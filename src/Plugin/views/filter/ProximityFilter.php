@@ -53,14 +53,11 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    // Make phpcs happy.
-    /** @var \Drupal\geolocation\GeolocationCore $geolocation_core */
-    $geolocation_core = $container->get('geolocation.core');
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $geolocation_core
+      $container->get('geolocation.core')
     );
   }
 

@@ -4,7 +4,6 @@ namespace Drupal\geolocation\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\geolocation\GoogleMapsDisplayTrait;
 
 /**
  * Implements the GeolocationGoogleMapAPIkey form controller.
@@ -12,8 +11,6 @@ use Drupal\geolocation\GoogleMapsDisplayTrait;
  * @see \Drupal\Core\Form\FormBase
  */
 class GeolocationSettings extends ConfigFormBase {
-
-  use GoogleMapsDisplayTrait;
 
   /**
    * {@inheritdoc}
@@ -121,7 +118,12 @@ class GeolocationSettings extends ConfigFormBase {
   }
 
   /**
-   * Ajax submit to add new field.
+   * Add library submit handler.
+   *
+   * @param array $form
+   *   Settings form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
    */
   public function addLibrariesSubmit(array &$form, FormStateInterface &$form_state) {
     $max = $form_state->get('fields_count') + 1;
@@ -130,7 +132,15 @@ class GeolocationSettings extends ConfigFormBase {
   }
 
   /**
-   * Ajax callback to add new field.
+   * Add library AJAX handler.
+   *
+   * @param array $form
+   *   Settings form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
+   *
+   * @return array
+   *   Ajax return value.
    */
   public function addLibrariesCallback(array &$form, FormStateInterface &$form_state) {
     return $form['parameters']['libraries'];

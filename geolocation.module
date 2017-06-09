@@ -36,14 +36,26 @@ function geolocation_help($route_name, RouteMatchInterface $route_match) {
  */
 function geolocation_theme() {
   return [
-    'geolocation_map_formatter' => [
+    'geolocation_map_wrapper' => [
       'variables' => [
+        'maptype' => NULL,
         'locations' => NULL,
-        'latitude' => NULL,
-        'longitude' => NULL,
+        'centre' => NULL,
+        'fitbounds' => NULL,
+        'clientlocation' => NULL,
         'uniqueid' => NULL,
       ],
-      'template' => 'geolocation-map-formatter',
+    ],
+    'geolocation_map_location' => [
+      'variables' => [
+        'content' => NULL,
+        'title' => NULL,
+        'position' => NULL,
+        'location_id' => NULL,
+        'disable_marker' => NULL,
+        'icon' => NULL,
+        'marker_label' => NULL,
+      ],
     ],
     'geolocation_latlng_formatter' => [
       'variables' => [
@@ -58,26 +70,6 @@ function geolocation_theme() {
         'lng' => NULL,
       ],
       'template' => 'geolocation-sexagesimal-formatter',
-    ],
-    'geolocation_common_map_display' => [
-      'variables' => [
-        'centre' => NULL,
-        'fitbounds' => NULL,
-        'clientlocation' => NULL,
-        'locations' => NULL,
-        'id' => NULL,
-      ],
-    ],
-    'geolocation_common_map_location' => [
-      'variables' => [
-        'content' => NULL,
-        'title' => NULL,
-        'position' => NULL,
-        'location_id' => NULL,
-        'disable_marker' => NULL,
-        'icon' => NULL,
-        'marker_label' => NULL,
-      ],
     ],
   ];
 }

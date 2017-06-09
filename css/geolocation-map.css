@@ -1,0 +1,8 @@
+.geolocation-common-map-locations {
+  display: none;
+}
+
+.geolocation-map-container {
+  height: 300px;
+  width: 100%;
+}

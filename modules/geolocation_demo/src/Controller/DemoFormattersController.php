@@ -87,6 +87,7 @@ class DemoFormattersController extends ControllerBase {
       'geolocation_map',
       'geolocation_sexagesimal',
       'geolocation_token',
+      'geolocation_leaflet_map',
     ] as $formatter_id) {
       $formatter = $this->pluginManagerFieldFormatter->getInstance(array_merge_recursive($widget_settings, ['configuration' => ['type' => $formatter_id]]));
 

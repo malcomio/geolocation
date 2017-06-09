@@ -5,9 +5,9 @@ namespace Drupal\geolocation\Plugin\views\style;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation\Plugin\views\field\GeolocationField;
-use Drupal\geolocation\GoogleMapsDisplayTrait;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
+use Drupal\geolocation\Plugin\geolocation\MapProvider\GoogleMaps;
 
 /**
  * Allow to display several field items on a common map.
@@ -24,12 +24,26 @@ use Drupal\Core\Url;
  */
 class CommonMap extends StylePluginBase {
 
-  use GoogleMapsDisplayTrait;
-
   protected $usesFields = TRUE;
   protected $usesRowPlugin = TRUE;
   protected $usesRowClass = FALSE;
   protected $usesGrouping = FALSE;
+
+  /**
+   * Google Map Provider.
+   *
+   * @var \Drupal\geolocation\Plugin\geolocation\MapProvider\GoogleMaps
+   */
+  protected $googleMapProvider = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->googleMapProvider = \Drupal::service('geolocation.core')->getMapProviderManager()->getMapProvider('google_maps');
+  }
 
   /**
    * Map update option handling.
@@ -118,8 +132,8 @@ class CommonMap extends StylePluginBase {
     $map_id = $this->view->dom_id;
 
     $build = [
-      '#theme' => 'geolocation_common_map_display',
-      '#id' => $map_id,
+      '#theme' => 'geolocation_map_wrapper',
+      '#uniqueid' => $map_id,
       '#attached' => [
         'library' => [
           'geolocation/geolocation.commonmap',
@@ -128,10 +142,10 @@ class CommonMap extends StylePluginBase {
           'geolocation' => [
             'commonMap' => [
               $map_id => [
-                'settings' => $this->getGoogleMapsSettings($this->options),
+                'settings' => $this->googleMapProvider->getSettings($this->options),
               ],
             ],
-            'google_map_url' => $this->getGoogleMapsApiUrl(),
+            'google_map_url' => $this->googleMapProvider->getGoogleMapsApiUrl(),
           ],
         ],
       ],
@@ -271,7 +285,7 @@ class CommonMap extends StylePluginBase {
         ];
 
         $location = [
-          '#theme' => 'geolocation_common_map_location',
+          '#theme' => 'geolocation_map_location',
           '#content' => $this->view->rowPlugin->render($row),
           '#title' => empty($title_build) ? '' : $title_build,
           '#position' => $position,
@@ -464,7 +478,7 @@ class CommonMap extends StylePluginBase {
     $options['centre'] = ['default' => ''];
     $options['context_popup_content'] = ['default' => ''];
 
-    foreach (self::getGoogleMapDefaultSettings() as $key => $setting) {
+    foreach (GoogleMaps::getDefaultSettings() as $key => $setting) {
       $options[$key] = ['default' => $setting];
     }
 
@@ -852,7 +866,7 @@ class CommonMap extends StylePluginBase {
      * Google Maps settings
      */
 
-    $form += $this->getGoogleMapsSettingsForm($this->options, 'style_options][');
+    $form += $this->googleMapProvider->getSettingsForm($this->options, 'style_options][');
   }
 
   /**
@@ -877,7 +891,7 @@ class CommonMap extends StylePluginBase {
       }
     }
 
-    $this->validateGoogleMapsSettingsForm($form, $form_state, 'style_options');
+    $this->googleMapProvider->validateSettingsForm($form, $form_state, 'style_options');
   }
 
 }

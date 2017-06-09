@@ -1,16 +1,21 @@
 <?php
 
-namespace Drupal\geolocation;
+namespace Drupal\geolocation\Plugin\geolocation\MapProvider;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\geolocation\MapProviderBase;
 
 /**
- * Class GoogleMapsDisplayTrait.
+ * Provides Google Maps.
  *
- * @package Drupal\geolocation
+ * @MapProvider(
+ *   id = "google_maps",
+ *   name = @Translation("Google Maps"),
+ *   description = @Translation("You do require an API key for this plugin to work."),
+ * )
  */
-trait GoogleMapsDisplayTrait {
+class GoogleMaps extends MapProviderBase {
 
   /**
    * Google map style - Roadmap.
@@ -121,12 +126,9 @@ trait GoogleMapsDisplayTrait {
   }
 
   /**
-   * Provide a populated settings array.
-   *
-   * @return array
-   *   The settings array with the default map settings.
+   * {@inheritdoc}
    */
-  public static function getGoogleMapDefaultSettings() {
+  public static function getDefaultSettings() {
     return [
       'google_map_settings' => [
         'type' => static::$ROADMAP,
@@ -154,16 +156,10 @@ trait GoogleMapsDisplayTrait {
   }
 
   /**
-   * Provide settings ready to handover to JS to feed to Google Maps.
-   *
-   * @param array $settings
-   *   Current settings. Might contain unrelated settings as well.
-   *
-   * @return array
-   *   An array only containing keys defined in this trait.
+   * {@inheritdoc}
    */
-  public function getGoogleMapsSettings(array $settings) {
-    $default_settings = self::getGoogleMapDefaultSettings();
+  public function getSettings(array $settings) {
+    $default_settings = self::getDefaultSettings();
     $settings = array_replace_recursive($default_settings, $settings);
 
     $settings['google_map_settings']['marker_icon_path'] = \Drupal::token()->replace($settings['google_map_settings']['marker_icon_path']);
@@ -188,15 +184,9 @@ trait GoogleMapsDisplayTrait {
   }
 
   /**
-   * Provide a summary array to use in field formatters.
-   *
-   * @param array $settings
-   *   The current map settings.
-   *
-   * @return array
-   *   An array to use as field formatter summary.
+   * {@inheritdoc}
    */
-  public function getGoogleMapsSettingsSummary(array $settings) {
+  public function getSettingsSummary(array $settings) {
     $types = $this->getMapTypes();
     $summary = [];
     $summary[] = $this->t('Map Type: @type', ['@type' => $types[$settings['google_map_settings']['type']]]);
@@ -207,18 +197,10 @@ trait GoogleMapsDisplayTrait {
   }
 
   /**
-   * Provide a generic map settings form array.
-   *
-   * @param array $settings
-   *   The current map settings.
-   * @param string $form_prefix
-   *   Form specific optional prefix.
-   *
-   * @return array
-   *   A form array to be integrated in whatever.
+   * {@inheritdoc}
    */
-  public function getGoogleMapsSettingsForm(array $settings, $form_prefix = '') {
-    $settings['google_map_settings'] += self::getGoogleMapDefaultSettings()['google_map_settings'];
+  public function getSettingsForm(array $settings, $form_prefix = '') {
+    $settings['google_map_settings'] += self::getDefaultSettings()['google_map_settings'];
     $form = [
       'google_map_settings' => [
         '#type' => 'details',
@@ -455,16 +437,9 @@ trait GoogleMapsDisplayTrait {
   }
 
   /**
-   * Validate the form elements defined above.
-   *
-   * @param array $form
-   *   Values to validate.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current Formstate.
-   * @param string|null $prefix
-   *   Form state prefix if needed.
+   * {@inheritdoc}
    */
-  public function validateGoogleMapsSettingsForm(array $form, FormStateInterface $form_state, $prefix = NULL) {
+  public function validateSettingsForm(array $form, FormStateInterface $form_state, $prefix = NULL) {
     if ($prefix) {
       $values = $form_state->getValues();
       if (!empty($values[$prefix])) {
@@ -492,6 +467,13 @@ trait GoogleMapsDisplayTrait {
         $form_state->setErrorByName($prefix . 'google_map_settings][style', $this->t('Decoded style JSON is not an array.'));
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLibraries() {
+    return ['geolocation/geolocation.googlemapsapi'];
   }
 
 }

@@ -5,8 +5,9 @@ namespace Drupal\geolocation_google_places_api\Plugin\geolocation\Geocoder;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Component\Serialization\Json;
 use Drupal\geolocation\GeocoderBase;
-use Drupal\geolocation\GoogleMapsDisplayTrait;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\geolocation\GeolocationCore;
+use Drupal\Core\Config\Config;
 
 /**
  * Provides the Google Places API.
@@ -21,7 +22,21 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class GooglePlacesAPI extends GeocoderBase {
 
-  use GoogleMapsDisplayTrait;
+  /**
+   * Google Maps Provider.
+   *
+   * @var \Drupal\geolocation\Plugin\geolocation\MapProvider\GoogleMaps
+   */
+  protected $googleMapsProvider = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Config $config, GeolocationCore $geolocationCore) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $config, $geolocationCore);
+
+    $this->googleMapsProvider = $this->geolocationCore->getMapProviderManager()->getMapProvider('google_maps');
+  }
 
   /**
    * {@inheritdoc}
@@ -85,7 +100,7 @@ class GooglePlacesAPI extends GeocoderBase {
    * {@inheritdoc}
    */
   public function formAttachGeocoder(array &$render_array, $element_name) {
-    $render_array['#attached']['drupalSettings']['geolocation']['google_map_url'] = $this->getGoogleMapsApiUrl();
+    $render_array['#attached']['drupalSettings']['geolocation']['google_map_url'] = $this->googleMapsProvider->getGoogleMapsApiUrl();
 
     $render_array['geolocation_geocoder_google_places_api'] = [
       '#type' => 'textfield',

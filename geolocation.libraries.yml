@@ -1,3 +1,21 @@
+geolocation.api:
+  version: 8.x-1.x
+  js:
+    js/geolocation-api.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+
+geolocation.map:
+  version: 8.x-1.x
+  css:
+    theme:
+      css/geolocation-map.css: {}
+  js:
+    js/geolocation-map.js: {}
+  dependencies:
+    - geolocation/geolocation.api
+
 # Google Maps geocoder function.
 geolocation.geocoder:
   version: 8.x-1.x
@@ -33,6 +51,38 @@ geolocation.widgets.html5:
 
 #
 #
+# Leaflet API
+#
+# TODO: Seperate into module.
+#
+#
+
+leaflet:
+  header: true
+  remote: http://leafletjs.com/
+  version: '1.0.3'
+  license:
+    name: BSD 2-clause "Simplified" License
+    url: https://github.com/Leaflet/Leaflet/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      'https://unpkg.com/leaflet@1.0.3/dist/leaflet.css': { type: external, minified: true }
+  js:
+    'https://unpkg.com/leaflet@1.0.3/dist/leaflet.js': { type: external, minified: true }
+
+# Leaflet integration library.
+geolocation.leaflet:
+  version: 8.x-1.x
+  dependencies:
+    - core/drupalSettings
+    - geolocation/geolocation.api
+    - geolocation/leaflet
+  js:
+    js/geolocation-leaflet.js: {}
+
+#
+#
 # Google Maps API
 #
 # TODO: Seperate into module.
@@ -43,10 +93,8 @@ geolocation.widgets.html5:
 geolocation.googlemapsapi:
   version: 8.x-1.x
   dependencies:
-    - core/drupal
-    - core/jquery
-    - core/underscore
     - core/drupalSettings
+    - geolocation/geolocation.api
   js:
     js/geolocation-google-maps-api.js: {}
 
@@ -58,17 +106,6 @@ geolocation.geocoder.googlegeocodingapi:
   dependencies:
     - core/jquery.once
     - geolocation/geolocation.geocoder
-    - geolocation/geolocation.googlemapsapi
-
-# Google Maps display formatter.
-geolocation.formatter.googlemap:
-  version: 8.x-1.x
-  css:
-    theme:
-      css/geolocation-formatter-map.css: {}
-  js:
-    js/geolocation-formatter-googlemap.js: {}
-  dependencies:
     - geolocation/geolocation.googlemapsapi
 
 # Google geocoder widget library.
@@ -96,6 +133,16 @@ geolocation.commonmap:
     - core/drupal.ajax
     - core/jquery
     - core/jquery.once
+    - geolocation/geolocation.map
+    - geolocation/geolocation.googlemapsapi
+
+# Drawing support.
+geolocation.commongooglemap.drawing:
+  js:
+    js/geolocation-common-google-map-drawing.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
     - geolocation/geolocation.googlemapsapi
 
 # External marker clusterer.

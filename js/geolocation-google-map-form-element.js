@@ -36,6 +36,7 @@
    */
   Drupal.behaviors.geolocationGoogleMapFormElements = {
     attach: function (context, drupalSettings) {
+
       $.each(
         drupalSettings.geolocation.googleMapFormElements,
 
@@ -44,6 +45,7 @@
          * @param {GeolocationGoogleMapFormElementSettings} formElementSettings - settings for form element
          */
         function (mapId, formElementSettings) {
+
           /** @type {jQuery} */
           var container = $('#geolocation-google-map-form-element-' + mapId);
 
@@ -51,7 +53,9 @@
             return;
           }
 
-          Drupal.geolocation.addMapLoadedCallback(function (map) {
+          var map = Drupal.geolocation.getMapById(mapId);
+
+          map.addLoadedCallback(function (map) {
             // Remove all markers not represented by input.
             map.mapMarkers.forEach(function (currentMarker, index) {
               if (index >= parseInt(formElementSettings.maxLocations)) {
@@ -71,7 +75,7 @@
             });
 
             google.maps.event.addListener(map.googleMap, 'click', function (event) {
-              var availableInput = container.find('.geolocation-map-input').filter(function() {
+              var availableInput = container.find('.geolocation-map-input').filter(function () {
                 return (
                   $(this).find('input.geolocation-map-input-latitude').val() === ''
                   && $(this).find('input.geolocation-map-input-longitude').val() === ''
@@ -96,7 +100,7 @@
                 });
               }
               else {
-                alert(Drupal.t("All available location inputs are filled. You can clear existing locations by clicking them."));
+                alert(Drupal.t('All available location inputs are filled. You can clear existing locations by clicking them.'));
               }
             });
           }, mapId);

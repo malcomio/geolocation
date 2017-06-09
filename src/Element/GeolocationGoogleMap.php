@@ -3,7 +3,6 @@
 namespace Drupal\geolocation\Element;
 
 use Drupal\Core\Render\Element\RenderElement;
-use Drupal\geolocation\GoogleMapsDisplayTrait;
 
 /**
  * Provides a render element to display a geolocation map.
@@ -27,7 +26,21 @@ use Drupal\geolocation\GoogleMapsDisplayTrait;
  */
 class GeolocationGoogleMap extends RenderElement {
 
-  use GoogleMapsDisplayTrait;
+  /**
+   * Google Map Provider.
+   *
+   * @var \Drupal\geolocation\Plugin\geolocation\MapProvider\GoogleMaps
+   */
+  protected $googleMapProvider = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->googleMapProvider = \Drupal::service('geolocation.core')->getMapProviderManager()->getMapProvider('google_maps');
+  }
 
   /**
    * {@inheritdoc}
@@ -59,12 +72,12 @@ class GeolocationGoogleMap extends RenderElement {
   public function preRenderGoogleMapElement(array $element) {
 
     $render_array = [
-      '#theme' => 'geolocation_map_formatter',
+      '#theme' => 'geolocation_map_wrapper',
       '#attached' => [
-        'library' => ['geolocation/geolocation.formatter.googlemap'],
+        'library' => array_merge(['geolocation/geolocation.map'], $this->googleMapProvider->getLibraries()),
         'drupalSettings' => [
           'geolocation' => [
-            'google_map_url' => $this->getGoogleMapsApiUrl(),
+            'google_map_url' => $this->googleMapProvider->getGoogleMapsApiUrl(),
           ],
         ],
       ],
@@ -78,7 +91,7 @@ class GeolocationGoogleMap extends RenderElement {
       $render_array['#suffix'] = $element['#suffix'];
     }
 
-    $settings = $this->getGoogleMapDefaultSettings();
+    $settings = $this->googleMapProvider->getDefaultSettings();
     if (!empty($element['#settings'])) {
       $settings = array_replace_recursive($settings, $element['#settings']);
     }
@@ -122,7 +135,7 @@ class GeolocationGoogleMap extends RenderElement {
         $fallback = $item['latitude'] . ' ' . $item['longitude'];
 
         $locations[] = [
-          '#theme' => 'geolocation_common_map_location',
+          '#theme' => 'geolocation_map_location',
           '#content' => empty($item['content']) ? $fallback : $item['content'],
           '#title' => empty($item['title']) ? $fallback : $item['title'],
           '#position' => [

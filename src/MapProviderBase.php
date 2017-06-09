@@ -9,18 +9,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\Config;
 
 /**
- * Class GeocoderBase.
+ * Class MapProviderBase.
  *
  * @package Drupal\geolocation
  */
-abstract class GeocoderBase extends PluginBase implements GeocoderInterface, ContainerFactoryPluginInterface {
-
-  /**
-   * The GeolocationCore object.
-   *
-   * @var \Drupal\geolocation\GeolocationCore
-   */
-  protected $geolocationCore;
+abstract class MapProviderBase extends PluginBase implements MapProviderInterface, ContainerFactoryPluginInterface {
 
   /**
    * Geolocation settings config instance.
@@ -40,14 +33,11 @@ abstract class GeocoderBase extends PluginBase implements GeocoderInterface, Con
    *   The plugin implementation definition.
    * @param \Drupal\Core\Config\Config $config
    *   The 'geolocation.settings' config.
-   * @param \Drupal\geolocation\GeolocationCore $geolocation_core
-   *   The GeolocationCore object.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Config $config, GeolocationCore $geolocation_core) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Config $config) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->geolocationSettings = $config;
-    $this->geolocationCore = $geolocation_core;
   }
 
   /**
@@ -58,55 +48,51 @@ abstract class GeocoderBase extends PluginBase implements GeocoderInterface, Con
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('config.factory')->get('geolocation.settings'),
-      $container->get('geolocation.core')
+      $container->get('config.factory')->get('geolocation.settings')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getOptionsForm() {
-    return [
-      '#type' => 'html_tag',
-      '#tag' => 'span',
-      '#value' => $this->t('No settings available.'),
-    ];
+  public static function getDefaultSettings() {
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function processOptionsForm(array $form_element) {
-    return NULL;
+  public function getSettings(array $settings) {
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function formAttachGeocoder(array &$render_array, $element_name) {
-    return NULL;
+  public function getSettingsSummary(array $settings) {
+    $summary = [];
+    return $summary;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function formValidateInput(FormStateInterface $form_state) {
-    return TRUE;
+  public function getSettingsForm(array $settings, $form_prefix = '') {
+    $form = [];
+
+    return $form;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function formProcessInput(array &$input, $element_name) {
-    return TRUE;
-  }
+  public function validateSettingsForm(array $form, FormStateInterface $form_state, $prefix = NULL) {}
 
   /**
    * {@inheritdoc}
    */
-  public function geocode($address) {
-    return NULL;
+  public function getLibraries() {
+    return [];
   }
 
 }

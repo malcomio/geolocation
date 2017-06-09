@@ -1,19 +1,17 @@
 <?php
 
-namespace Drupal\geolocation_demo\Controller;
+namespace Drupal\geolocation_demo\Form;
 
-use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Form\FormState;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Field\WidgetPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Returns responses for geolocation_demo module routes.
  */
-class DemoWidgetFormsController extends ControllerBase {
+abstract class DemoWidget extends FormBase {
 
   /**
    * Drupal\Core\Field\WidgetPluginManager definition.
@@ -48,26 +46,18 @@ class DemoWidgetFormsController extends ControllerBase {
   }
 
   /**
-   * Return the non-functional geocoding widget form.
-   *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   Page request object.
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *   The route match.
-   *
-   * @return array
-   *   A render array.
+   * {@inheritdoc}
    */
-  public function widgets(Request $request, RouteMatchInterface $route_match) {
+  public function getWidgetForm($widget_id, array $form, FormStateInterface $form_state) {
 
     /** @var \Drupal\node\NodeInterface $node */
     $node = $this->entityTypeManager->getStorage('node')->create([
       'type' => 'geolocation_default_article',
     ]);
 
-    $items = $node->get('field_geolocation_demo_single');
+    $field_name = 'field_geolocation_demo_multiple';
 
-    $field_definition = $node->getFieldDefinition('field_geolocation_demo_single');
+    $field_definition = $node->getFieldDefinition($field_name);
 
     $widget_settings = [
       'field_definition' => $field_definition,
@@ -80,24 +70,18 @@ class DemoWidgetFormsController extends ControllerBase {
       ],
     ];
 
-    $form_state = new FormState();
-    $form = [];
+    $widget = $this->pluginManagerFieldWidget->getInstance(array_merge_recursive($widget_settings, ['configuration' => ['type' => $widget_id]]));
 
-    foreach ([
-      'geolocation_googlegeocoder',
-      'geolocation_latlng',
-      'geolocation_html5',
-    ] as $widget_id) {
-      $widget = $this->pluginManagerFieldWidget->getInstance(array_merge_recursive($widget_settings, ['configuration' => ['type' => $widget_id]]));
+    $items = $node->get($field_name);
 
-      $form[$widget_id] = [
-        '#type' => 'fieldset',
-        '#title' => $widget->getPluginDefinition()['label'],
-        'widget' => $widget->formElement($items, 0, [], $form, $form_state),
-      ];
-    }
+    $form['#parents'] = [];
 
-    return $form;
+    return $widget->form($items, $form, $form_state);
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {}
 
 }

@@ -5,8 +5,9 @@ namespace Drupal\geolocation\Plugin\geolocation\Geocoder;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Component\Serialization\Json;
 use Drupal\geolocation\GeocoderBase;
-use Drupal\geolocation\GoogleMapsDisplayTrait;
+use Drupal\geolocation\GeolocationCore;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Config\Config;
 
 /**
  * Provides the Google Geocoding API.
@@ -21,7 +22,21 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class GoogleGeocodingAPI extends GeocoderBase {
 
-  use GoogleMapsDisplayTrait;
+  /**
+   * Google Maps Provider.
+   *
+   * @var \Drupal\geolocation\Plugin\geolocation\MapProvider\GoogleMaps
+   */
+  protected $googleMapsProvider = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Config $config, GeolocationCore $geolocationCore) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $config, $geolocationCore);
+
+    $this->googleMapsProvider = $this->geolocationCore->getMapProviderManager()->getMapProvider('google_maps');
+  }
 
   /**
    * {@inheritdoc}
@@ -96,7 +111,7 @@ class GoogleGeocodingAPI extends GeocoderBase {
         ],
         'drupalSettings' => [
           'geolocation' => [
-            'google_map_url' => $this->getGoogleMapsApiUrl(),
+            'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
           ],
         ],
       ],

@@ -31,8 +31,6 @@
 (function ($, Drupal) {
   'use strict';
 
-  /* global google */
-
   if (typeof Drupal.geolocation.geocoder === 'undefined') {
     return false;
   }

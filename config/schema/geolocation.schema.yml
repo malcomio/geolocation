@@ -63,6 +63,35 @@ geolocation.google_map_settings:
       type: string
       label: 'Smart scrolling'
 
+geolocation.common_map_draw_settings:
+  type: mapping
+  label: 'Common map draw settings'
+  mapping:
+    polyline:
+      type: integer
+      label: 'Draw polyline'
+    strokeColor:
+      type: string
+      label: 'strokeColor'
+    strokeOpacity:
+      type: string
+      label: 'strokeOpacity'
+    strokeWeight:
+      type: string
+      label: 'strokeWeight'
+    geodesic:
+      type: integer
+      label: 'geodesic'
+    polygon:
+      type: integer
+      label: 'Draw polygon'
+    fillColor:
+      type: string
+      label: 'fillColor'
+    fillOpacity:
+      type: string
+      label: 'fillOpacity'
+
 geolocation.settings:
   type: config_object
   label: 'Geolocation settings'
@@ -338,10 +367,13 @@ field.formatter.settings.geolocation_map:
       label: 'Info Text'
     use_overridden_map_settings:
       type: integer
-      label: 'Use overriden map settings optionally set by GoogleGeocoderWidget.'
+      label: 'Use overridden map settings optionally set by GoogleGeocoderWidget.'
     google_map_settings:
       type: geolocation.google_map_settings
       label: 'Google map settings'
+    common_map_draw_settings:
+      type: geolocation.common_map_draw_settings
+      label: 'Common map settings'
 
 field.formatter.settings.geolocation_token:
   type: mapping

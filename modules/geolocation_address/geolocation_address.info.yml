@@ -1,0 +1,8 @@
+name: Geolocation - Address
+type: module
+description: EAddress integration
+core: 8.x
+package: Geolocation
+dependencies:
+  - geolocation
+  - address
