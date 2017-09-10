@@ -13,28 +13,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class AjaxResponseSubscriber implements EventSubscriberInterface {
 
   /**
-   * Alter the views AJAX response commands only for the map.
-   *
-   * @param array $commands
-   *   An array of commands to alter.
-   */
-  protected function alterCommands(array &$commands) {
-    foreach ($commands as $delta => &$command) {
-      // Substitute the 'replace' method without our custom jQuery method which
-      // will allow views content to be injected one after the other.
-      if (
-        isset($command['method'])
-        && $command['method'] === 'replaceWith'
-        && isset($command['selector'])
-        && substr($command['selector'], 0, 16) === '.js-view-dom-id-'
-      ) {
-        $command['command'] = 'geolocationCommonMapsUpdate';
-        unset($command['method']);
-      }
-    }
-  }
-
-  /**
    * Renders the ajax commands right before preparing the result.
    *
    * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event

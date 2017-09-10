@@ -1,0 +1,7 @@
+geolocation_map_provider:
+  type: mapping
+  mapping:
+
+geolocation.map.provider.*:
+  type: geolocation_map_provider
+  label: 'Empty map provider'

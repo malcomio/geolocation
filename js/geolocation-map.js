@@ -57,8 +57,6 @@
           });
 
           var map = Drupal.geolocation.Factory(mapSettings);
-          map.initialize();
-
           map.addReadyCallback(function (map) {
 
             /**
@@ -67,6 +65,7 @@
             map.removeMapMarkers();
 
             var locations = map.loadMarkersFromContainer();
+
             $.each(locations, function (index, location) {
               map.setMapMarker(location);
             });
@@ -111,8 +110,6 @@
                 });
               }
               break;
-
-
           }
         }
       });

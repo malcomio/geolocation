@@ -3,7 +3,6 @@
 namespace Drupal\geolocation;
 
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\Config;
@@ -23,6 +22,13 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
   protected $geolocationSettings;
 
   /**
+   * Map feature manager.
+   *
+   * @var \Drupal\geolocation\MapFeatureManager
+   */
+  protected $mapFeatureManager;
+
+  /**
    * Constructs a new GeocoderBase object.
    *
    * @param array $configuration
@@ -33,11 +39,14 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
    *   The plugin implementation definition.
    * @param \Drupal\Core\Config\Config $config
    *   The 'geolocation.settings' config.
+   * @param \Drupal\geolocation\MapFeatureManager $map_feature_manager
+   *   Map feature manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Config $config) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Config $config, MapFeatureManager $map_feature_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->geolocationSettings = $config;
+    $this->mapFeatureManager = $map_feature_manager;
   }
 
   /**
@@ -48,7 +57,8 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('config.factory')->get('geolocation.settings')
+      $container->get('config.factory')->get('geolocation.settings'),
+      $container->get('plugin.manager.geolocation.mapfeature')
     );
   }
 
@@ -77,7 +87,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
   /**
    * {@inheritdoc}
    */
-  public function getSettingsForm(array $settings, $form_prefix = '') {
+  public function getSettingsForm(array $settings, array $parents = []) {
     $form = [];
 
     return $form;
@@ -86,12 +96,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
   /**
    * {@inheritdoc}
    */
-  public function validateSettingsForm(array $form, FormStateInterface $form_state, $prefix = NULL) {}
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getLibraries() {
+  public function attachments(array $settings) {
     return [];
   }
 

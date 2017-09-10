@@ -1,6 +1,7 @@
 {
   "globals": {
-    "google": true
+    "google": true,
+    "L": true
   },
   "rules": {
     "max-nested-callbacks": [1, 5]

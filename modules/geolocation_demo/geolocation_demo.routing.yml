@@ -30,14 +30,6 @@ geolocation_demo.form_elements:
   requirements:
     _permission: 'access content'
 
-geolocation_demo.googlegeocoder_widget:
-  path: '/geolocation-demo/widgets/googlegeocoder'
-  defaults:
-    _form: '\Drupal\geolocation_demo\Form\GooglegeocoderWidget'
-    _title: 'Google Geocoder Widget'
-  requirements:
-    _permission: 'access content'
-
 geolocation_demo.html5_widget:
   path: '/geolocation-demo/widgets/html5'
   defaults:

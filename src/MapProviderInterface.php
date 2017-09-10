@@ -3,7 +3,6 @@
 namespace Drupal\geolocation;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
-use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines an interface for geolocation MapProvider plugins.
@@ -45,32 +44,23 @@ interface MapProviderInterface extends PluginInspectionInterface {
    *
    * @param array $settings
    *   The current map settings.
-   * @param string $form_prefix
-   *   Form specific optional prefix.
+   * @param array $parents
+   *   Form parents.
    *
    * @return array
    *   A form array to be integrated in whatever.
    */
-  public function getSettingsForm(array $settings, $form_prefix = '');
+  public function getSettingsForm(array $settings, array $parents);
 
   /**
-   * Validate the form elements defined above.
+   * Return all Drupal render attachments required by this map provider.
    *
-   * @param array $form
-   *   Values to validate.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current Formstate.
-   * @param string|null $prefix
-   *   Form state prefix if needed.
-   */
-  public function validateSettingsForm(array $form, FormStateInterface $form_state, $prefix = NULL);
-
-  /**
-   * Return all Drupal libraries required by this map provider.
+   * @param array $settings
+   *   The current map settings.
    *
    * @return array
-   *   Drupal libraries.
+   *   Render attachments.
    */
-  public function getLibraries();
+  public function attachments(array $settings);
 
 }

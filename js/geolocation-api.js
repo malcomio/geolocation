@@ -63,84 +63,56 @@
  */
 
 /**
- * Set marker on map.
+ * Update existing map by settings.
+ * @function
+ * @name GeolocationMapInterface#update
+ * @param {GeolocationMapSettings} mapSettings - Settings to update by.
  *
+ * Set marker on map.
  * @function
  * @name GeolocationMapInterface#setMapMarker
  * @param {GeolocationLocationSettings} Settings for the marker.
  * @param {Boolean} [skipInfoWindow=false] - Skip attaching InfoWindow.
  * @return {Object} - Created marker.
  *
- *
- *
  * Remove all markers from map.
- *
  * @function
  * @name GeolocationMapInterface#removeMapMarkers
  *
- *
- *
  * Center map on coordinates.
- *
  * @function
  * @name GeolocationMapInterface#setCenterByCoordinates
  * @param {GeolocationCoordinates} coordinates - Coordinates to center on.
  * @param {Number} [accuracy] - Optional accuracy in meter.
  *
- *
- *
  * Fit map to markers.
- *
  * @function
  * @name GeolocationMapInterface#fitMapToMarkers
  * @param {GeolocationLocationSettings[]} [locations] Override using map.mapMarker.
  *
- *
- *
  * Fit map to bounds.
- *
  * @function
  * @name GeolocationMapInterface#fitBoundaries
  * @param {Object} boundaries - Override using map.mapMarker.
  *
- *
- *
- * Executes {GeolocationMapReadyCallbacks} for this map.
- *
- * @function
- * @name GeolocationMapInterface#readyCallback
- *
- *
- *
- * Adds a callback that will be called when map provider becomes available.
- *
- * @function
- * @name GeolocationMapInterface#addReadyCallback
- * @param {GeolocationMapReadyCallback} callback - Callback.
- *
- *
- *
- * Executes {GeolocationMapLoadedCallbacks} for this map.
- *
+ * Executes {GeolocationMapLoadedCallback[]} for this map.
  * @function
  * @name GeolocationMapInterface#loadedCallback
  *
- *
- *
  * Adds a callback that will be called when map is fully loaded.
- *
  * @function
  * @name GeolocationMapInterface#addLoadedCallback
  * @param {GeolocationMapLoadedCallback} callback - Callback.
  *
- *
- *
- * Initialize map provider and execute readyCallback().
- *
+ * Executes {GeolocationMapReadyCallbacks} for this map.
  * @function
- * @name GeolocationMapInterface#initialize
+ * @name GeolocationMapInterface#readyCallback
+ *
+ * Adds a callback that will be called when map provider becomes available.
+ * @function
+ * @name GeolocationMapInterface#addReadyCallback
+ * @param {GeolocationMapReadyCallback} callback - Callback.
  */
-
 
 (function ($, Drupal) {
 
@@ -193,6 +165,13 @@
   }
 
   GeolocationMapBase.prototype = {
+    update: function (mapSettings) {
+      this.settings = $.extend(this.settings, mapSettings.settings);
+      this.wrapper = mapSettings.wrapper;
+      this.container = mapSettings.wrapper.find('.geolocation-map-container').first();
+      this.lat = mapSettings.lat;
+      this.lng = mapSettings.lng;
+    },
     setCenterByCoordinates: function (coordinates, accuracy) {
       // Stub.
     },
@@ -243,9 +222,6 @@
         this.loadedCallbacks = this.loadedCallbacks || [];
         this.loadedCallbacks.push(callback);
       }
-    },
-    initialize: function () {
-      // Stub;
     },
     loadMarkersFromContainer: function () {
       var locations = [];
@@ -305,6 +281,8 @@
     reset = reset || false;
     mapSettings.type = mapSettings.type || 'google';
 
+    var map = null;
+
     /**
      * Previously stored map.
      * @type {boolean|GeolocationMapInterface}
@@ -313,7 +291,7 @@
 
     $.each(Drupal.geolocation.maps, function (index, map) {
       if (map.id === mapSettings.id) {
-        existingMap = map;
+        existingMap = Drupal.geolocation.maps[index];
       }
     });
 
@@ -321,19 +299,19 @@
       // TODO: Is there some Plugin mechanism in JS? Ideally the Factory should not need to know how to do load things.
       switch (mapSettings.type) {
         case 'google':
-          var googleMap = new Drupal.geolocation.GeolocationGoogleMap(mapSettings);
-          Drupal.geolocation.maps.push(googleMap);
-          return googleMap;
+          map = new Drupal.geolocation.GeolocationGoogleMap(mapSettings);
+          break;
 
         case 'leaflet':
-          var leafletMap = new Drupal.geolocation.GeolocationLeafletMap(mapSettings);
-          Drupal.geolocation.maps.push(leafletMap);
-          return leafletMap;
+          map = new Drupal.geolocation.GeolocationLeafletMap(mapSettings);
+          break;
       }
     }
     else {
-      return existingMap;
+      map = existingMap;
+      map.update(mapSettings);
     }
+    return map;
   }
 
   Drupal.geolocation.Factory = Factory;

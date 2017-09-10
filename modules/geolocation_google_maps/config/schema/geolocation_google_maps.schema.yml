@@ -1,0 +1,126 @@
+geolocation.common_map_draw_settings:
+  type: mapping
+  label: 'Common map draw settings'
+  mapping:
+    polyline:
+      type: integer
+      label: 'Draw polyline'
+    strokeColor:
+      type: string
+      label: 'strokeColor'
+    strokeOpacity:
+      type: string
+      label: 'strokeOpacity'
+    strokeWeight:
+      type: string
+      label: 'strokeWeight'
+    geodesic:
+      type: integer
+      label: 'geodesic'
+    polygon:
+      type: integer
+      label: 'Draw polygon'
+    fillColor:
+      type: string
+      label: 'fillColor'
+    fillOpacity:
+      type: string
+      label: 'fillOpacity'
+
+geolocation_google_maps.settings:
+  type: config_object
+  label: 'Geolocation settings'
+  mapping:
+    google_map_api_key:
+      type: string
+      label: 'Google Maps API Key'
+    google_map_api_server_key:
+      type: string
+      label: 'Google Maps API Key'
+    google_map_custom_url_parameters:
+      type: mapping
+      label: 'Additional Google Maps API parameters'
+      mapping:
+        region:
+          type: string
+          label: 'Region'
+        language:
+          type: string
+          label: 'languae'
+        v:
+          type: string
+          label: 'Version'
+        client:
+          type: string
+          label: 'Client ID'
+        libraries:
+          type: sequence
+          label: 'Libraries'
+          sequence:
+            type: string
+            label: 'Library name'
+
+geolocation.map.provider.google_maps:
+  type: mapping
+  label: 'Google Map settings'
+  mapping:
+    type:
+      type: string
+      label: 'Google map type'
+    zoom:
+      type: string
+      label: 'Zoom level'
+    minZoom:
+      type: integer
+      label: 'Min Zoom'
+    maxZoom:
+      type: integer
+      label: 'Max Zoom'
+    rotateControl:
+      type: integer
+      label: 'The state of the rotate control'
+    mapTypeControl:
+      type: integer
+      label: 'Map controls'
+    streetViewControl:
+      type: integer
+      label: 'Street view'
+    zoomControl:
+      type: integer
+      label: 'Zoom control'
+    fullscreenControl:
+      type: integer
+      label: 'The state of the fullscreen control'
+    scrollwheel:
+      type: integer
+      label: 'Scrool wheel'
+    disableDoubleClickZoom:
+      type: integer
+      label: 'Disable double click zoom'
+    draggable:
+      type: integer
+      label: 'Draggable'
+    height:
+      type: string
+      label: 'Height value'
+    width:
+      type: string
+      label: 'Width value'
+    info_auto_display:
+      type: integer
+      label: 'Display info'
+    marker_icon_path:
+      type: string
+      label: 'Path to marker icon'
+    disableAutoPan:
+      type: integer
+      label: 'Disable automatic panning for info window'
+    style:
+      type: string
+      label: 'JSON encoded style'
+    preferScrollingToZooming:
+      type: integer
+      label: 'Require user to click map before zooming'
+    gestureHandling:
+      type: string
+      label: 'Smart scrolling'

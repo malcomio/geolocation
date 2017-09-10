@@ -34,8 +34,8 @@
         data-centre-lng="{{ centre.lng }}"
     {% endif %}
 
-    {% if centre.type is not empty %}
-        data-centre-behavior="{{ centre.type }}"
+    {% if centre.behavior is not empty %}
+        data-centre-behavior="{{ centre.behavior }}"
     {% else %}
         data-centre-behavior="fitlocations"
     {% endif %}

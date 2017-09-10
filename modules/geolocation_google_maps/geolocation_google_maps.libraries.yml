@@ -1,0 +1,50 @@
+# Geolocation Google Maps API integration library.
+geolocation.googlemapsapi:
+  version: 8.x-1.x
+  dependencies:
+    - core/drupalSettings
+    - geolocation/geolocation.api
+  js:
+    js/geolocation-google-maps-api.js: {}
+
+# Google Maps geocoder function.
+geolocation.geocoder.googlegeocodingapi:
+  version: 8.x-1.x
+  js:
+    js/geolocation-google-geocoding-api-geocoder.js: {}
+  dependencies:
+    - core/jquery.once
+    - geolocation/geolocation.geocoder
+    - geolocation_google_maps/geolocation.googlemapsapi
+
+# Google geocoder widget library.
+geolocation.widgets.googlegeocoder:
+  version: 1.x
+  css:
+    theme:
+      css/geolocation-widget-googlegeocoder.css: {}
+  js:
+    js/geolocation-widget-googlegeocoder.js: { scope: footer }
+  dependencies:
+    - geolocation/geolocation.geocoder
+    - geolocation_google_maps/geolocation.googlemapsapi
+
+# Drawing support.
+geolocation.commongooglemap.drawing:
+  js:
+    js/geolocation-common-google-map-drawing.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - geolocation/geolocation.googlemapsapi
+
+# External marker clusterer.
+markerclusterer:
+  remote: https://github.com/googlemaps/js-marker-clusterer
+  version: 1.x
+  license:
+    name: Apache License, Version 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+    gpl-compatible: true
+  js:
+    https://cdn.rawgit.com/googlemaps/js-marker-clusterer/gh-pages/src/markerclusterer.js: { type: external }

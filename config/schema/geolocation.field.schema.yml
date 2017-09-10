@@ -1,0 +1,88 @@
+field.formatter.settings.geolocation_map:
+  type: mapping
+  label: 'Geolocation Google Map Formatter'
+  mapping:
+    set_marker:
+      type: string
+      label: 'Set marker at map center'
+    common_map:
+      type: string
+      label: 'Display results on a common map'
+    title:
+      type: string
+      label: 'Title'
+    info_text:
+      type: string
+      label: 'Info Text'
+    use_overridden_map_settings:
+      type: integer
+      label: 'Use overridden map settings optionally set by GoogleGeocoderWidget.'
+    google_map_settings:
+      type: geolocation.google_map_settings
+      label: 'Google map settings'
+    common_map_draw_settings:
+      type: geolocation.common_map_draw_settings
+      label: 'Common map settings'
+
+field.formatter.settings.geolocation_token:
+  type: mapping
+  label: 'Geolocation Token Formatter'
+  mapping:
+    tokenized_text:
+      type: string
+      label: 'Tokenized text'
+
+field.widget.settings.geolocation_googlegeocoder:
+  type: mapping
+  label: 'Geolocation Google Geocoder Widget settings'
+  mapping:
+    default_longitude:
+      type: string
+      label: 'Default Longitude'
+    default_latitude:
+      type: string
+      label: 'Default Latitude'
+    auto_client_location:
+      type: string
+      label: 'Automatically use client location'
+    auto_client_location_marker:
+      type: string
+      label: 'Automatically set marker as well'
+    populate_address_field:
+      type: string
+      label: 'Store address'
+    target_address_field:
+      type: string
+      label: 'Target address field name'
+    explicite_actions_address_field:
+      type: string
+      label: 'Explicite buttons'
+    allow_override_map_settings:
+      type: integer
+      label: 'Allow override map settings.'
+    google_map_settings:
+      type: geolocation.google_map_settings
+      label: 'Google map settings'
+
+field.value.geolocation:
+  type: mapping
+  label: 'Default value'
+  mapping:
+    lat:
+      type: text
+      label: 'Latitude'
+    lng:
+      type: text
+      label: 'Longitude'
+    lat_sin:
+      type: text
+      label: 'Support value'
+    lat_cos:
+      type: text
+      label: 'Support value'
+    lng_rad:
+      type: text
+      label: 'Support value'
+    data:
+      type: text
+      label: 'Catchall'

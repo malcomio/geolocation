@@ -19,13 +19,6 @@ geolocation_demo.form_elements:
   weight: 103
   menu_name: geolocation-demo
 
-geolocation_demo.googlegeocoder_widget:
-  title: 'GoogleGeocoder widget'
-  description: 'Geolocation field widget'
-  route_name: geolocation_demo.googlegeocoder_widget
-  weight: 110
-  menu_name: geolocation-demo
-
 geolocation_demo.html5_widget:
   title: 'HTML5 widget'
   description: 'Geolocation field widget'

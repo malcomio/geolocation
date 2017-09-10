@@ -16,14 +16,6 @@ geolocation.map:
   dependencies:
     - geolocation/geolocation.api
 
-# Google Maps geocoder function.
-geolocation.geocoder:
-  version: 8.x-1.x
-  js:
-    js/geolocation-geocoder.js: {}
-  dependencies:
-    - core/jquery.ui.autocomplete
-
 # Geolocation views field geocoder function.
 geolocation.views.field.geocoder:
   version: 8.x-1.x
@@ -49,77 +41,6 @@ geolocation.widgets.html5:
   js:
     js/geolocation-widget-html5.js: { scope: footer }
 
-#
-#
-# Leaflet API
-#
-# TODO: Seperate into module.
-#
-#
-
-leaflet:
-  header: true
-  remote: http://leafletjs.com/
-  version: '1.0.3'
-  license:
-    name: BSD 2-clause "Simplified" License
-    url: https://github.com/Leaflet/Leaflet/blob/master/LICENSE
-    gpl-compatible: true
-  css:
-    component:
-      'https://unpkg.com/leaflet@1.0.3/dist/leaflet.css': { type: external, minified: true }
-  js:
-    'https://unpkg.com/leaflet@1.0.3/dist/leaflet.js': { type: external, minified: true }
-
-# Leaflet integration library.
-geolocation.leaflet:
-  version: 8.x-1.x
-  dependencies:
-    - core/drupalSettings
-    - geolocation/geolocation.api
-    - geolocation/leaflet
-  js:
-    js/geolocation-leaflet.js: {}
-
-#
-#
-# Google Maps API
-#
-# TODO: Seperate into module.
-#
-#
-
-# Geolocation Google Maps API integration library.
-geolocation.googlemapsapi:
-  version: 8.x-1.x
-  dependencies:
-    - core/drupalSettings
-    - geolocation/geolocation.api
-  js:
-    js/geolocation-google-maps-api.js: {}
-
-# Google Maps geocoder function.
-geolocation.geocoder.googlegeocodingapi:
-  version: 8.x-1.x
-  js:
-    js/geolocation-google-geocoding-api-geocoder.js: {}
-  dependencies:
-    - core/jquery.once
-    - geolocation/geolocation.geocoder
-    - geolocation/geolocation.googlemapsapi
-
-# Google geocoder widget library.
-geolocation.widgets.googlegeocoder:
-  version: 1.x
-  css:
-    theme:
-      css/geolocation-widget-googlegeocoder.css: {}
-  js:
-    js/geolocation-widget-googlegeocoder.js: { scope: footer }
-  dependencies:
-    - geolocation/geolocation.geocoder
-    - geolocation/geolocation.googlemapsapi
-
 # CommonMap widget library.
 geolocation.commonmap:
   css:
@@ -134,27 +55,6 @@ geolocation.commonmap:
     - core/jquery
     - core/jquery.once
     - geolocation/geolocation.map
-    - geolocation/geolocation.googlemapsapi
-
-# Drawing support.
-geolocation.commongooglemap.drawing:
-  js:
-    js/geolocation-common-google-map-drawing.js: {}
-  dependencies:
-    - core/drupal
-    - core/drupalSettings
-    - geolocation/geolocation.googlemapsapi
-
-# External marker clusterer.
-geolocation.markerclusterer:
-  remote: https://github.com/googlemaps/js-marker-clusterer
-  version: 1.x
-  license:
-    name: Apache License, Version 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0
-    gpl-compatible: true
-  js:
-    https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js: { type: external }
 
 # Form element library.
 geolocation.google_map_form_element:
@@ -162,3 +62,11 @@ geolocation.google_map_form_element:
     js/geolocation-google-map-form-element.js: {}
   dependencies:
     - geolocation/geolocation.googlemapsapi
+
+# Geocoder function.
+geolocation.geocoder:
+  version: 8.x-1.x
+  js:
+    js/geolocation-geocoder.js: {}
+  dependencies:
+    - core/jquery.ui.autocomplete

@@ -29,7 +29,7 @@ class GeolocationGoogleMap extends RenderElement {
   /**
    * Google Map Provider.
    *
-   * @var \Drupal\geolocation\Plugin\geolocation\MapProvider\GoogleMaps
+   * @var \Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps
    */
   protected $googleMapProvider = NULL;
 
@@ -73,14 +73,7 @@ class GeolocationGoogleMap extends RenderElement {
 
     $render_array = [
       '#theme' => 'geolocation_map_wrapper',
-      '#attached' => [
-        'library' => array_merge(['geolocation/geolocation.map'], $this->googleMapProvider->getLibraries()),
-        'drupalSettings' => [
-          'geolocation' => [
-            'google_map_url' => $this->googleMapProvider->getGoogleMapsApiUrl(),
-          ],
-        ],
-      ],
+      '#attached' => $this->googleMapProvider->attachments([]),
     ];
 
     if (!empty($element['#prefix'])) {
