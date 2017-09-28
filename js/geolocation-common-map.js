@@ -78,12 +78,15 @@
             }
           }
 
-          var map = Drupal.geolocation.getMapById(mapId);
+          if (
+            typeof commonMapSettings.markerScrollToResult !== 'undefined'
+            && commonMapSettings.markerScrollToResult === true
+          ) {
+            var map = Drupal.geolocation.getMapById(mapId);
 
-          map.addLoadedCallback(function (map) {
-            $.each(map.mapMarkers, function (index, marker) {
-              marker.addListener('click', function () {
-                if (commonMapSettings.markerScrollToResult === true) {
+            map.addLoadedCallback(function (map) {
+              $.each(map.mapMarkers, function (index, marker) {
+                marker.addListener('click', function () {
                   var target = $('[data-location-id="' + location.data('location-id') + '"]:visible').first();
 
                   // Alternatively select by class.
@@ -96,10 +99,11 @@
                       scrollTop: target.offset().top
                     }, 'slow');
                   }
-                }
+
+                });
               });
             });
-          });
+          }
         }
       );
 

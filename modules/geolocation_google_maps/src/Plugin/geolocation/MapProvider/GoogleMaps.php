@@ -178,7 +178,7 @@ class GoogleMaps extends MapProviderBase {
     }
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
-      if ($settings[$feature_id]['enabled']) {
+      if (!empty($settings[$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
         $settings[$feature_id] = $feature->getSettings($settings[$feature_id]['settings']);
       }
@@ -205,7 +205,11 @@ class GoogleMaps extends MapProviderBase {
    */
   public function getSettingsForm(array $settings, array $parents = []) {
     $settings += self::getDefaultSettings();
-    $parents_string = implode('][', $parents);
+    $parents_string = '';
+    if ($parents) {
+      $parents_string = implode('][', $parents) . '][';
+    }
+
     $form = [
       '#type' => 'details',
       '#title' => t('Google Maps settings'),
@@ -220,7 +224,7 @@ class GoogleMaps extends MapProviderBase {
       '#title' => $this->t('General'),
     ];
     $form['height'] = [
-      '#group' => $parents_string . '][general_settings',
+      '#group' => $parents_string . 'general_settings',
       '#type' => 'textfield',
       '#title' => $this->t('Height'),
       '#description' => $this->t('Enter the dimensions and the measurement units. E.g. 200px or 100%.'),
@@ -228,7 +232,7 @@ class GoogleMaps extends MapProviderBase {
       '#default_value' => $settings['height'],
     ];
     $form['width'] = [
-      '#group' => $parents_string . '][general_settings',
+      '#group' => $parents_string . 'general_settings',
       '#type' => 'textfield',
       '#title' => $this->t('Width'),
       '#description' => $this->t('Enter the dimensions and the measurement units. E.g. 200px or 100%.'),
@@ -236,7 +240,7 @@ class GoogleMaps extends MapProviderBase {
       '#default_value' => $settings['width'],
     ];
     $form['type'] = [
-      '#group' => $parents_string . '][general_settings',
+      '#group' => $parents_string . 'general_settings',
       '#type' => 'select',
       '#title' => $this->t('Default map type'),
       '#options' => $this->getMapTypes(),
@@ -250,7 +254,7 @@ class GoogleMaps extends MapProviderBase {
       ],
     ];
     $form['zoom'] = [
-      '#group' => $parents_string . '][general_settings',
+      '#group' => $parents_string . 'general_settings',
       '#type' => 'select',
       '#title' => $this->t('Zoom level'),
       '#options' => range(static::$MINZOOMLEVEL, static::$MAXZOOMLEVEL),
@@ -265,7 +269,7 @@ class GoogleMaps extends MapProviderBase {
       ],
     ];
     $form['maxZoom'] = [
-      '#group' => $parents_string . '][general_settings',
+      '#group' => $parents_string . 'general_settings',
       '#type' => 'select',
       '#title' => $this->t('Max Zoom level'),
       '#options' => range(static::$MINZOOMLEVEL, static::$MAXZOOMLEVEL),
@@ -280,7 +284,7 @@ class GoogleMaps extends MapProviderBase {
       ],
     ];
     $form['minZoom'] = [
-      '#group' => $parents_string . '][general_settings',
+      '#group' => $parents_string . 'general_settings',
       '#type' => 'select',
       '#title' => $this->t('Min Zoom level'),
       '#options' => range(static::$MINZOOMLEVEL, static::$MAXZOOMLEVEL),
@@ -304,35 +308,35 @@ class GoogleMaps extends MapProviderBase {
       '#title' => $this->t('Controls'),
     ];
     $form['mapTypeControl'] = [
-      '#group' => $parents_string . '][control_settings',
+      '#group' => $parents_string . 'control_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Map type control'),
       '#description' => $this->t('Allow the user to change the map type.'),
       '#default_value' => $settings['mapTypeControl'],
     ];
     $form['streetViewControl'] = [
-      '#group' => $parents_string . '][control_settings',
+      '#group' => $parents_string . 'control_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Street view control'),
       '#description' => $this->t('Allow the user to switch to google street view.'),
       '#default_value' => $settings['streetViewControl'],
     ];
     $form['zoomControl'] = [
-      '#group' => $parents_string . '][control_settings',
+      '#group' => $parents_string . 'control_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Zoom control'),
       '#description' => $this->t('Show zoom controls.'),
       '#default_value' => $settings['zoomControl'],
     ];
     $form['rotateControl'] = [
-      '#group' => $parents_string . '][control_settings',
+      '#group' => $parents_string . 'control_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Rotate control'),
       '#description' => $this->t('Show rotate control.'),
       '#default_value' => $settings['rotateControl'],
     ];
     $form['fullscreenControl'] = [
-      '#group' => $parents_string . '][control_settings',
+      '#group' => $parents_string . 'control_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Fullscreen control'),
       '#description' => $this->t('Show fullscreen control.'),
@@ -348,14 +352,14 @@ class GoogleMaps extends MapProviderBase {
     ];
 
     $form['scrollwheel'] = [
-      '#group' => $parents_string . '][behavior_settings',
+      '#group' => $parents_string . 'behavior_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Scrollwheel'),
       '#description' => $this->t('Allow the user to zoom the map using the scrollwheel.'),
       '#default_value' => $settings['scrollwheel'],
     ];
     $form['gestureHandling'] = [
-      '#group' => $parents_string . '][behavior_settings',
+      '#group' => $parents_string . 'behavior_settings',
       '#type' => 'select',
       '#title' => $this->t('Gesture Handling'),
       '#default_value' => $settings['gestureHandling'],
@@ -378,21 +382,21 @@ class GoogleMaps extends MapProviderBase {
       ],
     ];
     $form['draggable'] = [
-      '#group' => $parents_string . '][behavior_settings',
+      '#group' => $parents_string . 'behavior_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Draggable'),
       '#description' => $this->t('Allow the user to change the field of view. <i>Deprecated as of v3.27 / Nov. 2016 in favor of gesture handling described above.</i>.'),
       '#default_value' => $settings['draggable'],
     ];
     $form['preferScrollingToZooming'] = [
-      '#group' => $parents_string . '][behavior_settings',
+      '#group' => $parents_string . 'behavior_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Require the user to click the map once to zoom, to ease scrolling behavior.'),
       '#description' => $this->t('Note: this is only relevant, when the Scrollwheel option is enabled.'),
       '#default_value' => $settings['preferScrollingToZooming'],
     ];
     $form['disableDoubleClickZoom'] = [
-      '#group' => $parents_string . '][behavior_settings',
+      '#group' => $parents_string . 'behavior_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Disable double click zoom'),
       '#description' => $this->t('Disables the double click zoom functionality.'),
@@ -417,20 +421,20 @@ class GoogleMaps extends MapProviderBase {
     ];
 
     $form['info_auto_display'] = [
-      '#group' => $parents_string . '][marker_settings',
+      '#group' => $parents_string . 'marker_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Automatically show info text'),
       '#default_value' => $settings['info_auto_display'],
     ];
     $form['marker_icon_path'] = [
-      '#group' => $parents_string . '][marker_settings',
+      '#group' => $parents_string . 'marker_settings',
       '#type' => 'textfield',
       '#title' => $this->t('Marker icon path'),
       '#description' => $this->t('Set relative or absolute path to custom marker icon. Tokens supported. Empty for default.'),
       '#default_value' => $settings['marker_icon_path'],
     ];
     $form['disableAutoPan'] = [
-      '#group' => $parents_string . '][marker_settings',
+      '#group' => $parents_string . 'marker_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Disable automatic panning of map when info bubble is opened.'),
       '#default_value' => $settings['disableAutoPan'],
@@ -438,14 +442,13 @@ class GoogleMaps extends MapProviderBase {
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
       $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
-continue;
       if (empty($feature)) {
         continue;
       }
 
       $feature_enable_id = uniqid($feature_id . '_enabled');
 
-      $feature_form = $feature->getSettingsForm($settings[$feature_id]['settings'] ?: [], $parents_string . '][' . $feature_id . '_settings');
+      $feature_form = $feature->getSettingsForm($settings[$feature_id]['settings'] ?: [], array_merge($parents, [$feature_id, 'settings']));
       $feature_form['#states'] = [
         'visible' => [
           ':input[id="' . $feature_enable_id . '"]' => ['checked' => TRUE],
@@ -512,7 +515,7 @@ continue;
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings) {
+  public function attachments(array $settings, $map_id) {
     $libraries = ['geolocation_google_maps/geolocation.googlemapsapi'];
 
     $default_settings = self::getDefaultSettings();
@@ -530,11 +533,27 @@ continue;
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
       if (!empty($settings[$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
-        $feature_attachments = array_merge_recursive($feature->attachments($settings[$feature_id]['settings']), $attachments);
-
-        $a = 5;
+        if ($feature) {
+          $attachments = array_merge_recursive($feature->attachments($settings[$feature_id]['settings'] ?: [], $map_id), $attachments);
+          unset($settings[$feature_id]);
+        }
       }
     }
+
+    $attachments = array_merge_recursive(
+      $attachments,
+      [
+        'drupalSettings' => [
+          'geolocation' => [
+            'maps' => [
+              $map_id => [
+                'settings' => $settings,
+              ],
+            ],
+          ],
+        ],
+      ]
+    );
 
     return $attachments;
   }

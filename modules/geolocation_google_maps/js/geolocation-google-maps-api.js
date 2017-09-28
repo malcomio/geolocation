@@ -47,9 +47,24 @@
  */
 
 /**
+ * @typedef {Object} GoogleMapSize
+ * @property {function():float} height
+ * @property {function():float} width
+ */
+
+/**
  * @typedef {Object} GoogleMapPoint
  * @property {function():float} x
  * @property {function():float} y
+ */
+
+/**
+ * @typedef {Object} GoogleMapSymbolPath
+ * @property {String} BACKWARD_CLOSED_ARROW
+ * @property {String} BACKWARD_OPEN_ARROW
+ * @property {String} CIRCLE
+ * @property {String} FORWARD_CLOSED_ARROW
+ * @property {String} FORWARD_OPEN_ARROW
  */
 
 /**
@@ -100,6 +115,7 @@
  * @property {Function} setPosition
  * @property {Function} setMap
  * @property {Function} setIcon
+ * @property {Function} getIcon
  * @property {Function} setTitle
  * @property {Function} setLabel
  * @property {Function} addListener
@@ -150,6 +166,11 @@
  *
  * @function
  * @property {function(string|number|float, string|number|float):GoogleMapPoint} Point
+ *
+ * @function
+ * @property {function(string|number|float, string|number|float):GoogleMapSize} Size
+ *
+ * @property {GoogleMapSymbolPath} SymbolPath
  *
  * @property {function(Object):GoogleCircle} Circle
  *
@@ -337,7 +358,7 @@
   }
   GeolocationGoogleMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationGoogleMap.prototype.constructor = GeolocationGoogleMap;
-  GeolocationGoogleMap.prototype.update = function(mapSettings) {
+  GeolocationGoogleMap.prototype.update = function (mapSettings) {
     Drupal.geolocation.GeolocationMapBase.prototype.update.call(this, mapSettings);
     this.googleMap.setOptions(mapSettings.google_map_settings);
   };
@@ -348,7 +369,7 @@
 
     markerSettings.skipInfoWindow = markerSettings.skipInfoWindow || false;
 
-    markerSettings.position = new google.maps.LatLng(markerSettings.position.lat, markerSettings.position.lng);
+    markerSettings.position = new google.maps.LatLng(parseFloat(markerSettings.position.lat), parseFloat(markerSettings.position.lng));
 
     var googleMap = this.googleMap;
     markerSettings.map = googleMap;
@@ -440,24 +461,36 @@
   };
 
   /**
-   * Re-center map, draw a circle indicating accuracy and slowly fade it out.
+   * Draw a circle representing the accuracy radius of HTML5 geolocation.
    *
-   * @param {GeolocationCoordinates} coordinates - A location (latLng) object from Google Maps API.
-   * @param {int} accuracy - Accuracy in meter.
+   * @param {GeolocationCoordinates|GoogleMapLatLng} location - Location to center on.
+   * @param {int} accuracy - Accuracy in m.
+   *
+   * @return {GoogleCircle} - Indicator circle.
    */
-  GeolocationGoogleMap.prototype.setCenterByCoordinates = function (coordinates, accuracy) {
-
-    // Draw a circle representing the accuracy radius of HTML5 geolocation.
-    var circle = new google.maps.Circle({
+  GeolocationGoogleMap.prototype.addAccuracyIndicatorCircle = function (location, accuracy) {
+    return new google.maps.Circle({
       center: location,
       radius: accuracy,
       map: this.googleMap,
       fillColor: '#4285F4',
-      fillOpacity: 0.5,
+      fillOpacity: 0.15,
       strokeColor: '#4285F4',
-      strokeOpacity: 1,
+      strokeOpacity: 0.3,
+      strokeWeight: 1,
       clickable: false
     });
+  };
+
+  /**
+   * Re-center map, draw a circle indicating accuracy and slowly fade it out.
+   *
+   * @param {GoogleMapLatLng} coordinates - A location (latLng) object from Google Maps API.
+   * @param {int} accuracy - Accuracy in meter.
+   */
+  GeolocationGoogleMap.prototype.setCenterByCoordinates = function (coordinates, accuracy) {
+
+    var circle = this.addAccuracyIndicatorCircle(coordinates, accuracy);
 
     // Set the zoom level to the accuracy circle's size.
     this.googleMap.fitBounds(circle.getBounds());

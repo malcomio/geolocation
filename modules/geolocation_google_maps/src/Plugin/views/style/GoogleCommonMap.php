@@ -31,16 +31,12 @@ class GoogleCommonMap extends CommonMapBase {
 
     $build['#attached'] = array_merge_recursive(
       $build['#attached'],
-      $this->mapProviderManager->createInstance('google_maps')->attachments($this->options['google_map_settings']),
+      $this->mapProviderManager
+        ->createInstance('google_maps')
+        ->attachments($this->options['google_map_settings'], $this->mapId),
       [
-        'drupalSettings' => [
-          'geolocation' => [
-            'maps' => [
-              $this->mapId => [
-                'settings' => $this->mapProviderManager->createInstance('google_maps')->getSettings($this->options['google_map_settings']),
-              ],
-            ],
-          ],
+        'library' => [
+          'geolocation_google_maps/geolocation.commonmap.google',
         ],
       ]
     );
@@ -90,7 +86,10 @@ class GoogleCommonMap extends CommonMapBase {
 
     parent::buildOptionsForm($form, $form_state);
 
-    $form['google_map_settings'] = $this->mapProviderManager->createInstance('google_maps')->getSettingsForm($this->options, ['style_options']);
+    $form['google_map_settings'] = $this
+      ->mapProviderManager
+      ->createInstance('google_maps')
+      ->getSettingsForm($this->options['google_map_settings'], ['style_options', 'google_map_settings']);
   }
 
 }

@@ -62,7 +62,10 @@ abstract class MapFeatureBase extends PluginBase implements MapFeatureInterface,
    * {@inheritdoc}
    */
   public function getSettings(array $settings) {
-    return [];
+    $default_settings = $this->getDefaultSettings();
+    $settings = array_replace_recursive($default_settings, $settings);
+
+    return $settings;
   }
 
   /**
@@ -76,7 +79,7 @@ abstract class MapFeatureBase extends PluginBase implements MapFeatureInterface,
   /**
    * {@inheritdoc}
    */
-  public function getSettingsForm(array $settings, $form_prefix = '') {
+  public function getSettingsForm(array $settings, array $parents) {
     $form = [];
 
     return $form;
@@ -85,7 +88,7 @@ abstract class MapFeatureBase extends PluginBase implements MapFeatureInterface,
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings) {
+  public function attachments(array $settings, $map_id) {
     return [];
   }
 

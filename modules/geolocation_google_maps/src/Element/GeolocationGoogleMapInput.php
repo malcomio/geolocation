@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\geolocation\Element;
+namespace Drupal\geolocation_google_maps\Element;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElementInterface;

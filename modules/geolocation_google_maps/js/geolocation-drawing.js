@@ -1,45 +1,83 @@
-if (
-  commonMapSettings.common_google_map_drawing_settings.polyline
-  || commonMapSettings.common_google_map_drawing_settings.polygon
-) {
-  map.addLoadedCallback(function (map) {
+/**
+ * @typedef {Object} DrawingSettings
+ *
+ * @property {String} enable
+ */
 
-    var locations = [];
+(function ($, Drupal) {
 
-    $('#' + map.id, context).find('.geolocation-map-locations .geolocation').each(function (index, location) {
+  'use strict';
 
-      /** @var jQuery */
-      location = $(location);
-      locations.push(new google.maps.LatLng(Number(location.data('lat')), Number(location.data('lng'))));
-    });
+  /**
+   * DrawingSettings.
+   *
+   * @type {Drupal~behavior}
+   *
+   * @prop {Drupal~behaviorAttach} attach
+   *   Attaches common map style functionality to relevant elements.
+   */
+  Drupal.behaviors.geolocationDrawing = {
+    attach: function (context, drupalSettings) {
+      $.each(
+        drupalSettings.geolocation.maps,
 
-    if (!locations.length) {
-      return;
+        /**
+         * @param {String} mapId - canvasId of current map
+         * @param {Object} mapSettings - settings for current map
+         * @param {DrawingSettings} mapSettings.drawing - settings for current map
+         */
+        function (mapId, mapSettings) {
+          if (
+            typeof mapSettings.drawing !== 'undefined'
+            && mapSettings.drawing.enable
+          ) {
+
+            var map = Drupal.geolocation.getMapById(mapId);
+
+            map.addReadyCallback(function (map) {
+              var locations = [];
+
+              $('#' + map.id, context).find('.geolocation-map-locations .geolocation-location').each(function (index, location) {
+                location = $(location);
+                locations.push(new google.maps.LatLng(Number(location.data('lat')), Number(location.data('lng'))));
+              });
+
+              if (!locations.length) {
+                return;
+              }
+
+              var drawingSettings = mapSettings.drawing.settings;
+
+              if (drawingSettings.polygon) {
+                var polygon = new google.maps.Polygon({
+                  paths: locations,
+                  strokeColor: drawingSettings.strokeColor,
+                  strokeOpacity: drawingSettings.strokeOpacity,
+                  strokeWeight: drawingSettings.strokeWeight,
+                  geodesic: drawingSettings.geodesic,
+                  fillColor: drawingSettings.fillColor,
+                  fillOpacity: drawingSettings.fillOpacity
+                });
+                polygon.setMap(map.googleMap);
+              }
+
+              if (drawingSettings.polyline) {
+                var polyline = new google.maps.Polyline({
+                  path: locations,
+                  strokeColor: drawingSettings.strokeColor,
+                  strokeOpacity: drawingSettings.strokeOpacity,
+                  strokeWeight: drawingSettings.strokeWeight,
+                  geodesic: drawingSettings.geodesic
+                });
+                polyline.setMap(map.googleMap);
+              }
+            });
+          }
+        }
+      );
     }
+  };
 
-    if (map.settings.common_google_map_drawing_settings.polygon) {
-      var polygon = new google.maps.Polygon({
-        paths: locations,
-        strokeColor: map.settings.common_google_map_drawing_settings.strokeColor,
-        strokeOpacity: map.settings.common_google_map_drawing_settings.strokeOpacity,
-        strokeWeight: map.settings.common_google_map_drawing_settings.strokeWeight,
-        geodesic: map.settings.common_google_map_drawing_settings.geodesic,
-        fillColor: map.settings.common_google_map_drawing_settings.fillColor,
-        fillOpacity: map.settings.common_google_map_drawing_settings.fillOpacity
-      });
-      polygon.setMap(map.googleMap);
-    }
+})(jQuery, Drupal);
 
-    if (map.settings.common_google_map_drawing_settings.polyline) {
-      var polyline = new google.maps.Polyline({
-        path: locations,
-        strokeColor: map.settings.common_google_map_drawing_settings.strokeColor,
-        strokeOpacity: map.settings.common_google_map_drawing_settings.strokeOpacity,
-        strokeWeight: map.settings.common_google_map_drawing_settings.strokeWeight,
-        geodesic: map.settings.common_google_map_drawing_settings.geodesic
-      });
-      polyline.setMap(map.googleMap);
-    }
 
-  }, mapId);
-}

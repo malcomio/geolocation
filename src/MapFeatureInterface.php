@@ -54,26 +54,28 @@ interface MapFeatureInterface extends PluginInspectionInterface {
    *
    * @param array $settings
    *   The current map settings.
-   * @param string $form_prefix
+   * @param array $parents
    *   Form specific optional prefix.
    *
    * @return array
    *   A form array to be integrated in whatever.
    */
-  public function getSettingsForm(array $settings, $form_prefix = '');
+  public function getSettingsForm(array $settings, array $parents);
 
   /**
-   * Return all Drupal libraries required by this map feature.
+   * Return all Drupal attachments required by this map feature.
    *
    * 'settings' => JS settings.
    * 'libraries' => array of libraries.
    *
    * @param array $settings
    *   The current map settings.
+   * @param string $map_id
+   *   Map ID.
    *
    * @return array
    *   Drupal libraries.
    */
-  public function attachments(array $settings);
+  public function attachments(array $settings, $map_id);
 
 }

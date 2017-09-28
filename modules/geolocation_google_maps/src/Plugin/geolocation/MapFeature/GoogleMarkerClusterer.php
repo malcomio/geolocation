@@ -5,6 +5,7 @@ namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation\MapFeatureBase;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 
 /**
  * Provides Google Maps.
@@ -25,24 +26,7 @@ class GoogleMarkerClusterer extends MapFeatureBase {
     return [
       'image_path' => '',
       'styles' => [],
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSettings(array $settings) {
-    $default_settings = self::getDefaultSettings();
-    $settings = array_replace_recursive($default_settings, $settings);
-
-    $return = [];
-
-    $return['enable'] = TRUE;
-    $return['imagePath'] = $settings['image_path'];
-    $return['styles'] = json_decode($settings['styles']);
-
-    return [
-      'markerClusterer' => $return,
+      'max_zoom' => 15,
     ];
   }
 
@@ -59,22 +43,19 @@ class GoogleMarkerClusterer extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function getSettingsForm(array $settings, $form_prefix = '') {
+  public function getSettingsForm(array $settings, array $parents) {
     $form['description'] = [
-      '#group' => $form_prefix,
       '#type' => 'html_tag',
       '#tag' => 'span',
       '#value' => $this->t('Various <a href=":url">examples</a> are available.', [':url' => 'https://developers.google.com/maps/documentation/javascript/marker-clustering']),
     ];
     $form['image_path'] = [
-      '#group' => $form_prefix,
       '#title' => $this->t('Cluster image path'),
       '#type' => 'textfield',
       '#default_value' => $settings['image_path'],
       '#description' => $this->t("Set the marker image path. If omitted, the default image path %url will be used.", ['%url' => 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m']),
     ];
     $form['styles'] = [
-      '#group' => $form_prefix,
       '#title' => $this->t('Styles of the Cluster'),
       '#type' => 'textarea',
       '#default_value' => $settings['styles'],
@@ -84,6 +65,12 @@ class GoogleMarkerClusterer extends MapFeatureBase {
           ':reference' => 'https://googlemaps.github.io/js-marker-clusterer/docs/reference.html',
         ]
       ),
+    ];
+    $form['max_zoom'] = [
+      '#title' => $this->t('Max Zoom'),
+      '#type' => 'select',
+      '#options' => range(GoogleMaps::$MINZOOMLEVEL, GoogleMaps::$MAXZOOMLEVEL),
+      '#default_value' => $settings['max_zoom'],
     ];
 
     $form['#element_validate'][] = [$this, 'validateSettingsForm'];
@@ -129,12 +116,27 @@ class GoogleMarkerClusterer extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings) {
+  public function attachments(array $settings, $maps_id) {
+    $settings = $this->getSettings($settings);
+
     return [
-      'libraries' => [
-        'geolocation/geolocation.markerclusterer',
+      'library' => [
+        'geolocation_google_maps/geolocation.markerclusterer',
       ],
-      'settings' => $this->getSettings($settings),
+      'drupalSettings' => [
+        'geolocation' => [
+          'maps' => [
+            $maps_id => [
+              'marker_clusterer' => [
+                'enable' => TRUE,
+                'imagePath' => $settings['image_path'],
+                'styles' => $settings['styles'],
+                'maxZoom' => (int) $settings['max_zoom'],
+              ],
+            ],
+          ],
+        ],
+      ],
     ];
   }
 

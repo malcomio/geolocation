@@ -96,7 +96,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings) {
+  public function attachments(array $settings, $map_id) {
     return [];
   }
 

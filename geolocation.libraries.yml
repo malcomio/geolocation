@@ -56,13 +56,6 @@ geolocation.commonmap:
     - core/jquery.once
     - geolocation/geolocation.map
 
-# Form element library.
-geolocation.google_map_form_element:
-  js:
-    js/geolocation-google-map-form-element.js: {}
-  dependencies:
-    - geolocation/geolocation.googlemapsapi
-
 # Geocoder function.
 geolocation.geocoder:
   version: 8.x-1.x

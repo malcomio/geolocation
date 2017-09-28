@@ -156,13 +156,6 @@ abstract class CommonMapBase extends StylePluginBase {
         'library' => [
           'geolocation/geolocation.commonmap',
         ],
-        'drupalSettings' => [
-          'geolocation' => [
-            'commonMap' => [
-              $this->mapId => [],
-            ],
-          ],
-        ],
       ],
     ];
 

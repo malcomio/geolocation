@@ -5,8 +5,6 @@ namespace Drupal\geolocation_google_maps\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\geolocation\CommonGoogleMapDrawingTrait;
-use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 use Drupal\geolocation\Plugin\Field\FieldFormatter\GeolocationMapFormatterBase;
 
@@ -31,15 +29,12 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
    */
   protected $mapProviderId = 'google_maps';
 
-  use CommonGoogleMapDrawingTrait;
-
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
     $settings = parent::defaultSettings();
     $settings += GoogleMaps::getDefaultSettings();
-    $settings += self::getCommonGoogleMapDrawingDefaultSettings();
 
     return $settings;
   }
@@ -61,22 +56,6 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
       '#default_value' => $settings['use_overridden_map_settings'],
     ];
 
-    $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
-    if (
-      $cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED
-      || $cardinality > 1
-    ) {
-      $form_prefix = 'fields[' . $this->fieldDefinition->getName() . '][settings_edit_form][settings][';
-
-      $form += $this->getCommonGoogleMapDrawingSettingsForm($settings, $form_prefix);
-
-      $form['common_google_map_drawing_settings']['#states'] = [
-        'visible' => [
-          'input[name="' . $form_prefix . 'common_map]"]' => ['checked' => TRUE],
-        ],
-      ];
-    }
-
     return $form;
   }
 
@@ -88,7 +67,6 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
 
     $summary = parent::settingsSummary();
     $summary = array_merge($summary, $this->mapProvider->getSettingsSummary($settings));
-    $summary = array_merge($summary, $this->getCommonGoogleMapDrawingSettingsSummary($settings));
 
     return $summary;
   }
@@ -111,34 +89,16 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
       $google_map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data']);
     }
 
-    $elements['#attached']['library'] = array_merge($elements['#attached']['library'], $this->mapProvider->attachments($google_map_settings));
-
     if (!empty($settings['common_map'])) {
       $unique_id = $elements['#uniqueid'];
       $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id]['settings'] = $google_map_settings;
+      $elements['#attached'] = array_merge($elements['#attached'], $this->mapProvider->attachments($google_map_settings, $unique_id));
     }
     else {
       foreach (Element::children($elements) as $delta => $element) {
         $unique_id = $elements[$delta]['#uniqueid'];
         $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id]['settings'] = $google_map_settings;
-      }
-    }
-
-    if (
-      !empty($settings['common_google_map_drawing_settings']['polyline'])
-      || !empty($settings['common_google_map_drawing_settings']['polygon'])
-    ) {
-      $elements['#attached']['library'][] = 'geolocation/geolocation.commonmap.draw';
-
-      if (!empty($settings['common_map'])) {
-        $unique_id = $elements['#uniqueid'];
-        $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id]['settings'] += $this->getCommonGoogleMapDrawingSettings($settings);
-      }
-      else {
-        foreach (Element::children($elements) as $delta => $element) {
-          $unique_id = $elements[$delta]['#uniqueid'];
-          $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id]['settings'] += $this->getCommonGoogleMapDrawingSettings($settings);
-        }
+        $elements['#attached'] = array_merge($elements['#attached'], $this->mapProvider->attachments($google_map_settings, $unique_id));
       }
     }
 

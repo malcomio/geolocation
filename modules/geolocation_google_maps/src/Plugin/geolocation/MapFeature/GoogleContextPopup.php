@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\geolocation\Plugin\geolocation\MapFeature;
+namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
 use Drupal\geolocation\MapFeatureBase;
 
@@ -21,26 +21,7 @@ class GoogleContextPopup extends MapFeatureBase {
    */
   public static function getDefaultSettings() {
     return [
-      'image_path' => '',
-      'styles' => [],
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSettings(array $settings) {
-    $default_settings = self::getDefaultSettings();
-    $settings = array_replace_recursive($default_settings, $settings);
-
-    $return = [];
-
-    $return['enable'] = TRUE;
-    $return['imagePath'] = $settings['image_path'];
-    $return['styles'] = json_decode($settings['styles']);
-
-    return [
-      'markerClusterer' => $return,
+      'content' => '',
     ];
   }
 
@@ -57,14 +38,20 @@ class GoogleContextPopup extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function getSettingsForm(array $settings, $form_prefix = '') {
-    $form['context_popup_content'] = [
-      '#group' => 'style_options][advanced_settings',
+  public function getSettingsForm(array $settings, array $parents) {
+    $form['content'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Context popup content'),
       '#description' => $this->t('A right click on the map will open a context popup with this content. Tokens supported. Additionally "@lat, @lng" will be replaced dynamically.'),
-      '#default_value' => $this->options['context_popup_content'],
+      '#default_value' => $settings['content'],
     ];
+
+    if (\Drupal::service('module_handler')->moduleExists('token')) {
+      // Add the token UI from the token module if present.
+      $form['token_help'] = [
+        '#theme' => 'token_tree_link',
+      ];
+    }
 
     return $form;
   }
@@ -72,18 +59,26 @@ class GoogleContextPopup extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function getLibraries() {
+  public function attachments(array $settings, $maps_id) {
+    $settings = $this->getSettings($settings);
 
-    /*
-     * Context popup content.
-     */
-    if (!empty($this->options['context_popup_content'])) {
-      $context_popup_content = \Drupal::token()->replace($this->options['context_popup_content']);
-      $build['#attached']['drupalSettings']['geolocation']['commonMap'][$map_id]['contextPopupContent'] = [];
-      $build['#attached']['drupalSettings']['geolocation']['commonMap'][$map_id]['contextPopupContent']['enable'] = TRUE;
-      $build['#attached']['drupalSettings']['geolocation']['commonMap'][$map_id]['contextPopupContent']['content'] = $context_popup_content;
-    }
-    return ['geolocation/geolocation.markerclusterer'];
+    return [
+      'library' => [
+        'geolocation_google_maps/geolocation.contextpopup',
+      ],
+      'drupalSettings' => [
+        'geolocation' => [
+          'maps' => [
+            $maps_id => [
+              'context_popup' => [
+                'enable' => TRUE,
+                'content' => $settings['content'],
+              ],
+            ],
+          ],
+        ],
+      ],
+    ];
   }
 
 }

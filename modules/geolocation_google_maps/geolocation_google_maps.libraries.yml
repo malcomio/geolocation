@@ -7,6 +7,13 @@ geolocation.googlemapsapi:
   js:
     js/geolocation-google-maps-api.js: {}
 
+# Google CommonMap.
+geolocation.commonmap.google:
+  js:
+    js/geolocation-common-map-google.js: {}
+  dependencies:
+    - geolocation/geolocation.commonmap
+
 # Google Maps geocoder function.
 geolocation.geocoder.googlegeocodingapi:
   version: 8.x-1.x
@@ -29,14 +36,53 @@ geolocation.widgets.googlegeocoder:
     - geolocation/geolocation.geocoder
     - geolocation_google_maps/geolocation.googlemapsapi
 
-# Drawing support.
-geolocation.commongooglemap.drawing:
+# Form element library.
+geolocation.google_map_form_element:
   js:
-    js/geolocation-common-google-map-drawing.js: {}
+    js/geolocation-google-map-form-element.js: {}
   dependencies:
-    - core/drupal
-    - core/drupalSettings
-    - geolocation/geolocation.googlemapsapi
+    - geolocation_google_maps/geolocation.googlemapsapi
+
+# Drawing support.
+geolocation.drawing:
+  js:
+    js/geolocation-drawing.js: {}
+  dependencies:
+    - geolocation_google_maps/geolocation.googlemapsapi
+
+# ClientLocationIndicator support.
+geolocation.client_location_indicator:
+  js:
+    js/geolocation-client-location-indicator.js: {}
+  dependencies:
+    - geolocation_google_maps/geolocation.googlemapsapi
+
+# Spiderfying support.
+geolocation.spiderfying:
+  js:
+    js/geolocation-spiderfying.js: {}
+  dependencies:
+    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/spiderfier
+
+# External OverlappingMarkerSpiderfier
+spiderfier:
+  remote: https://github.com/jawj/OverlappingMarkerSpiderfier
+  version: 1.x
+  license:
+    name: MIT licence
+    url: http://www.opensource.org/licenses/mit-license.php
+    gpl-compatible: true
+  js:
+    https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier/1.0.3/oms.min.js: { type: external }
+
+# MarkerClusterer support.
+geolocation.markerclusterer:
+  js:
+    js/geolocation-markerclusterer.js: {}
+  dependencies:
+    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/markerclusterer
 
 # External marker clusterer.
 markerclusterer:
@@ -48,3 +94,10 @@ markerclusterer:
     gpl-compatible: true
   js:
     https://cdn.rawgit.com/googlemaps/js-marker-clusterer/gh-pages/src/markerclusterer.js: { type: external }
+
+# ContextPopup support.
+geolocation.contextpopup:
+  js:
+    js/geolocation-contextpopup.js: {}
+  dependencies:
+    - geolocation_google_maps/geolocation.googlemapsapi
