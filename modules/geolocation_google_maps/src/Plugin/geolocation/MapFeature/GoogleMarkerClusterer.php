@@ -44,6 +44,7 @@ class GoogleMarkerClusterer extends MapFeatureBase {
    * {@inheritdoc}
    */
   public function getSettingsForm(array $settings, array $parents) {
+    $settings = $this->getSettings($settings);
     $form['description'] = [
       '#type' => 'html_tag',
       '#tag' => 'span',

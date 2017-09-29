@@ -92,13 +92,13 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
     if (!empty($settings['common_map'])) {
       $unique_id = $elements['#uniqueid'];
       $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id]['settings'] = $google_map_settings;
-      $elements['#attached'] = array_merge($elements['#attached'], $this->mapProvider->attachments($google_map_settings, $unique_id));
+      $elements['#attached'] = array_merge_recursive($elements['#attached'], $this->mapProvider->attachments($google_map_settings, $unique_id));
     }
     else {
       foreach (Element::children($elements) as $delta => $element) {
         $unique_id = $elements[$delta]['#uniqueid'];
         $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id]['settings'] = $google_map_settings;
-        $elements['#attached'] = array_merge($elements['#attached'], $this->mapProvider->attachments($google_map_settings, $unique_id));
+        $elements['#attached'] = array_merge_recursive($elements['#attached'], $this->mapProvider->attachments($google_map_settings, $unique_id));
       }
     }
 

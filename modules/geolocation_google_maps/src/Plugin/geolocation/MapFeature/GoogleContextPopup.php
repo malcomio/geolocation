@@ -39,6 +39,7 @@ class GoogleContextPopup extends MapFeatureBase {
    * {@inheritdoc}
    */
   public function getSettingsForm(array $settings, array $parents) {
+    $settings = $this->getSettings($settings);
     $form['content'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Context popup content'),

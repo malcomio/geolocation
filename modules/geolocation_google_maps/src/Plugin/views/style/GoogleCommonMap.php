@@ -30,10 +30,10 @@ class GoogleCommonMap extends CommonMapBase {
     $build = parent::render();
 
     $build['#attached'] = array_merge_recursive(
-      $build['#attached'],
+      empty($build['#attached']) ? [] : $build['#attached'],
       $this->mapProviderManager
         ->createInstance('google_maps')
-        ->attachments($this->options['google_map_settings'], $this->mapId),
+        ->attachments(empty($this->options['google_map_settings']) ? [] : $this->options['google_map_settings'], $this->mapId),
       [
         'library' => [
           'geolocation_google_maps/geolocation.commonmap.google',
@@ -89,7 +89,7 @@ class GoogleCommonMap extends CommonMapBase {
     $form['google_map_settings'] = $this
       ->mapProviderManager
       ->createInstance('google_maps')
-      ->getSettingsForm($this->options['google_map_settings'], ['style_options', 'google_map_settings']);
+      ->getSettingsForm(empty($this->options['google_map_settings']) ? [] : $this->options['google_map_settings'], ['style_options', 'google_map_settings']);
   }
 
 }

@@ -82,13 +82,23 @@ class DemoFormattersController extends ControllerBase {
 
     $form = [];
 
-    foreach ([
+    $formatters = [
       'geolocation_latlng',
-      'geolocation_map',
       'geolocation_sexagesimal',
       'geolocation_token',
-      'geolocation_leaflet_map',
-    ] as $formatter_id) {
+    ];
+
+    $moduleHandler = \Drupal::moduleHandler();
+
+    if ($moduleHandler->moduleExists('geolocation_leaflet')) {
+      $formatters[] = 'geolocation_leaflet_map';
+    }
+
+    if ($moduleHandler->moduleExists('geolocation_google_maps')) {
+      $formatters[] = 'geolocation_map';
+    }
+
+    foreach ($formatters as $formatter_id) {
       $formatter = $this->pluginManagerFieldFormatter->getInstance(array_merge_recursive($widget_settings, ['configuration' => ['type' => $formatter_id]]));
 
       $form[$formatter_id] = [

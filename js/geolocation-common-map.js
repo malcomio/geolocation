@@ -46,6 +46,10 @@
    */
   Drupal.behaviors.geolocationCommonMap = {
     attach: function (context, drupalSettings) {
+      if (typeof drupalSettings.geolocation === 'undefined') {
+        return;
+      }
+
       $.each(
         drupalSettings.geolocation.commonMap,
 
@@ -54,6 +58,18 @@
          * @param {CommonMapSettings} commonMapSettings - settings for current map
          */
         function (mapId, commonMapSettings) {
+
+          var map = Drupal.geolocation.getMapById(mapId);
+
+          // Hide the graceful-fallback HTML list; map will propably work now.
+          // Map-container is not hidden by default in case of graceful-fallback.
+          if (typeof commonMapSettings.showRawLocations !== 'undefined') {
+            if (commonMapSettings.showRawLocations) {
+              map.addLoadedCallback(function (map) {
+                map.wrapper.find('.geolocation-map-locations').show();
+              });
+            }
+          }
 
           /*
            * Hide form if requested.
@@ -82,8 +98,6 @@
             typeof commonMapSettings.markerScrollToResult !== 'undefined'
             && commonMapSettings.markerScrollToResult === true
           ) {
-            var map = Drupal.geolocation.getMapById(mapId);
-
             map.addLoadedCallback(function (map) {
               $.each(map.mapMarkers, function (index, marker) {
                 marker.addListener('click', function () {

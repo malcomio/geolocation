@@ -50,6 +50,10 @@
             centreBehavior = mapWrapper.data('centre-behavior');
           }
 
+          if (typeof drupalSettings.geolocation === 'undefined') {
+            return;
+          }
+
           $.each(drupalSettings.geolocation.maps, function (index, currentSettings) {
             if (currentSettings.id === mapSettings.id) {
               mapSettings = $.extend(currentSettings, mapSettings);
@@ -69,6 +73,8 @@
             $.each(locations, function (index, location) {
               map.setMapMarker(location);
             });
+
+            map.wrapper.find('.geolocation-map-locations').hide();
 
             // Set the already processed flag.
             map.container.addClass('geolocation-processed');

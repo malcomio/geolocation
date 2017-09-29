@@ -448,7 +448,7 @@ class GoogleMaps extends MapProviderBase {
 
       $feature_enable_id = uniqid($feature_id . '_enabled');
 
-      $feature_form = $feature->getSettingsForm($settings[$feature_id]['settings'] ?: [], array_merge($parents, [$feature_id, 'settings']));
+      $feature_form = $feature->getSettingsForm(empty($settings[$feature_id]['settings']) ? [] : $settings[$feature_id]['settings'], array_merge($parents, [$feature_id, 'settings']));
       $feature_form['#states'] = [
         'visible' => [
           ':input[id="' . $feature_enable_id . '"]' => ['checked' => TRUE],
@@ -466,7 +466,7 @@ class GoogleMaps extends MapProviderBase {
           ],
           '#description' => $feature_definition['description'],
           '#type' => 'checkbox',
-          '#default_value' => (boolean) $settings[$feature_id]['enabled'],
+          '#default_value' => empty($settings[$feature_id]['enabled']) ? FALSE : TRUE,
         ],
         'settings' => $feature_form,
       ];

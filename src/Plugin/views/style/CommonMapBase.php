@@ -4,7 +4,6 @@ namespace Drupal\geolocation\Plugin\views\style;
 
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\geolocation\Plugin\views\field\GeolocationField;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\views\ResultRow;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,7 +23,6 @@ abstract class CommonMapBase extends StylePluginBase {
   protected $mapId = FALSE;
 
   protected $idField = FALSE;
-  protected $geoField = FALSE;
   protected $titleField = FALSE;
   protected $iconField = FALSE;
 
@@ -36,12 +34,20 @@ abstract class CommonMapBase extends StylePluginBase {
   protected $mapProviderManager = NULL;
 
   /**
+   * Geolocation provider base.
+   *
+   * @var \Drupal\geolocation\DataProviderManager
+   */
+  protected $dataProviderManager = NULL;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, $map_provider_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, $map_provider_manager, $data_provider_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->mapProviderManager = $map_provider_manager;
+    $this->dataProviderManager = $data_provider_manager;
   }
 
   /**
@@ -52,7 +58,8 @@ abstract class CommonMapBase extends StylePluginBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.geolocation.mapprovider')
+      $container->get('plugin.manager.geolocation.mapprovider'),
+      $container->get('plugin.manager.geolocation.dataprovider')
     );
   }
 
@@ -110,11 +117,10 @@ abstract class CommonMapBase extends StylePluginBase {
    */
   public function render() {
 
-    if (!empty($this->options['geolocation_field'])) {
-      $this->geoField = $this->options['geolocation_field'];
-    }
-    else {
-      \Drupal::logger('geolocation')->error("The geolocation common map views style was called without a geolocation field defined in the views style settings.");
+    if (empty($this->options['geolocation_field'])) {
+      // TODO: Hu?
+      \Drupal::logger('geolocation')->error("The geolocation common map ' . $this->view->id() . ' views style was called without a geolocation field defined in the views style settings.");
+      drupal_set_message("The geolocation common map ' . $this->view->id() . ' views style was called without a geolocation field defined in the views style settings.", 'error');
       return [];
     }
 
@@ -382,8 +388,16 @@ abstract class CommonMapBase extends StylePluginBase {
       }
     }
 
-    /** @var \Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem $item */
-    foreach ($this->getPositionsFromField($row) as $position) {
+    $positions = [];
+    foreach ($this->dataProviderManager->getDefinitions() as $dataProviderId => $dataProviderDefinition) {
+      /** @var \Drupal\geolocation\DataProviderInterface $dataProvider */
+      $dataProvider = $this->dataProviderManager->createInstance($dataProviderId);
+      if ($dataProvider->isCommonMapViewsStyleOption($this->view->field[$this->options['geolocation_field']])) {
+        $positions = array_merge($positions, $dataProvider->getPositionsFromViewsRow($this->view->field[$this->options['geolocation_field']], $row));
+      }
+    }
+
+    foreach ($positions as $position) {
       $location = [
         '#theme' => 'geolocation_map_location',
         '#content' => $this->view->rowPlugin->render($row),
@@ -407,38 +421,6 @@ abstract class CommonMapBase extends StylePluginBase {
     }
 
     return $locations;
-  }
-
-  /**
-   * Return list of postitions.
-   *
-   * @param \Drupal\views\ResultRow $row
-   *   Result row.
-   *
-   * @return array
-   *   List of positions.
-   */
-  protected function getPositionsFromField(ResultRow $row) {
-
-    $positions = [];
-
-    if ($this->view->field[$this->geoField] instanceof GeolocationField) {
-      /** @var \Drupal\geolocation\Plugin\views\field\GeolocationField $geolocation_field */
-      $geolocation_field = $this->view->field[$this->geoField];
-      $entity = $geolocation_field->getEntity($row);
-      if (isset($entity->{$geolocation_field->definition['field_name']})) {
-        /** @var \Drupal\Core\Field\FieldItemListInterface $geo_items */
-        $geo_items = $entity->{$geolocation_field->definition['field_name']};
-        foreach ($geo_items as $item) {
-          $positions[] = [
-            'lat' => $item->get('lat')->getValue(),
-            'lng' => $item->get('lng')->getValue(),
-          ];
-        }
-      }
-    }
-
-    return $positions;
   }
 
   /**
@@ -477,40 +459,32 @@ abstract class CommonMapBase extends StylePluginBase {
     parent::buildOptionsForm($form, $form_state);
 
     $labels = $this->displayHandler->getFieldLabels();
-    $fieldMap = \Drupal::service('entity_field.manager')->getFieldMap();
     $geo_options = [];
     $title_options = [];
     $icon_options = [];
     $id_options = [];
 
-    $fields = $this->displayHandler->getOption('fields');
+    $fields = $this->displayHandler->getHandlers('field');
+    /** @var \Drupal\views\Plugin\views\field\FieldPluginBase[] $fields */
     foreach ($fields as $field_name => $field) {
-      if ($field['plugin_id'] == 'geolocation_field') {
-        $geo_options[$field_name] = $labels[$field_name];
-      }
+      foreach ($this->dataProviderManager->getDefinitions() as $dataProviderId => $dataProviderDefinition) {
+        /** @var \Drupal\geolocation\DataProviderInterface $dataProvider */
+        $dataProvider = $this->dataProviderManager->createInstance($dataProviderId);
 
-      if (
-        $field['plugin_id'] == 'field'
-        && !empty($field['entity_type'])
-        && !empty($field['entity_field'])
-      ) {
-        if (
-          !empty($fieldMap[$field['entity_type']][$field['entity_field']]['type'])
-          && $fieldMap[$field['entity_type']][$field['entity_field']]['type'] == 'geolocation'
-        ) {
+        if ($dataProvider->isCommonMapViewsStyleOption($field)) {
           $geo_options[$field_name] = $labels[$field_name];
         }
       }
 
-      if (!empty($field['type']) && $field['type'] == 'image') {
+      if (!empty($field->options['type']) && $field->options['type'] == 'image') {
         $icon_options[$field_name] = $labels[$field_name];
       }
 
-      if (!empty($field['type']) && $field['type'] == 'string') {
+      if (!empty($field->options['type']) && $field->options['type'] == 'string') {
         $title_options[$field_name] = $labels[$field_name];
       }
 
-      if (!empty($field['type']) && $field['type'] == 'number_integer') {
+      if (!empty($field->options['type']) && $field->options['type'] == 'number_integer') {
         $id_options[$field_name] = $labels[$field_name];
       }
     }

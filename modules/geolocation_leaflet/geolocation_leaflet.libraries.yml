@@ -18,6 +18,6 @@ geolocation.leaflet:
   dependencies:
     - core/drupalSettings
     - geolocation/geolocation.api
-    - geolocation/leaflet
+    - geolocation_leaflet/leaflet
   js:
     js/geolocation-leaflet.js: {}

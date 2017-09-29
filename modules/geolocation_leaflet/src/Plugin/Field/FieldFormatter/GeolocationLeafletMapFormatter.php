@@ -74,19 +74,17 @@ class GeolocationLeafletMapFormatter extends GeolocationMapFormatterBase {
 
     $leaflet_settings = $this->mapProvider->getSettings($settings);
 
-    $elements['#attached']['library'] = array_merge($elements['#attached']['library'], $this->mapProvider->getLibraries());
-
     if (!empty($settings['common_map'])) {
       $elements['#maptype'] = 'leaflet';
       $unique_id = $elements['#uniqueid'];
-      $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id]['settings'] = $leaflet_settings;
 
+      $elements['#attached'] = array_merge_recursive($elements['#attached'], $this->mapProvider->attachments($leaflet_settings, $unique_id));
     }
     else {
       foreach (Element::children($elements) as $delta => $element) {
         $elements[$delta]['#maptype'] = 'leaflet';
         $unique_id = $elements[$delta]['#uniqueid'];
-        $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id]['settings'] = $leaflet_settings;
+        $elements['#attached'] = array_merge_recursive($elements['#attached'], $this->mapProvider->attachments($leaflet_settings, $unique_id));
       }
     }
 

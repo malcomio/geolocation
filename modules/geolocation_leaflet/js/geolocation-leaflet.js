@@ -10,6 +10,7 @@
 /**
  * @typedef {Object} L
  * @property {Function} L
+ * @property {Function} L.featureGroup
  */
 
 /**
@@ -17,6 +18,13 @@
  * @property {Function} tileLayer
  * @property {Function} addTo
  * @property {Function} setView
+ * @property {Function} featureGroup
+ * @property {Function} marker
+ */
+
+/**
+ * @typedef {Object} LeafletMarker
+ * @property {Function} bindPopup
  */
 
 
@@ -37,6 +45,15 @@
     this.type = 'leaflet';
 
     Drupal.geolocation.GeolocationMapBase.call(this, mapSettings);
+
+    var defaultLeafletSettings = {
+      zoom: 10,
+      height: '400px',
+      width: '100%'
+    };
+
+    // Add any missing settings.
+    this.settings.leaflet_settings = $.extend(defaultLeafletSettings, this.settings.leaflet_settings);
 
     // Set the container size.
     this.container.css({
@@ -66,11 +83,32 @@
       return;
     }
 
+    if (typeof markerSettings.icon === 'string') {
+      markerSettings.icon = L.icon({
+        iconUrl: markerSettings.icon
+      });
+    }
+
+    /** @param {LeafletMarker} */
     var currentMarker = L.marker([markerSettings.position.lat, markerSettings.position.lng], markerSettings).addTo(this.leafletMap);
+
+    currentMarker.bindPopup(markerSettings.infoWindowContent);
 
     this.mapMarkers.push(currentMarker);
 
     return currentMarker;
+  };
+  GeolocationLeafletMap.prototype.fitMapToMarkers = function (locations) {
+
+    locations = locations || this.mapMarkers;
+
+    if (locations.length === 0) {
+      return;
+    }
+
+    var group = new L.featureGroup(locations);
+
+    this.leafletMap.fitBounds(group.getBounds());
   };
 
 
