@@ -1,0 +1,63 @@
+plugin.plugin_configuration.geolocation.map_feature.drawing:
+  type: geolocation.map_feature_settings
+  label: 'Common map draw settings'
+  mapping:
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        polyline:
+          type: string
+          label: 'Draw polyline'
+        strokeColor:
+          type: string
+          label: 'strokeColor'
+        strokeOpacity:
+          type: string
+          label: 'strokeOpacity'
+        strokeWeight:
+          type: string
+          label: 'strokeWeight'
+        geodesic:
+          type: string
+          label: 'Geodesic'
+        polygon:
+          type: string
+          label: 'Draw polygon'
+        fillColor:
+          type: string
+          label: 'fillColor'
+        fillOpacity:
+          type: string
+          label: 'fillOpacity'
+
+
+plugin.plugin_configuration.geolocation.map_feature.marker_clusterer:
+  type: geolocation.map_feature_settings
+  label: 'Marker clusterer'
+  mapping:
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        image_path:
+          type: string
+          label: 'Image path'
+        styles:
+          type: string
+          label: 'Styles'
+        max_zoom:
+          type: string
+          label: 'Max Zoom'
+
+plugin.plugin_configuration.geolocation.map_feature.context_popup:
+  type: geolocation.map_feature_settings
+  label: 'Context Popup'
+  mapping:
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        content:
+          type: string
+          label: 'Content'

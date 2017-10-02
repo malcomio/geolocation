@@ -20,6 +20,8 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class LeafletCommonMap extends CommonMapBase {
 
+  protected $mapProviderId = 'leaflet';
+
   /**
    * {@inheritdoc}
    */
@@ -30,9 +32,6 @@ class LeafletCommonMap extends CommonMapBase {
 
     $build['#attached'] = array_merge_recursive(
       empty($build['#attached']) ? [] : $build['#attached'],
-      $this->mapProviderManager
-        ->createInstance('leaflet')
-        ->attachments(empty($this->options['leaflet_settings']) ? [] : $this->options['leaflet_settings'], $this->mapId),
       [
         'library' => [
           'geolocation_leaflet/geolocation.leaflet',
@@ -41,19 +40,6 @@ class LeafletCommonMap extends CommonMapBase {
     );
 
     return $build;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-
-    parent::buildOptionsForm($form, $form_state);
-
-    $form['leaflet_settings'] = $this
-      ->mapProviderManager
-      ->createInstance('leaflet')
-      ->getSettingsForm(empty($this->options['leaflet_settings']) ? [] : $this->options['leaflet_settings'], ['style_options', 'leaflet_settings']);
   }
 
 }

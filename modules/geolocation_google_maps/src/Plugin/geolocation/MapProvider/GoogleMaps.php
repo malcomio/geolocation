@@ -146,7 +146,6 @@ class GoogleMaps extends MapProviderBase {
       'height' => '400px',
       'width' => '100%',
       'info_auto_display' => TRUE,
-      'marker_icon_path' => '',
       'disableAutoPan' => TRUE,
       'style' => '',
       'preferScrollingToZooming' => FALSE,
@@ -160,8 +159,6 @@ class GoogleMaps extends MapProviderBase {
   public function getSettings(array $settings) {
     $default_settings = self::getDefaultSettings();
     $settings = array_replace_recursive($default_settings, $settings);
-
-    $settings['marker_icon_path'] = \Drupal::token()->replace($settings['marker_icon_path']);
 
     foreach ($settings as $key => $setting) {
       if (!isset($default_settings[$key])) {
@@ -178,9 +175,9 @@ class GoogleMaps extends MapProviderBase {
     }
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
-      if (!empty($settings[$feature_id]['enabled'])) {
+      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
-        $settings[$feature_id] = $feature->getSettings($settings[$feature_id]['settings']);
+        $settings['map_features'][$feature_id] = $feature->getSettings($settings['map_features'][$feature_id]['settings']);
       }
     }
 
@@ -426,13 +423,6 @@ class GoogleMaps extends MapProviderBase {
       '#title' => $this->t('Automatically show info text'),
       '#default_value' => $settings['info_auto_display'],
     ];
-    $form['marker_icon_path'] = [
-      '#group' => $parents_string . 'marker_settings',
-      '#type' => 'textfield',
-      '#title' => $this->t('Marker icon path'),
-      '#description' => $this->t('Set relative or absolute path to custom marker icon. Tokens supported. Empty for default.'),
-      '#default_value' => $settings['marker_icon_path'],
-    ];
     $form['disableAutoPan'] = [
       '#group' => $parents_string . 'marker_settings',
       '#type' => 'checkbox',
@@ -448,15 +438,7 @@ class GoogleMaps extends MapProviderBase {
 
       $feature_enable_id = uniqid($feature_id . '_enabled');
 
-      $feature_form = $feature->getSettingsForm(empty($settings[$feature_id]['settings']) ? [] : $settings[$feature_id]['settings'], array_merge($parents, [$feature_id, 'settings']));
-      $feature_form['#states'] = [
-        'visible' => [
-          ':input[id="' . $feature_enable_id . '"]' => ['checked' => TRUE],
-        ],
-      ];
-      $feature_form['#type'] = 'item';
-
-      $form[$feature_id] = [
+      $form['map_features'][$feature_id] = [
         '#type' => 'fieldset',
         '#title' => $feature_definition['name'],
         'enabled' => [
@@ -466,10 +448,25 @@ class GoogleMaps extends MapProviderBase {
           ],
           '#description' => $feature_definition['description'],
           '#type' => 'checkbox',
-          '#default_value' => empty($settings[$feature_id]['enabled']) ? FALSE : TRUE,
+          '#default_value' => empty($settings['map_features'][$feature_id]['enabled']) ? FALSE : TRUE,
         ],
-        'settings' => $feature_form,
       ];
+
+      $feature_form = $feature->getSettingsForm(
+        empty($settings['map_features'][$feature_id]['settings']) ? [] : $settings['map_features'][$feature_id]['settings'],
+        array_merge($parents, ['map_features', $feature_id, 'settings'])
+      );
+
+      if (!empty($feature_form)) {
+        $feature_form['#states'] = [
+          'visible' => [
+            ':input[id="' . $feature_enable_id . '"]' => ['checked' => TRUE],
+          ],
+        ];
+        $feature_form['#type'] = 'item';
+
+        $form['map_features'][$feature_id]['settings'] = $feature_form;
+      }
     }
 
     $form['#element_validate'][] = [$this, 'validateSettingsForm'];
@@ -531,11 +528,11 @@ class GoogleMaps extends MapProviderBase {
     ];
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
-      if (!empty($settings[$feature_id]['enabled'])) {
+      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
         if ($feature) {
-          $attachments = array_merge_recursive($feature->attachments($settings[$feature_id]['settings'] ?: [], $map_id), $attachments);
-          unset($settings[$feature_id]);
+          $attachments = array_merge_recursive($feature->attachments($settings['map_features'][$feature_id]['settings'] ?: [], $map_id), $attachments);
+          unset($settings['map_features'][$feature_id]);
         }
       }
     }

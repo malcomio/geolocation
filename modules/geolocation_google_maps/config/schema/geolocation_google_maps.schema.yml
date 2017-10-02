@@ -1,32 +1,3 @@
-geolocation.common_map_draw_settings:
-  type: mapping
-  label: 'Common map draw settings'
-  mapping:
-    polyline:
-      type: integer
-      label: 'Draw polyline'
-    strokeColor:
-      type: string
-      label: 'strokeColor'
-    strokeOpacity:
-      type: string
-      label: 'strokeOpacity'
-    strokeWeight:
-      type: string
-      label: 'strokeWeight'
-    geodesic:
-      type: integer
-      label: 'geodesic'
-    polygon:
-      type: integer
-      label: 'Draw polygon'
-    fillColor:
-      type: string
-      label: 'fillColor'
-    fillOpacity:
-      type: string
-      label: 'fillOpacity'
-
 geolocation_google_maps.settings:
   type: config_object
   label: 'Geolocation settings'
@@ -60,8 +31,16 @@ geolocation_google_maps.settings:
             type: string
             label: 'Library name'
 
-geolocation.map.provider.google_maps:
-  type: mapping
+views.style.maps_common:
+  type: geolocation_views_style
+  label: 'Geolocation CommonMap'
+  mapping:
+    google_map_settings:
+      type: geolocation.map_provider.google_maps
+      label: 'Google Map settings'
+
+geolocation.map_provider.google_maps:
+  type: geolocation_map_provider
   label: 'Google Map settings'
   mapping:
     type:
@@ -71,10 +50,10 @@ geolocation.map.provider.google_maps:
       type: string
       label: 'Zoom level'
     minZoom:
-      type: integer
+      type: string
       label: 'Min Zoom'
     maxZoom:
-      type: integer
+      type: string
       label: 'Max Zoom'
     rotateControl:
       type: integer
@@ -109,9 +88,6 @@ geolocation.map.provider.google_maps:
     info_auto_display:
       type: integer
       label: 'Display info'
-    marker_icon_path:
-      type: string
-      label: 'Path to marker icon'
     disableAutoPan:
       type: integer
       label: 'Disable automatic panning for info window'

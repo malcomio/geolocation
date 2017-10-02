@@ -15,12 +15,6 @@
 (function ($, Drupal) {
   'use strict';
 
-  /**
-   * @namespace
-   */
-  Drupal.geolocation = Drupal.geolocation || {};
-  Drupal.geolocation.geocoder = Drupal.geolocation.geocoder || {};
-
   drupalSettings.geolocation.geocoder = drupalSettings.geolocation.geocoder || {};
 
   /**

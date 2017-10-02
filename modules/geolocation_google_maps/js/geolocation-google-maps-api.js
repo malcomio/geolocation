@@ -235,9 +235,10 @@
  */
 
 /**
- * @typedef {Object} GeolocationMapSettings
- * @property {CommonMapDrawSettings} settings.common_google_map_drawing_settings
+ * @typedef {Object} GeolocationMapInterface
+ * @property {GoogleInfoWindow} infoWindow
  */
+
 
 (function ($, Drupal, drupalSettings) {
   'use strict';
@@ -530,6 +531,7 @@
   };
 
   Drupal.geolocation.GeolocationGoogleMap = GeolocationGoogleMap;
+  Drupal.geolocation.addMapProvider('google', 'GeolocationGoogleMap');
 
   /**
    * Provides the callback that is called when maps loads.

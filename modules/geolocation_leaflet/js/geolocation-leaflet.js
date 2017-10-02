@@ -9,12 +9,14 @@
 
 /**
  * @typedef {Object} L
+ *
  * @property {Function} L
- * @property {Function} L.featureGroup
+ * @property {function(Object[]):Object} L.featureGroup
  */
 
 /**
  * @typedef {Object} LeafletMap
+ *
  * @property {Function} tileLayer
  * @property {Function} addTo
  * @property {Function} setView
@@ -24,6 +26,7 @@
 
 /**
  * @typedef {Object} LeafletMarker
+ *
  * @property {Function} bindPopup
  */
 
@@ -113,5 +116,6 @@
 
 
   Drupal.geolocation.GeolocationLeafletMap = GeolocationLeafletMap;
+  Drupal.geolocation.addMapProvider('google', 'GeolocationLeafletMap');
 
 })(jQuery, Drupal);

@@ -9,6 +9,7 @@
 
 /**
  * @typedef {Object} GeolocationMapSettings
+ *
  * @property {String} [type] Map type
  * @property {String} id
  * @property {Object} settings
@@ -16,21 +17,20 @@
  * @property {Number} lng
  * @property {jQuery} wrapper
  * @property {Object[]} mapMarkers
- * @property {GoogleInfoWindow} infoWindow
  */
 
 /**
  * Callback when map provider becomes available.
  *
  * @callback GeolocationMapReadyCallback
- * @param {GeolocationMapInterface} map - Google map.
+ * @param {GeolocationMapInterface} map - Geolocation map.
  */
 
 /**
  * Callback when map fully loaded.
  *
  * @callback GeolocationMapLoadedCallback
- * @param {GeolocationMapInterface} map - Google map.
+ * @param {GeolocationMapInterface} map - Geolocation map.
  */
 
 /**
@@ -60,6 +60,13 @@
  * @interface GeolocationMapInterface
  * @property {Boolean} ready - True when map provider available and readyCallbacks executed.
  * @property {Boolean} loaded - True when map fully loaded and all loadCallbacks executed.
+ * @property {String} id
+ * @property {GeolocationMapSettings} settings
+ * @property {Number} lat
+ * @property {Number} lng
+ * @property {jQuery} wrapper
+ * @property {jQuery} container
+ * @property {Object[]} mapMarkers
  */
 
 /**
@@ -296,15 +303,9 @@
     });
 
     if (reset === true || !existingMap) {
-      // TODO: Is there some Plugin mechanism in JS? Ideally the Factory should not need to know how to do load things.
-      switch (mapSettings.type) {
-        case 'google':
-          map = new Drupal.geolocation.GeolocationGoogleMap(mapSettings);
-          break;
-
-        case 'leaflet':
-          map = new Drupal.geolocation.GeolocationLeafletMap(mapSettings);
-          break;
+      if (typeof Drupal.geolocation[Drupal.geolocation.MapProviders[mapSettings.type]] !== 'undefined') {
+        var mapProvider = Drupal.geolocation[Drupal.geolocation.MapProviders[mapSettings.type]];
+        map = new mapProvider(mapSettings);
       }
     }
     else {
@@ -315,6 +316,15 @@
   }
 
   Drupal.geolocation.Factory = Factory;
+
+  /**
+   * @type {Object[]}
+   */
+  Drupal.geolocation.MapProviders = {};
+
+  Drupal.geolocation.addMapProvider = function (type, name) {
+    Drupal.geolocation.MapProviders[type] = name;
+  };
 
   /**
    * Get map by ID.

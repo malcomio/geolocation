@@ -1,4 +1,4 @@
-views.style.maps_common:
+geolocation_views_style:
   type: views_style
   label: 'Geolocation CommonMap'
   mapping:
@@ -26,6 +26,9 @@ views.style.maps_common:
     id_field:
       type: string
       label: 'ID field'
+    marker_icon_path:
+      type: string
+      label: 'Path to marker icon'
     dynamic_map:
       type: mapping
       label: 'Dynamic map settings'

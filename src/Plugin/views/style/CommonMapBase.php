@@ -6,6 +6,7 @@ use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\views\ResultRow;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,6 +26,16 @@ abstract class CommonMapBase extends StylePluginBase {
   protected $idField = FALSE;
   protected $titleField = FALSE;
   protected $iconField = FALSE;
+
+  protected $mapProviderId = FALSE;
+  protected $mapProviderSettingsFormId = FALSE;
+
+  /**
+   * Map provider.
+   *
+   * @var \Drupal\geolocation\MapProviderInterface
+   */
+  protected $mapProvider = FALSE;
 
   /**
    * Map provider base.
@@ -48,6 +59,15 @@ abstract class CommonMapBase extends StylePluginBase {
 
     $this->mapProviderManager = $map_provider_manager;
     $this->dataProviderManager = $data_provider_manager;
+
+    $mapProvider = $this->mapProviderManager->createInstance($this->mapProviderId);
+    if ($mapProvider) {
+      $this->mapProvider = $mapProvider;
+    }
+
+    if (empty($this->mapProviderSettingsFormId)) {
+      $this->mapProviderSettingsFormId = $this->mapProviderId . '_settings';
+    }
   }
 
   /**
@@ -164,6 +184,11 @@ abstract class CommonMapBase extends StylePluginBase {
         ],
       ],
     ];
+
+    $build['#attached'] = array_merge_recursive(
+      empty($build['#attached']) ? [] : $build['#attached'],
+      $this->mapProvider->attachments(empty($this->options[$this->mapProviderSettingsFormId]) ? [] : $this->options[$this->mapProviderSettingsFormId], $this->mapId)
+    );
 
     if (!empty($this->options['show_raw_locations'])) {
       $build['#attached']['drupalSettings']['geolocation']['commonMap'][$this->mapId]['showRawLocations'] = TRUE;
@@ -387,6 +412,26 @@ abstract class CommonMapBase extends StylePluginBase {
         }
       }
     }
+    elseif (!empty($this->options['marker_icon_path'])) {
+      $icon_token_uri = $this->viewsTokenReplace($this->options['marker_icon_path'], $this->rowTokens[$row->index]);
+      $icon_token_url = file_create_url($icon_token_uri);
+
+      if ($icon_token_url) {
+        $icon_url = $icon_token_url;
+      }
+      else {
+        try {
+          $icon_token_url = Url::fromUri($icon_token_uri);
+          if ($icon_token_url) {
+            $icon_url = $icon_token_url->setAbsolute(TRUE)->toString();
+          }
+        }
+        catch (\Exception $e) {
+          // User entered mal-formed URL, but that doesn't matter.
+          // We hereby skip it anyway.
+        }
+      }
+    }
 
     $positions = [];
     foreach ($this->dataProviderManager->getDefinitions() as $dataProviderId => $dataProviderDefinition) {
@@ -447,6 +492,7 @@ abstract class CommonMapBase extends StylePluginBase {
       ],
     ];
     $options['centre'] = ['default' => ''];
+    $options['marker_icon_path'] = ['default' => ''];
 
     return $options;
   }
@@ -767,6 +813,18 @@ abstract class CommonMapBase extends StylePluginBase {
       '#default_value' => $this->options['marker_row_number'],
     ];
 
+    $form['marker_icon_path'] = [
+      '#group' => 'style_options][advanced_settings',
+      '#type' => 'textfield',
+      '#title' => $this->t('Marker icon path'),
+      '#description' => $this->t('Set relative or absolute path to custom marker icon. Tokens supported. Empty for default.'),
+      '#default_value' => $this->options['marker_icon_path'],
+    ];
+
+    if ($this->mapProvider) {
+      $mapProviderSettings = empty($this->options[$this->mapProviderSettingsFormId]) ? [] : $this->options[$this->mapProviderSettingsFormId];
+      $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm($mapProviderSettings, ['style_options', $this->mapProviderSettingsFormId]);
+    }
   }
 
 }

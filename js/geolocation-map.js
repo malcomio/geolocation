@@ -1,6 +1,6 @@
 /**
  * @file
- * Javascript for the Google map formatter.
+ * Javascript for the Geolocation map formatter.
  */
 
 (function ($, Drupal) {
@@ -13,7 +13,7 @@
    * @type {Drupal~behavior}
    *
    * @prop {Drupal~behaviorAttach} attach
-   *   Attaches Google Maps formatter functionality to relevant elements.
+   *   Attaches Geolocation Maps formatter functionality to relevant elements.
    */
   Drupal.behaviors.geolocationMap = {
     attach: function (context, drupalSettings) {
@@ -41,9 +41,6 @@
 
           if (mapWrapper.data('map-type')) {
             mapSettings.type = mapWrapper.data('map-type');
-          }
-          else {
-            mapSettings.type = 'google';
           }
 
           if (mapWrapper.data('centre-behavior')) {

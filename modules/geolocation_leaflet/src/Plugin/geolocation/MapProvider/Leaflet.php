@@ -40,9 +40,9 @@ class Leaflet extends MapProviderBase {
     }
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('leaflet') as $feature_id => $feature_definition) {
-      if (!empty($settings[$feature_id]['enabled'])) {
+      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
-        $settings[$feature_id] = $feature->getSettings($settings[$feature_id]['settings']);
+        $settings['map_features'][$feature_id] = $feature->getSettings($settings['map_features'][$feature_id]['settings']);
       }
     }
 
@@ -124,10 +124,10 @@ class Leaflet extends MapProviderBase {
     ];
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('leaflet') as $feature_id => $feature_definition) {
-      if (!empty($settings[$feature_id]['enabled'])) {
+      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
         if ($feature) {
-          $attachments = array_merge_recursive($feature->attachments($settings[$feature_id]['settings'] ?: [], $map_id), $attachments);
+          $attachments = array_merge_recursive($feature->attachments($settings['map_features'][$feature_id]['settings'] ?: [], $map_id), $attachments);
           unset($settings[$feature_id]);
         }
       }
