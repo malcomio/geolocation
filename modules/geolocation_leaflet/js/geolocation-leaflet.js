@@ -116,6 +116,6 @@
 
 
   Drupal.geolocation.GeolocationLeafletMap = GeolocationLeafletMap;
-  Drupal.geolocation.addMapProvider('google', 'GeolocationLeafletMap');
+  Drupal.geolocation.addMapProvider('leaflet', 'GeolocationLeafletMap');
 
 })(jQuery, Drupal);

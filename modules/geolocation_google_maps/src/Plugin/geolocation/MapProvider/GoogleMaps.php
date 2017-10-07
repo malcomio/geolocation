@@ -130,41 +130,37 @@ class GoogleMaps extends MapProviderBase {
    * {@inheritdoc}
    */
   public static function getDefaultSettings() {
-    return [
-      'type' => static::$ROADMAP,
-      'zoom' => 10,
-      'minZoom' => static::$MINZOOMLEVEL,
-      'maxZoom' => static::$MAXZOOMLEVEL,
-      'rotateControl' => FALSE,
-      'mapTypeControl' => TRUE,
-      'streetViewControl' => TRUE,
-      'zoomControl' => TRUE,
-      'fullscreenControl' => FALSE,
-      'scrollwheel' => TRUE,
-      'disableDoubleClickZoom' => FALSE,
-      'draggable' => TRUE,
-      'height' => '400px',
-      'width' => '100%',
-      'info_auto_display' => TRUE,
-      'disableAutoPan' => TRUE,
-      'style' => '',
-      'preferScrollingToZooming' => FALSE,
-      'gestureHandling' => 'auto',
-    ];
+    return array_replace_recursive(
+      parent::getDefaultSettings(),
+      [
+        'type' => static::$ROADMAP,
+        'zoom' => 10,
+        'minZoom' => static::$MINZOOMLEVEL,
+        'maxZoom' => static::$MAXZOOMLEVEL,
+        'rotateControl' => FALSE,
+        'mapTypeControl' => TRUE,
+        'streetViewControl' => TRUE,
+        'zoomControl' => TRUE,
+        'fullscreenControl' => FALSE,
+        'scrollwheel' => TRUE,
+        'disableDoubleClickZoom' => FALSE,
+        'draggable' => TRUE,
+        'height' => '400px',
+        'width' => '100%',
+        'info_auto_display' => TRUE,
+        'disableAutoPan' => TRUE,
+        'style' => '',
+        'preferScrollingToZooming' => FALSE,
+        'gestureHandling' => 'auto',
+      ]
+    );
   }
 
   /**
    * {@inheritdoc}
    */
   public function getSettings(array $settings) {
-    $default_settings = self::getDefaultSettings();
-    $settings = array_replace_recursive($default_settings, $settings);
-
-    foreach ($settings as $key => $setting) {
-      if (!isset($default_settings[$key])) {
-        unset($settings[$key]);
-      }
-    }
+    $settings = parent::getSettings($settings);
 
     // Convert JSON string to actual array before handing to Renderer.
     if (!empty($settings['style'])) {
@@ -177,7 +173,17 @@ class GoogleMaps extends MapProviderBase {
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
       if (!empty($settings['map_features'][$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
-        $settings['map_features'][$feature_id] = $feature->getSettings($settings['map_features'][$feature_id]['settings']);
+        if ($feature) {
+          if (empty($settings['map_features'][$feature_id]['settings'])) {
+            $settings['map_features'][$feature_id]['settings'] = $feature->getSettings([]);
+          }
+          else {
+            $settings['map_features'][$feature_id]['settings'] = $feature->getSettings($settings['map_features'][$feature_id]['settings']);
+          }
+        }
+        else {
+          unset($settings['map_features'][$feature_id]);
+        }
       }
     }
 
@@ -512,14 +518,10 @@ class GoogleMaps extends MapProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings, $map_id) {
-    $libraries = ['geolocation_google_maps/geolocation.googlemapsapi'];
-
-    $default_settings = self::getDefaultSettings();
-    $settings = array_replace_recursive($default_settings, $settings);
+  public function attachments(array $google_map_settings, $map_id) {
 
     $attachments = [
-      'library' => $libraries,
+      'library' => ['geolocation_google_maps/geolocation.googlemapsapi'],
       'drupalSettings' => [
         'geolocation' => [
           'google_map_url' => $this->getGoogleMapsApiUrl(),
@@ -527,12 +529,22 @@ class GoogleMaps extends MapProviderBase {
       ],
     ];
 
+    $google_map_settings = $this->getSettings($google_map_settings);
+
+    if (
+      !empty($settings['style'])
+      && is_array($settings['style'])
+    ) {
+      $settings['style'] = json_encode($settings['style']);
+    }
+
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
-      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
+      if (!empty($google_map_settings['map_features'][$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
         if ($feature) {
-          $attachments = array_merge_recursive($feature->attachments($settings['map_features'][$feature_id]['settings'] ?: [], $map_id), $attachments);
-          unset($settings['map_features'][$feature_id]);
+          $attachments = array_merge_recursive($feature->attachments($google_map_settings['map_features'][$feature_id]['settings'], $map_id), $attachments);
+          // Attachments and settings are merged later anyway.
+          unset($google_map_settings['map_features'][$feature_id]);
         }
       }
     }
@@ -544,7 +556,9 @@ class GoogleMaps extends MapProviderBase {
           'geolocation' => [
             'maps' => [
               $map_id => [
-                'settings' => $settings,
+                'settings' => [
+                  'google_map_settings' => $google_map_settings,
+                ],
               ],
             ],
           ],

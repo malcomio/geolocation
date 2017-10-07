@@ -24,6 +24,13 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
   protected $mapProviderId = FALSE;
 
   /**
+   * Map Provider Settings Form ID.
+   *
+   * @var string
+   */
+  protected $mapProviderSettingsFormId = FALSE;
+
+  /**
    * Map Provider.
    *
    * @var \Drupal\geolocation\MapProviderInterface
@@ -38,6 +45,10 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
     if (!empty($this->mapProviderId)) {
       $this->mapProvider = \Drupal::service('geolocation.core')->getMapProviderManager()->getMapProvider($this->mapProviderId, $this->getSettings());
+    }
+
+    if (empty($this->mapProviderSettingsFormId)) {
+      $this->mapProviderSettingsFormId = $this->mapProviderId . '_settings';
     }
   }
 
@@ -117,6 +128,19 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
         '#description' => $this->t('By default, each value will be displayed in a separate map. Settings this option displays all values on a common map instead. This settings is only useful on multi-value fields.'),
         '#default_value' => $settings['common_map'],
       ];
+    }
+
+    if ($this->mapProvider) {
+      $mapProviderSettings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
+      $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
+        $mapProviderSettings,
+        [
+          'fields',
+          $this->fieldDefinition->getName(),
+          'settings_edit_form',
+          'settings',
+        ]
+      );
     }
 
     return $form;

@@ -32,6 +32,11 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
   /**
    * {@inheritdoc}
    */
+  protected $mapProviderSettingsFormId = 'google_map_settings';
+
+  /**
+   * {@inheritdoc}
+   */
   public static function defaultSettings() {
     $settings = parent::defaultSettings();
     $settings += GoogleMaps::getDefaultSettings();
@@ -46,8 +51,6 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
     $settings = $this->getSettings();
 
     $form = parent::settingsForm($form, $form_state);
-
-    $form += $this->mapProvider->getSettingsForm($settings, 'fields[' . $this->fieldDefinition->getName() . '][settings_edit_form][settings][');
 
     $form['use_overridden_map_settings'] = [
       '#type' => 'checkbox',
@@ -79,25 +82,24 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
 
     $settings = $this->getSettings();
 
-    $google_map_settings = $this->mapProvider->getSettings($settings);
-
     if (
       $settings['use_overridden_map_settings']
-      && !empty($items->get(0)->getValue()['data']['google_map_settings'])
-      && is_array($items->get(0)->getValue()['data']['google_map_settings'])
+      && !empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
+      && is_array($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
     ) {
-      $google_map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data']);
+      $google_map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId]);
+    }
+    else {
+      $google_map_settings = $this->mapProvider->getSettings($this->getSettings()[$this->mapProviderSettingsFormId]);
     }
 
     if (!empty($settings['common_map'])) {
       $unique_id = $elements['#uniqueid'];
-      $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id]['settings'] = $google_map_settings;
       $elements['#attached'] = array_merge_recursive($elements['#attached'], $this->mapProvider->attachments($google_map_settings, $unique_id));
     }
     else {
       foreach (Element::children($elements) as $delta => $element) {
         $unique_id = $elements[$delta]['#uniqueid'];
-        $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id]['settings'] = $google_map_settings;
         $elements['#attached'] = array_merge_recursive($elements['#attached'], $this->mapProvider->attachments($google_map_settings, $unique_id));
       }
     }

@@ -51,13 +51,19 @@
             return;
           }
 
-          $.each(drupalSettings.geolocation.maps, function (index, currentSettings) {
-            if (currentSettings.id === mapSettings.id) {
+          $.each(drupalSettings.geolocation.maps, function (mapId, currentSettings) {
+            if (mapId === mapSettings.id) {
               mapSettings = $.extend(currentSettings, mapSettings);
             }
           });
 
           var map = Drupal.geolocation.Factory(mapSettings);
+
+          if (!map) {
+            console.error(mapSettings, 'Geolocation - Couldn\'t initialize map.'); // eslint-disable-line no-console
+            return;
+          }
+
           map.addReadyCallback(function (map) {
 
             /**

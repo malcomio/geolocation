@@ -70,11 +70,13 @@ class GeolocationGoogleMap extends RenderElement {
    *   Renderable map.
    */
   public function preRenderGoogleMapElement(array $element) {
+    $unique_id = uniqid("map-canvas-");
 
     $render_array = [
       '#theme' => 'geolocation_map_wrapper',
-      '#attached' => $this->googleMapProvider->attachments([]),
+      '#attached' => $this->googleMapProvider->attachments([], $unique_id),
     ];
+    $render_array['#attached']['library'][] = 'geolocation/geolocation.map';
 
     if (!empty($element['#prefix'])) {
       $render_array['#prefix'] = $element['#prefix'];
@@ -84,7 +86,10 @@ class GeolocationGoogleMap extends RenderElement {
       $render_array['#suffix'] = $element['#suffix'];
     }
 
-    $settings = $this->googleMapProvider->getDefaultSettings();
+    $settings = [
+      'google_map_settings' => $this->googleMapProvider->getDefaultSettings(),
+    ];
+
     if (!empty($element['#settings'])) {
       $settings = array_replace_recursive($settings, $element['#settings']);
     }
@@ -110,11 +115,11 @@ class GeolocationGoogleMap extends RenderElement {
       $settings['google_map_settings']['zoomControl'] = FALSE;
     }
 
-    $unique_id = uniqid("map-canvas-");
-
     if (empty($element['#locations'])) {
-      $render_array['#latitude'] = $element['#latitude'];
-      $render_array['#longitude'] = $element['#longitude'];
+      $render_array['#centre'] = [
+        'lat' => $element['#latitude'],
+        'lng' => $element['#longitude'],
+      ];
       $render_array['#uniqueid'] = $unique_id;
       $render_array['#attached']['drupalSettings']['geolocation']['maps'][$unique_id] = [
         'settings' => $settings,

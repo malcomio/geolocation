@@ -66,14 +66,25 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
    * {@inheritdoc}
    */
   public static function getDefaultSettings() {
-    return [];
+    return [
+      'map_features' => [],
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getSettings(array $settings) {
-    return [];
+    $default_settings = $this->getDefaultSettings();
+    $settings = array_replace_recursive($default_settings, $settings);
+
+    foreach ($settings as $key => $setting) {
+      if (!isset($default_settings[$key])) {
+        unset($settings[$key]);
+      }
+    }
+
+    return $settings;
   }
 
   /**
