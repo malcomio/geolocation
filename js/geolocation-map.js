@@ -20,7 +20,7 @@
       $('.geolocation-map-wrapper', context).each(function (index, item) {
         var mapWrapper = $(item);
         var mapSettings = {};
-        var centreBehavior = 'fitlocations';
+        mapSettings.centreBehavior = 'fitlocations';
         mapSettings.id = mapWrapper.attr('id');
         mapSettings.wrapper = mapWrapper;
 
@@ -44,7 +44,7 @@
           }
 
           if (mapWrapper.data('centre-behavior')) {
-            centreBehavior = mapWrapper.data('centre-behavior');
+            mapSettings.centreBehavior = mapWrapper.data('centre-behavior');
           }
 
           if (typeof drupalSettings.geolocation === 'undefined') {
@@ -82,44 +82,6 @@
             // Set the already processed flag.
             map.container.addClass('geolocation-processed');
           });
-
-          switch (centreBehavior) {
-            case 'fitlocations':
-              map.addLoadedCallback(function (map) {
-                map.fitMapToMarkers();
-              });
-              break;
-
-            case 'fitboundaries':
-              if (
-                mapWrapper.data('centre-lat-north-east')
-                && mapWrapper.data('centre-lng-north-east')
-                && mapWrapper.data('centre-lat-south-west')
-                && mapWrapper.data('centre-lng-south-west')
-              ) {
-                var centerBounds = {
-                  north: mapWrapper.data('centre-lat-north-east'),
-                  east: mapWrapper.data('centre-lng-north-east'),
-                  south: mapWrapper.data('centre-lat-south-west'),
-                  west: mapWrapper.data('centre-lng-south-west')
-                };
-                // Centre handling
-                map.addReadyCallback(function (map) {
-                  map.fitBoundaries(centerBounds);
-                });
-              }
-              break;
-
-            case 'html5':
-              if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                  map.addLoadedCallback(function (map) {
-                    map.setCenterByCoordinates({lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)}, parseInt(position.coords.accuracy));
-                  });
-                });
-              }
-              break;
-          }
         }
       });
     }

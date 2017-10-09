@@ -90,7 +90,7 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
       $google_map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId]);
     }
     else {
-      $google_map_settings = $this->mapProvider->getSettings($this->getSettings()[$this->mapProviderSettingsFormId]);
+      $google_map_settings = $this->mapProvider->getSettings($settings[$this->mapProviderSettingsFormId]);
     }
 
     if (!empty($settings['common_map'])) {

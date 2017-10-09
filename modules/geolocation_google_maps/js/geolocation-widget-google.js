@@ -3,40 +3,8 @@
  *   Javascript for the Google geocoder widget.
  */
 
-/**
- * @name GeocoderWidgetSettings
- * @property {String} autoClientLocation
- * @property {String} autoClientLocationMarker
- * @property {String} locationSet
- */
-
-/**
- * @param {GeocoderWidgetSettings[]} drupalSettings.geolocation.widgetSettings
- */
-
-/**
- * Callback for location found or set by widget.
- *
- * @callback geolocationGoogleGeocoderLocationCallback
- * @param {GoogleMapLatLng} location - Google address.
- */
-
-/**
- * Callback for location unset by widget.
- *
- * @callback geolocationGoogleGeocoderClearCallback
- */
-
 (function ($, Drupal) {
   'use strict';
-
-  /**
-   * @namespace
-   */
-  Drupal.geolocation.geocoderWidget = Drupal.geolocation.geocoderWidget || {};
-
-  Drupal.geolocation.geocoderWidget.locationCallbacks = Drupal.geolocation.geocoderWidget.locationCallbacks || [];
-  Drupal.geolocation.geocoderWidget.clearCallbacks = Drupal.geolocation.geocoderWidget.clearCallbacks || [];
 
   /**
    * Attach geocoder functionality.
@@ -48,13 +16,18 @@
    */
   Drupal.behaviors.geolocationGeocoderWidget = {
     attach: function (context, drupalSettings) {
-      // Ensure itterables.
-      drupalSettings.geolocation = drupalSettings.geolocation || {widgetSettings: []};
       $.each(
         drupalSettings.geolocation.widgetSettings,
         function (mapId, widgetSetting) {
+
+          /** @param {GeolocationGoogleMap} map */
           var map = Drupal.geolocation.getMapById(mapId);
           map.addLoadedCallback(function (map) {
+
+            if (typeof Drupal.geolocation.geocoderWidget.geocoder === 'undefined') {
+              Drupal.geolocation.geocoderWidget.geocoder = new google.maps.Geocoder();
+            }
+
             // Execute when a location is defined by the widget.
             Drupal.geolocation.geocoderWidget.addLocationCallback(function (location) {
               Drupal.geolocation.geocoderWidget.setInputFields(location, map);
@@ -95,7 +68,7 @@
 
                   var location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-                  map.drawAccuracyIndicator(
+                  map.addAccuracyIndicatorCircle(
                     location,
                     position.coords.accuracy
                   );
@@ -110,7 +83,7 @@
               }
             }
 
-            /** @var {jQuery} controls */
+            /** @type {jQuery} controls */
             var controls = $('#geocoder-controls-wrapper-' + mapId, context);
 
             controls.children('input.location').first().autocomplete({
@@ -219,7 +192,7 @@
                 navigator.geolocation.getCurrentPosition(function (position) {
                   var newLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-                  map.drawAccuracyIndicator(
+                  map.addAccuracyIndicatorCircle(
                     newLocation,
                     position.coords.accuracy
                   );
@@ -263,111 +236,6 @@
         }
       );
     }
-  };
-
-  /**
-   * Provides the callback that is called when geocoderwidget defines a location.
-   *
-   * @param {GoogleMapLatLng} location - first returned address
-   * @param {string} elementId - Source ID.
-   */
-  Drupal.geolocation.geocoderWidget.locationCallback = function (location, elementId) {
-    // Ensure callbacks array;
-    Drupal.geolocation.geocoderWidget.locationCallbacks = Drupal.geolocation.geocoderWidget.locationCallbacks || [];
-    $.each(Drupal.geolocation.geocoderWidget.locationCallbacks, function (index, callbackContainer) {
-      if (callbackContainer.elementId === elementId) {
-        callbackContainer.callback(location);
-      }
-    });
-  };
-
-  /**
-   * Adds a callback that will be called when a location is set.
-   *
-   * @param {geolocationGoogleGeocoderLocationCallback} callback - The callback
-   * @param {string} elementId - Identify source of result by its element ID.
-   */
-  Drupal.geolocation.geocoderWidget.addLocationCallback = function (callback, elementId) {
-    if (typeof elementId === 'undefined') {
-      return;
-    }
-    Drupal.geolocation.geocoderWidget.locationCallbacks.push({callback: callback, elementId: elementId});
-  };
-
-  /**
-   * Remove a callback that will be called when a location is set.
-   *
-   * @param {string} elementId - Identify the source
-   */
-  Drupal.geolocation.geocoderWidget.removeLocationCallback = function (elementId) {
-    $.each(Drupal.geolocation.geocoderWidget.locationCallbacks, function (index, callback) {
-      if (callback.elementId === elementId) {
-        Drupal.geolocation.geocoderWidget.locationCallbacks.splice(index, 1);
-      }
-    });
-  };
-
-  /**
-   * Provides the callback that is called when geocoderwidget unset the locations.
-   *
-   * @param {string} elementId - Source ID.
-   */
-  Drupal.geolocation.geocoderWidget.clearCallback = function (elementId) {
-    // Ensure callbacks array;
-    $.each(Drupal.geolocation.geocoderWidget.clearCallbacks, function (index, callbackContainer) {
-      if (callbackContainer.elementId === elementId) {
-        callbackContainer.callback(location);
-      }
-    });
-  };
-
-  /**
-   * Adds a callback that will be called when a location is unset.
-   *
-   * @param {geolocationGoogleGeocoderClearCallback} callback - The callback
-   * @param {string} elementId - Identify source of result by its element ID.
-   */
-  Drupal.geolocation.geocoderWidget.addClearCallback = function (callback, elementId) {
-    if (typeof elementId === 'undefined') {
-      return;
-    }
-    Drupal.geolocation.geocoderWidget.clearCallbacks.push({callback: callback, elementId: elementId});
-  };
-
-  /**
-   * Remove a callback that will be called when a location is unset.
-   *
-   * @param {string} elementId - Identify the source
-   */
-  Drupal.geolocation.geocoderWidget.removeClearCallback = function (elementId) {
-    $.each(Drupal.geolocation.geocoderWidget.clearCallbacks, function (index, callback) {
-      if (callback.elementId === elementId) {
-        Drupal.geolocation.geocoderWidget.clearCallbacks.splice(index, 1);
-      }
-    });
-  };
-
-  /**
-   * Set the latitude and longitude values to the input fields
-   *
-   * @param {GoogleMapLatLng} latLng - A location (latLng) object from Google Maps API.
-   * @param {Drupal.geolocation.GeolocationGoogleMap} map - The settings object that contains all of the necessary metadata for this map.
-   */
-  Drupal.geolocation.geocoderWidget.setInputFields = function (latLng, map) {
-    // Update the lat and lng input fields.
-    $('.canvas-' + map.id + ' .geolocation-hidden-lat').attr('value', latLng.lat());
-    $('.canvas-' + map.id + ' .geolocation-hidden-lng').attr('value', latLng.lng());
-  };
-
-  /**
-   * Set the latitude and longitude values to the input fields
-   *
-   * @param {GeolocationMap} map - The settings object that contains all of the necessary metadata for this map.
-   */
-  Drupal.geolocation.geocoderWidget.clearInputFields = function (map) {
-    // Update the lat and lng input fields.
-    $('.canvas-' + map.id + ' .geolocation-hidden-lat').attr('value', '');
-    $('.canvas-' + map.id + ' .geolocation-hidden-lng').attr('value', '');
   };
 
 })(jQuery, Drupal);

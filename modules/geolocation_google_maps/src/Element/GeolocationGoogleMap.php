@@ -93,7 +93,6 @@ class GeolocationGoogleMap extends RenderElement {
     if (!empty($element['#settings'])) {
       $settings = array_replace_recursive($settings, $element['#settings']);
     }
-    $settings['google_map_settings']['info_auto_display'] = FALSE;
 
     if (!empty($element['#height'])) {
       $settings['google_map_settings']['height'] = (int) $element['#height'] . 'px';

@@ -147,7 +147,7 @@ class GoogleMaps extends MapProviderBase {
         'draggable' => TRUE,
         'height' => '400px',
         'width' => '100%',
-        'info_auto_display' => TRUE,
+        'info_auto_display' => FALSE,
         'disableAutoPan' => TRUE,
         'style' => '',
         'preferScrollingToZooming' => FALSE,

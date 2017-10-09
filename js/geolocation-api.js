@@ -15,6 +15,7 @@
  * @property {Object} settings
  * @property {Number} lat
  * @property {Number} lng
+ * @property {String} centreBehavior
  * @property {jQuery} wrapper
  * @property {Object[]} mapMarkers
  */
@@ -64,12 +65,20 @@
  * @property {GeolocationMapSettings} settings
  * @property {Number} lat
  * @property {Number} lng
+ * @property {String} centreBehavior
  * @property {jQuery} wrapper
  * @property {jQuery} container
  * @property {Object[]} mapMarkers
  */
 
 /**
+ * Update existing map by settings.
+ * @function
+ * @name GeolocationMapInterface#addControl
+ * @param {jQuery} element - Control element.
+ * @param {string} [positionOnMap] - Control element positionOnMap.
+ * @param {integer} [index] - Control element index.
+ *
  * Update existing map by settings.
  * @function
  * @name GeolocationMapInterface#update
@@ -85,6 +94,11 @@
  * Remove all markers from map.
  * @function
  * @name GeolocationMapInterface#removeMapMarkers
+ *
+ * Center map by behavior.
+ * @function
+ * @name GeolocationMapInterface#setCenterByBehavior
+ * @param {string} behavior - Behavior to center by.
  *
  * Center map on coordinates.
  * @function
@@ -156,6 +170,7 @@
     this.loaded = false;
     this.lat = mapSettings.lat;
     this.lng = mapSettings.lng;
+    this.centreBehavior = mapSettings.centreBehavior;
 
     if (typeof mapSettings.id === 'undefined') {
       this.id = 'map' + Math.floor(Math.random() * 10000);
@@ -172,12 +187,64 @@
   }
 
   GeolocationMapBase.prototype = {
+    addControl: function (element, positionOnMap, index) {
+      // Stub.
+    },
     update: function (mapSettings) {
       this.settings = $.extend(this.settings, mapSettings.settings);
       this.wrapper = mapSettings.wrapper;
       this.container = mapSettings.wrapper.find('.geolocation-map-container').first();
       this.lat = mapSettings.lat;
       this.lng = mapSettings.lng;
+    },
+    setCenterByBehavior: function (centreBehavior) {
+      centreBehavior = centreBehavior || this.centreBehavior;
+
+      switch (centreBehavior) {
+        case 'preset':
+          this.setCenterByCoordinates({
+            lat: this.lat,
+            lng: this.lng
+          });
+          break;
+
+        case 'fitlocations':
+          this.addLoadedCallback(function (map) {
+            map.fitMapToMarkers();
+          });
+          break;
+
+        case 'fitboundaries':
+          if (
+            this.wrapper.data('centre-lat-north-east')
+            && this.wrapper.data('centre-lng-north-east')
+            && this.wrapper.data('centre-lat-south-west')
+            && this.wrapper.data('centre-lng-south-west')
+          ) {
+            var centerBounds = {
+              north: this.wrapper.data('centre-lat-north-east'),
+              east: this.wrapper.data('centre-lng-north-east'),
+              south: this.wrapper.data('centre-lat-south-west'),
+              west: this.wrapper.data('centre-lng-south-west')
+            };
+            // Centre handling
+            this.addReadyCallback(function (map) {
+              map.fitBoundaries(centerBounds);
+            });
+          }
+          break;
+
+        case 'html5':
+          if (navigator.geolocation) {
+            var that = this;
+            navigator.geolocation.getCurrentPosition(function (position) {
+              that.addLoadedCallback(function (map) {
+                map.setCenterByCoordinates({lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)}, parseInt(position.coords.accuracy));
+              });
+            });
+          }
+          break;
+      }
     },
     setCenterByCoordinates: function (coordinates, accuracy) {
       // Stub.
@@ -312,6 +379,8 @@
       map = existingMap;
       map.update(mapSettings);
     }
+
+    map.setCenterByBehavior(mapSettings.centreBehavior);
     return map;
   }
 

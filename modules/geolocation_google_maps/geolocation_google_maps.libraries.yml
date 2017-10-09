@@ -25,16 +25,12 @@ geolocation.geocoder.googlegeocodingapi:
     - geolocation_google_maps/geolocation.googlemapsapi
 
 # Google geocoder widget library.
-geolocation.widgets.googlegeocoder:
+geolocation.widgets.google:
   version: 1.x
-  css:
-    theme:
-      css/geolocation-widget-googlegeocoder.css: {}
   js:
-    js/geolocation-widget-googlegeocoder.js: { scope: footer }
+    js/geolocation-widget-google.js: { scope: footer }
   dependencies:
-    - geolocation/geolocation.geocoder
-    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation/geolocation.widgets.maps
 
 # Form element library.
 geolocation.google_map_form_element:
@@ -43,10 +39,21 @@ geolocation.google_map_form_element:
   dependencies:
     - geolocation_google_maps/geolocation.googlemapsapi
 
+#
+# Map Features
+#
+
 # Drawing support.
 geolocation.drawing:
   js:
     js/geolocation-drawing.js: {}
+  dependencies:
+    - geolocation_google_maps/geolocation.googlemapsapi
+
+# ClientLocationIndicator support.
+geolocation.control_recenter:
+  js:
+    js/geolocation-control-recenter.js: {}
   dependencies:
     - geolocation_google_maps/geolocation.googlemapsapi
 

@@ -72,9 +72,6 @@
    * @param {object} context - The html context.
    */
   function initialize(maps, context) {
-
-    Drupal.geolocation.geocoderWidget.geocoder = new google.maps.Geocoder();
-
     // Process drupalSettings for every Google map present on the current page.
     $.each(
       maps,

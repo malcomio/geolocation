@@ -519,15 +519,19 @@
   };
 
   /**
-   * Add form elements to the map.
-   *
-   * @param {jQuery} controls Controls form.
-   * @param {String} [position] Position constant by Google.
+   * @inheritDoc
    */
-  GeolocationGoogleMap.prototype.addControls = function (controls, position) {
-    position = position || google.maps.ControlPosition.TOP_LEFT;
-    this.controls = controls;
-    this.googleMap.controls[position].push(controls.get(0));
+  GeolocationGoogleMap.prototype.addControl = function (element, positionOnMap, index) {
+    element = $('<div class="geolocation-map-control"></div>').append(element);
+    positionOnMap = positionOnMap || google.maps.ControlPosition.TOP_LEFT;
+    index = index || -1;
+    if (index === -1) {
+      this.googleMap.controls[positionOnMap].push(element.get(0));
+    }
+    else {
+      this.googleMap.controls[positionOnMap][index] = element.get(0);
+    }
+
   };
 
   Drupal.geolocation.GeolocationGoogleMap = GeolocationGoogleMap;

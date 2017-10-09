@@ -15,7 +15,7 @@
 (function ($, Drupal) {
   'use strict';
 
-  drupalSettings.geolocation.geocoder = drupalSettings.geolocation.geocoder || {};
+  Drupal.geolocation.geocoder = Drupal.geolocation.geocoder || {};
 
   /**
    * Provides the callback that is called when geocoded results are found loads.

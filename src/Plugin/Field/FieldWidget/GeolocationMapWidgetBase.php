@@ -2,32 +2,21 @@
 
 namespace Drupal\geolocation\Plugin\Field\FieldWidget;
 
+use Drupal\geolocation\GeolocationCore;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\geolocation\GoogleMapsDisplayTrait;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
-use Drupal\geolocation\GeolocationCore;
 use Drupal\Component\Utility\Html;
 
 /**
- * Plugin implementation of the 'geolocation_googlegeocoder' widget.
- *
- * @FieldWidget(
- *   id = "geolocation_googlegeocoder",
- *   label = @Translation("Geolocation Google Maps API - Geocoding and Map"),
- *   field_types = {
- *     "geolocation"
- *   }
- * )
+ * Map widget base.
  */
-class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFactoryPluginInterface {
-
-  use GoogleMapsDisplayTrait;
+abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerFactoryPluginInterface {
 
   /**
    * The entity field manager.
@@ -37,11 +26,25 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
   protected $entityFieldManager;
 
   /**
-   * The GeolocationCore object.
+   * Map Provider ID.
    *
-   * @var \Drupal\geolocation\GeolocationCore
+   * @var string
    */
-  protected $geolocationCore;
+  protected $mapProviderId = FALSE;
+
+  /**
+   * Map Provider Settings Form ID.
+   *
+   * @var string
+   */
+  protected $mapProviderSettingsFormId = FALSE;
+
+  /**
+   * Map Provider.
+   *
+   * @var \Drupal\geolocation\MapProviderInterface
+   */
+  protected $mapProvider = NULL;
 
   /**
    * Constructs a WidgetBase object.
@@ -59,13 +62,20 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   The entity field manager.
    * @param \Drupal\geolocation\GeolocationCore $geolocation_core
-   *   The GeolocationCore object.
+   *   The entity field manager.
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityFieldManagerInterface $entity_field_manager, GeolocationCore $geolocation_core) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
 
     $this->entityFieldManager = $entity_field_manager;
-    $this->geolocationCore = $geolocation_core;
+
+    if (!empty($this->mapProviderId)) {
+      $this->mapProvider = $geolocation_core->getMapProviderManager()->getMapProvider($this->mapProviderId, $this->getSettings());
+    }
+
+    if (empty($this->mapProviderSettingsFormId)) {
+      $this->mapProviderSettingsFormId = $this->mapProviderId . '_settings';
+    }
   }
 
   /**
@@ -81,16 +91,6 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
       $container->get('entity_field.manager'),
       $container->get('geolocation.core')
     );
-  }
-
-  /**
-   * Return entity field manager.
-   *
-   * @return \Drupal\Core\Entity\EntityFieldManagerInterface
-   *   Field Manager.
-   */
-  public function getEntityFieldManager() {
-    return $this->entityFieldManager;
   }
 
   /**
@@ -117,7 +117,6 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
       'allow_override_map_settings' => FALSE,
     ];
     $settings += parent::defaultSettings();
-    $settings += self::getGoogleMapDefaultSettings();
 
     return $settings;
   }
@@ -164,7 +163,19 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
       '#title' => $this->t('Allow override the map settings when create/edit an content.'),
       '#default_value' => $settings['allow_override_map_settings'],
     ];
-    $element += $this->getGoogleMapsSettingsForm($settings, 'fields][' . $this->fieldDefinition->getName() . '][settings_edit_form][settings][');
+
+    if ($this->mapProvider) {
+      $mapProviderSettings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
+      $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
+        $mapProviderSettings,
+        [
+          'fields',
+          $this->fieldDefinition->getName(),
+          'settings_edit_form',
+          'settings',
+        ]
+      );
+    }
 
     return $element;
   }
@@ -192,7 +203,7 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
       $summary[] = $this->t('Users will be allowed to override the map settings for each content.');
     }
 
-    $summary = array_merge($summary, $this->getGoogleMapsSettingsSummary($settings));
+    $summary = array_replace_recursive($summary, $this->mapProvider->getSettingsSummary($settings[$this->mapProviderSettingsFormId]));
 
     return $summary;
   }
@@ -258,9 +269,9 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
   public function form(FieldItemListInterface $items, array &$form, FormStateInterface $form_state, $get_delta = NULL) {
     $element = parent::form($items, $form, $form_state, $get_delta);
 
-    $settings = $this->getGoogleMapsSettings($this->getSettings()) + $this->getSettings();
-
     $canvas_id = Html::getUniqueId($this->fieldDefinition->getName());
+
+    $settings = $this->getSettings();
 
     $element['#attributes']['class'][] = 'canvas-' . $canvas_id;
 
@@ -268,14 +279,9 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
     $element['map_container'] = [
       '#type' => 'container',
       '#weight' => -10,
-    ];
-
-    $element['map_container']['canvas'] = [
-      '#theme' => 'geolocation_map_formatter',
-      '#uniqueid' => $canvas_id,
       '#attached' => [
         'library' => [
-          'geolocation/geolocation.widgets.googlegeocoder',
+          'geolocation/geolocation.widgets.map',
         ],
         'drupalSettings' => [
           'geolocation' => [
@@ -285,25 +291,27 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
                 'autoClientLocationMarker' => $settings['auto_client_location_marker'] ? TRUE : FALSE,
               ],
             ],
-            'maps' => [
-              $canvas_id => [
-                'id' => $canvas_id,
-                'settings' => $settings,
-              ],
-            ],
-            'google_map_url' => $this->getGoogleMapsApiUrl(),
           ],
         ],
       ],
     ];
 
-    $element['map_container']['canvas']['#locations'] = [];
+    $element['map_container']['canvas'] = [
+      '#theme' => 'geolocation_map_wrapper',
+      '#uniqueid' => $canvas_id,
+    ];
+
+    $element['map_container']['canvas']['#attached']['drupalSettings']['geolocation']['maps'][$canvas_id] = [
+      'id' => $canvas_id,
+    ];
+
+    $locations = [];
     foreach ($items as $delta => $item) {
       if ($item->isEmpty()) {
         continue;
       }
       $location = [
-        '#theme' => 'geolocation_common_map_location',
+        '#theme' => 'geolocation_map_location',
         '#content' => $delta . ': ' . $item->lat . ' ' . $item->lng,
         '#title' => $delta . ': ' . $item->lat . ' ' . $item->lng,
         '#position' => [
@@ -314,6 +322,7 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
 
       $element['map_container']['canvas']['#locations'][] = $location;
     }
+    $element['map_container']['canvas']['#locations'] = $locations;
 
     $element['map_container']['controls'] = [
       '#type' => 'container',
@@ -324,7 +333,6 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
         ],
       ],
     ];
-
     $element['map_container']['controls']['location'] = [
       '#type' => 'textfield',
       '#placeholder' => t('Enter a location'),
@@ -336,7 +344,6 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
       ],
       '#theme_wrappers' => [],
     ];
-
     $element['map_container']['controls']['search'] = [
       '#type' => 'html_tag',
       '#tag' => 'button',
@@ -347,7 +354,6 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
         'title' => t('Search'),
       ],
     ];
-
     $element['map_container']['controls']['locate'] = [
       '#type' => 'html_tag',
       '#tag' => 'button',
@@ -359,7 +365,6 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
         'title' => t('Locate'),
       ],
     ];
-
     $element['map_container']['controls']['clear'] = [
       '#type' => 'html_tag',
       '#tag' => 'button',
@@ -373,17 +378,18 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
     ];
 
     if ($settings['allow_override_map_settings']) {
-      if (!empty($items[0]->data['google_map_settings'])) {
-        $map_settings = [
-          'google_map_settings' => $items[0]->data['google_map_settings'],
-        ];
+      if ($this->mapProvider) {
+        $mapProviderSettings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
+        $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
+          $mapProviderSettings,
+          [
+            'fields',
+            $this->fieldDefinition->getName(),
+            'settings_edit_form',
+            'settings',
+          ]
+        );
       }
-      else {
-        $map_settings = [
-          'google_map_settings' => [],
-        ];
-      }
-      $element += $this->getGoogleMapsSettingsForm($map_settings, $this->fieldDefinition->getName() . '][');
     }
 
     return $element;
@@ -397,7 +403,7 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
 
     if (!empty($this->settings['allow_override_map_settings'])) {
       if (!empty($values['google_map_settings'])) {
-        $values[0]['data']['google_map_settings'] = $values['google_map_settings'];
+        $values[0]['data'][$this->mapProviderSettingsFormId] = $values[$this->mapProviderSettingsFormId];
       }
     }
 
