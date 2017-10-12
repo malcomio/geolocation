@@ -4,7 +4,6 @@ namespace Drupal\geolocation;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -26,13 +25,6 @@ class GeolocationCore implements ContainerInjectionInterface {
   protected $moduleHandler;
 
   /**
-   * The required configuration object.
-   *
-   * @var \Drupal\Core\Config\Config
-   */
-  protected $config;
-
-  /**
    * The GeocoderManager object.
    *
    * @var \Drupal\geolocation\GeocoderManager
@@ -51,16 +43,13 @@ class GeolocationCore implements ContainerInjectionInterface {
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   A module handler.
-   * @param \Drupal\Core\Config\ConfigFactory $config
-   *   The factory for configuration objects.
    * @param \Drupal\geolocation\GeocoderManager $geocoder_manager
    *   The GeocoderManager object.
    * @param \Drupal\geolocation\MapProviderManager $map_provider_manager
    *   The MapProviderManager object.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, ConfigFactory $config, GeocoderManager $geocoder_manager, MapProviderManager $map_provider_manager) {
+  public function __construct(ModuleHandlerInterface $module_handler, GeocoderManager $geocoder_manager, MapProviderManager $map_provider_manager) {
     $this->moduleHandler = $module_handler;
-    $this->config = $config->get('geolocation.settings');
     $this->geocoderManager = $geocoder_manager;
     $this->mapProviderManager = $map_provider_manager;
   }
@@ -71,7 +60,6 @@ class GeolocationCore implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('module_handler'),
-      $container->get('config.factory'),
       $container->get('plugin.manager.geolocation.geocoder'),
       $container->get('plugin.manager.geolocation.mapprovider')
     );
@@ -85,16 +73,6 @@ class GeolocationCore implements ContainerInjectionInterface {
    */
   public function getGeocoderManager() {
     return $this->geocoderManager;
-  }
-
-  /**
-   * Return current mapprovider manager.
-   *
-   * @return \Drupal\geolocation\MapProviderManager
-   *   Geocoder manager.
-   */
-  public function getMapProviderManager() {
-    return $this->mapProviderManager;
   }
 
   /**

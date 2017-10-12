@@ -2,6 +2,8 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
+use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation\MapFeatureBase;
 
 /**
@@ -39,29 +41,122 @@ class ControlGeocoder extends MapFeatureBase {
    * {@inheritdoc}
    */
   public function getSettingsForm(array $settings, array $parents) {
-    $settings = $this->getSettings($settings);
-    $form['description'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'span',
-      '#value' => $this->t('Various <a href=":url">examples</a> are available.', [':url' => 'https://developers.google.com/maps/documentation/javascript/marker-clustering']),
-    ];
+    $form = [];
+
+    /** @var \Drupal\geolocation\GeocoderManager $geocoder_manager */
+    $geocoder_manager = \Drupal::service('plugin.manager.geolocation.geocoder');
+    $geocoder_definitions = $geocoder_manager->getBoundaryCapableGeocoders();
+
+    if ($geocoder_definitions) {
+      $geocoder_options = [];
+      foreach ($geocoder_definitions as $id => $definition) {
+        $geocoder_options[$id] = $definition['name'];
+      }
+
+      $form['geocoder'] = [
+        '#type' => 'select',
+        '#options' => $geocoder_options,
+        '#title' => $this->t('Geocoder plugin'),
+        '#default_value' => $settings['geocoder'],
+        '#ajax' => [
+          'callback' => [get_class($geocoder_manager), 'addGeocoderSettingsFormAjax'],
+          'wrapper' => 'geocoder-plugin-settings',
+          'effect' => 'fade',
+        ],
+      ];
+
+      if (!empty($settings['geocoder'])) {
+        $geocoder_plugin = $geocoder_manager->getGeocoder(
+            $settings['geocoder'],
+            $settings['settings']
+          );
+      }
+      elseif (current(array_keys($geocoder_options))) {
+        $geocoder_plugin = $geocoder_manager->getGeocoder(current(array_keys($geocoder_options)));
+      }
+
+      if (!empty($geocoder_plugin)) {
+        $geocoder_settings_form = $geocoder_plugin->getOptionsForm();
+        if ($geocoder_settings_form) {
+          $form['settings'] = $geocoder_settings_form;
+        }
+      }
+
+      if (empty($form['settings'])) {
+        $form['settings'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#value' => $this->t("No settings available."),
+        ];
+      }
+
+      $form['settings'] = array_replace_recursive($form['settings'], [
+        '#flatten' => TRUE,
+        '#prefix' => '<div id="geocoder-plugin-settings">',
+        '#suffix' => '</div>',
+      ]);
+
+      $form['#element_validate'][] = [$this, 'validateSettingsForm'];
+    }
 
     return $form;
   }
 
   /**
+   * Validate form.
+   *
+   * @param array $element
+   *   Form element to check.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
+   * @param array $form
+   *   Current form.
+   */
+  public function validateSettingsForm(array $element, FormStateInterface $form_state, array $form) {
+    $values = $form_state->getValues();
+    $parents = [];
+    if (!empty($element['#parents'])) {
+      $parents = $element['#parents'];
+      $values = NestedArray::getValue($values, $parents);
+    }
+
+    if ($values['geocoder']) {
+      /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
+      $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
+        ->getGeocoder(
+          $values['geocoder'],
+          $values['settings']
+        );
+
+      if (!empty($geocoder_plugin)) {
+        $geocoder_plugin->formvalidateInput($form_state);
+      }
+      else {
+        $form_state->setErrorByName(implode('][', $parents), $this->t('invalid geocoder.'));
+      }
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings, $maps_id) {
-    return [
+  public function attachments(array $settings, $map_id) {
+    /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
+    $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
+      ->getGeocoder(
+        $settings['geocoder'],
+        $settings['settings']
+      );
+
+    $attachments = [
       'library' => [
-        'geolocation_google_maps/geolocation.control_recenter',
+        'geolocation_google_maps/geolocation.control_geocoder',
       ],
       'drupalSettings' => [
         'geolocation' => [
           'maps' => [
-            $maps_id => [
-              'control_recenter' => [
+            $map_id => [
+              'control_geocoder' => [
                 'enable' => TRUE,
               ],
             ],
@@ -69,6 +164,10 @@ class ControlGeocoder extends MapFeatureBase {
         ],
       ],
     ];
+
+    $attachments = array_merge_recursive($attachments, $geocoder_plugin->attachments($map_id));
+
+    return $attachments;
   }
 
 }

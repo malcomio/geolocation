@@ -74,9 +74,9 @@ class GoogleMaps extends MapProviderBase {
    *   Parameters
    */
   public function getGoogleMapsApiParameters() {
-    $config = \Drupal::config('geolocation.settings');
+    $config = \Drupal::config('geolocation_google_maps.settings');
     $geolocation_parameters = [
-      'callback' => 'Drupal.geolocation.googleCallback',
+      'callback' => 'Drupal.geolocation.google.loadedCallback',
       'key' => $config->get('google_map_api_key'),
     ];
     $module_parameters = \Drupal::moduleHandler()->invokeAll('geolocation_google_maps_parameters') ?: [];
@@ -521,7 +521,9 @@ class GoogleMaps extends MapProviderBase {
   public function attachments(array $google_map_settings, $map_id) {
 
     $attachments = [
-      'library' => ['geolocation_google_maps/geolocation.googlemapsapi'],
+      'library' => [
+        'geolocation_google_maps/geolocation.googlemapsapi',
+      ],
       'drupalSettings' => [
         'geolocation' => [
           'google_map_url' => $this->getGoogleMapsApiUrl(),

@@ -5,7 +5,6 @@ namespace Drupal\geolocation;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Config\Config;
 
 /**
  * Class MapProviderBase.
@@ -13,13 +12,6 @@ use Drupal\Core\Config\Config;
  * @package Drupal\geolocation
  */
 abstract class MapProviderBase extends PluginBase implements MapProviderInterface, ContainerFactoryPluginInterface {
-
-  /**
-   * Geolocation settings config instance.
-   *
-   * @var \Drupal\Core\Config\Config
-   */
-  protected $geolocationSettings;
 
   /**
    * Map feature manager.
@@ -37,15 +29,12 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Config\Config $config
-   *   The 'geolocation.settings' config.
    * @param \Drupal\geolocation\MapFeatureManager $map_feature_manager
    *   Map feature manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Config $config, MapFeatureManager $map_feature_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MapFeatureManager $map_feature_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->geolocationSettings = $config;
     $this->mapFeatureManager = $map_feature_manager;
   }
 
@@ -57,7 +46,6 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('config.factory')->get('geolocation.settings'),
       $container->get('plugin.manager.geolocation.mapfeature')
     );
   }
@@ -109,6 +97,28 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
    */
   public function attachments(array $settings, $map_id) {
     return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function alterRenderArray(array $render_array, array $settings, $map_id) {
+    $render_array['#attached'] = array_merge_recursive($render_array['#attached'], $this->attachments($settings, $map_id));
+
+    foreach ($this->mapFeatureManager->getMapFeaturesByMapType($this->getPluginId()) as $feature_id => $feature_definition) {
+      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
+        $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
+        if ($feature) {
+          $feature_settings = [];
+          if (!empty($settings['map_features'][$feature_id]['settings'])) {
+            $feature_settings = $settings['map_features'][$feature_id]['settings'];
+          }
+          $render_array = $feature->alterRenderArray($render_array, $feature_settings, $map_id);
+        }
+      }
+    }
+
+    return $render_array;
   }
 
 }

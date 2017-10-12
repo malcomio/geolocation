@@ -4,6 +4,15 @@
  */
 
 /**
+ * @callback googleLoadedCallback
+ */
+
+/**
+ * @typedef {Object} Drupal.geolocation.google
+ * @property {googleLoadedCallback[]} loadedCallbacks
+ */
+
+/**
  * @param {String} drupalSettings.geolocation.google_map_url
  */
 
@@ -31,6 +40,16 @@
  * @property {Object} zoomControlOptions
  * @property {String} mapTypeId
  * @property {String} info_text
+ */
+
+/**
+ * @typedef {Object} google
+ * @property {GoogleMap} maps
+ * @property {Object} event
+ * @property {Function} addListener
+ * @property {Function} addDomListener
+ * @property {Function} addListenerOnce
+ * @property {Function} addDomListenerOnce
  */
 
 /**
@@ -188,25 +207,6 @@
  */
 
 /**
- * @typedef {Object} google
- * @property {GoogleMap} maps
- * @property {Object} event
- * @property {Function} addListener
- * @property {Function} addDomListener
- * @property {Function} addListenerOnce
- * @property {Function} addDomListenerOnce
- */
-
-/**
- * @callback googleLoadedCallback
- */
-
-/**
- * @typedef {Object} Drupal.geolocation.google
- * @property {googleLoadedCallback[]} loadedCallbacks
- */
-
-/**
  * @typedef {Object} GooglePolyline
  * @property {function(GoogleMap)} setMap
  */
@@ -256,7 +256,7 @@
    * @prop {GoogleMapSettings} settings.google_map_settings - Google Map specific settings.
    */
   function GeolocationGoogleMap(mapSettings) {
-    this.type = 'google';
+    this.type = 'google_maps';
 
     Drupal.geolocation.GeolocationMapBase.call(this, mapSettings);
 
@@ -354,7 +354,11 @@
       this.readyCallback();
     }
     else {
-      Drupal.geolocation.googleCallback();
+      var that = this;
+      Drupal.geolocation.google.addLoadedCallback(function () {
+        that.readyCallback();
+      });
+      Drupal.geolocation.google.loadedCallback();
     }
   }
   GeolocationGoogleMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
@@ -525,48 +529,65 @@
     element = $('<div class="geolocation-map-control"></div>').append(element);
     positionOnMap = positionOnMap || google.maps.ControlPosition.TOP_LEFT;
     index = index || -1;
-    if (index === -1) {
-      this.googleMap.controls[positionOnMap].push(element.get(0));
-    }
-    else {
-      this.googleMap.controls[positionOnMap][index] = element.get(0);
-    }
+    var controlElementExists = false;
+    this.googleMap.controls[positionOnMap].forEach(function (controlElement) {
+      if (element.get(0).isEqualNode(controlElement)) {
+        controlElementExists = true;
+      }
+    });
 
+    if (!controlElementExists) {
+      if (index === -1) {
+        this.googleMap.controls[positionOnMap].push(element.get(0));
+      }
+      else {
+        this.googleMap.controls[positionOnMap][index] = element.get(0);
+      }
+    }
   };
 
   Drupal.geolocation.GeolocationGoogleMap = GeolocationGoogleMap;
-  Drupal.geolocation.addMapProvider('google', 'GeolocationGoogleMap');
+  Drupal.geolocation.addMapProvider('google_maps', 'GeolocationGoogleMap');
+
+  /**
+   * Adds a callback that will be called once the maps library is loaded.
+   *
+   * @param {googleLoadedCallback} callback - The callback
+   */
+  Drupal.geolocation.google.addLoadedCallback = function (callback) {
+    Drupal.geolocation.google.loadedCallbacks = Drupal.geolocation.google.loadedCallbacks || [];
+    Drupal.geolocation.google.loadedCallbacks.push(callback);
+  };
 
   /**
    * Provides the callback that is called when maps loads.
    */
-  Drupal.geolocation.googleCallback = function () {
+  Drupal.geolocation.google.loadedCallback = function () {
     // Check for Google Maps.
     if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-      if (Drupal.geolocation.maps_api_loading === true) {
+      if (Drupal.geolocation.google.maps_api_loading === true) {
         return;
       }
 
-      Drupal.geolocation.maps_api_loading = true;
+      Drupal.geolocation.google.maps_api_loading = true;
       // Google Maps isn't loaded so lazy load Google Maps.
-
+      // This will trigger googleCallback() again!
       if (typeof drupalSettings.geolocation.google_map_url !== 'undefined') {
         $.getScript(drupalSettings.geolocation.google_map_url)
           .done(function () {
-            Drupal.geolocation.maps_api_loading = false;
+            Drupal.geolocation.google.maps_api_loading = false;
           });
       }
       else {
-        console.error('Geolocation - Google map url not set.'); // eslint-disable-line no-console
+        console.error('Geolocation - GoogleMapsAPI url not set.'); // eslint-disable-line no-console
       }
 
       return;
     }
 
-    $.each(Drupal.geolocation.maps, function (index, map) {
-      if (map.type === 'google' && map.ready === false) {
-        map.readyCallback();
-      }
+    $.each(Drupal.geolocation.google.loadedCallbacks, function (index, callback) {
+      callback();
+      delete Drupal.geolocation.google.loadedCallbacks[index];
     });
   };
 

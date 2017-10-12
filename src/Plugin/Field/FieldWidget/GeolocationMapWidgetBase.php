@@ -2,7 +2,6 @@
 
 namespace Drupal\geolocation\Plugin\Field\FieldWidget;
 
-use Drupal\geolocation\GeolocationCore;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -61,16 +60,14 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
    *   Any third party settings.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   The entity field manager.
-   * @param \Drupal\geolocation\GeolocationCore $geolocation_core
-   *   The entity field manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityFieldManagerInterface $entity_field_manager, GeolocationCore $geolocation_core) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityFieldManagerInterface $entity_field_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
 
     $this->entityFieldManager = $entity_field_manager;
 
     if (!empty($this->mapProviderId)) {
-      $this->mapProvider = $geolocation_core->getMapProviderManager()->getMapProvider($this->mapProviderId, $this->getSettings());
+      $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider($this->mapProviderId, $this->getSettings());
     }
 
     if (empty($this->mapProviderSettingsFormId)) {
@@ -88,8 +85,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('entity_field.manager'),
-      $container->get('geolocation.core')
+      $container->get('entity_field.manager')
     );
   }
 

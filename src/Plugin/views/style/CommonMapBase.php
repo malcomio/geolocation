@@ -176,7 +176,7 @@ abstract class CommonMapBase extends StylePluginBase {
     }
 
     $build = [
-      '#theme' => 'geolocation_map_wrapper',
+      '#type' => 'geolocation_map',
       '#uniqueid' => $this->mapId,
       '#attached' => [
         'library' => [
@@ -184,11 +184,6 @@ abstract class CommonMapBase extends StylePluginBase {
         ],
       ],
     ];
-
-    $build['#attached'] = array_merge_recursive(
-      empty($build['#attached']) ? [] : $build['#attached'],
-      $this->mapProvider->attachments(empty($this->options[$this->mapProviderSettingsFormId]) ? [] : $this->options[$this->mapProviderSettingsFormId], $this->mapId)
-    );
 
     if (!empty($this->options['show_raw_locations'])) {
       $build['#attached']['drupalSettings']['geolocation']['commonMap'][$this->mapId]['showRawLocations'] = TRUE;
@@ -354,6 +349,8 @@ abstract class CommonMapBase extends StylePluginBase {
     if (!empty($centre)) {
       $build['#centre'] = $centre ?: ['lat' => 0, 'lng' => 0];
     }
+
+    $build = $this->mapProvider->alterRenderArray($build, empty($this->options[$this->mapProviderSettingsFormId]) ? [] : $this->options[$this->mapProviderSettingsFormId], $this->mapId);
 
     return $build;
   }

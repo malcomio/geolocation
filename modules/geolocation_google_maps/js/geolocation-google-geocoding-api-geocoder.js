@@ -5,6 +5,7 @@
 
 /**
  * @property {Object} drupalSettings.geolocation.geocoder.googleGeocodingAPI.components
+ * @property {String[]} drupalSettings.geolocation.geocoder.googleGeocodingAPI.inputIds
  */
 
 /**
@@ -41,13 +42,12 @@
   Drupal.geolocation.geocoder.googleGeocodingAPI = {};
 
   /**
-   * @param {HTMLElement} context Context.
+   * @param {jQuery} geocoderInput - Input element.
    */
-  Drupal.geolocation.geocoder.googleGeocodingAPI.attach = function (context) {
-    $('input.geolocation-geocoder-google-geocoding-api', context).once().autocomplete({
+  Drupal.geolocation.geocoder.googleGeocodingAPI.attach = function (geocoderInput) {
+    geocoderInput.once().autocomplete({
       autoFocus: true,
       source: function (request, response) {
-
         if (typeof Drupal.geolocation.geocoder.googleGeocodingAPI.geocoder === 'undefined') {
           Drupal.geolocation.geocoder.googleGeocodingAPI.geocoder = new google.maps.Geocoder();
         }
@@ -105,17 +105,15 @@
    */
   Drupal.behaviors.geolocationGeocoderGoogleGeocodingApi = {
     attach: function (context) {
-      if (typeof google === 'undefined') {
-        if (typeof Drupal.geolocation.loadGoogle === 'function') {
-          // First load the library from google.
-          Drupal.geolocation.loadGoogle(function () {
-            Drupal.geolocation.geocoder.googleGeocodingAPI.attach(context);
-          });
-        }
-      }
-      else {
-        Drupal.geolocation.geocoder.googleGeocodingAPI.attach(context);
-      }
+      Drupal.geolocation.google.addLoadedCallback(function() {
+        $.each(drupalSettings.geolocation.geocoder.googleGeocodingAPI.inputIds, function(index, inputId) {
+          var geocoderInput = $('input[data-source-identifier="' + inputId + '"]', context);
+          if (geocoderInput) {
+            Drupal.geolocation.geocoder.googleGeocodingAPI.attach(geocoderInput);
+          }
+        });
+      });
+      Drupal.geolocation.google.loadedCallback();
     }
   };
 

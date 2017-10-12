@@ -16,11 +16,7 @@
     id="{{ uniqueid }}"
     class="geolocation-map-wrapper"
 
-    {% if maptype is not empty %}
-        data-map-type="{{ maptype }}"
-    {% else %}
-        data-map-type="google"
-    {% endif %}
+    data-map-type="{{ maptype }}"
 
     {% if centre.lat_north_east is not empty and centre.lng_north_east is not empty and centre.lat_south_west is not empty and centre.lng_south_west is not empty %}
         data-centre-lat-north-east="{{ centre.lat_north_east }}"
@@ -40,12 +36,17 @@
         data-centre-behavior="fitlocations"
     {% endif %}
 >
-<div class="geolocation-map-container"></div>
+    <div class="geolocation-map-container"></div>
     {% if locations is not empty %}
         <div class="geolocation-map-locations">
         {%  for location in locations %}
             {{ location }}
         {% endfor %}
         </div>
+    {% endif %}
+    {% if children is not empty %}
+        {%  for child in children %}
+            {{ child }}
+        {% endfor %}
     {% endif %}
 </div>

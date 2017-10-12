@@ -44,7 +44,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
 
     if (!empty($this->mapProviderId)) {
-      $this->mapProvider = \Drupal::service('geolocation.core')->getMapProviderManager()->getMapProvider($this->mapProviderId, $this->getSettings());
+      $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider($this->mapProviderId, $this->getSettings());
     }
 
     if (empty($this->mapProviderSettingsFormId)) {

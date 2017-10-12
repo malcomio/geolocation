@@ -1,7 +1,7 @@
 services:
   geolocation.core:
     class: Drupal\geolocation\GeolocationCore
-    arguments: ["@module_handler", "@config.factory", "@plugin.manager.geolocation.geocoder", "@plugin.manager.geolocation.mapprovider"]
+    arguments: ["@module_handler", "@plugin.manager.geolocation.geocoder", "@plugin.manager.geolocation.mapprovider"]
 
   geolocation.ajax_subscriber:
     class: Drupal\geolocation\EventSubscriber\AjaxResponseSubscriber

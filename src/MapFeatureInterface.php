@@ -18,16 +18,6 @@ interface MapFeatureInterface extends PluginInspectionInterface {
   public static function getDefaultSettings();
 
   /**
-   * Alter single location entry.
-   *
-   * @param array $location
-   *   Current location.
-   * @param array $tokens
-   *   Optionally tokens.
-   */
-  public function alterLocation(array &$location, array $tokens = []);
-
-  /**
    * Provide map feature specific settings ready to handover to JS.
    *
    * @param array $settings
@@ -77,5 +67,20 @@ interface MapFeatureInterface extends PluginInspectionInterface {
    *   Drupal libraries.
    */
   public function attachments(array $settings, $map_id);
+
+  /**
+   * Alter render array.
+   *
+   * @param array $render_array
+   *   Render array.
+   * @param array $settings
+   *   The current map settings.
+   * @param string $map_id
+   *   Map ID.
+   *
+   * @return array
+   *   Render array.
+   */
+  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL);
 
 }

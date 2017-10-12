@@ -95,12 +95,12 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
 
     if (!empty($settings['common_map'])) {
       $unique_id = $elements['#uniqueid'];
-      $elements['#attached'] = array_merge_recursive($elements['#attached'], $this->mapProvider->attachments($google_map_settings, $unique_id));
+      $elements = $this->mapProvider->alterRenderArray($elements, $google_map_settings, $unique_id);
     }
     else {
       foreach (Element::children($elements) as $delta => $element) {
         $unique_id = $elements[$delta]['#uniqueid'];
-        $elements['#attached'] = array_merge_recursive($elements['#attached'], $this->mapProvider->attachments($google_map_settings, $unique_id));
+        $elements[$delta] = $this->mapProvider->alterRenderArray($elements[$delta], $google_map_settings, $unique_id);
       }
     }
 

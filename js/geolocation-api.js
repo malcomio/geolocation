@@ -353,7 +353,7 @@
    */
   function Factory(mapSettings, reset) {
     reset = reset || false;
-    mapSettings.type = mapSettings.type || 'google';
+    mapSettings.type = mapSettings.type || 'google_maps';
 
     var map = null;
 

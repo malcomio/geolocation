@@ -31,6 +31,8 @@
 (function ($, Drupal) {
   'use strict';
 
+  /* global google */
+
   if (typeof Drupal.geolocation.geocoder === 'undefined') {
     return false;
   }
@@ -42,7 +44,12 @@
    * @param {HTMLElement} context Context
    */
   Drupal.geolocation.geocoder.googlePlacesAPI.attach = function (context) {
-    $('input.geolocation-geocoder-google-places-api', context).once().autocomplete({
+    var autocomplete = $('input.geolocation-geocoder-google-places-api', context);
+    if (!autocomplete.length) {
+      return;
+    }
+
+    autocomplete.once().autocomplete({
       autoFocus: true,
       source: function (request, response) {
         var autocompleteResults = [];
@@ -68,7 +75,8 @@
               $.each(results, function (index, result) {
                 autocompleteResults.push({
                   value: result.description,
-                  place_id: result.place_id
+                  place_id: result.place_id,
+                  classes: result.types.reverse()
                 });
               });
             }
@@ -106,7 +114,15 @@
         );
       }
     })
-    .on('input', function () {
+    .autocomplete('instance')
+    ._renderItem = function (ul, item) {
+      return $('<li></li>')
+        .attr('data-value', item.value)
+        .append('<div><div class="geolocation-geocoder-item ' + item.classes.join(' ') + '">' + item.label + '</div></div>')
+        .appendTo(ul);
+    };
+
+    autocomplete.on('input', function () {
       $('.geolocation-geocoder-google-places-api-state[data-source-identifier="' + $(this).data('source-identifier') + '"]').val(0);
       Drupal.geolocation.geocoder.clearCallback($(this).data('source-identifier'));
     });
@@ -122,10 +138,8 @@
    */
   Drupal.behaviors.geolocationGeocoderGooglePlacesApi = {
     attach: function (context) {
-
       if (typeof Drupal.geolocation.geocoder.googlePlacesAPI.autocompleteService === 'undefined') {
         if (typeof Drupal.geolocation.loadGoogle === 'function') {
-          // First load the library from google.
           Drupal.geolocation.loadGoogle(function () {
             if (typeof Drupal.geolocation.geocoder.googlePlacesAPI.service === 'undefined') {
               var attribution_block = $('#geolocation-google-places-api-attribution');
@@ -135,6 +149,9 @@
 
                 Drupal.geolocation.geocoder.googlePlacesAPI.attach(context);
               }
+            }
+            else {
+              Drupal.geolocation.geocoder.googlePlacesAPI.attach(context);
             }
           });
         }

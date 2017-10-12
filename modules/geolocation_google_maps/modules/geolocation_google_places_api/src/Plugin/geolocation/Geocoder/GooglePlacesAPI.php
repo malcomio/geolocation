@@ -6,8 +6,6 @@ use GuzzleHttp\Exception\RequestException;
 use Drupal\Component\Serialization\Json;
 use Drupal\geolocation\GeocoderBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\geolocation\GeolocationCore;
-use Drupal\Core\Config\Config;
 
 /**
  * Provides the Google Places API.
@@ -25,17 +23,67 @@ class GooglePlacesAPI extends GeocoderBase {
   /**
    * Google Maps Provider.
    *
-   * @var \Drupal\geolocation\Plugin\geolocation\MapProvider\GoogleMaps
+   * @var \Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps
    */
   protected $googleMapsProvider = NULL;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Config $config, GeolocationCore $geolocationCore) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $config, $geolocationCore);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->googleMapsProvider = $this->geolocationCore->getMapProviderManager()->getMapProvider('google_maps');
+    $this->googleMapsProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider('google_maps');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function attachments($input_id) {
+    $attachments = [
+      'library' => [
+        'geolocation_google_places_api/geolocation_google_places_api.geocoder.googleplacesapi',
+      ],
+      'drupalSettings' => [
+        'geolocation' => [
+          'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
+          'geocoder' => [
+            'googlePlacesAPI' => [
+              'inputIds' => [
+                $input_id,
+              ],
+            ],
+          ],
+        ],
+      ],
+    ];
+
+    if (!empty($this->configuration['component_restrictions'])) {
+      foreach ($this->configuration['component_restrictions'] as $component => $restriction) {
+        if (empty($restriction)) {
+          continue;
+        }
+
+        $attachments = array_merge_recursive(
+          $attachments,
+          [
+            'drupalSettings' => [
+              'geolocation' => [
+                'geocoder' => [
+                  'googlePlacesAPI' => [
+                    'restrictions' => [
+                      $component => $restriction,
+                    ],
+                  ],
+                ],
+              ],
+            ],
+          ]
+        );
+      }
+    }
+
+    return $attachments;
   }
 
   /**
@@ -100,8 +148,6 @@ class GooglePlacesAPI extends GeocoderBase {
    * {@inheritdoc}
    */
   public function formAttachGeocoder(array &$render_array, $element_name) {
-    $render_array['#attached']['drupalSettings']['geolocation']['google_map_url'] = $this->googleMapsProvider->getGoogleMapsApiUrl();
-
     $render_array['geolocation_geocoder_google_places_api'] = [
       '#type' => 'textfield',
       '#description' => $this->t('Enter an address to filter results.'),
@@ -132,36 +178,7 @@ class GooglePlacesAPI extends GeocoderBase {
       $render_array['geolocation_geocoder_google_places_api']['#title'] = $this->configuration['label'];
     }
 
-    $render_array['geolocation_geocoder_google_places_api'] = array_merge_recursive($render_array['geolocation_geocoder_google_places_api'], [
-      '#attached' => [
-        'library' => [
-          0 => 'geolocation_google_places_api/geolocation_google_places_api.geocoder.googleplacesapi',
-        ],
-      ],
-    ]);
-
-    if (!empty($this->configuration['component_restrictions'])) {
-      foreach ($this->configuration['component_restrictions'] as $component => $restriction) {
-        if (empty($restriction)) {
-          continue;
-        }
-        $render_array['geolocation_geocoder_google_places_api'] = array_merge_recursive($render_array['geolocation_geocoder_google_places_api'], [
-          '#attached' => [
-            'drupalSettings' => [
-              'geolocation' => [
-                'geocoder' => [
-                  'googlePlacesAPI' => [
-                    'restrictions' => [
-                      $component => $restriction,
-                    ],
-                  ],
-                ],
-              ],
-            ],
-          ],
-        ]);
-      }
-    }
+    $render_array['#attached'] = $this->attachments($element_name);
   }
 
   /**
@@ -214,15 +231,18 @@ class GooglePlacesAPI extends GeocoderBase {
     if (empty($address)) {
       return FALSE;
     }
+
+    $geolocationSettings = \Drupal::config('geolocation_google_maps.settings');
+
     $request_url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=' . $address;
 
     $google_key = '';
 
-    if (!empty($this->geolocationSettings->get('google_map_api_server_key'))) {
-      $google_key = $this->geolocationSettings->get('google_map_api_server_key');
+    if (!empty($geolocationSettings->get('google_map_api_server_key'))) {
+      $google_key = $geolocationSettings->get('google_map_api_server_key');
     }
-    elseif (!empty($this->geolocationSettings->get('google_map_api_key'))) {
-      $google_key = $this->geolocationSettings->get('google_map_api_key');
+    elseif (!empty($geolocationSettings->get('google_map_api_key'))) {
+      $google_key = $geolocationSettings->get('google_map_api_key');
     }
 
     if (!empty($google_key)) {
@@ -231,8 +251,8 @@ class GooglePlacesAPI extends GeocoderBase {
     if (!empty($this->configuration['component_restrictions']['country'])) {
       $request_url .= '&components=country:' . $this->configuration['component_restrictions']['country'];
     }
-    if (!empty($this->geolocationSettings->get('google_map_custom_url_parameters')['language'])) {
-      $request_url .= '&language=' . $this->geolocationSettings->get('google_map_custom_url_parameters')['language'];
+    if (!empty($geolocationSettings->get('google_map_custom_url_parameters')['language'])) {
+      $request_url .= '&language=' . $geolocationSettings->get('google_map_custom_url_parameters')['language'];
     }
 
     try {

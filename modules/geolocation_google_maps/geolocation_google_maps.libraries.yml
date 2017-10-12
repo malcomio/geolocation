@@ -46,28 +46,35 @@ geolocation.google_map_form_element:
 # Drawing support.
 geolocation.drawing:
   js:
-    js/geolocation-drawing.js: {}
+    js/MapFeature/geolocation-drawing.js: {}
   dependencies:
     - geolocation_google_maps/geolocation.googlemapsapi
 
-# ClientLocationIndicator support.
+# ControlRecenter support.
 geolocation.control_recenter:
   js:
-    js/geolocation-control-recenter.js: {}
+    js/MapFeature/geolocation-control-recenter.js: {}
+  dependencies:
+    - geolocation_google_maps/geolocation.googlemapsapi
+
+# ControlLocate support.
+geolocation.control_locate:
+  js:
+    js/MapFeature/geolocation-control-locate.js: {}
   dependencies:
     - geolocation_google_maps/geolocation.googlemapsapi
 
 # ClientLocationIndicator support.
 geolocation.client_location_indicator:
   js:
-    js/geolocation-client-location-indicator.js: {}
+    js/MapFeature/geolocation-client-location-indicator.js: {}
   dependencies:
     - geolocation_google_maps/geolocation.googlemapsapi
 
 # Spiderfying support.
 geolocation.spiderfying:
   js:
-    js/geolocation-spiderfying.js: {}
+    js/MapFeature/geolocation-spiderfying.js: {}
   dependencies:
     - geolocation_google_maps/geolocation.googlemapsapi
     - geolocation_google_maps/spiderfier
@@ -86,7 +93,7 @@ spiderfier:
 # MarkerClusterer support.
 geolocation.markerclusterer:
   js:
-    js/geolocation-markerclusterer.js: {}
+    js/MapFeature/geolocation-markerclusterer.js: {}
   dependencies:
     - geolocation_google_maps/geolocation.googlemapsapi
     - geolocation_google_maps/markerclusterer
@@ -105,6 +112,13 @@ markerclusterer:
 # ContextPopup support.
 geolocation.contextpopup:
   js:
-    js/geolocation-contextpopup.js: {}
+    js/MapFeature/geolocation-contextpopup.js: {}
+  dependencies:
+    - geolocation_google_maps/geolocation.googlemapsapi
+
+# ControlGeocoder support.
+geolocation.control_geocoder:
+  js:
+    js/MapFeature/geolocation-control-geocoder.js: {}
   dependencies:
     - geolocation_google_maps/geolocation.googlemapsapi

@@ -5,9 +5,7 @@ namespace Drupal\geolocation_google_maps\Plugin\geolocation\Geocoder;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Component\Serialization\Json;
 use Drupal\geolocation\GeocoderBase;
-use Drupal\geolocation\GeolocationCore;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Config\Config;
 
 /**
  * Provides the Google Geocoding API.
@@ -32,10 +30,10 @@ class GoogleGeocodingAPI extends GeocoderBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Config $config, GeolocationCore $geolocationCore) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $config, $geolocationCore);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->googleMapsProvider = $this->geolocationCore->getMapProviderManager()->getMapProvider('google_maps');
+    $this->googleMapsProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider('google_maps');
   }
 
   /**
@@ -84,7 +82,58 @@ class GoogleGeocodingAPI extends GeocoderBase {
   /**
    * {@inheritdoc}
    */
+  public function attachments($input_id) {
+    $attachments = [
+      'library' => [
+        'geolocation_google_maps/geolocation.geocoder.googlegeocodingapi',
+      ],
+      'drupalSettings' => [
+        'geolocation' => [
+          'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
+          'geocoder' => [
+            'googleGeocodingAPI' => [
+              'inputIds' => [
+                $input_id,
+              ],
+            ],
+          ],
+        ],
+      ],
+    ];
+
+    if (!empty($this->configuration['component_restrictions'])) {
+      foreach ($this->configuration['component_restrictions'] as $component => $restriction) {
+        if (empty($restriction)) {
+          continue;
+        }
+
+        $attachments = array_merge_recursive(
+          $attachments,
+          [
+            'drupalSettings' => [
+              'geolocation' => [
+                'geocoder' => [
+                  'googleGeocodingAPI' => [
+                    'restrictions' => [
+                      $component => $restriction,
+                    ],
+                  ],
+                ],
+              ],
+            ],
+          ]
+        );
+      }
+    }
+
+    return $attachments;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function formAttachGeocoder(array &$render_array, $element_name) {
+    $config = \Drupal::config('geolocation_google_maps.settings');
     $render_array['geolocation_geocoder_google_geocoding_api'] = [
       '#type' => 'textfield',
       '#description' => $this->t('Enter an address to filter results.'),
@@ -104,19 +153,6 @@ class GoogleGeocodingAPI extends GeocoderBase {
       $render_array['geolocation_geocoder_google_geocoding_api']['#title'] = $this->configuration['label'];
     }
 
-    $render_array = array_merge_recursive($render_array, [
-      '#attached' => [
-        'library' => [
-          0 => 'geolocation_google_maps/geolocation.geocoder.googlegeocodingapi',
-        ],
-        'drupalSettings' => [
-          'geolocation' => [
-            'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
-          ],
-        ],
-      ],
-    ]);
-
     $render_array['geolocation_geocoder_google_geocoding_api_state'] = [
       '#type' => 'hidden',
       '#default_value' => 1,
@@ -128,31 +164,10 @@ class GoogleGeocodingAPI extends GeocoderBase {
       ],
     ];
 
-    if (!empty($this->geolocationSettings->get('google_map_custom_url_parameters')['region'])) {
-      $render_array['#attached']['drupalSettings']['geolocation']['geocoder']['googleGeocodingAPI']['region'] = $this->geolocationSettings->get('google_map_custom_url_parameters')['region'];
-    }
+    $render_array['#attached'] = $this->attachments($element_name);
 
-    if (!empty($this->configuration['components'])) {
-      foreach ($this->configuration['components'] as $component => $restriction) {
-        if (empty($restriction)) {
-          continue;
-        }
-        $render_array['geolocation_geocoder_google_geocoding_api'] = array_merge_recursive($render_array['geolocation_geocoder_google_geocoding_api'], [
-          '#attached' => [
-            'drupalSettings' => [
-              'geolocation' => [
-                'geocoder' => [
-                  'googleGeocodingAPI' => [
-                    'components' => [
-                      $component => $restriction,
-                    ],
-                  ],
-                ],
-              ],
-            ],
-          ],
-        ]);
-      }
+    if (!empty($config->get('google_map_custom_url_parameters')['region'])) {
+      $render_array['#attached']['drupalSettings']['geolocation']['geocoder']['googleGeocodingAPI']['region'] = $config->get('google_map_custom_url_parameters')['region'];
     }
   }
 
@@ -202,17 +217,17 @@ class GoogleGeocodingAPI extends GeocoderBase {
    * {@inheritdoc}
    */
   public function geocode($address) {
-
+    $config = \Drupal::config('geolocation_google_maps.settings');
     if (empty($address)) {
       return FALSE;
     }
     $request_url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . $address;
 
-    if (!empty($this->geolocationSettings->get('google_map_api_server_key'))) {
-      $request_url .= '&key=' . $this->geolocationSettings->get('google_map_api_key');
+    if (!empty($config->get('google_map_api_server_key'))) {
+      $request_url .= '&key=' . $config->get('google_map_api_key');
     }
-    elseif (!empty($this->geolocationSettings->get('google_map_api_key'))) {
-      $request_url .= '&key=' . $this->geolocationSettings->get('google_map_api_key');
+    elseif (!empty($config->get('google_map_api_key'))) {
+      $request_url .= '&key=' . $config->get('google_map_api_key');
     }
     if (!empty($this->configuration['components'])) {
       $request_url .= '&components=';
@@ -220,8 +235,8 @@ class GoogleGeocodingAPI extends GeocoderBase {
         $request_url .= $component_id . ':' . $component_value . '|';
       }
     }
-    if (!empty($this->geolocationSettings->get('google_map_custom_url_parameters')['language'])) {
-      $request_url .= '&language=' . $this->geolocationSettings->get('google_map_custom_url_parameters')['language'];
+    if (!empty($config->get('google_map_custom_url_parameters')['language'])) {
+      $request_url .= '&language=' . $config->get('google_map_custom_url_parameters')['language'];
     }
 
     try {

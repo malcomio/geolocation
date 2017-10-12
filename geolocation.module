@@ -41,8 +41,6 @@ function geolocation_theme() {
         'maptype' => NULL,
         'locations' => NULL,
         'centre' => NULL,
-        'fitbounds' => NULL,
-        'clientlocation' => NULL,
         'uniqueid' => NULL,
       ],
     ],

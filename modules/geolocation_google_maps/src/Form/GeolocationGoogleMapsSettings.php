@@ -16,7 +16,7 @@ class GeolocationGoogleMapsSettings extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->configFactory->get('geolocation.settings');
+    $config = $this->configFactory->get('geolocation_google_maps.settings');
 
     $form['#tree'] = TRUE;
 
@@ -158,7 +158,7 @@ class GeolocationGoogleMapsSettings extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'geolocation.settings',
+      'geolocation_google_maps.settings',
     ];
   }
 
@@ -166,7 +166,7 @@ class GeolocationGoogleMapsSettings extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->configFactory()->getEditable('geolocation.settings');
+    $config = $this->configFactory()->getEditable('geolocation_google_maps.settings');
     $config->set('google_map_api_key', $form_state->getValue('google_map_api_key'));
     $config->set('google_map_api_server_key', $form_state->getValue('google_map_api_server_key'));
 

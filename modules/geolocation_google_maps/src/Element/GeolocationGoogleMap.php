@@ -39,7 +39,7 @@ class GeolocationGoogleMap extends RenderElement {
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->googleMapProvider = \Drupal::service('geolocation.core')->getMapProviderManager()->getMapProvider('google_maps');
+    $this->googleMapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider('google_maps');
   }
 
   /**
@@ -74,8 +74,9 @@ class GeolocationGoogleMap extends RenderElement {
 
     $render_array = [
       '#theme' => 'geolocation_map_wrapper',
-      '#attached' => $this->googleMapProvider->attachments([], $unique_id),
     ];
+    $render_array = $this->googleMapProvider->alterRenderArray($render_array, [], $unique_id);
+
     $render_array['#attached']['library'][] = 'geolocation/geolocation.map';
 
     if (!empty($element['#prefix'])) {
