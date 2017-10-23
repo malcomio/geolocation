@@ -37,16 +37,14 @@
     {% endif %}
 >
     <div class="geolocation-map-container"></div>
+
     {% if locations is not empty %}
-        <div class="geolocation-map-locations">
-        {%  for location in locations %}
+        {% for location in locations %}
             {{ location }}
         {% endfor %}
-        </div>
     {% endif %}
+
     {% if children is not empty %}
-        {%  for child in children %}
-            {{ child }}
-        {% endfor %}
+        {{ children }}
     {% endif %}
 </div>

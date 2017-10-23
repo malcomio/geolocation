@@ -132,7 +132,7 @@ display:
             preferScrollingToZooming: 0
             disableDoubleClickZoom: 0
             style: ''
-            info_auto_display: 1
+            info_auto_display: 0
             disableAutoPan: 1
       row:
         type: 'entity:node'

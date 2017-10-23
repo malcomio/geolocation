@@ -164,7 +164,13 @@ class GoogleMaps extends MapProviderBase {
 
     // Convert JSON string to actual array before handing to Renderer.
     if (!empty($settings['style'])) {
-      $json = json_decode($settings['style']);
+      if (!is_array($settings['style'])) {
+        $json = json_decode($settings['style']);
+      }
+      else {
+        $json = $settings['style'];
+      }
+
       if (is_array($json)) {
         $settings['style'] = $json;
       }
@@ -215,8 +221,8 @@ class GoogleMaps extends MapProviderBase {
 
     $form = [
       '#type' => 'details',
-      '#title' => t('Google Maps settings'),
-      '#description' => t('Additional map settings provided by Google Maps'),
+      '#title' => t('Google Maps API settings'),
+      '#description' => t('Additional map settings provided by Google Maps API'),
     ];
 
     /*

@@ -114,11 +114,11 @@ class GeolocationCommonMapAjaxJavascriptTest extends JavascriptTestBase {
   public function testCommonMap() {
     $this->drupalGetFilterGoogleKey('geolocation-common-map-ajax-test');
 
-    $this->assertSession()->elementExists('css', '.geolocation-common-map-container');
-    $this->assertSession()->elementExists('css', '.geolocation-common-map-locations');
+    $this->assertSession()->elementExists('css', '.geolocation-map-container');
+    $this->assertSession()->elementExists('css', '.geolocation-location');
 
     // If Google works, either gm-style or gm-err-container will be present.
-    $this->assertSession()->elementExists('css', '.geolocation-common-map-container [class^="gm-"]');
+    $this->assertSession()->elementExists('css', '.geolocation-map-container [class^="gm-"]');
   }
 
   /**

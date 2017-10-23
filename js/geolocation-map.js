@@ -48,6 +48,7 @@
           }
 
           if (typeof drupalSettings.geolocation === 'undefined') {
+            console.err("Bailing out for lack of settings.");  // eslint-disable-line no-console
             return;
           }
 
@@ -77,7 +78,7 @@
               map.setMapMarker(location);
             });
 
-            map.wrapper.find('.geolocation-map-locations').hide();
+            map.wrapper.find('.geolocation-location').hide();
 
             // Set the already processed flag.
             map.container.addClass('geolocation-processed');

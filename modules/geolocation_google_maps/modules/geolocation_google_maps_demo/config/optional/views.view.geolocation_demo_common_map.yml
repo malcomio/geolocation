@@ -97,7 +97,7 @@ display:
             style: ''
             height: 400px
             width: 100%
-            info_auto_display: 1
+            info_auto_display: 0
             disableAutoPan: 1
       row:
         type: fields

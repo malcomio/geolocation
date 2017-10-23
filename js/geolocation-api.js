@@ -299,7 +299,7 @@
     },
     loadMarkersFromContainer: function () {
       var locations = [];
-      this.wrapper.find('.geolocation-map-locations .geolocation-location').each(function (index, locationWrapper) {
+      this.wrapper.find('.geolocation-location').each(function (index, locationWrapper) {
 
         /** @type {jQuery} */
         locationWrapper = $(locationWrapper);
@@ -349,7 +349,7 @@
    * @constructor
    * @param {GeolocationMapSettings} mapSettings The map settings.
    * @param {Boolean} [reset] Force creation of new map.
-   * @return {GeolocationMapInterface} Un-initialized map.
+   * @return {GeolocationMapInterface|boolean} Un-initialized map.
    */
   function Factory(mapSettings, reset) {
     reset = reset || false;
@@ -378,6 +378,11 @@
     else {
       map = existingMap;
       map.update(mapSettings);
+    }
+
+    if (!map) {
+      console.error("Map could not be initialzed"); // eslint-disable-line no-console
+      return false;
     }
 
     map.setCenterByBehavior(mapSettings.centreBehavior);

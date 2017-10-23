@@ -230,7 +230,7 @@ abstract class CommonMapBase extends StylePluginBase {
      * Add locations to output.
      */
     foreach ($this->view->result as $row_number => $row) {
-      $build['#locations'][] = $this->getLocationsFromRow($row);
+      $build['locations'][] = $this->getLocationsFromRow($row);
     }
 
     $centre = NULL;
@@ -277,14 +277,14 @@ abstract class CommonMapBase extends StylePluginBase {
           break;
 
         case 'first_row':
-          if (!empty($build['#locations'][0]['#position'])) {
-            $centre = $build['#locations'][0]['#position'];
+          if (!empty($build['locations'][0]['#position'])) {
+            $centre = $build['locations'][0]['#position'];
           }
           break;
 
         case 'fit_bounds':
           // fitBounds will only work when at least one result is available.
-          if (!empty($build['#locations'][0]['#position'])) {
+          if (!empty($build['locations'][0]['#position'])) {
             $fitbounds = TRUE;
           }
           $centre['behavior'] = 'fitlocations';

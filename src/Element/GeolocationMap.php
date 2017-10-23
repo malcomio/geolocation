@@ -3,7 +3,7 @@
 namespace Drupal\geolocation\Element;
 
 use Drupal\Core\Render\Element;
-use Drupal\Core\Render\Element\RenderElement;
+use Drupal\Core\Render\Element\FormElement;
 
 /**
  * Provides a render element to display a geolocation map.
@@ -15,7 +15,6 @@ use Drupal\Core\Render\Element\RenderElement;
  *   '#prefix' => $this->t('Geolocation Map Render Element'),
  *   '#description' => $this->t('Render element type "geolocation_map"'),
  *   '#maptype' => 'leaflet,
- *   '#locations' => [],
  *   '#centre' => [],
  *   '#uniqueid' => 'thisisanid',
  * ];
@@ -23,7 +22,7 @@ use Drupal\Core\Render\Element\RenderElement;
  *
  * @FormElement("geolocation_map")
  */
-class GeolocationMap extends RenderElement {
+class GeolocationMap extends FormElement {
 
   /**
    * Map Provider.
@@ -45,59 +44,69 @@ class GeolocationMap extends RenderElement {
    * {@inheritdoc}
    */
   public function getInfo() {
-    return [
+    $class = get_class($this);
+
+    $info = [
+      '#process' => [
+        [$class, 'processGroup'],
+      ],
       '#pre_render' => [
+        [$class, 'preRenderGroup'],
         [$this, 'preRenderMap'],
       ],
       '#maptype' => NULL,
-      '#locations' => NULL,
       '#centre' => NULL,
       '#uniqueid' => NULL,
+      '#controls' => NULL,
+      '#children' => NULL,
     ];
+
+    return $info;
   }
 
   /**
    * Map element.
    *
-   * @param array $element
+   * @param array $render_array
    *   Element.
    *
    * @return array
    *   Renderable map.
    */
-  public function preRenderMap(array $element) {
-    $render_array = [
-      '#theme' => 'geolocation_map_wrapper',
-      '#uniqueid' => $element['#uniqueid'],
-    ];
+  public function preRenderMap(array $render_array) {
+    $render_array['#theme'] = 'geolocation_map_wrapper';
 
-    if (empty($element['#maptype'])) {
-      $element['#maptype'] = 'google_maps';
+    if (empty($render_array['#uniqueid'])) {
+      $unique_id = uniqid();
+      $render_array['#uniqueid'] = $unique_id;
+    }
+    else {
+      $unique_id = $render_array['#uniqueid'];
     }
 
-    $render_array['#maptype'] = $element['#maptype'];
+    $render_array['#attached']['drupalSettings']['geolocation']['maps'][$unique_id] = [
+      'id' => $unique_id,
+    ];
+
+    if (empty($render_array['#maptype'])) {
+      if (\Drupal::moduleHandler()->moduleExists('geolocation_google_maps')) {
+        $render_array['#maptype'] = 'google_maps';
+      }
+    }
+
+    if (empty($render_array['#settings'][$render_array['#maptype'] . '_settings'])) {
+      $render_array['#settings'][$render_array['#maptype'] . '_settings'] = [];
+    }
+
+    $render_array['#attached'] = array_merge_recursive(
+      $render_array['#attached'],
+      $this->mapProviderManager->getMapProvider($render_array['#maptype'])->attachments($render_array['#settings'][$render_array['#maptype'] . '_settings'], $unique_id)
+    );
 
     $render_array['#attached']['library'][] = 'geolocation/geolocation.map';
 
-    if (!empty($element['#prefix'])) {
-      $render_array['#prefix'] = $element['#prefix'];
-    }
-
-    if (!empty($element['#suffix'])) {
-      $render_array['#suffix'] = $element['#suffix'];
-    }
-
-    if (!empty($element['#locations'])) {
-      $render_array['#locations'] = $element['#locations'];
-    }
-
-    if (!empty($element['#centre'])) {
-      $render_array['#centre'] = $element['#centre'];
-    }
-
-    $children = Element::children($element, TRUE);
-    if ($children) {
-      $render_array['#children'] = $children;
+    foreach (Element::children($render_array) as $child) {
+      $render_array['#children'][] = $render_array[$child];
     }
 
     return $render_array;

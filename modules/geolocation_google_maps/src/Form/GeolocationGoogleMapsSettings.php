@@ -44,7 +44,7 @@ class GeolocationGoogleMapsSettings extends ConfigFormBase {
 
     $form['parameters']['libraries'] = [
       '#type' => 'fieldset',
-      '#title' => $this->t("Google Maps Libraries - 'libraries'"),
+      '#title' => $this->t("Google Maps API Libraries - 'libraries'"),
       '#description' => $this->t('See <a href=":google_libraries_link">Google libraries documentation</a>.', [':google_libraries_link' => 'https://developers.google.com/maps/documentation/javascript/libraries']),
       '#attributes' => [
         'id' => 'geolocation-google-libraries',
@@ -90,26 +90,26 @@ class GeolocationGoogleMapsSettings extends ConfigFormBase {
 
     $form['parameters']['region'] = [
       '#type' => 'textfield',
-      '#title' => $this->t("Google Maps Region - 'region'"),
+      '#title' => $this->t("Google Maps API Region - 'region'"),
       '#default_value' => empty($custom_parameters['region']) ?: $custom_parameters['region'],
     ];
     $form['parameters']['language'] = [
       '#type' => 'textfield',
-      '#title' => $this->t("Google Maps Localization - 'language'"),
+      '#title' => $this->t("Google Maps API Localization - 'language'"),
       '#default_value' => empty($custom_parameters['language']) ?: $custom_parameters['language'],
       '#description' => $this->t('See <a href=":google_localization_link">Google Maps API - Localizing the Map</a>.', [':google_localization_link' => 'https://developers.google.com/maps/documentation/javascript/localization']),
     ];
 
     $form['parameters']['v'] = [
       '#type' => 'textfield',
-      '#title' => $this->t("Google Maps Version - 'v'"),
+      '#title' => $this->t("Google Maps API Version - 'v'"),
       '#default_value' => empty($custom_parameters['v']) ?: $custom_parameters['v'],
       '#description' => $this->t('Will default to current experimental. See <a href=":google_version_link">Google Maps API - Versioning</a>.', [':google_version_link' => 'https://developers.google.com/maps/documentation/javascript/versions']),
     ];
 
     $form['parameters']['client'] = [
       '#type' => 'textfield',
-      '#title' => $this->t("Google Maps Client ID - 'client'"),
+      '#title' => $this->t("Google Maps API Client ID - 'client'"),
       '#default_value' => empty($custom_parameters['client']) ?: $custom_parameters['client'],
       '#description' => $this->t('Attention: setting this option has major usage implications. See <a href=":google_client_id_link">Google Maps Authentication documentation</a>.', [':google_client_id_link' => 'https://developers.google.com/maps/documentation/javascript/get-api-key#client-id']),
     ];

@@ -66,7 +66,7 @@
           if (typeof commonMapSettings.showRawLocations !== 'undefined') {
             if (commonMapSettings.showRawLocations) {
               map.addLoadedCallback(function (map) {
-                map.wrapper.find('.geolocation-map-locations').show();
+                map.wrapper.find('.geolocation-location').show();
               });
             }
           }

@@ -37,7 +37,7 @@
             map.addReadyCallback(function (map) {
               var locations = [];
 
-              $('#' + map.id, context).find('.geolocation-map-locations .geolocation-location').each(function (index, location) {
+              $('#' + map.id, context).find('.geolocation-location').each(function (index, location) {
                 location = $(location);
                 locations.push(new google.maps.LatLng(Number(location.data('lat')), Number(location.data('lng'))));
               });

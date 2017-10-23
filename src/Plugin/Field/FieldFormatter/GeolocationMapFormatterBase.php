@@ -233,15 +233,12 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
         $elements[$delta] = [
           '#theme' => 'geolocation_map_wrapper',
         ];
-        $elements[$delta]['#locations'] = [$location];
+        $elements[$delta]['location'] = $location;
         $elements[$delta]['#uniqueid'] = $unique_id;
         $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id] = [
           'id' => $unique_id,
         ];
-        $elements[$delta]['#centre'] = [
-          'lat' => $location['#position']['lat'],
-          'lng' => $location['#position']['lng'],
-        ];
+        $elements[$delta]['#centre'] = $location['#position'];
       }
     }
 
@@ -254,7 +251,9 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       $elements = [
         '#theme' => 'geolocation_map_wrapper',
       ];
-      $elements['#locations'] = $locations;
+      foreach ($locations as $delta => $location) {
+        $elements['location_' . $delta] = $location;
+      }
       $elements['#uniqueid'] = $unique_id;
       $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id] = [
         'id' => $unique_id,
