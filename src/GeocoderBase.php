@@ -13,13 +13,46 @@ use Drupal\Core\Form\FormStateInterface;
 abstract class GeocoderBase extends PluginBase implements GeocoderInterface {
 
   /**
+   * Return plugin default settings.
+   *
+   * @return array
+   *   Default settings.
+   */
+  protected function getDefaultSettings() {
+    return [
+      'label' => $this->t('Address'),
+      'description' => $this->t('Enter an address to be localized.'),
+    ];
+  }
+
+  /**
+   * Return plugin settings.
+   *
+   * @return array
+   *   Settings.
+   */
+  public function getSettings() {
+    return array_replace_recursive($this->getDefaultSettings(), $this->configuration);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getOptionsForm() {
     return [
-      '#type' => 'html_tag',
-      '#tag' => 'span',
-      '#value' => $this->t('No settings available.'),
+      'label' => [
+        '#type' => 'textfield',
+        '#title' => $this->t('Label'),
+        '#default_value' => $this->configuration['label'],
+        '#size' => 15,
+      ],
+
+      'description' => [
+        '#type' => 'textfield',
+        '#title' => $this->t('Label'),
+        '#default_value' => $this->configuration['description'],
+        '#size' => 15,
+      ],
     ];
   }
 

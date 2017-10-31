@@ -6,6 +6,7 @@ use Drupal\geolocation\Plugin\Field\FieldWidget\GeolocationMapWidgetBase;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Plugin implementation of the 'geolocation_googlegeocoder' widget.
@@ -35,7 +36,12 @@ class GeolocationGoogleWidget extends GeolocationMapWidgetBase {
    */
   public static function defaultSettings() {
     $settings = parent::defaultSettings();
-    $settings += GoogleMaps::getDefaultSettings();
+    $settings['google_map_settings'] = array_replace_recursive(
+      GoogleMaps::getDefaultSettings(),
+      empty($settings['google_map_settings']) ? [] : $settings['google_map_settings']
+    );
+    $settings['google_map_settings']['map_features']['control_geocoder']['enabled'] = TRUE;
+    $settings['google_map_settings']['map_features']['control_locate']['enabled'] = TRUE;
 
     return $settings;
   }
@@ -54,12 +60,11 @@ class GeolocationGoogleWidget extends GeolocationMapWidgetBase {
 
     $google_map_settings = $this->mapProvider->getSettings($settings[$this->mapProviderSettingsFormId]);
 
-    $element['map_container']['#attached']['library'][] = 'geolocation_google_maps/geolocation.widgets.google';
-    $unique_id = $element['map_container']['canvas']['#uniqueid'];
+    $element['map_container']['#attached']['library'][] = 'geolocation_google_maps/widgets.google';
 
-    $element['map_container']['canvas']['#attached'] = array_merge_recursive(
-      $element['map_container']['canvas']['#attached'],
-      $this->mapProvider->attachments($google_map_settings, $unique_id)
+    $element['map_container']['#attached'] = BubbleableMetadata::mergeAttachments(
+      $element['map_container']['#attached'],
+      $this->mapProvider->attachments($google_map_settings, $element['map_container']['#id'])
     );
 
     return $element;

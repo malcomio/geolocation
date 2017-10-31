@@ -208,8 +208,10 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
         ]);
 
       $location = [
-        '#theme' => 'geolocation_map_location',
-        '#content' => $content,
+        '#type' => 'geolocation_map_location',
+        'content' => [
+          '#markup' => $content,
+        ],
         '#title' => $title,
         '#disable_marker' => empty($settings['set_marker']) ? TRUE : FALSE,
         '#position' => [
@@ -224,19 +226,20 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       if (!empty($settings['common_map'])) {
         $locations[] = $location;
       }
+
       /*
-       * Add each single maps to render output.
+       * Add each single map to render output.
        */
       else {
-        $unique_id = uniqid("map-canvas-");
+        $id = uniqid("map-canvas-");
 
         $elements[$delta] = [
-          '#theme' => 'geolocation_map_wrapper',
+          '#type' => 'geolocation_map',
         ];
         $elements[$delta]['location'] = $location;
-        $elements[$delta]['#uniqueid'] = $unique_id;
-        $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id] = [
-          'id' => $unique_id,
+        $elements[$delta]['#id'] = $id;
+        $elements['#attached']['drupalSettings']['geolocation']['maps'][$id] = [
+          'id' => $id,
         ];
         $elements[$delta]['#centre'] = $location['#position'];
       }
@@ -246,17 +249,17 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
      * Display one map with all locations.
      */
     if (!empty($settings['common_map'])) {
-      $unique_id = uniqid("map-canvas-");
+      $id = uniqid("map-canvas-");
 
       $elements = [
-        '#theme' => 'geolocation_map_wrapper',
+        '#type' => 'geolocation_map',
       ];
       foreach ($locations as $delta => $location) {
         $elements['location_' . $delta] = $location;
       }
-      $elements['#uniqueid'] = $unique_id;
-      $elements['#attached']['drupalSettings']['geolocation']['maps'][$unique_id] = [
-        'id' => $unique_id,
+      $elements['#id'] = $id;
+      $elements['#attached']['drupalSettings']['geolocation']['maps'][$id] = [
+        'id' => $id,
       ];
 
       if (empty($locations)) {

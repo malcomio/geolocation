@@ -76,15 +76,12 @@ class GeolocationLeafletMapFormatter extends GeolocationMapFormatterBase {
 
     if (!empty($settings['common_map'])) {
       $elements['#maptype'] = 'leaflet';
-      $unique_id = $elements['#uniqueid'];
-
-      $elements['#attached'] = array_merge_recursive($elements['#attached'], $this->mapProvider->attachments($leaflet_settings, $unique_id));
+      $elements['#settings'] = $leaflet_settings;
     }
     else {
       foreach (Element::children($elements) as $delta => $element) {
         $elements[$delta]['#maptype'] = 'leaflet';
-        $unique_id = $elements[$delta]['#uniqueid'];
-        $elements['#attached'] = array_merge_recursive($elements['#attached'], $this->mapProvider->attachments($leaflet_settings, $unique_id));
+        $elements['#settings'] = $leaflet_settings;
       }
     }
 

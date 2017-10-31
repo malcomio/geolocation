@@ -3,7 +3,8 @@
 namespace Drupal\geolocation\Element;
 
 use Drupal\Core\Render\Element;
-use Drupal\Core\Render\Element\FormElement;
+use Drupal\Core\Render\Element\RenderElement;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Provides a render element to display a geolocation map.
@@ -16,13 +17,13 @@ use Drupal\Core\Render\Element\FormElement;
  *   '#description' => $this->t('Render element type "geolocation_map"'),
  *   '#maptype' => 'leaflet,
  *   '#centre' => [],
- *   '#uniqueid' => 'thisisanid',
+ *   '#id' => 'thisisanid',
  * ];
  * @endcode
  *
  * @FormElement("geolocation_map")
  */
-class GeolocationMap extends FormElement {
+class GeolocationMap extends RenderElement {
 
   /**
    * Map Provider.
@@ -56,9 +57,8 @@ class GeolocationMap extends FormElement {
       ],
       '#maptype' => NULL,
       '#centre' => NULL,
-      '#uniqueid' => NULL,
+      '#id' => NULL,
       '#controls' => NULL,
-      '#children' => NULL,
     ];
 
     return $info;
@@ -76,17 +76,13 @@ class GeolocationMap extends FormElement {
   public function preRenderMap(array $render_array) {
     $render_array['#theme'] = 'geolocation_map_wrapper';
 
-    if (empty($render_array['#uniqueid'])) {
-      $unique_id = uniqid();
-      $render_array['#uniqueid'] = $unique_id;
+    if (empty($render_array['#id'])) {
+      $id = uniqid();
+      $render_array['#id'] = $id;
     }
     else {
-      $unique_id = $render_array['#uniqueid'];
+      $id = $render_array['#id'];
     }
-
-    $render_array['#attached']['drupalSettings']['geolocation']['maps'][$unique_id] = [
-      'id' => $unique_id,
-    ];
 
     if (empty($render_array['#maptype'])) {
       if (\Drupal::moduleHandler()->moduleExists('geolocation_google_maps')) {
@@ -94,20 +90,37 @@ class GeolocationMap extends FormElement {
       }
     }
 
-    if (empty($render_array['#settings'][$render_array['#maptype'] . '_settings'])) {
-      $render_array['#settings'][$render_array['#maptype'] . '_settings'] = [];
+    $map_provider = $this->mapProviderManager->getMapProvider($render_array['#maptype']);
+
+    if (
+      !empty($render_array['#settings'])
+      && is_array($render_array['#settings'])
+    ) {
+      $map_settings = $render_array['#settings'];
+    }
+    else {
+      $map_settings = [];
     }
 
-    $render_array['#attached'] = array_merge_recursive(
-      $render_array['#attached'],
-      $this->mapProviderManager->getMapProvider($render_array['#maptype'])->attachments($render_array['#settings'][$render_array['#maptype'] . '_settings'], $unique_id)
-    );
+    $new_attached = $map_provider->attachments($map_settings, $id);
 
-    $render_array['#attached']['library'][] = 'geolocation/geolocation.map';
+    if (empty($render_array['#attached'])) {
+      $render_array['#attached'] = $new_attached;
+    }
+    else {
+      $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+        $render_array['#attached'],
+        $new_attached
+      );
+    }
+
+    array_unshift($render_array['#attached']['library'], 'geolocation/geolocation.map');
 
     foreach (Element::children($render_array) as $child) {
       $render_array['#children'][] = $render_array[$child];
     }
+
+    $render_array = $map_provider->alterRenderArray($render_array, $map_settings, $id);
 
     return $render_array;
   }

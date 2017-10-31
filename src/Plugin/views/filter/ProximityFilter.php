@@ -7,6 +7,7 @@ use Drupal\geolocation\GeolocationCore;
 use Drupal\views\Plugin\views\filter\NumericFilter;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Filter handler for search keywords.
@@ -246,7 +247,7 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
 
         $geocoder_plugin->formAttachGeocoder($form, $identifier);
 
-        $form = array_merge_recursive($form, [
+        $form = BubbleableMetadata::mergeAttachments($form, [
           '#attached' => [
             'library' => [
               'geolocation/geolocation.views.filter.geocoder',

@@ -3,6 +3,7 @@
 namespace Drupal\geolocation_google_maps\Plugin\views\style;
 
 use Drupal\geolocation\Plugin\views\style\CommonMapBase;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Allow to display several field items on a common map.
@@ -29,11 +30,11 @@ class GoogleCommonMap extends CommonMapBase {
 
     $build = parent::render();
 
-    $build['#attached'] = array_merge_recursive(
+    $build['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($build['#attached']) ? [] : $build['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.commonmap.google',
+          'geolocation_google_maps/commonmap.google',
         ],
       ]
     );

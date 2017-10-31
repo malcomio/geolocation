@@ -8,6 +8,7 @@ use Drupal\views\Plugin\views\query\Sql;
 use Drupal\geolocation\GeolocationCore;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Filter handler for search keywords.
@@ -202,7 +203,7 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
 
       $geocoder_plugin->formAttachGeocoder($form[$this->options['expose']['identifier']], $identifier);
 
-      $form = array_merge_recursive($form, [
+      $form = BubbleableMetadata::mergeAttachments($form, [
         '#attached' => [
           'library' => [
             'geolocation/geolocation.views.filter.geocoder',

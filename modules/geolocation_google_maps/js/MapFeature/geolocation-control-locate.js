@@ -22,7 +22,7 @@
         drupalSettings.geolocation.maps,
 
         /**
-         * @param {String} mapId - canvasId of current map
+         * @param {String} mapId - ID of current map
          * @param {Object} mapSettings - settings for current map
          * @param {ControlLocateSettings} mapSettings.control_locate - settings for current map
          */

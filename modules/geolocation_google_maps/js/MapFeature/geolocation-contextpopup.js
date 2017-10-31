@@ -23,7 +23,7 @@
         drupalSettings.geolocation.maps,
 
         /**
-         * @param {String} mapId - canvasId of current map
+         * @param {String} mapId - ID of current map
          * @param {Object} mapSettings - settings for current map
          * @param {ContextPopupSettings} mapSettings.context_popup - settings for current map
          */
@@ -34,6 +34,10 @@
           ) {
 
             var map = Drupal.geolocation.getMapById(mapId);
+
+            if (!map) {
+              return;
+            }
 
             map.addReadyCallback(function (map) {
 
@@ -72,8 +76,13 @@
                 );
               };
 
-              google.maps.event.addListener(map.googleMap, 'rightclick', function (event) {
-                console.log(mapSettings.context_popup.content, "Contents");
+              map.addClickCallback(function (event) {
+                if (typeof contextContainer !== 'undefined') {
+                  contextContainer.hide();
+                }
+              });
+
+              map.addContextClickCallback(function (event) {
                 var content = Drupal.formatString(mapSettings.context_popup.content, {
                   '@lat': event.latLng.lat(),
                   '@lng': event.latLng.lng()
@@ -86,12 +95,6 @@
                   contextContainer.show();
                   contextContainer.css('left', pos.x);
                   contextContainer.css('top', pos.y);
-                }
-              });
-
-              google.maps.event.addListener(map.googleMap, 'click', function (event) {
-                if (typeof contextContainer !== 'undefined') {
-                  contextContainer.hide();
                 }
               });
             });

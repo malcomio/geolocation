@@ -22,7 +22,7 @@
         drupalSettings.geolocation.maps,
 
         /**
-         * @param {String} mapId - canvasId of current map
+         * @param {String} mapId - ID of current map
          * @param {Object} mapSettings - settings for current map
          * @param {ControlGeocoderSettings} mapSettings.control_geocoder - settings for current map
          */
@@ -34,9 +34,7 @@
             var map = Drupal.geolocation.getMapById(mapId);
 
             map.addReadyCallback(function (map) {
-              var geocoderInput = $('<input data-source-identifier="' + mapId + '" class="geocoder" />');
-
-              map.addControl(geocoderInput);
+              // TODO?
             });
           }
         }

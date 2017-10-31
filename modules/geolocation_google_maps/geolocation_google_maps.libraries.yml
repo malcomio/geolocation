@@ -1,5 +1,5 @@
 # Geolocation Google Maps API integration library.
-geolocation.googlemapsapi:
+googlemapsapi:
   version: 8.x-1.x
   dependencies:
     - core/drupalSettings
@@ -8,36 +8,29 @@ geolocation.googlemapsapi:
     js/geolocation-google-maps-api.js: {}
 
 # Google CommonMap.
-geolocation.commonmap.google:
+commonmap.google:
   js:
     js/geolocation-common-map-google.js: {}
   dependencies:
     - geolocation/geolocation.commonmap
 
 # Google Maps geocoder function.
-geolocation.geocoder.googlegeocodingapi:
+geocoder.googlegeocodingapi:
   version: 8.x-1.x
   js:
     js/geolocation-google-geocoding-api-geocoder.js: {}
   dependencies:
     - core/jquery.once
     - geolocation/geolocation.geocoder
-    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/googlemapsapi
 
 # Google geocoder widget library.
-geolocation.widgets.google:
+widgets.google:
   version: 1.x
   js:
     js/geolocation-widget-google.js: { scope: footer }
   dependencies:
     - geolocation/geolocation.widgets.maps
-
-# Form element library.
-geolocation.google_map_form_element:
-  js:
-    js/geolocation-google-map-form-element.js: {}
-  dependencies:
-    - geolocation_google_maps/geolocation.googlemapsapi
 
 #
 # Map Features
@@ -48,35 +41,35 @@ geolocation.drawing:
   js:
     js/MapFeature/geolocation-drawing.js: {}
   dependencies:
-    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/googlemapsapi
 
 # ControlRecenter support.
 geolocation.control_recenter:
   js:
     js/MapFeature/geolocation-control-recenter.js: {}
   dependencies:
-    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/googlemapsapi
 
 # ControlLocate support.
 geolocation.control_locate:
   js:
     js/MapFeature/geolocation-control-locate.js: {}
   dependencies:
-    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/googlemapsapi
 
 # ClientLocationIndicator support.
 geolocation.client_location_indicator:
   js:
     js/MapFeature/geolocation-client-location-indicator.js: {}
   dependencies:
-    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/googlemapsapi
 
 # Spiderfying support.
 geolocation.spiderfying:
   js:
     js/MapFeature/geolocation-spiderfying.js: {}
   dependencies:
-    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/googlemapsapi
     - geolocation_google_maps/spiderfier
 
 # External OverlappingMarkerSpiderfier
@@ -95,7 +88,7 @@ geolocation.markerclusterer:
   js:
     js/MapFeature/geolocation-markerclusterer.js: {}
   dependencies:
-    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/googlemapsapi
     - geolocation_google_maps/markerclusterer
 
 # External marker clusterer.
@@ -114,11 +107,11 @@ geolocation.contextpopup:
   js:
     js/MapFeature/geolocation-contextpopup.js: {}
   dependencies:
-    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/googlemapsapi
 
 # ControlGeocoder support.
 geolocation.control_geocoder:
   js:
     js/MapFeature/geolocation-control-geocoder.js: {}
   dependencies:
-    - geolocation_google_maps/geolocation.googlemapsapi
+    - geolocation_google_maps/googlemapsapi

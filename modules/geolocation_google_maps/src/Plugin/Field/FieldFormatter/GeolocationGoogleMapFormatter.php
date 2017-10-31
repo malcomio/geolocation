@@ -87,20 +87,20 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
       && !empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
       && is_array($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
     ) {
-      $google_map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId]);
+      $google_map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId] ?: []);
     }
     else {
-      $google_map_settings = $this->mapProvider->getSettings($settings[$this->mapProviderSettingsFormId]);
+      $google_map_settings = $this->mapProvider->getSettings(isset($settings[$this->mapProviderSettingsFormId]) ? $this->mapProviderSettingsFormId : []);
     }
 
     if (!empty($settings['common_map'])) {
-      $unique_id = $elements['#uniqueid'];
-      $elements = $this->mapProvider->alterRenderArray($elements, $google_map_settings, $unique_id);
+      $id = $elements['#id'];
+      $elements = $this->mapProvider->alterRenderArray($elements, $google_map_settings, $id);
     }
     else {
       foreach (Element::children($elements) as $delta => $element) {
-        $unique_id = $elements[$delta]['#uniqueid'];
-        $elements[$delta] = $this->mapProvider->alterRenderArray($elements[$delta], $google_map_settings, $unique_id);
+        $id = $elements[$delta]['#id'];
+        $elements[$delta] = $this->mapProvider->alterRenderArray($elements[$delta], $google_map_settings, $id);
       }
     }
 

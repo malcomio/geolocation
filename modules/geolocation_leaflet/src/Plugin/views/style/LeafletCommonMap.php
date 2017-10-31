@@ -3,7 +3,7 @@
 namespace Drupal\geolocation_leaflet\Plugin\views\style;
 
 use Drupal\geolocation\Plugin\views\style\CommonMapBase;
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Allow to display several field items on a common map.
@@ -30,7 +30,7 @@ class LeafletCommonMap extends CommonMapBase {
     $build = parent::render();
     $build['#maptype'] = 'leaflet';
 
-    $build['#attached'] = array_merge_recursive(
+    $build['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($build['#attached']) ? [] : $build['#attached'],
       [
         'library' => [

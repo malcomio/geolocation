@@ -9,6 +9,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Field handler for geolocaiton field.
@@ -522,7 +523,7 @@ class ProximityField extends NumericField implements ContainerFactoryPluginInter
 
       $geocoder_plugin->formAttachGeocoder($form, 'views_field_geocoder');
 
-      $form = array_merge_recursive($form, [
+      $form = BubbleableMetadata::mergeAttachments($form, [
         '#attached' => [
           'library' => [
             'geolocation/geolocation.views.field.geocoder',

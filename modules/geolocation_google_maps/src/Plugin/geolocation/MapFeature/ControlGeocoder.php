@@ -5,6 +5,7 @@ namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation\MapFeatureBase;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Provides Google Maps.
@@ -23,7 +24,8 @@ class ControlGeocoder extends MapFeatureBase {
    */
   public static function getDefaultSettings() {
     return [
-      'geocoder' => '',
+      'geocoder' => 'google_geocoding_api',
+      'settings' => [],
     ];
   }
 
@@ -42,6 +44,11 @@ class ControlGeocoder extends MapFeatureBase {
    */
   public function getSettingsForm(array $settings, array $parents) {
     $form = [];
+
+    $settings = array_replace_recursive(
+      self::getDefaultSettings(),
+      $settings
+    );
 
     /** @var \Drupal\geolocation\GeocoderManager $geocoder_manager */
     $geocoder_manager = \Drupal::service('plugin.manager.geolocation.geocoder');
@@ -140,6 +147,25 @@ class ControlGeocoder extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
+  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
+    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+
+    $render_array['#controls']['geocoder'] = [];
+
+    /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
+    $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
+      ->getGeocoder(
+        $settings['geocoder'],
+        $settings['settings']
+      );
+    $geocoder_plugin->formAttachGeocoder($render_array['#controls']['geocoder'], $render_array['#id']);
+
+    return $render_array;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function attachments(array $settings, $map_id) {
     /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
     $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
@@ -165,7 +191,7 @@ class ControlGeocoder extends MapFeatureBase {
       ],
     ];
 
-    $attachments = array_merge_recursive($attachments, $geocoder_plugin->attachments($map_id));
+    $attachments = BubbleableMetadata::mergeAttachments($attachments, $geocoder_plugin->attachments($map_id));
 
     return $attachments;
   }

@@ -175,9 +175,15 @@ abstract class CommonMapBase extends StylePluginBase {
       $this->mapId = $this->view->dom_id;
     }
 
+    $map_settings = [];
+    if (!empty($this->options[$this->mapProviderSettingsFormId])) {
+      $map_settings = $this->options[$this->mapProviderSettingsFormId];
+    }
+
     $build = [
       '#type' => 'geolocation_map',
-      '#uniqueid' => $this->mapId,
+      '#id' => $this->mapId,
+      '#settings' => $map_settings,
       '#attached' => [
         'library' => [
           'geolocation/geolocation.commonmap',
@@ -273,12 +279,14 @@ abstract class CommonMapBase extends StylePluginBase {
           $centre = [
             'lat' => (float) $option['settings']['latitude'],
             'lng' => (float) $option['settings']['longitude'],
+            'behavior' => 'preset',
           ];
           break;
 
         case 'first_row':
           if (!empty($build['locations'][0]['#position'])) {
             $centre = $build['locations'][0]['#position'];
+            $centre['behavior'] = 'preset';
           }
           break;
 
@@ -349,8 +357,6 @@ abstract class CommonMapBase extends StylePluginBase {
     if (!empty($centre)) {
       $build['#centre'] = $centre ?: ['lat' => 0, 'lng' => 0];
     }
-
-    $build = $this->mapProvider->alterRenderArray($build, empty($this->options[$this->mapProviderSettingsFormId]) ? [] : $this->options[$this->mapProviderSettingsFormId], $this->mapId);
 
     return $build;
   }
@@ -441,8 +447,8 @@ abstract class CommonMapBase extends StylePluginBase {
 
     foreach ($positions as $position) {
       $location = [
-        '#theme' => 'geolocation_map_location',
-        '#content' => $this->view->rowPlugin->render($row),
+        '#type' => 'geolocation_map_location',
+        'content' => $this->view->rowPlugin->render($row),
         '#title' => empty($title_build) ? '' : $title_build,
         '#position' => $position,
       ];

@@ -2,15 +2,8 @@
 
 namespace Drupal\geolocation\Element;
 
-use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
-use Drupal\address\FieldHelper;
-use Drupal\address\LabelHelper;
-use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\NestedArray;
-use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Form\FormStateInterface;
-
 
 /**
  * Provides a render element to display a geolocation map.
@@ -23,7 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
  *   '#description' => $this->t('Render element type "geolocation_map"'),
  *   '#maptype' => 'leaflet,
  *   '#centre' => [],
- *   '#uniqueid' => 'thisisanid',
+ *   '#id' => 'thisisanid',
  * ];
  * @endcode
  *
@@ -43,19 +36,17 @@ class GeolocationInput extends FormElement {
         [$class, 'processGroup'],
       ],
       '#pre_render' => [
-        [$class, 'groupElements'],
         [$class, 'preRenderGroup'],
       ],
       '#element_validate' => [
         [$class, 'validateGeolocation'],
       ],
-      '#theme' => 'input__email',
       '#theme_wrappers' => ['form_element'],
     ];
   }
 
   /**
-   * Processes the address form element.
+   * Processes the geolocation form element.
    *
    * @param array $element
    *   The form element to process.
@@ -66,9 +57,6 @@ class GeolocationInput extends FormElement {
    *
    * @return array
    *   The processed element.
-   *
-   * @throws \InvalidArgumentException
-   *   Thrown when #available_countries or #used_fields is malformed.
    */
   public static function processGeolocation(array &$element, FormStateInterface $form_state, array &$complete_form) {
     $default_field_values = [
@@ -115,42 +103,29 @@ class GeolocationInput extends FormElement {
   }
 
   /**
-   * Groups elements with the same #group so that they can be inlined.
-   */
-  public static function groupElements(array $element) {
-    $sort = [];
-    foreach (Element::getVisibleChildren($element) as $key) {
-      if (isset($element[$key]['#group'])) {
-        // Copy the element to the container and remove the original.
-        $group_index = $element[$key]['#group'];
-        $container_key = 'container' . $group_index;
-        $element[$container_key][$key] = $element[$key];
-        unset($element[$key]);
-        // Mark the container for sorting.
-        if (!in_array($container_key, $sort)) {
-          $sort[] = $container_key;
-        }
-      }
-    }
-    // Sort the moved elements, so that their #weight stays respected.
-    foreach ($sort as $key) {
-      uasort($element[$key], [SortArray::class, 'sortByWeightProperty']);
-    }
-
-    return $element;
-  }
-
-  /**
    * Form element validation handler for #type 'email'.
    *
-   * Note that #maxlength and #required is validated by _form_validate() already.
+   * @param array $element
+   *   The form element to process.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
    */
-  public static function validateGeolocation(&$element, FormStateInterface $form_state, &$complete_form) {
-    $value = trim($element['#value']);
-    $form_state->setValueForElement($element, $value);
+  public static function validateGeolocation(array &$element, FormStateInterface $form_state, array &$complete_form) {
+    $longitude = floatval($element['#value']['longitude']);
+    $latitude = floatval($element['#value']['latitude']);
+    $form_state->setValueForElement($element, [
+      'latitude' => $latitude,
+      'longitude' => $longitude,
+    ]);
 
-    if ($value !== '' && !\Drupal::service('email.validator')->isValid($value)) {
-      $form_state->setError($element, t('The email address %mail is not valid.', ['%mail' => $value]));
+    if ($latitude < -90 || $latitude > 90) {
+      $form_state->setError($element, t('Latitude must be between -90 and 90.'));
+    }
+
+    if ($longitude < -180 || $longitude > 180) {
+      $form_state->setError($element, t('Longitude must be between -180 and 180.'));
     }
   }
 

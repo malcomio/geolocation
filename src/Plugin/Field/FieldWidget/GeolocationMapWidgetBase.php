@@ -199,7 +199,9 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       $summary[] = $this->t('Users will be allowed to override the map settings for each content.');
     }
 
-    $summary = array_replace_recursive($summary, $this->mapProvider->getSettingsSummary($settings[$this->mapProviderSettingsFormId]));
+    $map_provider_settings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
+
+    $summary = array_replace_recursive($summary, $this->mapProvider->getSettingsSummary($map_provider_settings));
 
     return $summary;
   }
@@ -227,32 +229,11 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       ];
     }
 
-    // Hidden lat,lng input fields.
-    $element['latitude'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Latitude'),
-      '#default_value' => $default_field_values['lat'],
-      '#attributes' => [
-        'class' => [
-          'geolocation-map-input-latitude',
-        ],
-      ],
-    ];
-    $element['longitude'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Longitude'),
-      '#default_value' => $default_field_values['lng'],
-      '#attributes' => [
-        'class' => [
-          'geolocation-map-input-latitude',
-        ],
-      ],
-    ];
-
-    $element['#attributes'] = [
-      'class' => [
-        'geolocation-map-input',
-        'geolocation-map-input-' . $delta,
+    $element['element'] = [
+      '#type' => 'geolocation_input',
+      '#default_value' => [
+        'lat' => $default_field_values['lat'],
+        'lng' => $default_field_values['lng'],
       ],
     ];
 
@@ -265,11 +246,11 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
   public function form(FieldItemListInterface $items, array &$form, FormStateInterface $form_state, $get_delta = NULL) {
     $element = parent::form($items, $form, $form_state, $get_delta);
 
-    $canvas_id = Html::getUniqueId($this->fieldDefinition->getName());
+    $id = Html::getUniqueId($this->fieldDefinition->getName());
 
     $settings = $this->getSettings();
 
-    $element['#attributes']['class'][] = 'canvas-' . $canvas_id;
+    $element['#attributes']['class'][] = 'canvas-' . $id;
 
     // Add the map container.
     $element['map_container'] = [
@@ -282,7 +263,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
         'drupalSettings' => [
           'geolocation' => [
             'widgetSettings' => [
-              $canvas_id => [
+              $id => [
                 'autoClientLocation' => $settings['auto_client_location'] ? TRUE : FALSE,
                 'autoClientLocationMarker' => $settings['auto_client_location_marker'] ? TRUE : FALSE,
               ],
@@ -292,86 +273,28 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       ],
     ];
 
-    $element['map_container']['canvas'] = [
-      '#theme' => 'geolocation_map_wrapper',
-      '#uniqueid' => $canvas_id,
+    $element['map_container'] = [
+      '#type' => 'geolocation_map',
+      '#settings' => $settings[$this->mapProviderSettingsFormId],
+      '#id' => $id,
     ];
 
-    $element['map_container']['canvas']['#attached']['drupalSettings']['geolocation']['maps'][$canvas_id] = [
-      'id' => $canvas_id,
-    ];
-
-    $locations = [];
     foreach ($items as $delta => $item) {
       if ($item->isEmpty()) {
         continue;
       }
-      $location = [
-        '#theme' => 'geolocation_map_location',
-        '#content' => $delta . ': ' . $item->lat . ' ' . $item->lng,
+      $element['map_container']['location_' . $delta][] = [
+        '#type' => 'geolocation_map_location',
+        'content' => [
+          '#markup' => $delta . ': ' . $item->lat . ' ' . $item->lng,
+        ],
         '#title' => $delta . ': ' . $item->lat . ' ' . $item->lng,
         '#position' => [
           'lat' => $item->lat,
           'lng' => $item->lng,
         ],
       ];
-
-      $element['map_container']['canvas']['#locations'][] = $location;
     }
-    $element['map_container']['canvas']['#locations'] = $locations;
-
-    $element['map_container']['controls'] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'id' => 'geocoder-controls-wrapper-' . $canvas_id,
-        'class' => [
-          'geocode-controls-wrapper',
-        ],
-      ],
-    ];
-    $element['map_container']['controls']['location'] = [
-      '#type' => 'textfield',
-      '#placeholder' => t('Enter a location'),
-      '#attributes' => [
-        'class' => [
-          'location',
-          'form-autocomplete',
-        ],
-      ],
-      '#theme_wrappers' => [],
-    ];
-    $element['map_container']['controls']['search'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'button',
-      '#attributes' => [
-        'class' => [
-          'search',
-        ],
-        'title' => t('Search'),
-      ],
-    ];
-    $element['map_container']['controls']['locate'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'button',
-      '#attributes' => [
-        'class' => [
-          'locate',
-        ],
-        'style' => 'display: none;',
-        'title' => t('Locate'),
-      ],
-    ];
-    $element['map_container']['controls']['clear'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'button',
-      '#attributes' => [
-        'class' => [
-          'clear',
-          'disabled',
-        ],
-        'title' => t('Clear'),
-      ],
-    ];
 
     if ($settings['allow_override_map_settings']) {
       if ($this->mapProvider) {

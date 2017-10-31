@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\geolocation\MapProviderBase;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Provides Google Maps.
@@ -76,7 +77,7 @@ class GoogleMaps extends MapProviderBase {
   public function getGoogleMapsApiParameters() {
     $config = \Drupal::config('geolocation_google_maps.settings');
     $geolocation_parameters = [
-      'callback' => 'Drupal.geolocation.google.loadedCallback',
+      'callback' => 'Drupal.geolocation.google.load',
       'key' => $config->get('google_map_api_key'),
     ];
     $module_parameters = \Drupal::moduleHandler()->invokeAll('geolocation_google_maps_parameters') ?: [];
@@ -201,6 +202,10 @@ class GoogleMaps extends MapProviderBase {
    */
   public function getSettingsSummary(array $settings) {
     $types = $this->getMapTypes();
+    $settings = array_replace_recursive(
+      self::getDefaultSettings(),
+      $settings
+    );
     $summary = [];
     $summary[] = $this->t('Map Type: @type', ['@type' => $types[$settings['type']]]);
     $summary[] = $this->t('Zoom level: @zoom', ['@zoom' => $settings['zoom']]);
@@ -528,7 +533,7 @@ class GoogleMaps extends MapProviderBase {
 
     $attachments = [
       'library' => [
-        'geolocation_google_maps/geolocation.googlemapsapi',
+        'geolocation_google_maps/googlemapsapi',
       ],
       'drupalSettings' => [
         'geolocation' => [
@@ -540,25 +545,28 @@ class GoogleMaps extends MapProviderBase {
     $google_map_settings = $this->getSettings($google_map_settings);
 
     if (
-      !empty($settings['style'])
-      && is_array($settings['style'])
+      !empty($google_map_settings['style'])
+      && is_string($google_map_settings['style'])
     ) {
-      $settings['style'] = json_encode($settings['style']);
+      $google_map_settings['style'] = json_decode($google_map_settings['style']);
     }
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
       if (!empty($google_map_settings['map_features'][$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
         if ($feature) {
-          $attachments = array_merge_recursive($feature->attachments($google_map_settings['map_features'][$feature_id]['settings'], $map_id), $attachments);
+          $feature_settings = [];
+          if (!empty($google_map_settings['map_features'][$feature_id]['settings'])) {
+            $feature_settings = $google_map_settings['map_features'][$feature_id]['settings'];
+          }
+          $attachments = BubbleableMetadata::mergeAttachments($feature->attachments($feature_settings, $map_id), $attachments);
           // Attachments and settings are merged later anyway.
           unset($google_map_settings['map_features'][$feature_id]);
         }
       }
     }
 
-    $attachments = array_merge_recursive(
-      $attachments,
+    $attachments = BubbleableMetadata::mergeAttachments(
       [
         'drupalSettings' => [
           'geolocation' => [
@@ -571,7 +579,8 @@ class GoogleMaps extends MapProviderBase {
             ],
           ],
         ],
-      ]
+      ],
+      $attachments
     );
 
     return $attachments;

@@ -1,22 +1,13 @@
-{#
-  When overriding this template, make sure to preserve
-  - CSS-classes
-  - parent - children hierarchy
-  - data-lng and data-lat attributes
-  or the attached Geolocation Javascript will fail.
-
-  Changing the HTML tags, adding classes or adding content around or within the existing structure is no problem.
-#}
 <div
     class="geolocation-location"
     data-lat="{{ position.lat }}"
     data-lng="{{ position.lng }}"
     typeof="Place"
-    {% if location_id is not empty %} data-location-id="{{ location_id }}" {% endif %}
-    {% if disable_marker is empty %}
+    {% if id is not empty %} id="{{ id }}" {% endif %}
+    {% if hidden is empty %}
         data-set-marker="true"
         {% if icon is not empty %} data-icon="{{ icon }}" {% endif %}
-        {% if marker_label is not empty %} data-marker-label="{{ marker_label }}" {% endif %}
+        {% if label is not empty %} data-label="{{ label }}" {% endif %}
     {% endif %}
 >
     <span property="geo" typeof="GeoCoordinates">
@@ -24,5 +15,5 @@
         <meta property="longitude" content="{{ position.lng }}" />
     </span>
     <h2 class="location-title" property="name">{{ title }}</h2>
-    <div class="location-content">{{ content }}</div>
+    <div class="location-content">{{ children }}</div>
 </div>

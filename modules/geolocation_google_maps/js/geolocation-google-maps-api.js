@@ -326,17 +326,16 @@
         gestureHandling: map.settings.google_map_settings.gestureHandling
       });
 
-      // TODO: Add explizite settings to enforce zoom.
-      if (map.settings.google_map_settings.zoom && 1==2) {
-        google.maps.event.addListenerOnce(googleMap, 'zoom_changed', function () {
-          if (map.settings.google_map_settings.zoom < map.googleMap.getZoom()) {
-            map.googleMap.setZoom(map.settings.google_map_settings.zoom);
-          }
-        });
-      }
-
       /** @property {GoogleMap} googleMap */
       map.googleMap = googleMap;
+
+      google.maps.event.addListener(map.googleMap, 'click', function (event) {
+        map.clickCallback(event);
+      });
+
+      google.maps.event.addListener(map.googleMap, 'rightclick', function (event) {
+        map.contextClickCallback(event);
+      });
 
       if (map.settings.google_map_settings.scrollwheel && map.settings.google_map_settings.preferScrollingToZooming) {
         map.googleMap.setOptions({scrollwheel: false});
@@ -358,8 +357,11 @@
       Drupal.geolocation.google.addLoadedCallback(function () {
         that.readyCallback();
       });
-      Drupal.geolocation.google.loadedCallback();
+
+      // Load Google Maps API and execute all callbacks.
+      Drupal.geolocation.google.load();
     }
+
   }
   GeolocationGoogleMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationGoogleMap.prototype.constructor = GeolocationGoogleMap;
@@ -487,6 +489,24 @@
     });
   };
 
+  GeolocationGoogleMap.prototype.setCenterByBehavior = function (centreBehavior) {
+    Drupal.geolocation.GeolocationMapBase.prototype.setCenterByBehavior.call(this, centreBehavior);
+
+    switch (centreBehavior) {
+      case 'preset':
+        this.addReadyCallback(function (map) {
+          if (map.settings.google_map_settings.zoom) {
+            google.maps.event.addListenerOnce(map.googleMap, 'zoom_changed', function () {
+              if (map.settings.google_map_settings.zoom < map.googleMap.getZoom()) {
+                map.googleMap.setZoom(map.settings.google_map_settings.zoom);
+              }
+            });
+          }
+        });
+        break;
+    }
+  };
+
   /**
    * Re-center map, draw a circle indicating accuracy and slowly fade it out.
    *
@@ -494,6 +514,12 @@
    * @param {int} accuracy - Accuracy in meter.
    */
   GeolocationGoogleMap.prototype.setCenterByCoordinates = function (coordinates, accuracy) {
+    Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy);
+
+    if (typeof accuracy === 'undefined') {
+      this.googleMap.setCenter(coordinates);
+      return;
+    }
 
     var circle = this.addAccuracyIndicatorCircle(coordinates, accuracy);
 
@@ -562,7 +588,7 @@
   /**
    * Provides the callback that is called when maps loads.
    */
-  Drupal.geolocation.google.loadedCallback = function () {
+  Drupal.geolocation.google.load = function () {
     // Check for Google Maps.
     if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
       if (Drupal.geolocation.google.maps_api_loading === true) {

@@ -49,12 +49,6 @@
               map.removeMapMarkers();
             }, mapId);
 
-            /**
-             *
-             * Initialize map.
-             *
-             */
-
             // If requested in settings, try to override map center by user location.
             if (typeof (widgetSetting.autoClientLocation) !== 'undefined') {
               if (
@@ -148,7 +142,7 @@
               );
             });
 
-            map.addControls(controls);
+            //map.addControl(controls);
 
             google.maps.event.addDomListener(map.controls.children('button.search')[0], 'click', function (e) {
               e.preventDefault();
@@ -226,7 +220,7 @@
             });
 
             // Add a doubleclick listener.
-            google.maps.event.addListener(map.googleMap, 'dblclick', function (e) {
+            google.maps.event.addListener(map.googleMap, 'dblclick', function (e) { // eslint-disable-line no-unused-vars
               clearTimeout(singleClick);
             });
 

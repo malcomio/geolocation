@@ -25,7 +25,7 @@
         drupalSettings.geolocation.maps,
 
         /**
-         * @param {String} mapId - canvasId of current map
+         * @param {String} mapId - ID of current map
          * @param {Object} mapSettings - settings for current map
          * @param {MarkerClustererSettings} mapSettings.marker_clusterer - settings for current map
          */
@@ -52,6 +52,10 @@
             }
 
             var map = Drupal.geolocation.getMapById(mapId);
+
+            if (!map) {
+              return;
+            }
 
             map.addLoadedCallback(function (map) {
               new MarkerClusterer(

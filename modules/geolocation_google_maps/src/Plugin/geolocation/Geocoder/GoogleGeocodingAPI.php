@@ -6,6 +6,7 @@ use GuzzleHttp\Exception\RequestException;
 use Drupal\Component\Serialization\Json;
 use Drupal\geolocation\GeocoderBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Provides the Google Geocoding API.
@@ -30,6 +31,23 @@ class GoogleGeocodingAPI extends GeocoderBase {
   /**
    * {@inheritdoc}
    */
+  protected function getDefaultSettings() {
+    $default_settings = parent::getDefaultSettings();
+
+    $default_settings['components'] = [
+      'route' => '',
+      'locality' => '',
+      'administrative_area' => '',
+      'postal_code' => '',
+      'country' => '',
+    ];
+
+    return $default_settings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -40,66 +58,78 @@ class GoogleGeocodingAPI extends GeocoderBase {
    * {@inheritdoc}
    */
   public function getOptionsForm() {
-    return [
+
+    $settings = $this->getSettings();
+
+    $form = parent::getOptionsForm();
+
+    $form += [
       'components' => [
         '#type' => 'fieldset',
         '#title' => $this->t('Component presets'),
         '#description' => $this->t('See https://developers.google.com/maps/documentation/geocoding/intro#ComponentFiltering'),
         'route' => [
           '#type' => 'textfield',
-          '#default_value' => isset($this->configuration['components']['route']) ? $this->configuration['components']['route'] : '',
+          '#default_value' => $settings['components']['route'],
           '#title' => $this->t('Route'),
           '#size' => 15,
         ],
         'locality' => [
           '#type' => 'textfield',
-          '#default_value' => isset($this->configuration['components']['locality']) ? $this->configuration['components']['locality'] : '',
+          '#default_value' => $settings['components']['locality'],
           '#title' => $this->t('Locality'),
           '#size' => 15,
         ],
         'administrativeArea' => [
           '#type' => 'textfield',
-          '#default_value' => isset($this->configuration['components']['administrative_area']) ? $this->configuration['components']['administrativeArea'] : '',
+          '#default_value' => $settings['components']['administrativeArea'],
           '#title' => $this->t('Administrative Area'),
           '#size' => 15,
         ],
         'postalCode' => [
           '#type' => 'textfield',
-          '#default_value' => isset($this->configuration['components']['postal_code']) ? $this->configuration['components']['postalCode'] : '',
+          '#default_value' => $settings['components']['postalCode'],
           '#title' => $this->t('Postal code'),
           '#size' => 5,
         ],
         'country' => [
           '#type' => 'textfield',
-          '#default_value' => isset($this->configuration['components']['country']) ? $this->configuration['components']['country'] : '',
+          '#default_value' => $settings['components']['country'],
           '#title' => $this->t('Country'),
           '#size' => 5,
         ],
       ],
     ];
+
+    return $form;
   }
 
   /**
    * {@inheritdoc}
    */
   public function attachments($input_id) {
-    $attachments = [
-      'library' => [
-        'geolocation_google_maps/geolocation.geocoder.googlegeocodingapi',
-      ],
-      'drupalSettings' => [
-        'geolocation' => [
-          'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
-          'geocoder' => [
-            'googleGeocodingAPI' => [
-              'inputIds' => [
-                $input_id,
+    $attachments = parent::attachments($input_id);
+
+    $attachments = BubbleableMetadata::mergeAttachments(
+      $attachments,
+      [
+        'library' => [
+          'geolocation_google_maps/geocoder.googlegeocodingapi',
+        ],
+        'drupalSettings' => [
+          'geolocation' => [
+            'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
+            'geocoder' => [
+              'googleGeocodingAPI' => [
+                'inputIds' => [
+                  $input_id,
+                ],
               ],
             ],
           ],
         ],
-      ],
-    ];
+      ]
+    );
 
     if (!empty($this->configuration['component_restrictions'])) {
       foreach ($this->configuration['component_restrictions'] as $component => $restriction) {
@@ -107,7 +137,7 @@ class GoogleGeocodingAPI extends GeocoderBase {
           continue;
         }
 
-        $attachments = array_merge_recursive(
+        $attachments = $attachments = BubbleableMetadata::mergeAttachments(
           $attachments,
           [
             'drupalSettings' => [
@@ -134,9 +164,14 @@ class GoogleGeocodingAPI extends GeocoderBase {
    */
   public function formAttachGeocoder(array &$render_array, $element_name) {
     $config = \Drupal::config('geolocation_google_maps.settings');
+
+    $settings = $this->getSettings();
+
     $render_array['geolocation_geocoder_google_geocoding_api'] = [
       '#type' => 'textfield',
-      '#description' => $this->t('Enter an address to filter results.'),
+      '#title' => $settings['label'],
+      '#description' => $settings['description'],
+      '#description_display' => 'after',
       '#attributes' => [
         'class' => [
           'form-autocomplete',
@@ -146,12 +181,6 @@ class GoogleGeocodingAPI extends GeocoderBase {
         'data-source-identifier' => $element_name,
       ],
     ];
-    if (!empty($render_array[$element_name]['#title'])) {
-      $render_array['geolocation_geocoder_google_geocoding_api']['#title'] = $render_array[$element_name]['#title'];
-    }
-    elseif ($this->configuration['label']) {
-      $render_array['geolocation_geocoder_google_geocoding_api']['#title'] = $this->configuration['label'];
-    }
 
     $render_array['geolocation_geocoder_google_geocoding_api_state'] = [
       '#type' => 'hidden',
@@ -175,6 +204,8 @@ class GoogleGeocodingAPI extends GeocoderBase {
    * {@inheritdoc}
    */
   public function formValidateInput(FormStateInterface $form_state) {
+    $validate = parent::formValidateInput($form_state);
+
     $input = $form_state->getUserInput();
     if (
       !empty($input['geolocation_geocoder_google_geocoding_api'])
@@ -187,13 +218,15 @@ class GoogleGeocodingAPI extends GeocoderBase {
         return FALSE;
       }
     }
-    return TRUE;
+    return $validate;
   }
 
   /**
    * {@inheritdoc}
    */
   public function formProcessInput(array &$input, $element_name) {
+    $return = parent::formProcessInput($input, $element_name);
+
     if (
       !empty($input['geolocation_geocoder_google_geocoding_api'])
       && empty($input['geolocation_geocoder_google_geocoding_api_state'])
@@ -210,7 +243,7 @@ class GoogleGeocodingAPI extends GeocoderBase {
 
       return $location_data;
     }
-    return TRUE;
+    return $return;
   }
 
   /**

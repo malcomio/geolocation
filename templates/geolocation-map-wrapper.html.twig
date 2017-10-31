@@ -13,7 +13,7 @@
  */
 #}
 <div
-    id="{{ uniqueid }}"
+    id="{{ id }}"
     class="geolocation-map-wrapper"
 
     data-map-type="{{ maptype }}"
@@ -36,13 +36,15 @@
         data-centre-behavior="fitlocations"
     {% endif %}
 >
-    <div class="geolocation-map-container"></div>
-
-    {% if locations is not empty %}
-        {% for location in locations %}
-            {{ location }}
+    <div class="geolocation-map-controls">
+      {% if controls is not empty %}
+        {% for control in controls %}
+          {{ control }}
         {% endfor %}
-    {% endif %}
+      {% endif %}
+    </div>
+
+    <div class="geolocation-map-container"></div>
 
     {% if children is not empty %}
         {{ children }}

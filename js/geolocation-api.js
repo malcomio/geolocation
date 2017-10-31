@@ -21,6 +21,27 @@
  */
 
 /**
+ * Callback when map is clicked.
+ *
+ * @callback GeolocationMapClickCallback
+ * @param {Object} event - Click event.
+ */
+
+/**
+ * Callback when map is right-clicked.
+ *
+ * @callback GeolocationMapContextClickCallback
+ * @param {Object} event - Click event.
+ */
+
+/**
+ * Callback when map is clicked.
+ *
+ * @callback GeolocationMapMarkerClickCallback
+ * @param {Object} event - Click event.
+ */
+
+/**
  * Callback when map provider becomes available.
  *
  * @callback GeolocationMapReadyCallback
@@ -133,6 +154,33 @@
  * @function
  * @name GeolocationMapInterface#addReadyCallback
  * @param {GeolocationMapReadyCallback} callback - Callback.
+ *
+ * Executes {GeolocationMapClickCallbacks} for this map.
+ * @function
+ * @name GeolocationMapInterface#clickCallback
+ *
+ * Adds a callback that will be called when map provider becomes available.
+ * @function
+ * @name GeolocationMapInterface#addClickCallback
+ * @param {GeolocationMapClickCallback} callback - Callback.
+ *
+ * Executes {GeolocationMapMarkerClickCallbacks} for this map.
+ * @function
+ * @name GeolocationMapInterface#markerClickCallback
+ *
+ * Adds a callback that will be called when map provider becomes available.
+ * @function
+ * @name GeolocationMapInterface#addMarkerClickCallback
+ * @param {GeolocationMapMarkerClickCallback} callback - Callback.
+ *
+ * Executes {GeolocationMapContextClickCallbacks} for this map.
+ * @function
+ * @name GeolocationMapInterface#contextClickCallback
+ *
+ * Adds a callback that will be called when map provider becomes available.
+ * @function
+ * @name GeolocationMapInterface#addContextClickCallback
+ * @param {GeolocationMapContextClickCallback} callback - Callback.
  */
 
 (function ($, Drupal) {
@@ -180,7 +228,6 @@
     }
 
     this.mapMarkers = this.mapMarkers || [];
-
     Drupal.geolocation.maps.push(this);
 
     return this;
@@ -202,9 +249,11 @@
 
       switch (centreBehavior) {
         case 'preset':
-          this.setCenterByCoordinates({
-            lat: this.lat,
-            lng: this.lng
+          this.addReadyCallback(function (map) {
+            map.setCenterByCoordinates({
+              lat: map.lat,
+              lng: map.lng
+            });
           });
           break;
 
@@ -260,6 +309,36 @@
     },
     fitBoundaries: function (boundaries) {
       // Stub.
+    },
+    clickCallback: function (event) {
+      this.clickCallbacks = this.clickCallbacks || [];
+      $.each(this.clickCallbacks, function (index, callback) {
+        callback(event);
+      });
+    },
+    addClickCallback: function (callback) {
+      this.clickCallbacks = this.clickCallbacks || [];
+      this.clickCallbacks.push(callback);
+    },
+    contextClickCallback: function (event) {
+      this.contextClickCallbacks = this.contextClickCallbacks || [];
+      $.each(this.contextClickCallbacks, function (index, callback) {
+        callback(event);
+      });
+    },
+    addContextClickCallback: function (callback) {
+      this.contextClickCallbacks = this.contextClickCallbacks || [];
+      this.contextClickCallbacks.push(callback);
+    },
+    markerClickCallback: function (event) {
+      this.markerClickCallbacks = this.markerClickCallbacks || [];
+      $.each(this.markerClickCallbacks, function (index, callback) {
+        callback(event);
+      });
+    },
+    addMarkerClickCallback: function (callback) {
+      this.markerClickCallbacks = this.markerClickCallbacks || [];
+      this.markerClickCallbacks.push(callback);
     },
     readyCallback: function () {
       this.readyCallbacks = this.readyCallbacks || [];

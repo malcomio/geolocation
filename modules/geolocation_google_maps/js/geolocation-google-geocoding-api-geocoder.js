@@ -113,7 +113,9 @@
           }
         });
       });
-      Drupal.geolocation.google.loadedCallback();
+
+      // Load Google Maps API and execute all callbacks.
+      Drupal.geolocation.google.load();
     }
   };
 

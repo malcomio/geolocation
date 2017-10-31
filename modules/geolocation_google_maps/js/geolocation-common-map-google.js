@@ -15,7 +15,7 @@
         drupalSettings.geolocation.commonMap,
 
         /**
-         * @param {String} mapId - canvasId of current map
+         * @param {String} mapId - ID of current map
          * @param {CommonMapSettings} commonMapSettings - settings for current map
          */
         function (mapId, commonMapSettings) {

@@ -99,7 +99,9 @@ class DemoFormattersController extends ControllerBase {
     }
 
     foreach ($formatters as $formatter_id) {
-      $formatter = $this->pluginManagerFieldFormatter->getInstance(array_merge_recursive($widget_settings, ['configuration' => ['type' => $formatter_id]]));
+      $formatter = $this
+        ->pluginManagerFieldFormatter
+        ->getInstance(array_merge_recursive($widget_settings, ['configuration' => ['type' => $formatter_id]]));
 
       $form[$formatter_id] = [
         '#type' => 'fieldset',

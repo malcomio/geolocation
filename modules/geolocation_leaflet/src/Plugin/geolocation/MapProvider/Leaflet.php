@@ -3,6 +3,7 @@
 namespace Drupal\geolocation_leaflet\Plugin\geolocation\MapProvider;
 
 use Drupal\geolocation\MapProviderBase;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Provides Google Maps.
@@ -113,9 +114,7 @@ class Leaflet extends MapProviderBase {
    * {@inheritdoc}
    */
   public function attachments(array $settings, $map_id) {
-
-    $default_settings = self::getDefaultSettings();
-    $settings = array_replace_recursive($default_settings, $settings);
+    $settings = $this->getSettings($settings);
 
     $attachments = [
       'library' => [
@@ -127,13 +126,13 @@ class Leaflet extends MapProviderBase {
       if (!empty($settings['map_features'][$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
         if ($feature) {
-          $attachments = array_merge_recursive($feature->attachments($settings['map_features'][$feature_id]['settings'] ?: [], $map_id), $attachments);
+          $attachments = BubbleableMetadata::mergeAttachments($feature->attachments($settings['map_features'][$feature_id]['settings'] ?: [], $map_id), $attachments);
           unset($settings[$feature_id]);
         }
       }
     }
 
-    $attachments = array_merge_recursive(
+    $attachments = BubbleableMetadata::mergeAttachments(
       $attachments,
       [
         'drupalSettings' => [

@@ -6,6 +6,7 @@ use GuzzleHttp\Exception\RequestException;
 use Drupal\Component\Serialization\Json;
 use Drupal\geolocation\GeocoderBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Provides the Google Places API.
@@ -39,24 +40,46 @@ class GooglePlacesAPI extends GeocoderBase {
   /**
    * {@inheritdoc}
    */
+  protected function getDefaultSettings() {
+    $default_settings = parent::getDefaultSettings();
+
+    $default_settings['component_restrictions'] = [
+      'route' => '',
+      'locality' => '',
+      'administrative_area' => '',
+      'postal_code' => '',
+      'country' => '',
+    ];
+
+    return $default_settings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function attachments($input_id) {
-    $attachments = [
-      'library' => [
-        'geolocation_google_places_api/geolocation_google_places_api.geocoder.googleplacesapi',
-      ],
-      'drupalSettings' => [
-        'geolocation' => [
-          'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
-          'geocoder' => [
-            'googlePlacesAPI' => [
-              'inputIds' => [
-                $input_id,
+    $attachments = parent::attachments($input_id);
+
+    $attachments = BubbleableMetadata::mergeAttachments(
+      $attachments,
+      [
+        'library' => [
+          'geolocation_google_places_api/geolocation_google_places_api.geocoder.googleplacesapi',
+        ],
+        'drupalSettings' => [
+          'geolocation' => [
+            'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
+            'geocoder' => [
+              'googlePlacesAPI' => [
+                'inputIds' => [
+                  $input_id,
+                ],
               ],
             ],
           ],
         ],
-      ],
-    ];
+      ]
+    );
 
     if (!empty($this->configuration['component_restrictions'])) {
       foreach ($this->configuration['component_restrictions'] as $component => $restriction) {
@@ -64,7 +87,7 @@ class GooglePlacesAPI extends GeocoderBase {
           continue;
         }
 
-        $attachments = array_merge_recursive(
+        $attachments = BubbleableMetadata::mergeAttachments(
           $attachments,
           [
             'drupalSettings' => [
@@ -90,18 +113,12 @@ class GooglePlacesAPI extends GeocoderBase {
    * {@inheritdoc}
    */
   public function getOptionsForm() {
-    $settings = [
-      'route' => '',
-      'locality' => '',
-      'administrativeArea' => '',
-      'postalCode' => '',
-      'country' => '',
-    ];
-    if (isset($this->configuration['component_restrictions'])) {
-      $settings = array_replace($settings, $this->configuration['component_restrictions']);
-    }
 
-    return [
+    $form = parent::getOptionsForm();
+
+    $settings = $this->getSettings();
+
+    $form += [
       'description' => [
         '#type' => 'html_tag',
         '#tag' => 'span',
@@ -142,15 +159,21 @@ class GooglePlacesAPI extends GeocoderBase {
         ],
       ],
     ];
+
+    return $form;
   }
 
   /**
    * {@inheritdoc}
    */
   public function formAttachGeocoder(array &$render_array, $element_name) {
+    $settings = $this->getSettings();
+
     $render_array['geolocation_geocoder_google_places_api'] = [
       '#type' => 'textfield',
-      '#description' => $this->t('Enter an address to filter results.'),
+      '#title' => $settings['label'],
+      '#description' => $settings['description'],
+      '#description_display' => 'after',
       '#attributes' => [
         'class' => [
           'form-autocomplete',
@@ -170,13 +193,6 @@ class GooglePlacesAPI extends GeocoderBase {
         'data-source-identifier' => $element_name,
       ],
     ];
-
-    if (!empty($render_array[$element_name]['#title'])) {
-      $render_array['geolocation_geocoder_google_places_api']['#title'] = $render_array[$element_name]['#title'];
-    }
-    elseif ($this->configuration['label']) {
-      $render_array['geolocation_geocoder_google_places_api']['#title'] = $this->configuration['label'];
-    }
 
     $render_array['#attached'] = $this->attachments($element_name);
   }
