@@ -150,7 +150,9 @@ class ControlGeocoder extends MapFeatureBase {
   public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
     $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
 
-    $render_array['#controls']['geocoder'] = [];
+    $render_array['#controls']['geocoder'] = [
+      '#type' => 'container',
+    ];
 
     /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
     $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')

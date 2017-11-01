@@ -20,20 +20,18 @@ class ControlLocate extends MapFeatureBase {
    * {@inheritdoc}
    */
   public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
-    $render_array['control_locate'] = [
+    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+
+    $render_array['#controls']['locate'] = [
       '#type' => 'button',
+      '#weight' => -50,
+      '#value' => $this->t('Locate'),
       '#attributes' => [
-        'class' => [
-          'locate',
-        ],
+        'class' => ['locate'],
       ],
     ];
 
-    $render_array['control_locate2'] = [
-      '#markup' => 'Hallo Welt',
-    ];
-
-    return parent::alterRenderArray($render_array, $settings, $map_id);
+    return $render_array;
   }
 
   /**

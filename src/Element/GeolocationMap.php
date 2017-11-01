@@ -5,6 +5,7 @@ namespace Drupal\geolocation\Element;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\RenderElement;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Component\Utility\SortArray;
 
 /**
  * Provides a render element to display a geolocation map.
@@ -121,6 +122,20 @@ class GeolocationMap extends RenderElement {
     }
 
     $render_array = $map_provider->alterRenderArray($render_array, $map_settings, $id);
+
+    if (!empty($render_array['#controls'])) {
+      uasort($render_array['#controls'], [
+        SortArray::class,
+        'sortByWeightProperty',
+      ]);
+    }
+
+    if (!empty($render_array['#children'])) {
+      uasort($render_array['#children'], [
+        SortArray::class,
+        'sortByWeightProperty',
+      ]);
+    }
 
     return $render_array;
   }

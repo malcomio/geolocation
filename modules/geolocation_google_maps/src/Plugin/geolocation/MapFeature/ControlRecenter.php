@@ -19,6 +19,24 @@ class ControlRecenter extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
+  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
+    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+
+    $render_array['#controls']['recenter'] = [
+      '#type' => 'button',
+      '#weight' => 100,
+      '#value' => $this->t('Recenter'),
+      '#attributes' => [
+        'class' => ['recenter'],
+      ],
+    ];
+
+    return $render_array;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function attachments(array $settings, $maps_id) {
     return [
       'library' => [

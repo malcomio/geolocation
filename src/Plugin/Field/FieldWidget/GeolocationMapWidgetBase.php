@@ -258,7 +258,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       '#weight' => -10,
       '#attached' => [
         'library' => [
-          'geolocation/geolocation.widgets.map',
+          'geolocation/geolocation.widget.api',
         ],
         'drupalSettings' => [
           'geolocation' => [

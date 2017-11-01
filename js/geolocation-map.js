@@ -80,6 +80,10 @@
 
             map.wrapper.find('.geolocation-location').hide();
 
+            $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
+              map.addControl(control);
+            });
+
             // Set the already processed flag.
             map.container.addClass('geolocation-processed');
           });

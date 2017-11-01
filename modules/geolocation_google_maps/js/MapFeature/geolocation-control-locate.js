@@ -34,7 +34,8 @@
             var map = Drupal.geolocation.getMapById(mapId);
 
             map.addReadyCallback(function (map) {
-              var locateButton = $('button.locate', map.wrapper).first();
+               var locateButton = $('.geolocation-map-controls .locate', map.wrapper);
+
               if (navigator.geolocation) {
                 locateButton.click(function () {
                   navigator.geolocation.getCurrentPosition(function (currentPosition) {
@@ -42,7 +43,6 @@
                     map.addAccuracyIndicatorCircle(currentLocation, parseInt(currentPosition.coords.accuracy));
                   });
                 });
-                map.addControl(locateButton);
               }
             });
           }

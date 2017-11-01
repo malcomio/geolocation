@@ -41,6 +41,7 @@ class GeolocationGoogleWidget extends GeolocationMapWidgetBase {
       empty($settings['google_map_settings']) ? [] : $settings['google_map_settings']
     );
     $settings['google_map_settings']['map_features']['control_geocoder']['enabled'] = TRUE;
+    $settings['google_map_settings']['map_features']['control_recenter']['enabled'] = TRUE;
     $settings['google_map_settings']['map_features']['control_locate']['enabled'] = TRUE;
 
     return $settings;

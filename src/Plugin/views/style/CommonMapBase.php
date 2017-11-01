@@ -8,6 +8,7 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\views\ResultRow;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Component\Utility\SortArray;
 
 /**
  * Class CommonMapBase.
@@ -734,7 +735,7 @@ abstract class CommonMapBase extends StylePluginBase {
       ],
     ];
 
-    uasort($form['centre'], 'Drupal\Component\Utility\SortArray::sortByWeightProperty');
+    uasort($form['centre'], [SortArray::class, 'sortByWeightProperty']);
 
     /*
      * Advanced settings

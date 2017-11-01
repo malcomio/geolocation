@@ -34,11 +34,10 @@
             var map = Drupal.geolocation.getMapById(mapId);
 
             map.addReadyCallback(function (map) {
-              var recenterButton = $('<button class="recenter" />');
+              var recenterButton = $('.geolocation-map-controls .recenter', map.wrapper);
               recenterButton.click(function () {
                 map.setCenterByBehavior();
               });
-              map.addControl(recenterButton);
             });
           }
         }

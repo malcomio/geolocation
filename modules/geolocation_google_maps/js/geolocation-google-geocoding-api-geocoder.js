@@ -86,6 +86,7 @@
        */
       select: function (event, ui) {
         Drupal.geolocation.geocoder.resultCallback(ui.item.address, $(event.target).data('source-identifier'));
+        console.log(ui.item.address, "You selected this result.");
         $('.geolocation-geocoder-google-geocoding-api-state[data-source-identifier="' + $(event.target).data('source-identifier') + '"]').val(1);
       }
     })
@@ -108,6 +109,9 @@
       Drupal.geolocation.google.addLoadedCallback(function() {
         $.each(drupalSettings.geolocation.geocoder.googleGeocodingAPI.inputIds, function(index, inputId) {
           var geocoderInput = $('input[data-source-identifier="' + inputId + '"]', context);
+          geocoderInput = $('input.button');
+          console.log(geocoderInput, "geocoder input");
+          console.log(context, inputId);
           if (geocoderInput) {
             Drupal.geolocation.geocoder.googleGeocodingAPI.attach(geocoderInput);
           }

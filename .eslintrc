@@ -6,6 +6,7 @@
   },
   "rules": {
     "max-nested-callbacks": [1, 5],
-    "no-mutable-exports": 0
+    "no-mutable-exports": 0,
+    "no-unused-vars": 0
   }
 }

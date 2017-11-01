@@ -21,7 +21,7 @@ geocoder.googlegeocodingapi:
     js/geolocation-google-geocoding-api-geocoder.js: {}
   dependencies:
     - core/jquery.once
-    - geolocation/geolocation.geocoder
+    - geolocation/geolocation.geocoder.api
     - geolocation_google_maps/googlemapsapi
 
 # Google geocoder widget library.
@@ -30,7 +30,7 @@ widgets.google:
   js:
     js/geolocation-widget-google.js: { scope: footer }
   dependencies:
-    - geolocation/geolocation.widgets.maps
+    - geolocation/geolocation.widget.api
 
 #
 # Map Features

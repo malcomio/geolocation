@@ -170,6 +170,7 @@ class GoogleGeocodingAPI extends GeocoderBase {
     $render_array['geolocation_geocoder_google_geocoding_api'] = [
       '#type' => 'textfield',
       '#title' => $settings['label'],
+      '#placeholder' => $settings['description'],
       '#description' => $settings['description'],
       '#description_display' => 'after',
       '#attributes' => [

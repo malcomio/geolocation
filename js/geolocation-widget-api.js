@@ -33,10 +33,10 @@
   /**
    * @namespace
    */
-  Drupal.geolocation.geocoderWidget = Drupal.geolocation.geocoderWidget || {};
+  Drupal.geolocation.widget = Drupal.geolocation.widget || {};
 
-  Drupal.geolocation.geocoderWidget.locationCallbacks = Drupal.geolocation.geocoderWidget.locationCallbacks || [];
-  Drupal.geolocation.geocoderWidget.clearCallbacks = Drupal.geolocation.geocoderWidget.clearCallbacks || [];
+  Drupal.geolocation.widget.locationCallbacks = Drupal.geolocation.widget.locationCallbacks || [];
+  Drupal.geolocation.widget.clearCallbacks = Drupal.geolocation.widget.clearCallbacks || [];
 
   /**
    * Provides the callback that is called when geocoderwidget defines a location.
@@ -44,10 +44,10 @@
    * @param {GeolocationCoordinates} location - first returned address
    * @param {string} elementId - Source ID.
    */
-  Drupal.geolocation.geocoderWidget.locationCallback = function (location, elementId) {
+  Drupal.geolocation.widget.locationCallback = function (location, elementId) {
     // Ensure callbacks array;
-    Drupal.geolocation.geocoderWidget.locationCallbacks = Drupal.geolocation.geocoderWidget.locationCallbacks || [];
-    $.each(Drupal.geolocation.geocoderWidget.locationCallbacks, function (index, callbackContainer) {
+    Drupal.geolocation.widget.locationCallbacks = Drupal.geolocation.widget.locationCallbacks || [];
+    $.each(Drupal.geolocation.widget.locationCallbacks, function (index, callbackContainer) {
       if (callbackContainer.elementId === elementId) {
         callbackContainer.callback(location);
       }
@@ -60,11 +60,11 @@
    * @param {geolocationGeocoderLocationCallback} callback - The callback
    * @param {string} elementId - Identify source of result by its element ID.
    */
-  Drupal.geolocation.geocoderWidget.addLocationCallback = function (callback, elementId) {
+  Drupal.geolocation.widget.addLocationCallback = function (callback, elementId) {
     if (typeof elementId === 'undefined') {
       return;
     }
-    Drupal.geolocation.geocoderWidget.locationCallbacks.push({callback: callback, elementId: elementId});
+    Drupal.geolocation.widget.locationCallbacks.push({callback: callback, elementId: elementId});
   };
 
   /**
@@ -72,10 +72,10 @@
    *
    * @param {string} elementId - Identify the source
    */
-  Drupal.geolocation.geocoderWidget.removeLocationCallback = function (elementId) {
-    $.each(Drupal.geolocation.geocoderWidget.locationCallbacks, function (index, callback) {
+  Drupal.geolocation.widget.removeLocationCallback = function (elementId) {
+    $.each(Drupal.geolocation.widget.locationCallbacks, function (index, callback) {
       if (callback.elementId === elementId) {
-        Drupal.geolocation.geocoderWidget.locationCallbacks.splice(index, 1);
+        Drupal.geolocation.widget.locationCallbacks.splice(index, 1);
       }
     });
   };
@@ -85,9 +85,9 @@
    *
    * @param {string} elementId - Source ID.
    */
-  Drupal.geolocation.geocoderWidget.clearCallback = function (elementId) {
+  Drupal.geolocation.widget.clearCallback = function (elementId) {
     // Ensure callbacks array;
-    $.each(Drupal.geolocation.geocoderWidget.clearCallbacks, function (index, callbackContainer) {
+    $.each(Drupal.geolocation.widget.clearCallbacks, function (index, callbackContainer) {
       if (callbackContainer.elementId === elementId) {
         callbackContainer.callback(location);
       }
@@ -100,11 +100,11 @@
    * @param {geolocationGeocoderClearCallback} callback - The callback
    * @param {string} elementId - Identify source of result by its element ID.
    */
-  Drupal.geolocation.geocoderWidget.addClearCallback = function (callback, elementId) {
+  Drupal.geolocation.widget.addClearCallback = function (callback, elementId) {
     if (typeof elementId === 'undefined') {
       return;
     }
-    Drupal.geolocation.geocoderWidget.clearCallbacks.push({callback: callback, elementId: elementId});
+    Drupal.geolocation.widget.clearCallbacks.push({callback: callback, elementId: elementId});
   };
 
   /**
@@ -112,10 +112,10 @@
    *
    * @param {string} elementId - Identify the source
    */
-  Drupal.geolocation.geocoderWidget.removeClearCallback = function (elementId) {
-    $.each(Drupal.geolocation.geocoderWidget.clearCallbacks, function (index, callback) {
+  Drupal.geolocation.widget.removeClearCallback = function (elementId) {
+    $.each(Drupal.geolocation.widget.clearCallbacks, function (index, callback) {
       if (callback.elementId === elementId) {
-        Drupal.geolocation.geocoderWidget.clearCallbacks.splice(index, 1);
+        Drupal.geolocation.widget.clearCallbacks.splice(index, 1);
       }
     });
   };
@@ -126,7 +126,7 @@
    * @param {GeolocationCoordinates} latLng - A location (latLng) object.
    * @param {GeolocationMapInterface} map - The settings object that contains all of the necessary metadata for this map.
    */
-  Drupal.geolocation.geocoderWidget.setInputFields = function (latLng, map) {
+  Drupal.geolocation.widget.setInputFields = function (latLng, map) {
     // Update the lat and lng input fields.
     $('.canvas-' + map.id + ' .geolocation-hidden-lat').attr('value', latLng.lat);
     $('.canvas-' + map.id + ' .geolocation-hidden-lng').attr('value', latLng.lng);
@@ -137,7 +137,7 @@
    *
    * @param {GeolocationMapInterface} map - The settings object that contains all of the necessary metadata for this map.
    */
-  Drupal.geolocation.geocoderWidget.clearInputFields = function (map) {
+  Drupal.geolocation.widget.clearInputFields = function (map) {
     // Update the lat and lng input fields.
     $('.canvas-' + map.id + ' .geolocation-hidden-lat').attr('value', '');
     $('.canvas-' + map.id + ' .geolocation-hidden-lng').attr('value', '');

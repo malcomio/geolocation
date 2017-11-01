@@ -7,5 +7,5 @@ geolocation_google_places_api.geocoder.googleplacesapi:
   js:
     js/geolocation-google-places-api-geocoder.js: {}
   dependencies:
-    - geolocation/geolocation.geocoder
+    - geolocation/geolocation.geocoder.api
     - geolocation/googlemapsapi
