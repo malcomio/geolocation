@@ -2,7 +2,8 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
-use Drupal\geolocation\MapFeatureBase;
+use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Provides Google Maps.
@@ -14,7 +15,7 @@ use Drupal\geolocation\MapFeatureBase;
  *   type = "google_maps",
  * )
  */
-class ControlRecenter extends MapFeatureBase {
+class ControlRecenter extends GoogleMapControlFeatureBase {
 
   /**
    * {@inheritdoc}
@@ -22,38 +23,39 @@ class ControlRecenter extends MapFeatureBase {
   public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
     $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
 
-    $render_array['#controls']['recenter'] = [
-      '#type' => 'button',
-      '#weight' => 100,
-      '#value' => $this->t('Recenter'),
-      '#attributes' => [
-        'class' => ['recenter'],
-      ],
-    ];
-
-    return $render_array;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function attachments(array $settings, $maps_id) {
-    return [
-      'library' => [
-        'geolocation_google_maps/geolocation.control_recenter',
-      ],
-      'drupalSettings' => [
-        'geolocation' => [
-          'maps' => [
-            $maps_id => [
-              'control_recenter' => [
-                'enable' => TRUE,
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
+      [
+        'library' => [
+          'geolocation_google_maps/geolocation.control_recenter',
+        ],
+        'drupalSettings' => [
+          'geolocation' => [
+            'maps' => [
+              $map_id => [
+                'control_recenter' => [
+                  'enable' => TRUE,
+                ],
               ],
             ],
           ],
         ],
-      ],
-    ];
+      ]
+    );
+
+    $render_array['#controls'][$this->pluginId] = NestedArray::mergeDeep(
+      $render_array['#controls'][$this->pluginId],
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'button',
+        '#value' => $this->t('Recenter'),
+        '#attributes' => [
+          'class' => ['recenter'],
+        ],
+      ]
+    );
+
+    return $render_array;
   }
 
 }

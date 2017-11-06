@@ -53,19 +53,6 @@ interface MapProviderInterface extends PluginInspectionInterface {
   public function getSettingsForm(array $settings, array $parents);
 
   /**
-   * Return all Drupal render attachments required by this map provider.
-   *
-   * @param array $settings
-   *   The current map settings.
-   * @param string $map_id
-   *   Map ID.
-   *
-   * @return array
-   *   Render attachments.
-   */
-  public function attachments(array $settings, $map_id);
-
-  /**
    * Alter render array.
    *
    * @param array $render_array

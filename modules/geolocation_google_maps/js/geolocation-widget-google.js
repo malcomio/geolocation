@@ -16,6 +16,15 @@
    */
   Drupal.behaviors.geolocationGeocoderWidget = {
     attach: function (context, drupalSettings) {
+      $('.geolocation-google-map-widget', context).each(function (index, item) {
+        // TODO: Get map by ID from wrapper
+          // TODO: get markers
+        // TODO: Get form/elements (?)
+        // TODO: Get delta from settings (?)
+
+      });
+
+
       $.each(
         drupalSettings.geolocation.widgetSettings,
         function (mapId, widgetSetting) {
@@ -24,27 +33,37 @@
           var map = Drupal.geolocation.getMapById(mapId);
           map.addLoadedCallback(function (map) {
 
-            if (typeof Drupal.geolocation.widget.geocoder === 'undefined') {
-              Drupal.geolocation.widget.geocoder = new google.maps.Geocoder();
+            // If requested, also use location as value.
+            if (typeof (widgetSetting.autoClientLocationMarker) !== 'undefined') {
+              if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (currentPosition) {
+                  var currentLocation = new google.maps.LatLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
+                  map.setMapMarker({
+                    position: currentLocation,
+                    map: map.googleMap,
+                    title: currentLocation.lat + ', ' + currentLocation.lng,
+                    infoWindowContent: Drupal.t('Latitude') + ': ' + currentLocation.lat + ' ' + Drupal.t('Longitude') + ': ' + currentLocation.lng
+                  });
+                });
+              }
             }
 
             // Execute when a location is defined by the widget.
             Drupal.geolocation.widget.addLocationCallback(function (location) {
               Drupal.geolocation.widget.setInputFields(location, map);
-              map.controls.children('button.clear').removeClass('disabled');
               map.removeMapMarkers();
               map.setMapMarker({
                 position: location,
                 map: map.googleMap,
-                title: location.lat() + ', ' + location.lng(),
-                infoWindowContent: Drupal.t('Latitude') + ': ' + location.lat() + ' ' + Drupal.t('Longitude') + ': ' + location.lng()
+                title: location.lat + ', ' + location.lng,
+                infoWindowContent: Drupal.t('Latitude') + ': ' + location.lat + ' ' + Drupal.t('Longitude') + ': ' + location.lng
               });
             }, mapId);
 
             // Execute when a location is unset by the widget.
             Drupal.geolocation.widget.addClearCallback(function () {
               Drupal.geolocation.widget.clearInputFields(map);
-              map.controls.children('button.clear').addClass('disabled');
+
               // Clear the map point.
               map.removeMapMarkers();
             }, mapId);
@@ -52,25 +71,16 @@
               // Add the click responders for setting the value.
             var singleClick;
 
-            /**
-             * Add the click listener.
-             *
-             * @param {GoogleMapLatLng} e.latLng
-             */
-            google.maps.event.addListener(map.googleMap, 'click', function (e) {
+            map.addClickCallback(function (e) {
               // Create 500ms timeout to wait for double click.
               singleClick = setTimeout(function () {
-                Drupal.geolocation.widget.locationCallback(e.latLng, map.id);
+                Drupal.geolocation.widget.locationCallback({lat: Number(e.latLng.lat()), lng: Number(e.latLng.lng())}, map.id);
               }, 500);
             });
 
-            // Add a doubleclick listener.
-            google.maps.event.addListener(map.googleMap, 'dblclick', function (e) {
+            map.addDoubleClickCallback(function (e) {
               clearTimeout(singleClick);
             });
-
-            // Set the already processed flag.
-            $(map.container).addClass('geolocation-processed');
           });
         }
       );

@@ -72,7 +72,7 @@ class GeolocationInput extends FormElement {
     }
 
     // Hidden lat,lng input fields.
-    $element['latitude'] = [
+    $element['lat'] = [
       '#type' => 'textfield',
       '#title' => t('Latitude'),
       '#default_value' => $default_field_values['lat'],
@@ -82,7 +82,7 @@ class GeolocationInput extends FormElement {
         ],
       ],
     ];
-    $element['longitude'] = [
+    $element['lng'] = [
       '#type' => 'textfield',
       '#title' => t('Longitude'),
       '#default_value' => $default_field_values['lng'],
@@ -113,11 +113,11 @@ class GeolocationInput extends FormElement {
    *   The complete form structure.
    */
   public static function validateGeolocation(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    $longitude = floatval($element['#value']['longitude']);
-    $latitude = floatval($element['#value']['latitude']);
+    $longitude = floatval($element['#value']['lng']);
+    $latitude = floatval($element['#value']['lat']);
     $form_state->setValueForElement($element, [
-      'latitude' => $latitude,
-      'longitude' => $longitude,
+      'lat' => $latitude,
+      'lng' => $longitude,
     ]);
 
     if ($latitude < -90 || $latitude > 90) {

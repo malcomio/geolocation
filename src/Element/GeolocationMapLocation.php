@@ -70,6 +70,26 @@ class GeolocationMapLocation extends RenderElement {
       $render_array['#children'][] = $render_array[$child];
     }
 
+    if (!empty($render_array['#data'])) {
+      if (is_array($render_array['#data'])) {
+        // Remove reserved elements.
+        foreach ($render_array['#data'] as $key => $data) {
+          if (
+            isset($data['identifier'])
+            && in_array(
+              $data['identifier'],
+              ['position', 'icon', 'label', 'set-marker']
+            )
+          ) {
+            unset($render_array['#data'][$key]);
+          }
+        }
+      }
+      else {
+        unset($render_array['#data']);
+      }
+    }
+
     return $render_array;
   }
 

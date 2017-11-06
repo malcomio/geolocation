@@ -93,26 +93,12 @@ class GeolocationMap extends RenderElement {
 
     $map_provider = $this->mapProviderManager->getMapProvider($render_array['#maptype']);
 
+    $map_settings = [];
     if (
       !empty($render_array['#settings'])
       && is_array($render_array['#settings'])
     ) {
       $map_settings = $render_array['#settings'];
-    }
-    else {
-      $map_settings = [];
-    }
-
-    $new_attached = $map_provider->attachments($map_settings, $id);
-
-    if (empty($render_array['#attached'])) {
-      $render_array['#attached'] = $new_attached;
-    }
-    else {
-      $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
-        $render_array['#attached'],
-        $new_attached
-      );
     }
 
     array_unshift($render_array['#attached']['library'], 'geolocation/geolocation.map');

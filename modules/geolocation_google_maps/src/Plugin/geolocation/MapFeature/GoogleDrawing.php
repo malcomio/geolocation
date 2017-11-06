@@ -3,6 +3,7 @@
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
 use Drupal\geolocation\MapFeatureBase;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Provides Google Maps.
@@ -158,26 +159,33 @@ class GoogleDrawing extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings, $maps_id) {
+  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
+    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+
     $settings = $this->getSettings($settings);
 
-    return [
-      'library' => [
-        'geolocation_google_maps/geolocation.drawing',
-      ],
-      'drupalSettings' => [
-        'geolocation' => [
-          'maps' => [
-            $maps_id => [
-              'drawing' => [
-                'enable' => TRUE,
-                'settings' => $settings,
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
+      [
+        'library' => [
+          'geolocation_google_maps/geolocation.drawing',
+        ],
+        'drupalSettings' => [
+          'geolocation' => [
+            'maps' => [
+              $map_id => [
+                'drawing' => [
+                  'enable' => TRUE,
+                  'settings' => $settings,
+                ],
               ],
             ],
           ],
         ],
-      ],
-    ];
+      ]
+    );
+
+    return $render_array;
   }
 
 }

@@ -2,9 +2,10 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
+use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation\MapFeatureBase;
-use Drupal\Component\Utility\NestedArray;
 use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 
 /**
@@ -117,28 +118,35 @@ class GoogleMarkerClusterer extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings, $maps_id) {
+  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
+    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+
     $settings = $this->getSettings($settings);
 
-    return [
-      'library' => [
-        'geolocation_google_maps/geolocation.markerclusterer',
-      ],
-      'drupalSettings' => [
-        'geolocation' => [
-          'maps' => [
-            $maps_id => [
-              'marker_clusterer' => [
-                'enable' => TRUE,
-                'imagePath' => $settings['image_path'],
-                'styles' => $settings['styles'],
-                'maxZoom' => (int) $settings['max_zoom'],
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
+      [
+        'library' => [
+          'geolocation_google_maps/geolocation.markerclusterer',
+        ],
+        'drupalSettings' => [
+          'geolocation' => [
+            'maps' => [
+              $map_id => [
+                'marker_clusterer' => [
+                  'enable' => TRUE,
+                  'imagePath' => $settings['image_path'],
+                  'styles' => $settings['styles'],
+                  'maxZoom' => (int) $settings['max_zoom'],
+                ],
               ],
             ],
           ],
         ],
-      ],
-    ];
+      ]
+    );
+
+    return $render_array;
   }
 
 }

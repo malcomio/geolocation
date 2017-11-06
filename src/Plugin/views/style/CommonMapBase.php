@@ -308,7 +308,7 @@ abstract class CommonMapBase extends StylePluginBase {
             $build['#attached']['drupalSettings']['geolocation']['commonMap'][$this->mapId]['client_location']['update_map'] = TRUE;
           }
 
-          $centre['behavior'] = 'html5';
+          $centre['behavior'] = 'client_location';
           break;
 
         /*

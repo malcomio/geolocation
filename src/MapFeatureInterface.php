@@ -53,22 +53,6 @@ interface MapFeatureInterface extends PluginInspectionInterface {
   public function getSettingsForm(array $settings, array $parents);
 
   /**
-   * Return all Drupal attachments required by this map feature.
-   *
-   * 'settings' => JS settings.
-   * 'libraries' => array of libraries.
-   *
-   * @param array $settings
-   *   The current map settings.
-   * @param string $map_id
-   *   Map ID.
-   *
-   * @return array
-   *   Drupal libraries.
-   */
-  public function attachments(array $settings, $map_id);
-
-  /**
    * Alter render array.
    *
    * @param array $render_array

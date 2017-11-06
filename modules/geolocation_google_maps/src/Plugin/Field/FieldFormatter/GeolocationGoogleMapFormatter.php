@@ -39,7 +39,7 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
    */
   public static function defaultSettings() {
     $settings = parent::defaultSettings();
-    $settings += GoogleMaps::getDefaultSettings();
+    $settings['google_map_settings'] = GoogleMaps::getDefaultSettings();
 
     return $settings;
   }
@@ -90,7 +90,7 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
       $google_map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId] ?: []);
     }
     else {
-      $google_map_settings = $this->mapProvider->getSettings(isset($settings[$this->mapProviderSettingsFormId]) ? $this->mapProviderSettingsFormId : []);
+      $google_map_settings = $this->mapProvider->getSettings(isset($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId]);
     }
 
     if (!empty($settings['common_map'])) {

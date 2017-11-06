@@ -17,12 +17,6 @@ field.formatter.settings.geolocation_map:
     use_overridden_map_settings:
       type: integer
       label: 'Use overridden map settings optionally set by GoogleGeocoderWidget.'
-    google_map_settings:
-      type: geolocation.google_map_settings
-      label: 'Google map settings'
-    common_map_draw_settings:
-      type: geolocation.common_map_draw_settings
-      label: 'Common map settings'
 
 field.formatter.settings.geolocation_token:
   type: mapping
@@ -32,7 +26,7 @@ field.formatter.settings.geolocation_token:
       type: string
       label: 'Tokenized text'
 
-field.widget.settings.geolocation_googlegeocoder:
+geolocation.field.widget.map:
   type: mapping
   label: 'Geolocation Google Geocoder Widget settings'
   mapping:
@@ -60,9 +54,6 @@ field.widget.settings.geolocation_googlegeocoder:
     allow_override_map_settings:
       type: integer
       label: 'Allow override map settings.'
-    google_map_settings:
-      type: geolocation.google_map_settings
-      label: 'Google map settings'
 
 field.value.geolocation:
   type: mapping

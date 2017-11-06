@@ -150,6 +150,8 @@
 /**
  * @typedef {Object} GoogleCircle
  * @property {function():GoogleMapBounds} Circle.getBounds()
+ * @property {function(GoogleMapLatLng)} Circle.setCenter()
+ * @property {function(number)} Circle.setRadius()
  */
 
 /**
@@ -321,7 +323,6 @@
         mapTypeControl: map.settings.google_map_settings.mapTypeControl,
         scrollwheel: map.settings.google_map_settings.scrollwheel,
         disableDoubleClickZoom: map.settings.google_map_settings.disableDoubleClickZoom,
-        draggable: map.settings.google_map_settings.draggable,
         styles: map.settings.google_map_settings.style,
         gestureHandling: map.settings.google_map_settings.gestureHandling
       });
@@ -490,8 +491,9 @@
   };
 
   GeolocationGoogleMap.prototype.setCenterByBehavior = function (centreBehavior) {
-    Drupal.geolocation.GeolocationMapBase.prototype.setCenterByBehavior.call(this, centreBehavior);
+    centreBehavior = centreBehavior || this.centreBehavior;
 
+    Drupal.geolocation.GeolocationMapBase.prototype.setCenterByBehavior.call(this, centreBehavior);
     switch (centreBehavior) {
       case 'preset':
         this.addReadyCallback(function (map) {
@@ -527,14 +529,14 @@
     this.googleMap.fitBounds(circle.getBounds());
 
     // Fade circle away.
-    setInterval(fadeCityCircles, 100);
+    setInterval(fadeCityCircles, 200);
 
     function fadeCityCircles() {
       var fillOpacity = circle.get('fillOpacity');
-      fillOpacity -= 0.02;
+      fillOpacity -= 0.01;
 
       var strokeOpacity = circle.get('strokeOpacity');
-      strokeOpacity -= 0.04;
+      strokeOpacity -= 0.02;
 
       if (
         strokeOpacity > 0
@@ -551,25 +553,9 @@
   /**
    * @inheritDoc
    */
-  GeolocationGoogleMap.prototype.addControl = function (element, positionOnMap, index) {
-    element = $('<div class="geolocation-map-control"></div>').append(element);
+  GeolocationGoogleMap.prototype.addControl = function (element, positionOnMap) {
     positionOnMap = positionOnMap || google.maps.ControlPosition.TOP_LEFT;
-    index = index || -1;
-    var controlElementExists = false;
-    this.googleMap.controls[positionOnMap].forEach(function (controlElement) {
-      if (element.get(0).isEqualNode(controlElement)) {
-        controlElementExists = true;
-      }
-    });
-
-    if (!controlElementExists) {
-      if (index === -1) {
-        this.googleMap.controls[positionOnMap].push(element.get(0));
-      }
-      else {
-        this.googleMap.controls[positionOnMap][index] = element.get(0);
-      }
-    }
+    this.googleMap.controls[positionOnMap].push(element);
   };
 
   Drupal.geolocation.GeolocationGoogleMap = GeolocationGoogleMap;

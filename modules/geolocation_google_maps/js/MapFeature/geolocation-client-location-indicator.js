@@ -32,7 +32,6 @@
             && mapSettings.client_location_indicator.enable
             && navigator.geolocation
           ) {
-
             var map = Drupal.geolocation.getMapById(mapId);
 
             map.addReadyCallback(function (map) {
@@ -51,12 +50,22 @@
                 map: map.googleMap
               });
 
-              navigator.geolocation.getCurrentPosition(function (currentPosition) {
-                var currentLocation = new google.maps.LatLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
-                clientLocationMarker.setPosition(currentLocation);
+              var indicatorCircle = null;
 
-                map.addAccuracyIndicatorCircle(currentLocation, parseInt(currentPosition.coords.accuracy));
-              });
+              setInterval(function(){
+                navigator.geolocation.getCurrentPosition(function (currentPosition) {
+                  var currentLocation = new google.maps.LatLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
+                  clientLocationMarker.setPosition(currentLocation);
+
+                  if (!indicatorCircle) {
+                    indicatorCircle = map.addAccuracyIndicatorCircle(currentLocation, parseInt(currentPosition.coords.accuracy));
+                  }
+                  else {
+                    indicatorCircle.setCenter(currentLocation);
+                    indicatorCircle.setRadius(parseInt(currentPosition.coords.accuracy));
+                  }
+                });
+              }, 5000);
             });
           }
         }

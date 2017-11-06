@@ -1,3 +1,18 @@
+geolocation.map_feature_settings:
+  type: mapping
+  label: 'Default processor configuration'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enabled yes/no/maybe'
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+
+plugin.plugin_configuration.geolocation.map_feature.*:
+  type: geolocation.map_feature_settings
+
 plugin.plugin_configuration.geolocation.map_feature.drawing:
   type: geolocation.map_feature_settings
   label: 'Common map draw settings'
@@ -31,7 +46,6 @@ plugin.plugin_configuration.geolocation.map_feature.drawing:
           type: string
           label: 'fillOpacity'
 
-
 plugin.plugin_configuration.geolocation.map_feature.marker_clusterer:
   type: geolocation.map_feature_settings
   label: 'Marker clusterer'
@@ -61,3 +75,41 @@ plugin.plugin_configuration.geolocation.map_feature.context_popup:
         content:
           type: string
           label: 'Content'
+
+geolocation_google_maps.map_control_feature_settings:
+  type: geolocation.map_feature_settings
+  label: 'Control Map Feature'
+  mapping:
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        position:
+          type: string
+          label: 'Position'
+        weight:
+          type: string
+          label: 'Weight'
+
+plugin.plugin_configuration.geolocation.map_feature.control_recenter:
+  type: geolocation_google_maps.map_control_feature_settings
+  label: 'Control Recenter'
+
+plugin.plugin_configuration.geolocation.map_feature.control_locate:
+  type: geolocation_google_maps.map_control_feature_settings
+  label: 'Control Locate'
+
+plugin.plugin_configuration.geolocation.map_feature.control_geocoder:
+  type: geolocation_google_maps.map_control_feature_settings
+  label: 'Control Geocoder'
+  mapping:
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        geocoder:
+          type: string
+          label: 'Geocoder'
+        settings:
+          type: geolocation.geocoder.google_geocoding_api
+

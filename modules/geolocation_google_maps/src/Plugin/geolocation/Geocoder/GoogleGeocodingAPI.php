@@ -80,15 +80,15 @@ class GoogleGeocodingAPI extends GeocoderBase {
           '#title' => $this->t('Locality'),
           '#size' => 15,
         ],
-        'administrativeArea' => [
+        'administrative_area' => [
           '#type' => 'textfield',
-          '#default_value' => $settings['components']['administrativeArea'],
+          '#default_value' => $settings['components']['administrative_area'],
           '#title' => $this->t('Administrative Area'),
           '#size' => 15,
         ],
-        'postalCode' => [
+        'postal_code' => [
           '#type' => 'textfield',
-          '#default_value' => $settings['components']['postalCode'],
+          '#default_value' => $settings['components']['postal_code'],
           '#title' => $this->t('Postal code'),
           '#size' => 5,
         ],
@@ -168,15 +168,15 @@ class GoogleGeocodingAPI extends GeocoderBase {
     $settings = $this->getSettings();
 
     $render_array['geolocation_geocoder_google_geocoding_api'] = [
-      '#type' => 'textfield',
+      '#type' => 'search',
       '#title' => $settings['label'],
       '#placeholder' => $settings['description'],
       '#description' => $settings['description'],
       '#description_display' => 'after',
+      '#size' => '25',
       '#attributes' => [
         'class' => [
           'form-autocomplete',
-          'geolocation-views-filter-geocoder',
           'geolocation-geocoder-google-geocoding-api',
         ],
         'data-source-identifier' => $element_name,

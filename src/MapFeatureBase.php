@@ -61,13 +61,6 @@ abstract class MapFeatureBase extends PluginBase implements MapFeatureInterface,
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings, $map_id) {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
     return $render_array;
   }

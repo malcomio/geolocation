@@ -113,33 +113,23 @@ class Leaflet extends MapProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings, $map_id) {
+  public function alterRenderArray(array $render_array, array $settings, $id) {
+
     $settings = $this->getSettings($settings);
 
-    $attachments = [
-      'library' => [
-        'geolocation_leaflet/geolocation.leaflet',
-      ],
-    ];
-
-    foreach ($this->mapFeatureManager->getMapFeaturesByMapType('leaflet') as $feature_id => $feature_definition) {
-      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
-        $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
-        if ($feature) {
-          $attachments = BubbleableMetadata::mergeAttachments($feature->attachments($settings['map_features'][$feature_id]['settings'] ?: [], $map_id), $attachments);
-          unset($settings[$feature_id]);
-        }
-      }
-    }
-
-    $attachments = BubbleableMetadata::mergeAttachments(
-      $attachments,
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
+        'library' => [
+          'geolocation_leaflet/geolocation.leaflet',
+        ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
-              $map_id => [
-                'settings' => $settings,
+              $id => [
+                'settings' => [
+                  'leaflet_settings' => $settings,
+                ],
               ],
             ],
           ],
@@ -147,7 +137,9 @@ class Leaflet extends MapProviderBase {
       ]
     );
 
-    return $attachments;
+    $render_array = parent::alterRenderArray($render_array, $settings, $id);
+
+    return $render_array;
   }
 
 }

@@ -59,7 +59,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $settings = [];
     $settings['title'] = '';
     $settings['set_marker'] = TRUE;
-    $settings['common_map'] = FALSE;
+    $settings['common_map'] = TRUE;
     $settings['info_text'] = '';
     $settings += parent::defaultSettings();
     $settings['use_overridden_map_settings'] = FALSE;
@@ -231,7 +231,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
        * Add each single map to render output.
        */
       else {
-        $id = uniqid("map-canvas-");
+        $id = uniqid("map-");
 
         $elements[$delta] = [
           '#type' => 'geolocation_map',
@@ -249,7 +249,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
      * Display one map with all locations.
      */
     if (!empty($settings['common_map'])) {
-      $id = uniqid("map-canvas-");
+      $id = uniqid("map-");
 
       $elements = [
         '#type' => 'geolocation_map',

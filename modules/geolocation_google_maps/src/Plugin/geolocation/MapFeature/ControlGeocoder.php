@@ -4,7 +4,6 @@ namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\geolocation\MapFeatureBase;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
@@ -17,16 +16,19 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   type = "google_maps",
  * )
  */
-class ControlGeocoder extends MapFeatureBase {
+class ControlGeocoder extends GoogleMapControlFeatureBase {
 
   /**
    * {@inheritdoc}
    */
   public static function getDefaultSettings() {
-    return [
-      'geocoder' => 'google_geocoding_api',
-      'settings' => [],
-    ];
+    return array_replace_recursive(
+      parent::getDefaultSettings(),
+      [
+        'geocoder' => 'google_geocoding_api',
+        'settings' => [],
+      ]
+    );
   }
 
   /**
@@ -43,7 +45,7 @@ class ControlGeocoder extends MapFeatureBase {
    * {@inheritdoc}
    */
   public function getSettingsForm(array $settings, array $parents) {
-    $form = [];
+    $form = parent::getSettingsForm($settings, $parents);
 
     $settings = array_replace_recursive(
       self::getDefaultSettings(),
@@ -150,9 +152,7 @@ class ControlGeocoder extends MapFeatureBase {
   public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
     $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
 
-    $render_array['#controls']['geocoder'] = [
-      '#type' => 'container',
-    ];
+    $settings = $this->getSettings($settings);
 
     /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
     $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
@@ -160,42 +160,23 @@ class ControlGeocoder extends MapFeatureBase {
         $settings['geocoder'],
         $settings['settings']
       );
-    $geocoder_plugin->formAttachGeocoder($render_array['#controls']['geocoder'], $render_array['#id']);
+
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
+      $geocoder_plugin->attachments($map_id)
+    );
+
+    $render_array['#controls'][$this->pluginId]['#type'] = 'container';
+
+    /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
+    $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
+      ->getGeocoder(
+        $settings['geocoder'],
+        $settings['settings']
+      );
+    $geocoder_plugin->formAttachGeocoder($render_array['#controls'][$this->pluginId], $render_array['#id']);
 
     return $render_array;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function attachments(array $settings, $map_id) {
-    /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
-    $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
-      ->getGeocoder(
-        $settings['geocoder'],
-        $settings['settings']
-      );
-
-    $attachments = [
-      'library' => [
-        'geolocation_google_maps/geolocation.control_geocoder',
-      ],
-      'drupalSettings' => [
-        'geolocation' => [
-          'maps' => [
-            $map_id => [
-              'control_geocoder' => [
-                'enable' => TRUE,
-              ],
-            ],
-          ],
-        ],
-      ],
-    ];
-
-    $attachments = BubbleableMetadata::mergeAttachments($attachments, $geocoder_plugin->attachments($map_id));
-
-    return $attachments;
   }
 
 }

@@ -43,7 +43,6 @@ class Dummy extends GeocoderBase {
       '#attributes' => [
         'class' => [
           'form-autocomplete',
-          'geolocation-views-filter-geocoder',
           'geolocation-geocoder-dummy',
         ],
         'data-source-identifier' => $element_name,

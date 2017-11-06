@@ -108,10 +108,3 @@ geolocation.contextpopup:
     js/MapFeature/geolocation-contextpopup.js: {}
   dependencies:
     - geolocation_google_maps/googlemapsapi
-
-# ControlGeocoder support.
-geolocation.control_geocoder:
-  js:
-    js/MapFeature/geolocation-control-geocoder.js: {}
-  dependencies:
-    - geolocation_google_maps/googlemapsapi

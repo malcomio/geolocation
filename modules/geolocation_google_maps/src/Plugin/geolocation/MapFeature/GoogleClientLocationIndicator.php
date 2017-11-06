@@ -3,6 +3,7 @@
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
 use Drupal\geolocation\MapFeatureBase;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Provides Google Maps.
@@ -19,23 +20,30 @@ class GoogleClientLocationIndicator extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $settings, $maps_id) {
-    return [
-      'library' => [
-        'geolocation_google_maps/geolocation.client_location_indicator',
-      ],
-      'drupalSettings' => [
-        'geolocation' => [
-          'maps' => [
-            $maps_id => [
-              'client_location_indicator' => [
-                'enable' => TRUE,
+  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
+    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
+      [
+        'library' => [
+          'geolocation_google_maps/geolocation.client_location_indicator',
+        ],
+        'drupalSettings' => [
+          'geolocation' => [
+            'maps' => [
+              $map_id => [
+                'client_location_indicator' => [
+                  'enable' => TRUE,
+                ],
               ],
             ],
           ],
         ],
-      ],
-    ];
+      ]
+    );
+
+    return $render_array;
   }
 
 }

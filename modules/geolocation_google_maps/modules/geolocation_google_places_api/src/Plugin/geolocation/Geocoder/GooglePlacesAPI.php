@@ -177,7 +177,6 @@ class GooglePlacesAPI extends GeocoderBase {
       '#attributes' => [
         'class' => [
           'form-autocomplete',
-          'geolocation-views-filter-geocoder',
           'geolocation-geocoder-google-places-api',
         ],
         'data-source-identifier' => $element_name,

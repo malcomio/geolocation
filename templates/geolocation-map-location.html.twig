@@ -1,14 +1,21 @@
 <div
     class="geolocation-location"
+    typeof="Place"
+
+    {% if id is not empty %} id="{{ id }}" {% endif %}
+
     data-lat="{{ position.lat }}"
     data-lng="{{ position.lng }}"
-    typeof="Place"
-    {% if id is not empty %} id="{{ id }}" {% endif %}
+
     {% if hidden is empty %}
         data-set-marker="true"
         {% if icon is not empty %} data-icon="{{ icon }}" {% endif %}
         {% if label is not empty %} data-label="{{ label }}" {% endif %}
     {% endif %}
+
+    {% for item in data %}
+      data-{{ item.identifier }}="{{ item.value }}"
+    {% endfor %}
 >
     <span property="geo" typeof="GeoCoordinates">
         <meta property="latitude" content="{{ position.lat }}" />

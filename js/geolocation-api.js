@@ -35,7 +35,7 @@
  */
 
 /**
- * Callback when map is clicked.
+ * Callback when marker is clicked.
  *
  * @callback GeolocationMapMarkerClickCallback
  * @param {Object} event - Click event.
@@ -159,16 +159,25 @@
  * @function
  * @name GeolocationMapInterface#clickCallback
  *
- * Adds a callback that will be called when map provider becomes available.
+ * Adds a callback that will be called when map is clicked.
  * @function
  * @name GeolocationMapInterface#addClickCallback
+ * @param {GeolocationMapClickCallback} callback - Callback.
+ *
+ * Executes {GeolocationMapClickCallbacks} for this map.
+ * @function
+ * @name GeolocationMapInterface#doubleClickCallback
+ *
+ * Adds a callback that will be called on double click.
+ * @function
+ * @name GeolocationMapInterface#addDoubleClickCallback
  * @param {GeolocationMapClickCallback} callback - Callback.
  *
  * Executes {GeolocationMapMarkerClickCallbacks} for this map.
  * @function
  * @name GeolocationMapInterface#markerClickCallback
  *
- * Adds a callback that will be called when map provider becomes available.
+ * Adds a callback that will be called when marker is clicked.
  * @function
  * @name GeolocationMapInterface#addMarkerClickCallback
  * @param {GeolocationMapMarkerClickCallback} callback - Callback.
@@ -177,7 +186,7 @@
  * @function
  * @name GeolocationMapInterface#contextClickCallback
  *
- * Adds a callback that will be called when map provider becomes available.
+ * Adds a callback that will be called when map is right-click.
  * @function
  * @name GeolocationMapInterface#addContextClickCallback
  * @param {GeolocationMapContextClickCallback} callback - Callback.
@@ -206,9 +215,6 @@
    * @abstract
    * @implements {GeolocationMapInterface}
    * @param {GeolocationMapSettings} mapSettings Setting to create map.
-   * @prop {String} id ID
-   * @prop {jQuery} container Wrapping element.
-   * @prop {Object} settings Settings element.
    */
   function GeolocationMapBase(mapSettings) {
     this.settings = mapSettings.settings || {};
@@ -283,7 +289,7 @@
           }
           break;
 
-        case 'html5':
+        case 'client_location':
           if (navigator.geolocation) {
             var that = this;
             navigator.geolocation.getCurrentPosition(function (position) {
@@ -319,6 +325,16 @@
     addClickCallback: function (callback) {
       this.clickCallbacks = this.clickCallbacks || [];
       this.clickCallbacks.push(callback);
+    },
+    doubleClickCallback: function (event) {
+      this.doubleClickCallbacks = this.doubleClickCallbacks || [];
+      $.each(this.doubleClickCallbacks, function (index, callback) {
+        callback(event);
+      });
+    },
+    addDoubleClickCallback: function (callback) {
+      this.doubleClickCallbacks = this.doubleClickCallbacks || [];
+      this.doubleClickCallbacks.push(callback);
     },
     contextClickCallback: function (event) {
       this.contextClickCallbacks = this.contextClickCallbacks || [];
@@ -394,15 +410,16 @@
           infoWindowContent: locationWrapper.html(),
           infoWindowSolitary: true,
           setMarker: true,
-          skipInfoWindow: false
+          skipInfoWindow: false,
+          sourceElement: locationWrapper
         };
 
         if (typeof locationWrapper.data('icon') !== 'undefined') {
           location.icon = locationWrapper.data('icon');
         }
 
-        if (typeof locationWrapper.data('markerLabel') !== 'undefined') {
-          location.label = locationWrapper.data('markerLabel').toString();
+        if (typeof locationWrapper.data('label') !== 'undefined') {
+          location.label = locationWrapper.data('label').toString();
         }
 
         if (locationWrapper.data('set-marker') === 'false') {

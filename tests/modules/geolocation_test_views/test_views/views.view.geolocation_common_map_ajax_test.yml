@@ -386,7 +386,6 @@ display:
             zoomControl: 1
             scrollwheel: 1
             disableDoubleClickZoom: 0
-            draggable: 1
             style: ''
             height: 400px
             width: 100%

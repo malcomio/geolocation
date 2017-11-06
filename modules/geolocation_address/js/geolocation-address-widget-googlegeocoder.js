@@ -485,19 +485,6 @@
   };
 
   /**
-   * Remove a callback that will be called when a location is set.
-   *
-   * @param {string} elementId - Identify the source
-   */
-  Drupal.geolocation.geocoderWidget.removeLocationCallback = function (elementId) {
-    $.each(Drupal.geolocation.geocoderWidget.locationCallbacks, function (index, callback) {
-      if (callback.elementId === elementId) {
-        Drupal.geolocation.geocoderWidget.locationCallbacks.splice(index, 1);
-      }
-    });
-  };
-
-  /**
    * Provides the callback that is called when geocoderwidget unset the locations.
    *
    * @param {string} elementId - Source ID.
@@ -522,19 +509,6 @@
       return;
     }
     Drupal.geolocation.geocoderWidget.clearCallbacks.push({callback: callback, elementId: elementId});
-  };
-
-  /**
-   * Remove a callback that will be called when a location is unset.
-   *
-   * @param {string} elementId - Identify the source
-   */
-  Drupal.geolocation.geocoderWidget.removeClearCallback = function (elementId) {
-    $.each(Drupal.geolocation.geocoderWidget.clearCallbacks, function (index, callback) {
-      if (callback.elementId === elementId) {
-        Drupal.geolocation.geocoderWidget.clearCallbacks.splice(index, 1);
-      }
-    });
   };
 
   /**

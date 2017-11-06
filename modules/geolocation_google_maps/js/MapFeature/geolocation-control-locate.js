@@ -34,14 +34,15 @@
             var map = Drupal.geolocation.getMapById(mapId);
 
             map.addReadyCallback(function (map) {
-               var locateButton = $('.geolocation-map-controls .locate', map.wrapper);
+              var locateButton = $('.geolocation-map-control .locate', map.wrapper);
 
               if (navigator.geolocation) {
-                locateButton.click(function () {
+                locateButton.click(function (e) {
                   navigator.geolocation.getCurrentPosition(function (currentPosition) {
                     var currentLocation = new google.maps.LatLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
-                    map.addAccuracyIndicatorCircle(currentLocation, parseInt(currentPosition.coords.accuracy));
+                    map.setCenterByCoordinates(currentLocation, parseInt(currentPosition.coords.accuracy));
                   });
+                  e.preventDefault();
                 });
               }
             });

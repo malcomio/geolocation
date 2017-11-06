@@ -145,7 +145,6 @@ class GoogleMaps extends MapProviderBase {
         'fullscreenControl' => FALSE,
         'scrollwheel' => TRUE,
         'disableDoubleClickZoom' => FALSE,
-        'draggable' => TRUE,
         'height' => '400px',
         'width' => '100%',
         'info_auto_display' => FALSE,
@@ -158,10 +157,44 @@ class GoogleMaps extends MapProviderBase {
   }
 
   /**
+   * Return available control positions.
+   *
+   * @return array
+   *   Positions.
+   */
+  public static function getControlPositions() {
+    return [
+      'LEFT_TOP' => t('Left top'),
+      'LEFT_CENTER' => t('Left center'),
+      'LEFT_BOTTOM' => t('Left bottom'),
+      'TOP_LEFT' => t('Top left'),
+      'TOP_CENTER' => t('Top center'),
+      'TOP_RIGHT' => t('Top right'),
+      'RIGHT_TOP' => t('Right top'),
+      'RIGHT_CENTER' => t('Right center'),
+      'RIGHT_BOTTOM' => t('Right bottom'),
+      'BOTTOM_LEFT' => t('Bottom left'),
+      'BOTTOM_CENTER' => t('Bottom center'),
+      'BOTTOM_RIGHT' => t('Bottom right'),
+    ];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getSettings(array $settings) {
     $settings = parent::getSettings($settings);
+
+    $settings['rotateControl'] = (bool) $settings['rotateControl'];
+    $settings['mapTypeControl'] = (bool) $settings['mapTypeControl'];
+    $settings['streetViewControl'] = (bool) $settings['streetViewControl'];
+    $settings['zoomControl'] = (bool) $settings['zoomControl'];
+    $settings['fullscreenControl'] = (bool) $settings['fullscreenControl'];
+    $settings['scrollwheel'] = (bool) $settings['scrollwheel'];
+    $settings['disableDoubleClickZoom'] = (bool) $settings['disableDoubleClickZoom'];
+    $settings['info_auto_display'] = (bool) $settings['info_auto_display'];
+    $settings['disableAutoPan'] = (bool) $settings['disableAutoPan'];
+    $settings['preferScrollingToZooming'] = (bool) $settings['preferScrollingToZooming'];
 
     // Convert JSON string to actual array before handing to Renderer.
     if (!empty($settings['style'])) {
@@ -395,13 +428,6 @@ class GoogleMaps extends MapProviderBase {
         ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
       ],
     ];
-    $form['draggable'] = [
-      '#group' => $parents_string . 'behavior_settings',
-      '#type' => 'checkbox',
-      '#title' => $this->t('Draggable'),
-      '#description' => $this->t('Allow the user to change the field of view. <i>Deprecated as of v3.27 / Nov. 2016 in favor of gesture handling described above.</i>.'),
-      '#default_value' => $settings['draggable'],
-    ];
     $form['preferScrollingToZooming'] = [
       '#group' => $parents_string . 'behavior_settings',
       '#type' => 'checkbox',
@@ -529,61 +555,41 @@ class GoogleMaps extends MapProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function attachments(array $google_map_settings, $map_id) {
+  public function alterRenderArray(array $render_array, array $settings, $id) {
 
-    $attachments = [
-      'library' => [
-        'geolocation_google_maps/googlemapsapi',
-      ],
-      'drupalSettings' => [
-        'geolocation' => [
-          'google_map_url' => $this->getGoogleMapsApiUrl(),
-        ],
-      ],
-    ];
-
-    $google_map_settings = $this->getSettings($google_map_settings);
+    $settings = $this->getSettings($settings);
 
     if (
-      !empty($google_map_settings['style'])
-      && is_string($google_map_settings['style'])
+      !empty($settings['style'])
+      && is_string($settings['style'])
     ) {
-      $google_map_settings['style'] = json_decode($google_map_settings['style']);
+      $settings['style'] = json_decode($settings['style']);
     }
 
-    foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
-      if (!empty($google_map_settings['map_features'][$feature_id]['enabled'])) {
-        $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
-        if ($feature) {
-          $feature_settings = [];
-          if (!empty($google_map_settings['map_features'][$feature_id]['settings'])) {
-            $feature_settings = $google_map_settings['map_features'][$feature_id]['settings'];
-          }
-          $attachments = BubbleableMetadata::mergeAttachments($feature->attachments($feature_settings, $map_id), $attachments);
-          // Attachments and settings are merged later anyway.
-          unset($google_map_settings['map_features'][$feature_id]);
-        }
-      }
-    }
-
-    $attachments = BubbleableMetadata::mergeAttachments(
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
+        'library' => [
+          'geolocation_google_maps/googlemapsapi',
+        ],
         'drupalSettings' => [
           'geolocation' => [
+            'google_map_url' => $this->getGoogleMapsApiUrl(),
             'maps' => [
-              $map_id => [
+              $id => [
                 'settings' => [
-                  'google_map_settings' => $google_map_settings,
+                  'google_map_settings' => $settings,
                 ],
               ],
             ],
           ],
         ],
-      ],
-      $attachments
+      ]
     );
 
-    return $attachments;
+    $render_array = parent::alterRenderArray($render_array, $settings, $id);
+
+    return $render_array;
   }
 
 }

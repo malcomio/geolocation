@@ -48,20 +48,6 @@
   };
 
   /**
-   * Remove a callback that will be called when results are found.
-   *
-   * @param {string} elementId - Identify the source
-   */
-  Drupal.geolocation.geocoder.removeResultCallback = function (elementId) {
-    Drupal.geolocation.geocoder.resultCallbacks = Drupal.geolocation.geocoder.resultCallbacks || [];
-    $.each(Drupal.geolocation.geocoder.resultCallbacks, function (index, callback) {
-      if (callback.elementId === elementId) {
-        Drupal.geolocation.geocoder.resultCallbacks.splice(index, 1);
-      }
-    });
-  };
-
-  /**
    * Provides the callback that is called when results become invalid loads.
    *
    * @param {string} elementId - Source ID.
@@ -88,20 +74,6 @@
     }
     Drupal.geolocation.geocoder.clearCallbacks = Drupal.geolocation.geocoder.clearCallbacks || [];
     Drupal.geolocation.geocoder.clearCallbacks.push({callback: callback, elementId: elementId});
-  };
-
-  /**
-   * Remove a callback that will be called when results should be cleared.
-   *
-   * @param {string} elementId - Identify the source
-   */
-  Drupal.geolocation.geocoder.removeClearCallback = function (elementId) {
-    Drupal.geolocation.geocoder.clearCallbacks = Drupal.geolocation.geocoder.clearCallbacks || [];
-    $.each(Drupal.geolocation.geocoder.clearCallbacks, function (index, callback) {
-      if (callback.elementId === elementId) {
-        Drupal.geolocation.geocoder.clearCallbacks.splice(index, 1);
-      }
-    });
   };
 
 })(jQuery, Drupal);

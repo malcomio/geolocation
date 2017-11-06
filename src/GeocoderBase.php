@@ -39,19 +39,21 @@ abstract class GeocoderBase extends PluginBase implements GeocoderInterface {
    * {@inheritdoc}
    */
   public function getOptionsForm() {
+    $settings = $this->getSettings();
+
     return [
       'label' => [
         '#type' => 'textfield',
         '#title' => $this->t('Label'),
-        '#default_value' => $this->configuration['label'],
+        '#default_value' => $settings['label'],
         '#size' => 15,
       ],
 
       'description' => [
         '#type' => 'textfield',
-        '#title' => $this->t('Label'),
-        '#default_value' => $this->configuration['description'],
-        '#size' => 15,
+        '#title' => $this->t('Description'),
+        '#default_value' => $settings['description'],
+        '#size' => 25,
       ],
     ];
   }

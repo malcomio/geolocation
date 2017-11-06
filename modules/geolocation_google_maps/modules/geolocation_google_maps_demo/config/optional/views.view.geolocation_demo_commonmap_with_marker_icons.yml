@@ -128,7 +128,6 @@ display:
             fullscreenControl: 0
             scrollwheel: 1
             gestureHandling: auto
-            draggable: 1
             preferScrollingToZooming: 0
             disableDoubleClickZoom: 0
             style: ''

@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Map widget base.
@@ -67,7 +68,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     $this->entityFieldManager = $entity_field_manager;
 
     if (!empty($this->mapProviderId)) {
-      $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider($this->mapProviderId, $this->getSettings());
+      $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider($this->mapProviderId);
     }
 
     if (empty($this->mapProviderSettingsFormId)) {
@@ -120,6 +121,26 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
   /**
    * {@inheritdoc}
    */
+  public function getSettings() {
+    $settings = parent::getSettings();
+    $map_settings = [];
+    if (!empty($settings[$this->mapProviderSettingsFormId])) {
+      $map_settings = $settings[$this->mapProviderSettingsFormId];
+    }
+
+    $settings = NestedArray::mergeDeep(
+      $settings,
+      [
+        $this->mapProviderSettingsFormId => $this->mapProvider->getSettings($map_settings),
+      ]
+    );
+
+    return $settings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $settings = $this->getSettings();
     $element = [];
@@ -138,20 +159,10 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       '#default_value' => $settings['default_latitude'],
     ];
 
-    $element['auto_client_location'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Automatically use client location, when no value is set'),
-      '#default_value' => $settings['auto_client_location'],
-    ];
     $element['auto_client_location_marker'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Automatically set marker to client location as well'),
       '#default_value' => $settings['auto_client_location_marker'],
-      '#states' => [
-        'visible' => [
-          ':input[name="fields[' . $this->fieldDefinition->getName() . '][settings_edit_form][settings][auto_client_location]"]' => ['checked' => TRUE],
-        ],
-      ],
     ];
 
     $element['allow_override_map_settings'] = [
@@ -161,14 +172,14 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     ];
 
     if ($this->mapProvider) {
-      $mapProviderSettings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
-      $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
-        $mapProviderSettings,
+      $element[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
+        $settings[$this->mapProviderSettingsFormId],
         [
           'fields',
           $this->fieldDefinition->getName(),
           'settings_edit_form',
           'settings',
+          $this->mapProviderSettingsFormId,
         ]
       );
     }
@@ -188,11 +199,8 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       '@default_latitude' => $settings['default_latitude'],
     ]);
 
-    if (!empty($settings['auto_client_location'])) {
-      $summary[] = $this->t('Will use client location automatically by default');
-      if (!empty($settings['auto_client_location_marker'])) {
-        $summary[] = $this->t('Will set client location marker automatically by default');
-      }
+    if (!empty($settings['auto_client_location_marker'])) {
+      $summary[] = $this->t('Will set client location marker automatically by default');
     }
 
     if (!empty($settings['allow_override_map_settings'])) {
@@ -229,7 +237,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       ];
     }
 
-    $element['element'] = [
+    $element = [
       '#type' => 'geolocation_input',
       '#default_value' => [
         'lat' => $default_field_values['lat'],
@@ -246,11 +254,11 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
   public function form(FieldItemListInterface $items, array &$form, FormStateInterface $form_state, $get_delta = NULL) {
     $element = parent::form($items, $form, $form_state, $get_delta);
 
+    $element['#attributes']['class'][] = 'geolocation-map-widget';
+
     $id = Html::getUniqueId($this->fieldDefinition->getName());
 
     $settings = $this->getSettings();
-
-    $element['#attributes']['class'][] = 'canvas-' . $id;
 
     // Add the map container.
     $element['map_container'] = [
@@ -264,7 +272,6 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
           'geolocation' => [
             'widgetSettings' => [
               $id => [
-                'autoClientLocation' => $settings['auto_client_location'] ? TRUE : FALSE,
                 'autoClientLocationMarker' => $settings['auto_client_location_marker'] ? TRUE : FALSE,
               ],
             ],
@@ -273,7 +280,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       ],
     ];
 
-    $element['map_container'] = [
+    $element['map_container']['map'] = [
       '#type' => 'geolocation_map',
       '#settings' => $settings[$this->mapProviderSettingsFormId],
       '#id' => $id,
@@ -283,15 +290,23 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       if ($item->isEmpty()) {
         continue;
       }
-      $element['map_container']['location_' . $delta][] = [
+      $element['map_container']['map']['location_' . $delta][] = [
         '#type' => 'geolocation_map_location',
-        'content' => [
-          '#markup' => $delta . ': ' . $item->lat . ' ' . $item->lng,
-        ],
-        '#title' => $delta . ': ' . $item->lat . ' ' . $item->lng,
+        '#title' => $this->t(
+          '[%delta] Latitude: %latitude Longitude: %longitude',
+          [
+            '%delta' => $delta,
+            '%latitude' => $item->lat,
+            '%longitude' => $item->lng,
+          ]
+        ),
+        '#label' => $delta + 1,
         '#position' => [
           'lat' => $item->lat,
           'lng' => $item->lng,
+        ],
+        '#data' => [
+          ['identifier' => 'widget-delta', 'value' => $delta],
         ],
       ];
     }

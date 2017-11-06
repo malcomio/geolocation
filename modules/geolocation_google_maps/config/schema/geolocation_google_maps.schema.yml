@@ -39,6 +39,36 @@ views.style.maps_common:
       type: geolocation.map_provider.google_maps
       label: 'Google Map settings'
 
+geolocation.geocoder.google_geocoding_api:
+  type: mapping
+  label: 'Google Geocoding API'
+  mapping:
+    label:
+      type: string
+      label: 'Label'
+    description:
+      type: string
+      label: 'Description'
+    components:
+      type: mapping
+      label: 'Components'
+      mapping:
+        route:
+          type: string
+          label: 'Route'
+        country:
+          type: string
+          label: 'Country'
+        administrative_area:
+          type: string
+          label: 'Administrative Area'
+        locality:
+          type: string
+          label: 'Locality'
+        postal_code:
+          type: string
+          label: 'Postal Code'
+
 geolocation.map_provider.google_maps:
   type: geolocation_map_provider
   label: 'Google Map settings'
@@ -56,28 +86,29 @@ geolocation.map_provider.google_maps:
       type: string
       label: 'Max Zoom'
     rotateControl:
-      type: integer
+      type: boolean
       label: 'The state of the rotate control'
     mapTypeControl:
-      type: integer
+      type: boolean
       label: 'Map controls'
     streetViewControl:
-      type: integer
+      type: boolean
       label: 'Street view'
     zoomControl:
-      type: integer
+      type: boolean
       label: 'Zoom control'
     fullscreenControl:
-      type: integer
+      type: boolean
       label: 'The state of the fullscreen control'
     scrollwheel:
-      type: integer
+      type: boolean
       label: 'Scrool wheel'
     disableDoubleClickZoom:
-      type: integer
+      type: string
       label: 'Disable double click zoom'
+    # TODO: Deprecated, remove
     draggable:
-      type: integer
+      type: boolean
       label: 'Draggable'
     height:
       type: string
@@ -86,16 +117,16 @@ geolocation.map_provider.google_maps:
       type: string
       label: 'Width value'
     info_auto_display:
-      type: integer
+      type: boolean
       label: 'Display info'
     disableAutoPan:
-      type: integer
+      type: boolean
       label: 'Disable automatic panning for info window'
     style:
       type: string
       label: 'JSON encoded style'
     preferScrollingToZooming:
-      type: integer
+      type: boolean
       label: 'Require user to click map before zooming'
     gestureHandling:
       type: string
