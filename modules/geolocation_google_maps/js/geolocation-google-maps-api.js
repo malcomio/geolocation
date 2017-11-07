@@ -116,17 +116,10 @@
 
 /**
  * @typedef {Object} GoogleMarkerSettings
+ * @extends {GeolocationLocationSettings}
  *
  * Settings from https://developers.google.com/maps/documentation/javascript/3.exp/reference#MarkerOptions:
- * @property {GoogleMapLatLng} position
  * @property {GoogleMap} map
- * @property {string} title
- * @property {string} [icon]
- * @property {string} [label]
- *
- * Settings from Geolocation module:
- * @property {string} [infoWindowContent]
- * @property {boolean} [infoWindowSolitary]
  */
 
 /**
@@ -139,12 +132,6 @@
  * @property {Function} setLabel
  * @property {Function} addListener
  * @property {function():GoogleMapLatLng} getPosition
- */
-
-/**
- * @typedef {Object} GoogleInfoWindow
- * @property {Function} open
- * @property {Function} close
  */
 
 /**
@@ -174,13 +161,7 @@
  * @property Map
  *
  * @function
- * @property InfoWindow
- *
- * @function
  * @property {function({GoogleMarkerSettings}):GoogleMarker} Marker
- *
- * @function
- * @property {function({}):GoogleInfoWindow} InfoWindow
  *
  * @function
  * @property {function(string|number|float, string|number|float):GoogleMapLatLng} LatLng
@@ -235,12 +216,6 @@
  * @property {string} fillColor
  * @property {string} fillOpacity
  */
-
-/**
- * @typedef {Object} GeolocationMapInterface
- * @property {GoogleInfoWindow} infoWindow
- */
-
 
 (function ($, Drupal, drupalSettings) {
   'use strict';
@@ -375,12 +350,9 @@
       return;
     }
 
-    markerSettings.skipInfoWindow = markerSettings.skipInfoWindow || false;
-
     markerSettings.position = new google.maps.LatLng(parseFloat(markerSettings.position.lat), parseFloat(markerSettings.position.lng));
 
-    var googleMap = this.googleMap;
-    markerSettings.map = googleMap;
+    markerSettings.map = this.googleMap;
 
     if (typeof this.settings.google_map_settings.marker_icon_path === 'string') {
       if (
@@ -394,31 +366,6 @@
     // Add the marker to the map.
     /** @type {GoogleMarker} */
     var currentMarker = new google.maps.Marker(markerSettings);
-
-    if (markerSettings.skipInfoWindow !== true) {
-
-      // Set the info popup text.
-      var currentInfoWindow = new google.maps.InfoWindow({
-        content: markerSettings.infoWindowContent,
-        disableAutoPan: this.settings.google_map_settings.disableAutoPan
-      });
-
-      currentMarker.addListener('click', function () {
-        if (markerSettings.infoWindowSolitary) {
-          if (typeof this.infoWindow !== 'undefined') {
-            this.infoWindow.close();
-          }
-          this.infoWindow = currentInfoWindow;
-        }
-        currentInfoWindow.open(googleMap, currentMarker);
-      });
-
-      if (this.settings.google_map_settings.info_auto_display) {
-        google.maps.event.addListenerOnce(googleMap, 'tilesloaded', function () {
-          google.maps.event.trigger(currentMarker, 'click');
-        });
-      }
-    }
 
     this.mapMarkers.push(currentMarker);
 

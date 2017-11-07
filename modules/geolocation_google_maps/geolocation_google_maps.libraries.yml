@@ -102,9 +102,35 @@ markerclusterer:
   js:
     https://cdn.rawgit.com/googlemaps/js-marker-clusterer/gh-pages/src/markerclusterer.js: { type: external }
 
+# InfoWindow support.
+geolocation.markerinfowindow:
+  js:
+    js/MapFeature/geolocation-marker-infowindow.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
 # ContextPopup support.
 geolocation.contextpopup:
   js:
     js/MapFeature/geolocation-contextpopup.js: {}
   dependencies:
     - geolocation_google_maps/googlemapsapi
+
+# External marker infobubble.
+infobubble:
+  remote: https://github.com/googlemaps/v3-utility-library/tree/master/infobubble
+  version: 1.x
+  license:
+    name: Apache License, Version 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+    gpl-compatible: true
+  js:
+    https://cdn.rawgit.com/googlemaps/v3-utility-library/master/infobubble/src/infobubble-compiled.js: { type: external }
+
+# InfoBubble support.
+geolocation.markerinfobubble:
+  js:
+    js/MapFeature/geolocation-marker-infobubble.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+    - geolocation_google_maps/infobubble

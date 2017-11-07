@@ -17,7 +17,7 @@
  * @property {Number} lng
  * @property {String} centreBehavior
  * @property {jQuery} wrapper
- * @property {Object[]} mapMarkers
+ * @property {GeolocationLocationSettings[]} mapMarkers
  */
 
 /**
@@ -70,10 +70,7 @@
  * @property {boolean} [setMarker]
  * @property {string} [icon]
  * @property {string} [label]
- * @property {string} [infoWindowContent]
- * @property {boolean} [infoWindowSolitary]
- * @property {boolean} [skipInfoWindow]
- * @property {boolean} [setMarker]
+ * @property {jQuery} locationWrapper
  */
 
 /**
@@ -109,7 +106,6 @@
  * @function
  * @name GeolocationMapInterface#setMapMarker
  * @param {GeolocationLocationSettings} Settings for the marker.
- * @param {Boolean} [skipInfoWindow=false] - Skip attaching InfoWindow.
  * @return {Object} - Created marker.
  *
  * Remove all markers from map.
@@ -407,11 +403,8 @@
         var location = {
           position: position,
           title: locationWrapper.children('.location-title').text(),
-          infoWindowContent: locationWrapper.html(),
-          infoWindowSolitary: true,
           setMarker: true,
-          skipInfoWindow: false,
-          sourceElement: locationWrapper
+          locationWrapper: locationWrapper
         };
 
         if (typeof locationWrapper.data('icon') !== 'undefined') {
@@ -424,10 +417,6 @@
 
         if (locationWrapper.data('set-marker') === 'false') {
           location.setMarker = false;
-        }
-
-        if (locationWrapper.children('.location-content').text().trim().length < 1) {
-          location.skipInfoWindow = true;
         }
 
         locations.push(location);
