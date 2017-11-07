@@ -131,6 +131,8 @@ class GoogleMaps extends MapProviderBase {
    * {@inheritdoc}
    */
   public static function getDefaultSettings() {
+    $settings['google_map_settings']['map_features']['control_locate']['enabled'] = TRUE;
+
     return array_replace_recursive(
       parent::getDefaultSettings(),
       [
@@ -147,11 +149,14 @@ class GoogleMaps extends MapProviderBase {
         'disableDoubleClickZoom' => FALSE,
         'height' => '400px',
         'width' => '100%',
-        'info_auto_display' => FALSE,
-        'disableAutoPan' => TRUE,
         'style' => '',
         'preferScrollingToZooming' => FALSE,
         'gestureHandling' => 'auto',
+        'map_features' => [
+          'marker_infowindow' => [
+            'enabled' => TRUE,
+          ],
+        ],
       ]
     );
   }
@@ -192,8 +197,6 @@ class GoogleMaps extends MapProviderBase {
     $settings['fullscreenControl'] = (bool) $settings['fullscreenControl'];
     $settings['scrollwheel'] = (bool) $settings['scrollwheel'];
     $settings['disableDoubleClickZoom'] = (bool) $settings['disableDoubleClickZoom'];
-    $settings['info_auto_display'] = (bool) $settings['info_auto_display'];
-    $settings['disableAutoPan'] = (bool) $settings['disableAutoPan'];
     $settings['preferScrollingToZooming'] = (bool) $settings['preferScrollingToZooming'];
 
     // Convert JSON string to actual array before handing to Renderer.
@@ -450,27 +453,6 @@ class GoogleMaps extends MapProviderBase {
       '#description' => $this->t('A JSON encoded styles array to customize the presentation of the Google Map. See the <a href=":styling">Styled Map</a> section of the Google Maps website for further information.', [
         ':styling' => 'https://developers.google.com/maps/documentation/javascript/styling',
       ]),
-    ];
-
-    /*
-     * Marker settings.
-     */
-    $form['marker_settings'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Marker'),
-    ];
-
-    $form['info_auto_display'] = [
-      '#group' => $parents_string . 'marker_settings',
-      '#type' => 'checkbox',
-      '#title' => $this->t('Automatically show info text'),
-      '#default_value' => $settings['info_auto_display'],
-    ];
-    $form['disableAutoPan'] = [
-      '#group' => $parents_string . 'marker_settings',
-      '#type' => 'checkbox',
-      '#title' => $this->t('Disable automatic panning of map when info bubble is opened.'),
-      '#default_value' => $settings['disableAutoPan'],
     ];
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {

@@ -42,7 +42,6 @@
                     position: currentLocation,
                     map: map.googleMap,
                     title: currentLocation.lat + ', ' + currentLocation.lng,
-                    infoWindowContent: Drupal.t('Latitude') + ': ' + currentLocation.lat + ' ' + Drupal.t('Longitude') + ': ' + currentLocation.lng
                   });
                 });
               }
