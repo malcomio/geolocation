@@ -100,24 +100,31 @@
         callback(location, delta);
       });
     },
-
     addLocationAddedCallback: function (callback) {
       this.locationAddedCallbacks.push(callback);
     },
-
     getMarkerByDelta: function (delta) {
 
     },
-
     getInputByDelta: function (delta) {
 
     },
-
-    setMarker: function (location, delta) {
+    addMarker: function (location) {
 
     },
+    addInput: function (location) {
 
-    setInput: function (location, delta) {
+    },
+    updateMarker: function (location, delta) {
+
+    },
+    updateInput: function (location, delta) {
+
+    },
+    removeMarker: function (location, delta) {
+
+    },
+    removeInput: function (location, delta) {
 
     }
 

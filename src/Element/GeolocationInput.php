@@ -113,12 +113,16 @@ class GeolocationInput extends FormElement {
    *   The complete form structure.
    */
   public static function validateGeolocation(array &$element, FormStateInterface $form_state, array &$complete_form) {
+    if (!is_numeric($element['#value']['lng'])) {
+      $form_state->setError($element, t('Longitude not numeric.'));
+    }
+
+    if (!is_numeric($element['#value']['lat'])) {
+      $form_state->setError($element, t('Latitude not numeric.'));
+    }
+
     $longitude = floatval($element['#value']['lng']);
     $latitude = floatval($element['#value']['lat']);
-    $form_state->setValueForElement($element, [
-      'lat' => $latitude,
-      'lng' => $longitude,
-    ]);
 
     if ($latitude < -90 || $latitude > 90) {
       $form_state->setError($element, t('Latitude must be between -90 and 90.'));

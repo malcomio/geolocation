@@ -4,8 +4,8 @@ namespace Drupal\geolocation\Element;
 
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\RenderElement;
-use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Component\Utility\SortArray;
+use Drupal\Core\Template\Attribute;
 
 /**
  * Provides a render element to display a geolocation map.
@@ -77,18 +77,22 @@ class GeolocationMap extends RenderElement {
   public function preRenderMap(array $render_array) {
     $render_array['#theme'] = 'geolocation_map_wrapper';
 
-    if (empty($render_array['#id'])) {
-      $id = uniqid();
-      $render_array['#id'] = $id;
+    if (empty($render_array['#attributes'])) {
+      $render_array['#attributes'] = [];
     }
-    else {
-      $id = $render_array['#id'];
+
+    if (empty($render_array['#id'])) {
+      $render_array['#id'] = uniqid();
     }
 
     if (empty($render_array['#maptype'])) {
       if (\Drupal::moduleHandler()->moduleExists('geolocation_google_maps')) {
         $render_array['#maptype'] = 'google_maps';
       }
+    }
+
+    if (empty($render_array['#centre']['behavior'])) {
+      $render_array['#centre']['behavior'] = 'fitlocations';
     }
 
     $map_provider = $this->mapProviderManager->getMapProvider($render_array['#maptype']);
@@ -107,7 +111,33 @@ class GeolocationMap extends RenderElement {
       $render_array['#children'][] = $render_array[$child];
     }
 
-    $render_array = $map_provider->alterRenderArray($render_array, $map_settings, $id);
+    $render_array = $map_provider->alterRenderArray($render_array, $map_settings, $render_array['#id']);
+
+    $render_array['#attributes'] = new Attribute($render_array['#attributes']);
+    $render_array['#attributes']->addClass('geolocation-map-wrapper');
+    $render_array['#attributes']->setAttribute('id', $render_array['#id']);
+    $render_array['#attributes']->setAttribute('data-map-type', $render_array['#maptype']);
+    $render_array['#attributes']->setAttribute('data-centre-behavior', $render_array['#centre']['behavior']);
+
+    if (
+      !empty($render_array['#centre']['lat'])
+      && !empty($render_array['#centre']['lng'])
+    ) {
+      $render_array['#attributes']->setAttribute('data-centre-lat', $render_array['#centre']['lat']);
+      $render_array['#attributes']->setAttribute('data-centre-lng', $render_array['#centre']['lng']);
+    }
+
+    if (
+      !empty($render_array['#centre']['lat_north_east'])
+      && !empty($render_array['#centre']['lng_north_east'])
+      && !empty($render_array['#centre']['lat_south_west'])
+      && !empty($render_array['#centre']['lng_south_west'])
+    ) {
+      $render_array['#attributes']->setAttribute('data-centre-lat-north-east', $render_array['#centre']['lat_north_east']);
+      $render_array['#attributes']->setAttribute('data-centre-lng-north-east', $render_array['#centre']['lng_north_east']);
+      $render_array['#attributes']->setAttribute('data-centre-lat-south-west', $render_array['#centre']['lat_south_west']);
+      $render_array['#attributes']->setAttribute('data-centre-lng-south-west', $render_array['#centre']['lng_south_west']);
+    }
 
     if (!empty($render_array['#controls'])) {
       uasort($render_array['#controls'], [

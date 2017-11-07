@@ -2,11 +2,8 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\Field\FieldWidget;
 
-use Drupal\Component\Utility\NestedArray;
-use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\geolocation\Plugin\Field\FieldWidget\GeolocationMapWidgetBase;
 
 /**

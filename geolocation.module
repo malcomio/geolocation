@@ -38,6 +38,7 @@ function geolocation_theme() {
   return [
     'geolocation_map_wrapper' => [
       'variables' => [
+        'attributes' => NULL,
         'maptype' => NULL,
         'locations' => NULL,
         'centre' => NULL,
@@ -48,6 +49,7 @@ function geolocation_theme() {
     ],
     'geolocation_map_location' => [
       'variables' => [
+        'attributes' => NULL,
         'children' => NULL,
         'title' => NULL,
         'position' => NULL,
@@ -55,7 +57,6 @@ function geolocation_theme() {
         'hidden' => NULL,
         'icon' => NULL,
         'label' => NULL,
-        'data' => NULL,
       ],
     ],
     'geolocation_latlng_formatter' => [

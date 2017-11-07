@@ -4,6 +4,7 @@ namespace Drupal\geolocation\Element;
 
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\RenderElement;
+use Drupal\Core\Template\Attribute;
 
 /**
  * Provides a render element to display a geolocation map.
@@ -70,23 +71,24 @@ class GeolocationMapLocation extends RenderElement {
       $render_array['#children'][] = $render_array[$child];
     }
 
-    if (!empty($render_array['#data'])) {
-      if (is_array($render_array['#data'])) {
-        // Remove reserved elements.
-        foreach ($render_array['#data'] as $key => $data) {
-          if (
-            isset($data['identifier'])
-            && in_array(
-              $data['identifier'],
-              ['position', 'icon', 'label', 'set-marker']
-            )
-          ) {
-            unset($render_array['#data'][$key]);
-          }
-        }
+    $render_array['#attributes'] = new Attribute($render_array['#attributes']);
+    $render_array['#attributes']->addClass('geolocation-location');
+    if (!empty($render_array['#id'])) {
+      $render_array['#attributes']->setAttribute('id', $render_array['#id']);
+    }
+
+    $render_array['#attributes']->setAttribute('data-lat', $render_array['#position']['lat']);
+    $render_array['#attributes']->setAttribute('data-lng', $render_array['#position']['lng']);
+
+    if (empty($render_array['#hidden'])) {
+      $render_array['#attributes']->setAttribute('data-set-marker', 'true');
+
+      if (!empty($render_array['#icon'])) {
+        $render_array['#attributes']->setAttribute('data-icon', $render_array['#icon']);
       }
-      else {
-        unset($render_array['#data']);
+
+      if (!empty($render_array['#label'])) {
+        $render_array['#attributes']->setAttribute('data-label', $render_array['#label']);
       }
     }
 
