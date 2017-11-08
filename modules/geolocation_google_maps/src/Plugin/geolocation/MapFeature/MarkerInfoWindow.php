@@ -6,8 +6,7 @@ use Drupal\geolocation\MapFeatureBase;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
- *
+ * Provides marker infowindow
  * @MapFeature(
  *   id = "marker_infowindow",
  *   name = @Translation("Marker InfoWindow"),
@@ -15,7 +14,7 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   type = "google_maps",
  * )
  */
-class GoogleMarkerInfoWindow extends MapFeatureBase {
+class MarkerInfoWindow extends MapFeatureBase {
 
   /**
    * {@inheritdoc}

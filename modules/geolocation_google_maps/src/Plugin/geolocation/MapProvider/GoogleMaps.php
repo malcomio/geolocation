@@ -2,11 +2,10 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\geolocation\MapProviderBase;
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Component\Utility\SortArray;
 
 /**
  * Provides Google Maps.
@@ -432,6 +431,29 @@ class GoogleMaps extends MapProviderBase {
       '#default_value' => $settings['disableDoubleClickZoom'],
     ];
 
+    $form['map_features'] = [
+      '#type' => 'table',
+      '#prefix' => $this->t('<h3>Map Features</h3>'),
+      '#title' => 'title table',
+      '#description' => 'description table',
+      '#header' => [
+        $this->t('Enable'),
+        $this->t('Feature'),
+        $this->t('Settings'),
+        [
+          'data' => $this->t('Settings'),
+          'colspan' => '1',
+        ],
+      ],
+      '#tabledrag' => [
+        [
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'geolocation-google-map-feature-option-weight',
+        ],
+      ],
+    ];
+
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
       $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
       if (empty($feature)) {
@@ -439,18 +461,34 @@ class GoogleMaps extends MapProviderBase {
       }
 
       $feature_enable_id = uniqid($feature_id . '_enabled');
+      $weight = isset($settings['map_features'][$feature_id]['weight']) ? $settings['map_features'][$feature_id]['weight'] : 0;
 
       $form['map_features'][$feature_id] = [
-        '#type' => 'fieldset',
-        '#title' => $feature_definition['name'],
+        '#weight' => $weight,
+        '#attributes' => [
+          'class' => [
+            'draggable',
+          ],
+        ],
         'enabled' => [
-          '#title' => $this->t('Enable'),
           '#attributes' => [
             'id' => $feature_enable_id,
           ],
-          '#description' => $feature_definition['description'],
           '#type' => 'checkbox',
           '#default_value' => empty($settings['map_features'][$feature_id]['enabled']) ? FALSE : TRUE,
+        ],
+        'feature' => [
+          '#type' => 'label',
+          '#title' => $feature_definition['name'],
+          '#suffix' => $feature_definition['description'],
+        ],
+        'weight' => [
+          '#type' => 'weight',
+          '#title' => $this->t('Weight for @option', ['@option' => $feature_definition['name']]),
+          '#title_display' => 'invisible',
+          '#size' => 4,
+          '#default_value' => $weight,
+          '#attributes' => ['class' => ['geolocation-google-map-feature-option-weight']],
         ],
       ];
 
@@ -470,6 +508,8 @@ class GoogleMaps extends MapProviderBase {
         $form['map_features'][$feature_id]['settings'] = $feature_form;
       }
     }
+
+    uasort($form['map_features'], [SortArray::class, 'sortByWeightProperty']);
 
     return $form;
   }

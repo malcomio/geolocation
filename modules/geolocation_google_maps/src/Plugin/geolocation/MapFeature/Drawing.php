@@ -6,16 +6,16 @@ use Drupal\geolocation\MapFeatureBase;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
+ * Provides Drawing.
  *
  * @MapFeature(
  *   id = "drawing",
- *   name = @Translation("Google Drawing"),
+ *   name = @Translation("Drawing"),
  *   description = @Translation("Draw lines and areas over markers."),
  *   type = "google_maps",
  * )
  */
-class GoogleDrawing extends MapFeatureBase {
+class Drawing extends MapFeatureBase {
 
   /**
    * {@inheritdoc}

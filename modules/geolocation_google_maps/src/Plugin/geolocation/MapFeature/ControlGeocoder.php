@@ -7,16 +7,16 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
+ * Provides Geocoding control element.
  *
  * @MapFeature(
  *   id = "control_geocoder",
- *   name = @Translation("Control Geocoder"),
+ *   name = @Translation("Map Control - Geocoder"),
  *   description = @Translation("Add address search with geocoding functionality map."),
  *   type = "google_maps",
  * )
  */
-class ControlGeocoder extends GoogleMapControlFeatureBase {
+class ControlGeocoder extends ControlMapFeatureBase {
 
   /**
    * {@inheritdoc}

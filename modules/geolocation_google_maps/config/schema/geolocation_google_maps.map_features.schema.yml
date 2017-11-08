@@ -5,6 +5,9 @@ geolocation.map_feature_settings:
     enabled:
       type: boolean
       label: 'Enabled yes/no/maybe'
+    weight:
+      type: integer
+      label: 'Weight'
     settings:
       type: mapping
       label: 'Settings'
@@ -87,9 +90,7 @@ geolocation_google_maps.map_control_feature_settings:
         position:
           type: string
           label: 'Position'
-        weight:
-          type: string
-          label: 'Weight'
+
 
 plugin.plugin_configuration.geolocation.map_feature.control_recenter:
   type: geolocation_google_maps.map_control_feature_settings

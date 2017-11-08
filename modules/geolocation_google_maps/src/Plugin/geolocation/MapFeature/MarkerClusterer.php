@@ -2,69 +2,67 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
-use Drupal\geolocation\MapFeatureBase;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Component\Utility\NestedArray;
+use Drupal\geolocation\MapFeatureBase;
+use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 
 /**
- * Provides Google Maps.
+ * Provides marker clusterer.
  *
  * @MapFeature(
- *   id = "map_type_style",
- *   name = @Translation("Google Map Type Style"),
- *   description = @Translation("Add map styling JSON."),
+ *   id = "marker_clusterer",
+ *   name = @Translation("Marker Clusterer"),
+ *   description = @Translation("Group elements on the map."),
  *   type = "google_maps",
  * )
  */
-class GoogleMapTypeStyle extends MapFeatureBase {
+class MarkerClusterer extends MapFeatureBase {
 
   /**
    * {@inheritdoc}
    */
   public static function getDefaultSettings() {
     return [
-      'style' => [],
+      'image_path' => '',
+      'styles' => [],
+      'max_zoom' => 15,
     ];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSettings(array $settings) {
-    $settings = parent::getSettings($settings);
-
-    // Convert JSON string to actual array before handing to Renderer.
-    if (!empty($settings['style'])) {
-      if (!is_array($settings['style'])) {
-        $json = json_decode($settings['style']);
-      }
-      else {
-        $json = $settings['style'];
-      }
-
-      if (is_array($json)) {
-        $settings['style'] = $json;
-      }
-    }
-
-    return $settings;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getSettingsForm(array $settings, array $parents) {
-
     $settings = $this->getSettings($settings);
-
-    $form['style'] = [
-      '#title' => $this->t('JSON styles'),
+    $form['description'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'span',
+      '#value' => $this->t('Various <a href=":url">examples</a> are available.', [':url' => 'https://developers.google.com/maps/documentation/javascript/marker-clustering']),
+    ];
+    $form['image_path'] = [
+      '#title' => $this->t('Cluster image path'),
+      '#type' => 'textfield',
+      '#default_value' => $settings['image_path'],
+      '#description' => $this->t("Set the marker image path. If omitted, the default image path %url will be used.", ['%url' => 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m']),
+    ];
+    $form['styles'] = [
+      '#title' => $this->t('Styles of the Cluster'),
       '#type' => 'textarea',
-      '#default_value' => $settings['style'],
-      '#description' => $this->t('A JSON encoded styles array to customize the presentation of the Google Map. See the <a href=":styling">Styled Map</a> section of the Google Maps website for further information.', [
-        ':styling' => 'https://developers.google.com/maps/documentation/javascript/styling',
-      ]),
+      '#default_value' => $settings['styles'],
+      '#description' => $this->t(
+        'Set custom Cluster styles in JSON Format. Custom Styles have to be set for all 5 Cluster Images. See the <a href=":reference">reference</a> for details.',
+        [
+          ':reference' => 'https://googlemaps.github.io/js-marker-clusterer/docs/reference.html',
+        ]
+      ),
+    ];
+    $form['max_zoom'] = [
+      '#title' => $this->t('Max Zoom'),
+      '#type' => 'select',
+      '#options' => range(GoogleMaps::$MINZOOMLEVEL, GoogleMaps::$MAXZOOMLEVEL),
+      '#default_value' => $settings['max_zoom'],
     ];
 
     $form['#element_validate'][] = [$this, 'validateSettingsForm'];
@@ -90,14 +88,14 @@ class GoogleMapTypeStyle extends MapFeatureBase {
       $values = NestedArray::getValue($values, $parents);
     }
 
-    $json_style = $values['style'];
-    if (!empty($json_style)) {
+    $marker_clusterer_styles = $values['styles'];
+    if (!empty($marker_clusterer_styles)) {
       $style_parents = $parents;
       $style_parents[] = 'styles';
-      if (!is_string($json_style)) {
+      if (!is_string($marker_clusterer_styles)) {
         $form_state->setErrorByName(implode('][', $style_parents), $this->t('Please enter a JSON string as style.'));
       }
-      $json_result = json_decode($json_style);
+      $json_result = json_decode($marker_clusterer_styles);
       if ($json_result === NULL) {
         $form_state->setErrorByName(implode('][', $style_parents), $this->t('Decoding style JSON failed. Error: %error.', ['%error' => json_last_error()]));
       }
@@ -115,27 +113,21 @@ class GoogleMapTypeStyle extends MapFeatureBase {
 
     $settings = $this->getSettings($settings);
 
-    if (
-      !empty($settings['style'])
-      && is_string($settings['style'])
-    ) {
-      $settings['style'] = json_decode($settings['style']);
-    }
-
-
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.maptypestyle',
+          'geolocation_google_maps/geolocation.markerclusterer',
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $map_id => [
-                'map_type_style' => [
+                'marker_clusterer' => [
                   'enable' => TRUE,
-                  'style' => $settings['style'],
+                  'imagePath' => $settings['image_path'],
+                  'styles' => $settings['styles'],
+                  'maxZoom' => (int) $settings['max_zoom'],
                 ],
               ],
             ],
