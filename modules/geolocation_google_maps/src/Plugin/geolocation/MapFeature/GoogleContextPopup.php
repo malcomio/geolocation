@@ -29,16 +29,6 @@ class GoogleContextPopup extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function getSettingsSummary(array $settings) {
-    $summary = [];
-    $summary[] = $this->t('ContextPopup enabled');
-
-    return $summary;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getSettingsForm(array $settings, array $parents) {
     $settings = $this->getSettings($settings);
     $form['content'] = [

@@ -37,7 +37,7 @@ class GoogleDrawing extends MapFeatureBase {
    * {@inheritdoc}
    */
   public function getSettingsSummary(array $settings) {
-    $summary = [];
+    $summary = parent::getSettingsSummary($settings);
     $summary[] = $this->t('Draw polyline: @polyline', ['@polyline' => $settings['polyline'] ? $this->t('Yes') : $this->t('No')]);
     $summary[] = $this->t('Draw polygon: @polygon', ['@polygon' => $settings['polygon'] ? $this->t('Yes') : $this->t('No')]);
 

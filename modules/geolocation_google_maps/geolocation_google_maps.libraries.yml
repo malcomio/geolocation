@@ -134,3 +134,10 @@ geolocation.markerinfobubble:
   dependencies:
     - geolocation_google_maps/googlemapsapi
     - geolocation_google_maps/infobubble
+
+# MapTypeStyle support.
+geolocation.maptypestyle:
+  js:
+    js/MapFeature/geolocation-maptypestyle.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
