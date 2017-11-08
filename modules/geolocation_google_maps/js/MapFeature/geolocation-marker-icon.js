@@ -74,11 +74,17 @@
 
                 var newIcon = {
                   anchor: new google.maps.Point(anchorX, anchorY),
-                  //labelOrigin: new google.maps.Point(labelOriginX, labelOriginY),
-                  //origin: new google.maps.Point(originX, originY),
-                  //size: new google.maps.Size(sizeWidth, sizeHeight),
-                  //scaledSize: new google.maps.Size(scaledSizeWidth, scaledSizeHeight),
+                  labelOrigin: new google.maps.Point(labelOriginX, labelOriginY),
+                  origin: new google.maps.Point(originX, originY)
                 };
+
+                if (sizeWidth && sizeHeight) {
+                  newIcon.size = new google.maps.Size(sizeWidth, sizeHeight);
+                }
+
+                if (scaledSizeWidth && scaledSizeHeight) {
+                  newIcon.scaledSize = new google.maps.Size(scaledSizeWidth, scaledSizeHeight);
+                }
 
                 if (typeof currentIcon === 'string') {
                   newIcon.url = currentIcon;

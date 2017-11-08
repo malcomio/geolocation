@@ -136,13 +136,13 @@ class GoogleMarkerIcon extends MapFeatureBase {
       'width' => [
         '#type' => 'number',
         '#title' => $this->t('Width'),
-        '#default_value' => $settings['size']['width'],
+        '#default_value' => $settings['scaled_size']['width'],
         '#min' => 0,
       ],
       'height' => [
         '#type' => 'number',
         '#title' => $this->t('Height'),
-        '#default_value' => $settings['size']['height'],
+        '#default_value' => $settings['scaled_size']['height'],
         '#min' => 0,
       ],
     ];
