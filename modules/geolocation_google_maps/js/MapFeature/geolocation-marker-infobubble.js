@@ -45,13 +45,12 @@
 
 /* global InfoBubble */
 
-
 (function ($, Drupal) {
 
   'use strict';
 
   /**
-   * ContextPopupSettings.
+   * CMarker InfoBubble.
    *
    * @type {Drupal~behavior}
    *

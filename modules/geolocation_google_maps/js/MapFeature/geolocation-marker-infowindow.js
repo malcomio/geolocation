@@ -18,13 +18,12 @@
  * @property {function({}):GoogleInfoWindow} GeolocationGoogleMap.InfoWindow
  */
 
-
 (function ($, Drupal) {
 
   'use strict';
 
   /**
-   * ContextPopupSettings.
+   * Marker InfoWindow.
    *
    * @type {Drupal~behavior}
    *

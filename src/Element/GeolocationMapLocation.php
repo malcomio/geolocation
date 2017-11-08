@@ -71,6 +71,10 @@ class GeolocationMapLocation extends RenderElement {
       $render_array['#children'][] = $render_array[$child];
     }
 
+    if (empty($render_array['#attributes'])) {
+      $render_array['#attributes'] = [];
+    }
+
     $render_array['#attributes'] = new Attribute($render_array['#attributes']);
     $render_array['#attributes']->addClass('geolocation-location');
     if (!empty($render_array['#id'])) {
