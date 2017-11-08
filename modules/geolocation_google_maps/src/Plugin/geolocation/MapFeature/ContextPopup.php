@@ -6,16 +6,16 @@ use Drupal\geolocation\MapFeatureBase;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
+ * Provides context popup.
  *
  * @MapFeature(
  *   id = "context_popup",
  *   name = @Translation("Context Popup"),
- *   description = @Translation("Provide right-click popup context windows."),
+ *   description = @Translation("Provide context / right-click popup window."),
  *   type = "google_maps",
  * )
  */
-class GoogleContextPopup extends MapFeatureBase {
+class ContextPopup extends MapFeatureBase {
 
   /**
    * {@inheritdoc}
@@ -24,16 +24,6 @@ class GoogleContextPopup extends MapFeatureBase {
     return [
       'content' => '',
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSettingsSummary(array $settings) {
-    $summary = [];
-    $summary[] = $this->t('ContextPopup enabled');
-
-    return $summary;
   }
 
   /**

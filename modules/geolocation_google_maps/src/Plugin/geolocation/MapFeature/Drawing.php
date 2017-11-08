@@ -6,16 +6,16 @@ use Drupal\geolocation\MapFeatureBase;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
+ * Provides Drawing.
  *
  * @MapFeature(
  *   id = "drawing",
- *   name = @Translation("Google Drawing"),
+ *   name = @Translation("Drawing"),
  *   description = @Translation("Draw lines and areas over markers."),
  *   type = "google_maps",
  * )
  */
-class GoogleDrawing extends MapFeatureBase {
+class Drawing extends MapFeatureBase {
 
   /**
    * {@inheritdoc}
@@ -37,7 +37,7 @@ class GoogleDrawing extends MapFeatureBase {
    * {@inheritdoc}
    */
   public function getSettingsSummary(array $settings) {
-    $summary = [];
+    $summary = parent::getSettingsSummary($settings);
     $summary[] = $this->t('Draw polyline: @polyline', ['@polyline' => $settings['polyline'] ? $this->t('Yes') : $this->t('No')]);
     $summary[] = $this->t('Draw polygon: @polygon', ['@polygon' => $settings['polygon'] ? $this->t('Yes') : $this->t('No')]);
 

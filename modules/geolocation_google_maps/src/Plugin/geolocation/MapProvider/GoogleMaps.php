@@ -2,11 +2,10 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\geolocation\MapProviderBase;
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Component\Utility\SortArray;
 
 /**
  * Provides Google Maps.
@@ -149,7 +148,6 @@ class GoogleMaps extends MapProviderBase {
         'disableDoubleClickZoom' => FALSE,
         'height' => '400px',
         'width' => '100%',
-        'style' => '',
         'preferScrollingToZooming' => FALSE,
         'gestureHandling' => 'auto',
         'map_features' => [
@@ -199,20 +197,6 @@ class GoogleMaps extends MapProviderBase {
     $settings['disableDoubleClickZoom'] = (bool) $settings['disableDoubleClickZoom'];
     $settings['preferScrollingToZooming'] = (bool) $settings['preferScrollingToZooming'];
 
-    // Convert JSON string to actual array before handing to Renderer.
-    if (!empty($settings['style'])) {
-      if (!is_array($settings['style'])) {
-        $json = json_decode($settings['style']);
-      }
-      else {
-        $json = $settings['style'];
-      }
-
-      if (is_array($json)) {
-        $settings['style'] = $json;
-      }
-    }
-
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
       if (!empty($settings['map_features'][$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
@@ -242,11 +226,12 @@ class GoogleMaps extends MapProviderBase {
       self::getDefaultSettings(),
       $settings
     );
-    $summary = [];
+    $summary = parent::getSettingsSummary($settings);
     $summary[] = $this->t('Map Type: @type', ['@type' => $types[$settings['type']]]);
     $summary[] = $this->t('Zoom level: @zoom', ['@zoom' => $settings['zoom']]);
     $summary[] = $this->t('Height: @height', ['@height' => $settings['height']]);
     $summary[] = $this->t('Width: @width', ['@width' => $settings['width']]);
+
     return $summary;
   }
 
@@ -446,13 +431,27 @@ class GoogleMaps extends MapProviderBase {
       '#default_value' => $settings['disableDoubleClickZoom'],
     ];
 
-    $form['style'] = [
-      '#title' => $this->t('JSON styles'),
-      '#type' => 'textarea',
-      '#default_value' => $settings['style'],
-      '#description' => $this->t('A JSON encoded styles array to customize the presentation of the Google Map. See the <a href=":styling">Styled Map</a> section of the Google Maps website for further information.', [
-        ':styling' => 'https://developers.google.com/maps/documentation/javascript/styling',
-      ]),
+    $form['map_features'] = [
+      '#type' => 'table',
+      '#prefix' => $this->t('<h3>Map Features</h3>'),
+      '#title' => 'title table',
+      '#description' => 'description table',
+      '#header' => [
+        $this->t('Enable'),
+        $this->t('Feature'),
+        $this->t('Settings'),
+        [
+          'data' => $this->t('Settings'),
+          'colspan' => '1',
+        ],
+      ],
+      '#tabledrag' => [
+        [
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'geolocation-google-map-feature-option-weight',
+        ],
+      ],
     ];
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
@@ -462,18 +461,34 @@ class GoogleMaps extends MapProviderBase {
       }
 
       $feature_enable_id = uniqid($feature_id . '_enabled');
+      $weight = isset($settings['map_features'][$feature_id]['weight']) ? $settings['map_features'][$feature_id]['weight'] : 0;
 
       $form['map_features'][$feature_id] = [
-        '#type' => 'fieldset',
-        '#title' => $feature_definition['name'],
+        '#weight' => $weight,
+        '#attributes' => [
+          'class' => [
+            'draggable',
+          ],
+        ],
         'enabled' => [
-          '#title' => $this->t('Enable'),
           '#attributes' => [
             'id' => $feature_enable_id,
           ],
-          '#description' => $feature_definition['description'],
           '#type' => 'checkbox',
           '#default_value' => empty($settings['map_features'][$feature_id]['enabled']) ? FALSE : TRUE,
+        ],
+        'feature' => [
+          '#type' => 'label',
+          '#title' => $feature_definition['name'],
+          '#suffix' => $feature_definition['description'],
+        ],
+        'weight' => [
+          '#type' => 'weight',
+          '#title' => $this->t('Weight for @option', ['@option' => $feature_definition['name']]),
+          '#title_display' => 'invisible',
+          '#size' => 4,
+          '#default_value' => $weight,
+          '#attributes' => ['class' => ['geolocation-google-map-feature-option-weight']],
         ],
       ];
 
@@ -494,44 +509,9 @@ class GoogleMaps extends MapProviderBase {
       }
     }
 
-    $form['#element_validate'][] = [$this, 'validateSettingsForm'];
+    uasort($form['map_features'], [SortArray::class, 'sortByWeightProperty']);
 
     return $form;
-  }
-
-  /**
-   * Validate form.
-   *
-   * @param array $element
-   *   Form element to check.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current form state.
-   * @param array $form
-   *   Current form.
-   */
-  public function validateSettingsForm(array $element, FormStateInterface $form_state, array $form) {
-    $values = $form_state->getValues();
-    $parents = [];
-    if (!empty($element['#parents'])) {
-      $parents = $element['#parents'];
-      $values = NestedArray::getValue($values, $parents);
-    }
-
-    $json_style = $values['style'];
-    if (!empty($json_style)) {
-      $style_parents = $parents;
-      $style_parents[] = 'styles';
-      if (!is_string($json_style)) {
-        $form_state->setErrorByName(implode('][', $style_parents), $this->t('Please enter a JSON string as style.'));
-      }
-      $json_result = json_decode($json_style);
-      if ($json_result === NULL) {
-        $form_state->setErrorByName(implode('][', $style_parents), $this->t('Decoding style JSON failed. Error: %error.', ['%error' => json_last_error()]));
-      }
-      elseif (!is_array($json_result)) {
-        $form_state->setErrorByName(implode('][', $style_parents), $this->t('Decoded style JSON is not an array.'));
-      }
-    }
   }
 
   /**
@@ -540,13 +520,6 @@ class GoogleMaps extends MapProviderBase {
   public function alterRenderArray(array $render_array, array $settings, $id) {
 
     $settings = $this->getSettings($settings);
-
-    if (
-      !empty($settings['style'])
-      && is_string($settings['style'])
-    ) {
-      $settings['style'] = json_decode($settings['style']);
-    }
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],

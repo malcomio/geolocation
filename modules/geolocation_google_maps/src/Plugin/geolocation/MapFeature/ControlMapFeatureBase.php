@@ -8,9 +8,9 @@ use Drupal\geolocation\MapFeatureBase;
 use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 
 /**
- * Class GoogleMapControlFeatureBase.
+ * Class ControlMapFeatureBase.
  */
-abstract class GoogleMapControlFeatureBase extends MapFeatureBase {
+abstract class ControlMapFeatureBase extends MapFeatureBase {
 
   /**
    * {@inheritdoc}
@@ -18,7 +18,6 @@ abstract class GoogleMapControlFeatureBase extends MapFeatureBase {
   public static function getDefaultSettings() {
     return [
       'position' => 'TOP_LEFT',
-      'weight' => 0,
     ];
   }
 
@@ -38,13 +37,6 @@ abstract class GoogleMapControlFeatureBase extends MapFeatureBase {
       '#title' => $this->t('Position'),
       '#options' => GoogleMaps::getControlPositions(),
       '#default_value' => $settings['position'],
-    ];
-
-    $form['weight'] = [
-      '#type' => 'weight',
-      '#title' => $this->t('Weight'),
-      '#size' => 4,
-      '#default_value' => $settings['weight'],
     ];
 
     return $form;
@@ -71,7 +63,6 @@ abstract class GoogleMapControlFeatureBase extends MapFeatureBase {
    */
   public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
     $render_array['#controls'][$this->pluginId] = [
-      '#weight' => $settings['weight'],
       '#position' => $settings['position'],
     ];
 

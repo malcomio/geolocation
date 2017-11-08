@@ -6,16 +6,16 @@ use Drupal\geolocation\MapFeatureBase;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
+ * Provides continious client location indicator.
  *
  * @MapFeature(
- *   id = "spiderfying",
- *   name = @Translation("Google Spiderfying"),
- *   description = @Translation("Split up overlapping markers on click."),
+ *   id = "client_location_indicator",
+ *   name = @Translation("Client Location Indicator"),
+ *   description = @Translation("Continuously show client location marker on map."),
  *   type = "google_maps",
  * )
  */
-class GoogleSpiderfying extends MapFeatureBase {
+class ClientLocationIndicator extends MapFeatureBase {
 
   /**
    * {@inheritdoc}
@@ -27,15 +27,14 @@ class GoogleSpiderfying extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.spiderfying',
+          'geolocation_google_maps/geolocation.client_location_indicator',
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $map_id => [
-                'spiderfying' => [
+                'client_location_indicator' => [
                   'enable' => TRUE,
-                  'spiderfiable_marker_path' => base_path() . drupal_get_path('module', 'geolocation_google_maps') . '/images/marker-plus.svg',
                 ],
               ],
             ],

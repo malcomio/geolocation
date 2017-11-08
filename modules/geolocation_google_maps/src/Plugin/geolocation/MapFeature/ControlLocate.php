@@ -6,16 +6,16 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
+ * Provides Locate control element.
  *
  * @MapFeature(
  *   id = "control_locate",
- *   name = @Translation("Control Locate"),
+ *   name = @Translation("Map Control - Locate"),
  *   description = @Translation("Add button to center on client location."),
  *   type = "google_maps",
  * )
  */
-class ControlLocate extends GoogleMapControlFeatureBase {
+class ControlLocate extends ControlMapFeatureBase {
 
   /**
    * {@inheritdoc}

@@ -6,8 +6,7 @@ use Drupal\geolocation\MapFeatureBase;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
- *
+ * Provides marker infowindow
  * @MapFeature(
  *   id = "marker_infowindow",
  *   name = @Translation("Marker InfoWindow"),
@@ -15,7 +14,7 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   type = "google_maps",
  * )
  */
-class GoogleMarkerInfoWindow extends MapFeatureBase {
+class MarkerInfoWindow extends MapFeatureBase {
 
   /**
    * {@inheritdoc}
@@ -26,16 +25,6 @@ class GoogleMarkerInfoWindow extends MapFeatureBase {
       'disable_auto_pan' => TRUE,
       'info_window_solitary' => TRUE,
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSettingsSummary(array $settings) {
-    $summary = [];
-    $summary[] = $this->t('InfoWindow enabled');
-
-    return $summary;
   }
 
   /**

@@ -6,7 +6,7 @@ use Drupal\geolocation\MapFeatureBase;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
+ * Provides marker infobubble.
  *
  * @MapFeature(
  *   id = "marker_infobubble",
@@ -15,7 +15,7 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   type = "google_maps",
  * )
  */
-class GoogleMarkerInfoBubble extends MapFeatureBase {
+class MarkerInfoBubble extends MapFeatureBase {
 
   /**
    * {@inheritdoc}
@@ -36,16 +36,6 @@ class GoogleMarkerInfoBubble extends MapFeatureBase {
       'min_height' => '',
       'max_height' => '',
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSettingsSummary(array $settings) {
-    $summary = [];
-    $summary[] = $this->t('InfoBubble enabled');
-
-    return $summary;
   }
 
   /**

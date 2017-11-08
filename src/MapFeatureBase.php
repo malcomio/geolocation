@@ -46,6 +46,7 @@ abstract class MapFeatureBase extends PluginBase implements MapFeatureInterface,
    */
   public function getSettingsSummary(array $settings) {
     $summary = [];
+    $summary[] = $this->t('%feature enabled', ['%feature' => $this->getPluginDefinition()['name']]);
     return $summary;
   }
 

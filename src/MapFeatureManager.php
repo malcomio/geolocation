@@ -5,6 +5,7 @@ namespace Drupal\geolocation;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Component\Utility\SortArray;
 
 /**
  * Search plugin manager.
@@ -79,7 +80,25 @@ class MapFeatureManager extends DefaultPluginManager {
     catch (\Exception $e) {
       return [];
     }
+
+    uasort($list, [self::class, 'sortByName']);
+
     return $list;
+  }
+
+  /**
+   * Support sorting function.
+   *
+   * @param mixed $a
+   *   Element entry.
+   * @param mixed $b
+   *   Element entry.
+   *
+   * @return int
+   *   Sorting value.
+   */
+  public static function sortByName($a, $b) {
+    return SortArray::sortByKeyString($a, $b, 'name');
   }
 
 }

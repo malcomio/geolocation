@@ -6,16 +6,16 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
+ * Provides Recenter control element.
  *
  * @MapFeature(
  *   id = "control_recenter",
- *   name = @Translation("Control Recenter"),
+ *   name = @Translation("Map Control - Recenter"),
  *   description = @Translation("Add button to recenter map."),
  *   type = "google_maps",
  * )
  */
-class ControlRecenter extends GoogleMapControlFeatureBase {
+class ControlRecenter extends ControlMapFeatureBase {
 
   /**
    * {@inheritdoc}

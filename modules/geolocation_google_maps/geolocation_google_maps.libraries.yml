@@ -141,3 +141,10 @@ geolocation.markericon:
     js/MapFeature/geolocation-marker-icon.js: {}
   dependencies:
     - geolocation_google_maps/googlemapsapi
+
+# MapTypeStyle support.
+geolocation.maptypestyle:
+  js:
+    js/MapFeature/geolocation-maptypestyle.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi

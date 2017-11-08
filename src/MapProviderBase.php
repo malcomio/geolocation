@@ -5,7 +5,6 @@ namespace Drupal\geolocation;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Class MapProviderBase.
@@ -81,6 +80,25 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
    */
   public function getSettingsSummary(array $settings) {
     $summary = [];
+
+    foreach ($this->mapFeatureManager->getMapFeaturesByMapType($this->getPluginId()) as $feature_id => $feature_definition) {
+      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
+        $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
+        if ($feature) {
+          if (!empty($settings['map_features'][$feature_id]['settings'])) {
+            $feature_settings = $settings['map_features'][$feature_id]['settings'];
+          }
+          else {
+            $feature_settings = $feature->getSettings([]);
+          }
+          $summary = array_merge(
+            $summary,
+            $feature->getSettingsSummary($feature_settings)
+          );
+        }
+      }
+    }
+
     return $summary;
   }
 
