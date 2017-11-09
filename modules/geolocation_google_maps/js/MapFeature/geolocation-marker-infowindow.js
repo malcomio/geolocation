@@ -54,11 +54,12 @@
 
             map.addReadyCallback(function (map) {
               $.each(map.mapMarkers, function(index, currentMarker) {
-                var content = currentMarker.locationWrapper.children('.location-content').html();
+                var content = currentMarker.locationWrapper.find('.location-content');
 
                 if (content.length < 1) {
                   return;
                 }
+                content = content.html();
 
                 // Set the info popup text.
                 var currentInfoWindow = new google.maps.InfoWindow({

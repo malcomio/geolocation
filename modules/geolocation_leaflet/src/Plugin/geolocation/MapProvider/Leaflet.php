@@ -113,9 +113,9 @@ class Leaflet extends MapProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $settings, $id) {
+  public function alterRenderArray(array $render_array, array $map_settings) {
 
-    $settings = $this->getSettings($settings);
+    $map_settings = $this->getSettings($map_settings);
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
@@ -126,9 +126,9 @@ class Leaflet extends MapProviderBase {
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
-              $id => [
+              $render_array['#id'] => [
                 'settings' => [
-                  'leaflet_settings' => $settings,
+                  'leaflet_settings' => $map_settings,
                 ],
               ],
             ],
@@ -137,7 +137,7 @@ class Leaflet extends MapProviderBase {
       ]
     );
 
-    $render_array = parent::alterRenderArray($render_array, $settings, $id);
+    $render_array = parent::alterRenderArray($render_array, $map_settings);
 
     return $render_array;
   }

@@ -61,9 +61,9 @@ abstract class ControlMapFeatureBase extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
+  public function alterMap(array $render_array, array $feature_settings) {
     $render_array['#controls'][$this->pluginId] = [
-      '#position' => $settings['position'],
+      '#position' => $feature_settings['position'],
     ];
 
     return $render_array;

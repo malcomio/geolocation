@@ -57,14 +57,12 @@ interface MapFeatureInterface extends PluginInspectionInterface {
    *
    * @param array $render_array
    *   Render array.
-   * @param array $settings
-   *   The current map settings.
-   * @param string $map_id
-   *   Map ID.
+   * @param array $feature_settings
+   *   The current feature settings.
    *
    * @return array
    *   Render array.
    */
-  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL);
+  public function alterMap(array $render_array, array $feature_settings);
 
 }

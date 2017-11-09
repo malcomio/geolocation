@@ -114,19 +114,19 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $settings, $id) {
+  public function alterRenderArray(array $render_array, array $map_settings) {
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType($this->getPluginId()) as $feature_id => $feature_definition) {
-      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
+      if (!empty($map_settings['map_features'][$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
         if ($feature) {
-          if (!empty($settings['map_features'][$feature_id]['settings'])) {
-            $feature_settings = $settings['map_features'][$feature_id]['settings'];
+          if (!empty($map_settings['map_features'][$feature_id]['settings'])) {
+            $feature_settings = $map_settings['map_features'][$feature_id]['settings'];
           }
           else {
             $feature_settings = $feature->getSettings([]);
           }
-          $render_array = $feature->alterRenderArray($render_array, $feature_settings, $id);
+          $render_array = $feature->alterMap($render_array, $feature_settings);
         }
       }
     }

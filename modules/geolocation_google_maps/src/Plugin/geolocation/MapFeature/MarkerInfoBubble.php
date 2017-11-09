@@ -129,10 +129,10 @@ class MarkerInfoBubble extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
-    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+  public function alterMap(array $render_array, array $feature_settings) {
+    $render_array = parent::alterMap($render_array, $feature_settings);
 
-    $settings = $this->getSettings($settings);
+    $feature_settings = $this->getSettings($feature_settings);
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
@@ -143,22 +143,22 @@ class MarkerInfoBubble extends MapFeatureBase {
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
-              $map_id => [
+              $render_array['#id'] => [
                 'marker_infobubble' => [
                   'enable' => TRUE,
-                  'closeButton' => $settings['close_button'],
-                  'closeOther' => $settings['close_other'],
-                  'closeButtonSrc' => $settings['close_button_src'],
-                  'shadowStyle' => $settings['shadow_style'],
-                  'padding' => $settings['padding'],
-                  'borderRadius' => $settings['border_radius'],
-                  'borderWidth' => $settings['border_width'],
-                  'borderColor' => $settings['border_color'],
-                  'backgroundColor' => $settings['background_color'],
-                  'minWidth' => $settings['min_width'],
-                  'maxWidth' => $settings['max_width'],
-                  'minHeight' => $settings['min_height'],
-                  'maxHeight' => $settings['max_height'],
+                  'closeButton' => $feature_settings['close_button'],
+                  'closeOther' => $feature_settings['close_other'],
+                  'closeButtonSrc' => $feature_settings['close_button_src'],
+                  'shadowStyle' => $feature_settings['shadow_style'],
+                  'padding' => $feature_settings['padding'],
+                  'borderRadius' => $feature_settings['border_radius'],
+                  'borderWidth' => $feature_settings['border_width'],
+                  'borderColor' => $feature_settings['border_color'],
+                  'backgroundColor' => $feature_settings['background_color'],
+                  'minWidth' => $feature_settings['min_width'],
+                  'maxWidth' => $feature_settings['max_width'],
+                  'minHeight' => $feature_settings['min_height'],
+                  'maxHeight' => $feature_settings['max_height'],
                 ],
               ],
             ],

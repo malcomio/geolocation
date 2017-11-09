@@ -192,10 +192,6 @@ abstract class CommonMapBase extends StylePluginBase {
       ],
     ];
 
-    if (!empty($this->options['show_raw_locations'])) {
-      $build['#attached']['drupalSettings']['geolocation']['commonMap'][$this->mapId]['showRawLocations'] = TRUE;
-    }
-
     /*
      * Dynamic map handling.
      */
@@ -410,7 +406,7 @@ abstract class CommonMapBase extends StylePluginBase {
               $icon_url = $style->buildUrl($file_uri);
             }
             else {
-              $icon_url = file_create_url($file_uri);
+              $icon_url = file_url_transform_relative(file_create_url($file_uri));
             }
           }
         }
@@ -418,23 +414,7 @@ abstract class CommonMapBase extends StylePluginBase {
     }
     elseif (!empty($this->options['marker_icon_path'])) {
       $icon_token_uri = $this->viewsTokenReplace($this->options['marker_icon_path'], $this->rowTokens[$row->index]);
-      $icon_token_url = file_create_url($icon_token_uri);
-
-      if ($icon_token_url) {
-        $icon_url = $icon_token_url;
-      }
-      else {
-        try {
-          $icon_token_url = Url::fromUri($icon_token_uri);
-          if ($icon_token_url) {
-            $icon_url = $icon_token_url->setAbsolute(TRUE)->toString();
-          }
-        }
-        catch (\Exception $e) {
-          // User entered mal-formed URL, but that doesn't matter.
-          // We hereby skip it anyway.
-        }
-      }
+      $icon_url = file_url_transform_relative(file_create_url($icon_token_uri));
     }
 
     $positions = [];
@@ -478,7 +458,6 @@ abstract class CommonMapBase extends StylePluginBase {
   protected function defineOptions() {
     $options = parent::defineOptions();
 
-    $options['show_raw_locations'] = ['default' => '0'];
     $options['even_empty'] = ['default' => '0'];
     $options['geolocation_field'] = ['default' => ''];
     $options['title_field'] = ['default' => ''];
@@ -744,14 +723,6 @@ abstract class CommonMapBase extends StylePluginBase {
     $form['advanced_settings'] = [
       '#type' => 'details',
       '#title' => $this->t('Advanced settings'),
-    ];
-
-    $form['show_raw_locations'] = [
-      '#group' => 'style_options][advanced_settings',
-      '#title' => $this->t('Show raw locations'),
-      '#description' => $this->t('By default, the location data for the map will be hidden when the map loads.'),
-      '#type' => 'checkbox',
-      '#default_value' => $this->options['show_raw_locations'],
     ];
 
     $form['even_empty'] = [

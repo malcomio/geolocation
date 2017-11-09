@@ -77,6 +77,7 @@ class GeolocationMapLocation extends RenderElement {
 
     $render_array['#attributes'] = new Attribute($render_array['#attributes']);
     $render_array['#attributes']->addClass('geolocation-location');
+    $render_array['#attributes']->addClass('js-hide');
     if (!empty($render_array['#id'])) {
       $render_array['#attributes']->setAttribute('id', $render_array['#id']);
     }

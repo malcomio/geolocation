@@ -113,6 +113,13 @@ class GeolocationInput extends FormElement {
    *   The complete form structure.
    */
   public static function validateGeolocation(array &$element, FormStateInterface $form_state, array &$complete_form) {
+    if (
+      empty($element['#value']['lng'])
+      && empty($element['#value']['lat'])
+    ) {
+      return;
+    }
+
     if (!is_numeric($element['#value']['lng'])) {
       $form_state->setError($element, t('Longitude not numeric.'));
     }

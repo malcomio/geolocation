@@ -402,7 +402,7 @@
         /** @type {GeolocationLocationSettings} */
         var location = {
           position: position,
-          title: locationWrapper.children('.location-title').text(),
+          title: locationWrapper.find('.location-title').text(),
           setMarker: true,
           locationWrapper: locationWrapper
         };

@@ -9,7 +9,7 @@ use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 use Drupal\geolocation\Plugin\Field\FieldFormatter\GeolocationMapFormatterBase;
 
 /**
- * Plugin implementation of the 'geolocation_latlng' formatter.
+ * Plugin implementation of the 'geolocation_googlemap' formatter.
  *
  * @FieldFormatter(
  *   id = "geolocation_map",
@@ -87,20 +87,15 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
       && !empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
       && is_array($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
     ) {
-      $google_map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId] ?: []);
-    }
-    else {
-      $google_map_settings = $this->mapProvider->getSettings(isset($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId]);
-    }
+      $google_map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId]);
 
-    if (!empty($settings['common_map'])) {
-      $id = $elements['#id'];
-      $elements = $this->mapProvider->alterRenderArray($elements, $google_map_settings, $id);
-    }
-    else {
-      foreach (Element::children($elements) as $delta => $element) {
-        $id = $elements[$delta]['#id'];
-        $elements[$delta] = $this->mapProvider->alterRenderArray($elements[$delta], $google_map_settings, $id);
+      if (!empty($settings['common_map'])) {
+        $elements['#settings'] = $google_map_settings;
+      }
+      else {
+        foreach (Element::children($elements) as $delta => $element) {
+          $elements[$delta]['#settings'] = $google_map_settings;
+        }
       }
     }
 

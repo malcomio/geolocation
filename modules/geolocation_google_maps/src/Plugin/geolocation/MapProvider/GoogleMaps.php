@@ -82,6 +82,11 @@ class GoogleMaps extends MapProviderBase {
     $module_parameters = \Drupal::moduleHandler()->invokeAll('geolocation_google_maps_parameters') ?: [];
     $custom_parameters = $config->get('google_map_custom_url_parameters') ?: [];
 
+    // Set the map language to site language if desired and possible.
+    if ($config->get('use_current_language') &&  \Drupal::moduleHandler()->moduleExists('language')) {
+      $custom_parameters['language'] = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    }
+
     $parameters = array_replace_recursive($custom_parameters, $module_parameters, $geolocation_parameters);
 
     if (!empty($parameters['client'])) {
@@ -517,9 +522,9 @@ class GoogleMaps extends MapProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $settings, $id) {
+  public function alterRenderArray(array $render_array, array $map_settings) {
 
-    $settings = $this->getSettings($settings);
+    $map_settings = $this->getSettings($map_settings);
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
@@ -531,9 +536,9 @@ class GoogleMaps extends MapProviderBase {
           'geolocation' => [
             'google_map_url' => $this->getGoogleMapsApiUrl(),
             'maps' => [
-              $id => [
+              $render_array['#id'] => [
                 'settings' => [
-                  'google_map_settings' => $settings,
+                  'google_map_settings' => $map_settings,
                 ],
               ],
             ],
@@ -542,7 +547,7 @@ class GoogleMaps extends MapProviderBase {
       ]
     );
 
-    $render_array = parent::alterRenderArray($render_array, $settings, $id);
+    $render_array = parent::alterRenderArray($render_array, $map_settings);
 
     return $render_array;
   }

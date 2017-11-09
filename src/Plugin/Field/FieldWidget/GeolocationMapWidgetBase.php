@@ -218,10 +218,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $default_field_values = [
-      'lat' => '',
-      'lng' => '',
-    ];
+    $default_field_values = FALSE;
 
     if (!empty($this->fieldDefinition->getDefaultValueLiteral()[0])) {
       $default_field_values = [
@@ -230,7 +227,11 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       ];
     }
 
-    if (!empty($items[$delta]->lat) && !empty($items[$delta]->lng)) {
+    // '0' is an allowed value, '' is not.
+    if (
+      isset($items[$delta]->lat)
+      && isset($items[$delta]->lng)
+    ) {
       $default_field_values = [
         'lat' => $items[$delta]->lat,
         'lng' => $items[$delta]->lng,
@@ -239,11 +240,14 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
 
     $element = [
       '#type' => 'geolocation_input',
-      '#default_value' => [
+    ];
+
+    if ($default_field_values) {
+      $element['#default_value'] = [
         'lat' => $default_field_values['lat'],
         'lng' => $default_field_values['lng'],
-      ],
-    ];
+      ];
+    }
 
     return $element;
   }

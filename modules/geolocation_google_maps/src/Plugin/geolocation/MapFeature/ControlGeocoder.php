@@ -149,21 +149,21 @@ class ControlGeocoder extends ControlMapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
-    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+  public function alterMap(array $render_array, array $feature_settings) {
+    $render_array = parent::alterMap($render_array, $feature_settings);
 
-    $settings = $this->getSettings($settings);
+    $feature_settings = $this->getSettings($feature_settings);
 
     /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
     $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
       ->getGeocoder(
-        $settings['geocoder'],
-        $settings['settings']
+        $feature_settings['geocoder'],
+        $feature_settings['settings']
       );
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
-      $geocoder_plugin->attachments($map_id)
+      $geocoder_plugin->attachments($render_array['#id'])
     );
 
     $render_array['#controls'][$this->pluginId]['#type'] = 'container';
@@ -171,8 +171,8 @@ class ControlGeocoder extends ControlMapFeatureBase {
     /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
     $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
       ->getGeocoder(
-        $settings['geocoder'],
-        $settings['settings']
+        $feature_settings['geocoder'],
+        $feature_settings['settings']
       );
     $geocoder_plugin->formAttachGeocoder($render_array['#controls'][$this->pluginId], $render_array['#id']);
 

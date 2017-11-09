@@ -196,10 +196,10 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
     else {
       $value_element = &$form;
     }
-    $value_element[$this->field]['#weight'] = 30;
+    $value_element[$identifier]['#weight'] = 30;
 
     if ($this->options['proximity_units'] == 'exposed') {
-      $value_element[$this->options['expose']['identifier'] . '-units'] = [
+      $value_element[$identifier . '-units'] = [
         '#type' => 'select',
         '#default_value' => !empty($this->value['units']) ? $this->value['units'] : '',
         '#weight' => 40,
@@ -211,13 +211,13 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
     }
 
     if ($this->options['proximity_source'] == 'exposed') {
-      $value_element[$this->options['expose']['identifier'] . '-lat'] = [
+      $value_element[$identifier . '-lat'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Latitude'),
         '#weight' => 10,
       ];
 
-      $value_element[$this->options['expose']['identifier'] . '-lng'] = [
+      $value_element[$identifier . '-lng'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Longitude'),
         '#weight' => 20,

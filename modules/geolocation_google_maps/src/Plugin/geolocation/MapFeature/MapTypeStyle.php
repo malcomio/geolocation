@@ -110,18 +110,17 @@ class MapTypeStyle extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
-    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+  public function alterMap(array $render_array, array $feature_settings) {
+    $render_array = parent::alterMap($render_array, $feature_settings);
 
-    $settings = $this->getSettings($settings);
+    $feature_settings = $this->getSettings($feature_settings);
 
     if (
-      !empty($settings['style'])
-      && is_string($settings['style'])
+      !empty($feature_settings['style'])
+      && is_string($feature_settings['style'])
     ) {
-      $settings['style'] = json_decode($settings['style']);
+      $feature_settings['style'] = json_decode($feature_settings['style']);
     }
-
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
@@ -132,10 +131,10 @@ class MapTypeStyle extends MapFeatureBase {
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
-              $map_id => [
+              $render_array['#id'] => [
                 'map_type_style' => [
                   'enable' => TRUE,
-                  'style' => $settings['style'],
+                  'style' => $feature_settings['style'],
                 ],
               ],
             ],

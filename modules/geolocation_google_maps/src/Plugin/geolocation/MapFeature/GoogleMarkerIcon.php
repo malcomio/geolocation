@@ -153,10 +153,10 @@ class GoogleMarkerIcon extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
-    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+  public function alterMap(array $render_array, array $feature_settings) {
+    $render_array = parent::alterMap($render_array, $feature_settings);
 
-    $settings = $this->getSettings($settings);
+    $feature_settings = $this->getSettings($feature_settings);
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
@@ -167,14 +167,14 @@ class GoogleMarkerIcon extends MapFeatureBase {
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
-              $map_id => [
+              $render_array['#id'] => [
                 'marker_icon' => [
                   'enable' => TRUE,
-                  'anchor' => $settings['anchor'],
-                  'size' => $settings['size'],
-                  'scaledSize' => $settings['scaled_size'],
-                  'labelOrigin' => $settings['label_origin'],
-                  'origin' => $settings['origin'],
+                  'anchor' => $feature_settings['anchor'],
+                  'size' => $feature_settings['size'],
+                  'scaledSize' => $feature_settings['scaled_size'],
+                  'labelOrigin' => $feature_settings['label_origin'],
+                  'origin' => $feature_settings['origin'],
                 ],
               ],
             ],

@@ -6,6 +6,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\RenderElement;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Provides a render element to display a geolocation map.
@@ -105,13 +106,22 @@ class GeolocationMap extends RenderElement {
       $map_settings = $render_array['#settings'];
     }
 
-    array_unshift($render_array['#attached']['library'], 'geolocation/geolocation.map');
+    $render_array = BubbleableMetadata::mergeAttachments(
+      [
+        '#attached' => [
+          'library' => [
+            'geolocation/geolocation.map',
+          ],
+        ],
+      ],
+      $render_array
+    );
 
     foreach (Element::children($render_array) as $child) {
       $render_array['#children'][] = $render_array[$child];
     }
 
-    $render_array = $map_provider->alterRenderArray($render_array, $map_settings, $render_array['#id']);
+    $render_array = $map_provider->alterRenderArray($render_array, $map_settings);
 
     $render_array['#attributes'] = new Attribute($render_array['#attributes']);
     $render_array['#attributes']->addClass('geolocation-map-wrapper');

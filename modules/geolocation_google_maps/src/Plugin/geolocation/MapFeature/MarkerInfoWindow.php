@@ -6,7 +6,8 @@ use Drupal\geolocation\MapFeatureBase;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides marker infowindow
+ * Provides marker infowindow.
+ *
  * @MapFeature(
  *   id = "marker_infowindow",
  *   name = @Translation("Marker InfoWindow"),
@@ -57,10 +58,10 @@ class MarkerInfoWindow extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
-    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+  public function alterMap(array $render_array, array $feature_settings) {
+    $render_array = parent::alterMap($render_array, $feature_settings);
 
-    $settings = $this->getSettings($settings);
+    $feature_settings = $this->getSettings($feature_settings);
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
@@ -71,12 +72,12 @@ class MarkerInfoWindow extends MapFeatureBase {
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
-              $map_id => [
+              $render_array['#id'] => [
                 'marker_infowindow' => [
                   'enable' => TRUE,
-                  'infoAutoDisplay' => $settings['info_auto_display'],
-                  'disableAutoPan' => $settings['disable_auto_pan'],
-                  'infoWindowSolitary' => $settings['info_window_solitary'],
+                  'infoAutoDisplay' => $feature_settings['info_auto_display'],
+                  'disableAutoPan' => $feature_settings['disable_auto_pan'],
+                  'infoWindowSolitary' => $feature_settings['info_window_solitary'],
                 ],
               ],
             ],

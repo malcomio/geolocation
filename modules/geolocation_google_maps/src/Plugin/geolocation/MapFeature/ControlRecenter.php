@@ -20,8 +20,8 @@ class ControlRecenter extends ControlMapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $settings, $map_id = NULL) {
-    $render_array = parent::alterRenderArray($render_array, $settings, $map_id);
+  public function alterMap(array $render_array, array $settings) {
+    $render_array = parent::alterMap($render_array, $settings);
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
@@ -32,7 +32,7 @@ class ControlRecenter extends ControlMapFeatureBase {
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
-              $map_id => [
+              $render_array['#id'] => [
                 'control_recenter' => [
                   'enable' => TRUE,
                 ],
