@@ -68,6 +68,9 @@
           return;
         }
 
+        // Set the already processed flag.
+        map.wrapper.addClass('geolocation-map-processed');
+
         map.addLoadedCallback(function (map) {
           $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
             map.addControl(control);
@@ -82,9 +85,6 @@
           });
 
           map.wrapper.find('.geolocation-location').hide();
-
-          // Set the already processed flag.
-          map.wrapper.addClass('geolocation-map-processed');
 
           map.setCenterByBehavior();
         });

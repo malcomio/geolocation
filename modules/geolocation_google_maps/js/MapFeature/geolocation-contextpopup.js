@@ -43,6 +43,8 @@
               return;
             }
 
+            map.wrapper.addClass('geolocation-map-contextpopup-processed');
+
             map.addReadyCallback(function (map) {
 
               /** @param {jQuery} */
@@ -101,8 +103,6 @@
                   contextContainer.css('top', pos.y);
                 }
               });
-
-              map.wrapper.addClass('geolocation-map-contextpopup-processed');
             });
           }
         }

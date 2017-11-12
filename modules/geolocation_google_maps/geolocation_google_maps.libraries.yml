@@ -155,3 +155,10 @@ geolocation.maptypestyle:
     js/MapFeature/geolocation-maptypestyle.js: {}
   dependencies:
     - geolocation_google_maps/googlemapsapi
+
+# MapDisablePOI support.
+geolocation.mapdisablepoi:
+  js:
+    js/MapFeature/geolocation-mapdisablepoi.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi

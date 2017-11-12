@@ -56,6 +56,8 @@
               return;
             }
 
+            map.wrapper.addClass('geolocation-marker-infowindow-processed');
+
             map.addReadyCallback(function (map) {
               $.each(map.mapMarkers, function(index, currentMarker) {
                 if (typeof (currentMarker.locationWrapper) === 'undefined') {
@@ -91,8 +93,6 @@
                   });
                 }
               });
-
-              map.wrapper.addClass('geolocation-marker-infowindow-processed');
             });
           }
         }

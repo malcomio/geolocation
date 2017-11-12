@@ -244,7 +244,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
         ) {
           $feature_parents = $parents;
           array_push($feature_parents, $feature_id, 'settings');
-          $feature->validateSettingsForm($values[$feature_id]['settings'], $form_state, $feature_parents);
+          $feature->validateSettingsForm(empty($values[$feature_id]['settings']) ? [] : $values[$feature_id]['settings'], $form_state, $feature_parents);
         }
       }
     }
@@ -255,17 +255,16 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
    */
   public function alterRenderArray(array $render_array, array $map_settings) {
 
-    foreach ($this->mapFeatureManager->getMapFeaturesByMapType($this->getPluginId()) as $feature_id => $feature_definition) {
-      if (!empty($map_settings['map_features'][$feature_id]['enabled'])) {
+    uasort($map_settings['map_features'], '\Drupal\Component\Utility\SortArray::sortByWeightElement');
+
+    foreach ($map_settings['map_features'] as $feature_id => $feature_settings) {
+      if (!empty($feature_settings['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
         if ($feature) {
-          if (!empty($map_settings['map_features'][$feature_id]['settings'])) {
-            $feature_settings = $map_settings['map_features'][$feature_id]['settings'];
+          if (empty($feature_settings['settings'])) {
+            $feature_settings['settings'] = $feature->getSettings([]);
           }
-          else {
-            $feature_settings = $feature->getSettings([]);
-          }
-          $render_array = $feature->alterMap($render_array, $feature_settings);
+          $render_array = $feature->alterMap($render_array, $feature_settings['settings']);
         }
       }
     }
