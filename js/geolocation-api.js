@@ -17,28 +17,21 @@
  * @property {Number} lng
  * @property {String} centreBehavior
  * @property {jQuery} wrapper
- * @property {GeolocationLocationSettings[]} mapMarkers
+ * @property {GeolocationMapMarker[]} mapMarkers
  */
 
 /**
  * Callback when map is clicked.
  *
  * @callback GeolocationMapClickCallback
- * @param {Object} event - Click event.
+ * @param {Event} event - Click event.
  */
 
 /**
  * Callback when map is right-clicked.
  *
  * @callback GeolocationMapContextClickCallback
- * @param {Object} event - Click event.
- */
-
-/**
- * Callback when marker is clicked.
- *
- * @callback GeolocationMapMarkerClickCallback
- * @param {Object} event - Click event.
+ * @param {Event} event - Click event.
  */
 
 /**
@@ -63,7 +56,7 @@
  */
 
 /**
- * @typedef {Object} GeolocationLocationSettings
+ * @typedef {Object} GeolocationMapMarker
  *
  * @property {GeolocationCoordinates} position
  * @property {string} title
@@ -105,8 +98,13 @@
  * Set marker on map.
  * @function
  * @name GeolocationMapInterface#setMapMarker
- * @param {GeolocationLocationSettings} Settings for the marker.
- * @return {Object} - Created marker.
+ * @param {GeolocationMapMarker} Settings for the marker.
+ * @return {GeolocationMapMarker} - Created marker.
+ *
+ * Remove single marker.
+ * @function
+ * @name GeolocationMapInterface#removeMapMarker
+ * @param {GeolocationMapMarker} Marker object.
  *
  * Remove all markers from map.
  * @function
@@ -126,7 +124,7 @@
  * Fit map to markers.
  * @function
  * @name GeolocationMapInterface#fitMapToMarkers
- * @param {GeolocationLocationSettings[]} [locations] Override using map.mapMarker.
+ * @param {GeolocationMapMarker[]} [locations] Override using map.mapMarker.
  *
  * Fit map to bounds.
  * @function
@@ -154,6 +152,7 @@
  * Executes {GeolocationMapClickCallbacks} for this map.
  * @function
  * @name GeolocationMapInterface#clickCallback
+ * @param {Event} e - Event.
  *
  * Adds a callback that will be called when map is clicked.
  * @function
@@ -163,20 +162,12 @@
  * Executes {GeolocationMapClickCallbacks} for this map.
  * @function
  * @name GeolocationMapInterface#doubleClickCallback
+ * @param {Event} e - Event.
  *
  * Adds a callback that will be called on double click.
  * @function
  * @name GeolocationMapInterface#addDoubleClickCallback
  * @param {GeolocationMapClickCallback} callback - Callback.
- *
- * Executes {GeolocationMapMarkerClickCallbacks} for this map.
- * @function
- * @name GeolocationMapInterface#markerClickCallback
- *
- * Adds a callback that will be called when marker is clicked.
- * @function
- * @name GeolocationMapInterface#addMarkerClickCallback
- * @param {GeolocationMapMarkerClickCallback} callback - Callback.
  *
  * Executes {GeolocationMapContextClickCallbacks} for this map.
  * @function
@@ -230,7 +221,6 @@
     }
 
     this.mapMarkers = this.mapMarkers || [];
-    Drupal.geolocation.maps.push(this);
 
     return this;
   }
@@ -303,6 +293,9 @@
     setMapMarker: function (markerSettings) {
       // Stub.
     },
+    removeMapMarker: function (marker) {
+      // Stub.
+    },
     removeMapMarkers: function () {
       // Stub.
     },
@@ -341,16 +334,6 @@
     addContextClickCallback: function (callback) {
       this.contextClickCallbacks = this.contextClickCallbacks || [];
       this.contextClickCallbacks.push(callback);
-    },
-    markerClickCallback: function (event) {
-      this.markerClickCallbacks = this.markerClickCallbacks || [];
-      $.each(this.markerClickCallbacks, function (index, callback) {
-        callback(event);
-      });
-    },
-    addMarkerClickCallback: function (callback) {
-      this.markerClickCallbacks = this.markerClickCallbacks || [];
-      this.markerClickCallbacks.push(callback);
     },
     readyCallback: function () {
       this.readyCallbacks = this.readyCallbacks || [];
@@ -399,7 +382,7 @@
           lng: Number(locationWrapper.data('lng'))
         };
 
-        /** @type {GeolocationLocationSettings} */
+        /** @type {GeolocationMapMarker} */
         var location = {
           position: position,
           title: locationWrapper.find('.location-title').text(),
@@ -458,6 +441,7 @@
       if (typeof Drupal.geolocation[Drupal.geolocation.MapProviders[mapSettings.type]] !== 'undefined') {
         var mapProvider = Drupal.geolocation[Drupal.geolocation.MapProviders[mapSettings.type]];
         map = new mapProvider(mapSettings);
+        Drupal.geolocation.maps.push(map);
       }
     }
     else {

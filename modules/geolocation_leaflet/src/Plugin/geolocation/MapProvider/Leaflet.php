@@ -31,21 +31,7 @@ class Leaflet extends MapProviderBase {
    * {@inheritdoc}
    */
   public function getSettings(array $settings) {
-    $default_settings = self::getDefaultSettings();
-    $settings = array_replace_recursive($default_settings, $settings);
-
-    foreach ($settings as $key => $setting) {
-      if (!isset($default_settings[$key])) {
-        unset($settings[$key]);
-      }
-    }
-
-    foreach ($this->mapFeatureManager->getMapFeaturesByMapType('leaflet') as $feature_id => $feature_definition) {
-      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
-        $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
-        $settings['map_features'][$feature_id] = $feature->getSettings($settings['map_features'][$feature_id]['settings']);
-      }
-    }
+    $settings = parent::getSettings($settings);
 
     return $settings;
   }
@@ -54,7 +40,7 @@ class Leaflet extends MapProviderBase {
    * {@inheritdoc}
    */
   public function getSettingsSummary(array $settings) {
-    $summary = [];
+    $summary = parent::getSettingsSummary($settings);
     $summary[] = $this->t('Zoom level: @zoom', ['@zoom' => $settings['zoom']]);
     $summary[] = $this->t('Height: @height', ['@height' => $settings['height']]);
     $summary[] = $this->t('Width: @width', ['@width' => $settings['width']]);
@@ -70,11 +56,9 @@ class Leaflet extends MapProviderBase {
     if ($parents) {
       $parents_string = implode('][', $parents);
     }
-    $form = [
-      '#type' => 'details',
-      '#title' => t('Leaflet settings'),
-      '#description' => t('Additional map settings provided by Leaflet'),
-    ];
+
+    $form = parent::getSettingsForm($settings, $parents);
+
     $form['height'] = [
       '#group' => $parents_string,
       '#type' => 'textfield',
@@ -106,6 +90,11 @@ class Leaflet extends MapProviderBase {
         ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
       ],
     ];
+
+    // Push to bottom.
+    $map_features = $form['map_features'];
+    unset($form['map_features']);
+    $form['map_features'] = $map_features;
 
     return $form;
   }

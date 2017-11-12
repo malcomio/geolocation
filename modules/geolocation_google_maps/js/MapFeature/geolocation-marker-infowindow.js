@@ -52,8 +52,16 @@
               return;
             }
 
+            if (map.wrapper.hasClass('geolocation-marker-infowindow-processed')) {
+              return;
+            }
+
             map.addReadyCallback(function (map) {
               $.each(map.mapMarkers, function(index, currentMarker) {
+                if (typeof (currentMarker.locationWrapper) === 'undefined') {
+                  return;
+                }
+
                 var content = currentMarker.locationWrapper.find('.location-content');
 
                 if (content.length < 1) {
@@ -83,6 +91,8 @@
                   });
                 }
               });
+
+              map.wrapper.addClass('geolocation-marker-infowindow-processed');
             });
           }
         }

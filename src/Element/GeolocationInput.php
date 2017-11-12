@@ -71,7 +71,6 @@ class GeolocationInput extends FormElement {
       ];
     }
 
-    // Hidden lat,lng input fields.
     $element['lat'] = [
       '#type' => 'textfield',
       '#title' => t('Latitude'),
@@ -88,16 +87,23 @@ class GeolocationInput extends FormElement {
       '#default_value' => $default_field_values['lng'],
       '#attributes' => [
         'class' => [
-          'geolocation-map-input-latitude',
+          'geolocation-map-input-longitude',
         ],
       ],
     ];
 
-    $element['#attributes'] = [
-      'class' => [
-        'geolocation-map-input',
-      ],
-    ];
+    if (empty($element['#wrapper_attributes'])) {
+      $element['#wrapper_attributes'] = [];
+    }
+
+    $element['#wrapper_attributes'] = array_merge_recursive(
+      $element['#wrapper_attributes'],
+      [
+        'class' => [
+          'geolocation-map-input',
+        ],
+      ]
+    );
 
     return $element;
   }

@@ -5,6 +5,7 @@ namespace Drupal\geolocation_google_maps\Plugin\Field\FieldWidget;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation\Plugin\Field\FieldWidget\GeolocationMapWidgetBase;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Plugin implementation of the 'geolocation_googlegeocoder' widget.
@@ -53,7 +54,17 @@ class GeolocationGoogleWidget extends GeolocationMapWidgetBase {
   public function form(FieldItemListInterface $items, array &$form, FormStateInterface $form_state, $get_delta = NULL) {
     $element = parent::form($items, $form, $form_state, $get_delta);
 
-    $element['#attributes']['class'][] = 'geolocation-google-map-widget';
+    // TODO: pluginId is weired for compatibility reasons. Overriding for now.
+    $element['#attributes']['data-widget-type'] = 'google';
+
+    $element['#attached'] = BubbleableMetadata::mergeAttachments(
+      $element['#attached'],
+      [
+        'library' => [
+          'geolocation_google_maps/widget.api.google',
+        ],
+      ]
+    );
 
     $settings = $this->getSettings();
 
@@ -62,8 +73,6 @@ class GeolocationGoogleWidget extends GeolocationMapWidgetBase {
     }
 
     $google_map_settings = $this->mapProvider->getSettings($settings[$this->mapProviderSettingsFormId]);
-
-    $element['map_container']['map']['#attached']['library'][] = 'geolocation_google_maps/widgets.google';
 
     $element['map_container']['map']['#settings'] = $google_map_settings;
 

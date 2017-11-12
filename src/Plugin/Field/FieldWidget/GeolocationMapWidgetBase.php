@@ -4,14 +4,15 @@ namespace Drupal\geolocation\Plugin\Field\FieldWidget;
 
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
-use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Map widget base.
@@ -240,6 +241,12 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
 
     $element = [
       '#type' => 'geolocation_input',
+      '#wrapper_attributes' => [
+        'class' => [
+          'geolocation-widget-input',
+          'geolocation-widget-input-' . $delta,
+        ],
+      ],
     ];
 
     if ($default_field_values) {
@@ -258,62 +265,54 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
   public function form(FieldItemListInterface $items, array &$form, FormStateInterface $form_state, $get_delta = NULL) {
     $element = parent::form($items, $form, $form_state, $get_delta);
 
-    $element['#attributes']['class'][] = 'geolocation-map-widget';
-
-    $id = Html::getUniqueId($this->fieldDefinition->getName());
-
     $settings = $this->getSettings();
+    $id = Html::getUniqueId('edit_' . $this->fieldDefinition->getName() . '_wrapper');
 
-    // Add the map container.
-    $element['map_container'] = [
-      '#type' => 'container',
-      '#weight' => -10,
-      '#attached' => [
+    if (empty($element['#attributes'])) {
+      $element['#attributes'] = [];
+    }
+
+    $element['#attributes'] = array_merge_recursive(
+      $element['#attributes'],
+      [
+        'data-widget-type' => $this->getPluginId(),
+        'id' => $id,
+        'class' => [
+          'geolocation-map-widget',
+        ],
+      ]
+    );
+
+    if (empty($element['#attached'])) {
+      $element['#attached'] = [];
+    }
+
+    $element['#attached'] = BubbleableMetadata::mergeAttachments(
+      $element['#attached'],
+      [
         'library' => [
-          'geolocation/geolocation.widget.api',
+          'geolocation/geolocation.widget',
         ],
         'drupalSettings' => [
           'geolocation' => [
             'widgetSettings' => [
               $id => [
                 'autoClientLocationMarker' => $settings['auto_client_location_marker'] ? TRUE : FALSE,
+                'cardinality' => $this->fieldDefinition->getFieldStorageDefinition()->getCardinality(),
+                'fieldName' => $this->fieldDefinition->getName(),
               ],
             ],
           ],
         ],
-      ],
-    ];
+      ]
+    );
 
-    $element['map_container']['map'] = [
+    $element['map'] = [
       '#type' => 'geolocation_map',
+      '#weight' => -10,
       '#settings' => $settings[$this->mapProviderSettingsFormId],
-      '#id' => $id,
+      '#id' => $id . '-map',
     ];
-
-    foreach ($items as $delta => $item) {
-      if ($item->isEmpty()) {
-        continue;
-      }
-      $element['map_container']['map']['location_' . $delta][] = [
-        '#type' => 'geolocation_map_location',
-        '#title' => $this->t(
-          '[%delta] Latitude: %latitude Longitude: %longitude',
-          [
-            '%delta' => $delta,
-            '%latitude' => $item->lat,
-            '%longitude' => $item->lng,
-          ]
-        ),
-        '#label' => $delta + 1,
-        '#position' => [
-          'lat' => $item->lat,
-          'lng' => $item->lng,
-        ],
-        '#data' => [
-          ['identifier' => 'widget-delta', 'value' => $delta],
-        ],
-      ];
-    }
 
     if ($settings['allow_override_map_settings']) {
       if ($this->mapProvider) {

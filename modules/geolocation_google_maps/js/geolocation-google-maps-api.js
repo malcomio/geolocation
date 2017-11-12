@@ -116,7 +116,6 @@
 
 /**
  * @typedef {Object} GoogleMarkerSettings
- * @extends {GeolocationLocationSettings}
  *
  * Settings from https://developers.google.com/maps/documentation/javascript/3.exp/reference#MarkerOptions:
  * @property {GoogleMap} map
@@ -124,6 +123,7 @@
 
 /**
  * @typedef {Object} GoogleMarker
+ * @extends {GeolocationMapMarker}
  * @property {Function} setPosition
  * @property {Function} setMap
  * @property {Function} setIcon
@@ -346,9 +346,13 @@
     this.googleMap.setOptions(mapSettings.google_map_settings);
   };
   GeolocationGoogleMap.prototype.setMapMarker = function (markerSettings) {
-    if (markerSettings.setMarker === false) {
-      return;
+    if (typeof markerSettings.setMarker !== 'undefined') {
+      if (markerSettings.setMarker === false) {
+       return;
+      }
     }
+
+    var that = this;
 
     markerSettings.position = new google.maps.LatLng(parseFloat(markerSettings.position.lat), parseFloat(markerSettings.position.lng));
 
@@ -370,6 +374,24 @@
     this.mapMarkers.push(currentMarker);
 
     return currentMarker;
+  };
+  GeolocationGoogleMap.prototype.removeMapMarker = function (marker) {
+    var that = this;
+    $.each(
+      this.mapMarkers,
+
+      /**
+       * @param {integer} index - Current index.
+       * @param {GoogleMarker} item - Current marker.
+       */
+      function (index, item) {
+        if (item === marker) {
+          that.mapMarkers.splice(Number(index), 1);
+        }
+      }
+    );
+
+    marker.setMap(null);
   };
   GeolocationGoogleMap.prototype.removeMapMarkers = function () {
     $.each(
@@ -546,8 +568,8 @@
 
     $.each(Drupal.geolocation.google.loadedCallbacks, function (index, callback) {
       callback();
-      delete Drupal.geolocation.google.loadedCallbacks[index];
     });
+    Drupal.geolocation.google.loadedCallbacks = [];
   };
 
 })(jQuery, Drupal, drupalSettings);

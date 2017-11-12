@@ -24,11 +24,11 @@ geocoder.googlegeocodingapi:
     - geolocation/geolocation.geocoder.api
     - geolocation_google_maps/googlemapsapi
 
-# Google geocoder widget library.
-widgets.google:
+# Google widget API.
+widget.api.google:
   version: 1.x
   js:
-    js/geolocation-widget-google.js: { scope: footer }
+    js/geolocation-widget-google-api.js: { scope: footer }
   dependencies:
     - geolocation/geolocation.widget.api
 

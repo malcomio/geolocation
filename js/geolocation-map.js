@@ -25,71 +25,74 @@
         mapSettings.wrapper = mapWrapper;
 
         if (
-          mapWrapper.length
-          && !mapWrapper.hasClass('geolocation-processed')
+          mapWrapper.length === 0
+          || mapWrapper.hasClass('geolocation-map-processed')
         ) {
-          mapSettings.lat = 0;
-          mapSettings.lng = 0;
-
-          if (
-            mapWrapper.data('centre-lat')
-            && mapWrapper.data('centre-lng')
-          ) {
-            mapSettings.lat = Number(mapWrapper.data('centre-lat'));
-            mapSettings.lng = Number(mapWrapper.data('centre-lng'));
-          }
-
-          if (mapWrapper.data('map-type')) {
-            mapSettings.type = mapWrapper.data('map-type');
-          }
-
-          if (mapWrapper.data('centre-behavior')) {
-            mapSettings.centreBehavior = mapWrapper.data('centre-behavior');
-          }
-
-          if (typeof drupalSettings.geolocation === 'undefined') {
-            console.err("Bailing out for lack of settings.");  // eslint-disable-line no-console
-            return;
-          }
-
-          $.each(drupalSettings.geolocation.maps, function (mapId, currentSettings) {
-            if (mapId === mapSettings.id) {
-              mapSettings = $.extend(currentSettings, mapSettings);
-            }
-          });
-
-          var map = Drupal.geolocation.Factory(mapSettings);
-
-          if (!map) {
-            console.error(mapSettings, 'Geolocation - Couldn\'t initialize map.'); // eslint-disable-line no-console
-            return;
-          }
-
-          map.addReadyCallback(function (map) {
-            map.removeMapMarkers();
-
-            var locations = map.loadMarkersFromContainer();
-
-            $.each(locations, function (index, location) {
-              map.setMapMarker(location);
-            });
-
-            map.wrapper.find('.geolocation-location').hide();
-
-            $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
-              map.addControl(control);
-            });
-
-            // Set the already processed flag.
-            map.container.addClass('geolocation-processed');
-          });
-
-          map.addLoadedCallback(function (map) {
-            $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
-              map.addControl(control);
-            });
-          });
+          return;
         }
+
+        mapSettings.lat = 0;
+        mapSettings.lng = 0;
+
+        if (
+          mapWrapper.data('centre-lat')
+          && mapWrapper.data('centre-lng')
+        ) {
+          mapSettings.lat = Number(mapWrapper.data('centre-lat'));
+          mapSettings.lng = Number(mapWrapper.data('centre-lng'));
+        }
+
+        if (mapWrapper.data('map-type')) {
+          mapSettings.type = mapWrapper.data('map-type');
+        }
+
+        if (mapWrapper.data('centre-behavior')) {
+          mapSettings.centreBehavior = mapWrapper.data('centre-behavior');
+        }
+
+        if (typeof drupalSettings.geolocation === 'undefined') {
+          console.err("Bailing out for lack of settings.");  // eslint-disable-line no-console
+          return;
+        }
+
+        $.each(drupalSettings.geolocation.maps, function (mapId, currentSettings) {
+          if (mapId === mapSettings.id) {
+            mapSettings = $.extend(currentSettings, mapSettings);
+          }
+        });
+
+        var map = Drupal.geolocation.Factory(mapSettings);
+
+        if (!map) {
+          console.error(mapSettings, 'Geolocation - Couldn\'t initialize map.'); // eslint-disable-line no-console
+          return;
+        }
+
+        map.addReadyCallback(function (map) {
+          map.removeMapMarkers();
+
+          var locations = map.loadMarkersFromContainer();
+
+          $.each(locations, function (index, location) {
+            map.setMapMarker(location);
+          });
+
+          map.wrapper.find('.geolocation-location').hide();
+
+          $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
+            map.addControl(control);
+          });
+
+          // Set the already processed flag.
+          map.wrapper.addClass('geolocation-map-processed');
+        });
+
+        map.addLoadedCallback(function (map) {
+          $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
+            map.addControl(control);
+          });
+        });
+
       });
     }
   };

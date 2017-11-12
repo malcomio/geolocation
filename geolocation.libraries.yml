@@ -25,8 +25,15 @@ geolocation.widget.api:
   js:
     js/geolocation-widget-api.js: { scope: footer }
   dependencies:
-    - geolocation/geolocation.map
-    - geolocation/geolocation.geocoder.api
+    - geolocation/geolocation.api
+
+geolocation.widget:
+  version: 8.x-1.x
+  js:
+    js/geolocation-widget.js: {}
+  dependencies:
+      - geolocation/geolocation.map
+      - geolocation/geolocation.widget.api
 
 #
 #

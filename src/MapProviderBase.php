@@ -5,6 +5,7 @@ namespace Drupal\geolocation;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Component\Utility\SortArray;
 
 /**
  * Class MapProviderBase.
@@ -72,6 +73,23 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
       }
     }
 
+    foreach ($this->mapFeatureManager->getMapFeaturesByMapType($this->getPluginId()) as $feature_id => $feature_definition) {
+      if (!empty($settings['map_features'][$feature_id]['enabled'])) {
+        $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
+        if ($feature) {
+          if (empty($settings['map_features'][$feature_id]['settings'])) {
+            $settings['map_features'][$feature_id]['settings'] = $feature->getSettings([]);
+          }
+          else {
+            $settings['map_features'][$feature_id]['settings'] = $feature->getSettings($settings['map_features'][$feature_id]['settings']);
+          }
+        }
+        else {
+          unset($settings['map_features'][$feature_id]);
+        }
+      }
+    }
+
     return $settings;
   }
 
@@ -106,7 +124,92 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
    * {@inheritdoc}
    */
   public function getSettingsForm(array $settings, array $parents = []) {
-    $form = [];
+    $form = [
+      '#type' => 'details',
+      '#title' => $this->t('%map_provider settings', ['%map_provider' => $this->pluginDefinition['name']]),
+      '#description' => $this->t('Additional map settings provided by %map_provider', ['%map_provider' => $this->pluginDefinition['name']]),
+    ];
+
+    $form['map_features'] = [
+      '#type' => 'table',
+      '#prefix' => $this->t('<h3>Map Features</h3>'),
+      '#title' => 'title table',
+      '#description' => 'description table',
+      '#header' => [
+        $this->t('Enable'),
+        $this->t('Feature'),
+        $this->t('Settings'),
+        [
+          'data' => $this->t('Settings'),
+          'colspan' => '1',
+        ],
+      ],
+      '#tabledrag' => [
+        [
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'geolocation-google-map-feature-option-weight',
+        ],
+      ],
+    ];
+
+    foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
+      $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
+      if (empty($feature)) {
+        continue;
+      }
+
+      $feature_enable_id = uniqid($feature_id . '_enabled');
+      $weight = isset($settings['map_features'][$feature_id]['weight']) ? $settings['map_features'][$feature_id]['weight'] : 0;
+
+      $form['map_features'][$feature_id] = [
+        '#weight' => $weight,
+        '#attributes' => [
+          'class' => [
+            'draggable',
+          ],
+        ],
+        'enabled' => [
+          '#attributes' => [
+            'id' => $feature_enable_id,
+          ],
+          '#type' => 'checkbox',
+          '#default_value' => empty($settings['map_features'][$feature_id]['enabled']) ? FALSE : TRUE,
+        ],
+        'feature' => [
+          '#type' => 'label',
+          '#title' => $feature_definition['name'],
+          '#suffix' => $feature_definition['description'],
+        ],
+        'weight' => [
+          '#type' => 'weight',
+          '#title' => $this->t('Weight for @option', ['@option' => $feature_definition['name']]),
+          '#title_display' => 'invisible',
+          '#size' => 4,
+          '#default_value' => $weight,
+          '#attributes' => ['class' => ['geolocation-google-map-feature-option-weight']],
+        ],
+      ];
+
+      $feature_form = $feature->getSettingsForm(
+        empty($settings['map_features'][$feature_id]['settings']) ? [] : $settings['map_features'][$feature_id]['settings'],
+        array_merge($parents, ['map_features', $feature_id, 'settings'])
+      );
+
+      if (!empty($feature_form)) {
+        $feature_form['#states'] = [
+          'visible' => [
+            ':input[id="' . $feature_enable_id . '"]' => ['checked' => TRUE],
+          ],
+        ];
+        $feature_form['#type'] = 'item';
+
+        $form['map_features'][$feature_id]['settings'] = $feature_form;
+      }
+    }
+
+    uasort($form['map_features'], [SortArray::class, 'sortByWeightProperty']);
+
 
     return $form;
   }
