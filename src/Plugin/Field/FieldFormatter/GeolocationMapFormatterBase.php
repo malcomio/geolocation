@@ -70,6 +70,19 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
   /**
    * {@inheritdoc}
    */
+  public function getSettings() {
+    $settings = parent::getSettings();
+
+    if (empty($settings[$this->mapProviderSettingsFormId])) {
+      $settings[$this->mapProviderSettingsFormId] = [];
+    }
+
+    return $settings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $settings = $this->getSettings();
 
@@ -131,7 +144,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     }
 
     if ($this->mapProvider) {
-      $mapProviderSettings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
+      $mapProviderSettings = $settings[$this->mapProviderSettingsFormId];
       $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
         $mapProviderSettings,
         [
@@ -164,6 +177,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       }
     }
 
+    $summary = array_replace_recursive($summary, $this->mapProvider->getSettingsSummary($settings[$this->mapProviderSettingsFormId]));
+
     return $summary;
   }
 
@@ -175,15 +190,9 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       return [];
     }
 
-    $settings = $this->getSettings();
+    $elements = [];
 
-    $elements = [
-      '#attached' => [
-        'library' => [
-          'geolocation/geolocation.map',
-        ],
-      ],
-    ];
+    $settings = $this->getSettings();
 
     $token_context = [
       $this->fieldDefinition->getTargetEntityTypeId() => $items->getEntity(),
@@ -220,56 +229,30 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
         ],
       ];
 
-      /*
-       * Add location to later display one common map.
-       */
-      if (!empty($settings['common_map'])) {
-        $locations[] = $location;
-      }
-
-      /*
-       * Add each single map to render output.
-       */
-      else {
-        $id = uniqid("map-");
-
-        $elements[$delta] = [
-          '#type' => 'geolocation_map',
-        ];
-        $elements[$delta]['location'] = $location;
-        $elements[$delta]['#id'] = $id;
-        $elements['#attached']['drupalSettings']['geolocation']['maps'][$id] = [
-          'id' => $id,
-        ];
-        $elements[$delta]['#centre'] = $location['#position'];
-      }
+      $locations[] = $location;
     }
 
-    /*
-     * Display one map with all locations.
-     */
+    $element_pattern = [
+      '#type' => 'geolocation_map',
+      '#settings' => $settings[$this->mapProviderSettingsFormId],
+      '#maptype' => $this->mapProviderId,
+      '#centre' => [
+        'behavior' => 'fitlocations',
+      ],
+    ];
+
     if (!empty($settings['common_map'])) {
-      $id = uniqid("map-");
-
-      $elements = [
-        '#type' => 'geolocation_map',
-      ];
+      $elements = $element_pattern;
+      $elements['#id'] = uniqid("map-");
       foreach ($locations as $delta => $location) {
-        $elements['location_' . $delta] = $location;
+        $elements[$delta] = $location;
       }
-      $elements['#id'] = $id;
-      $elements['#attached']['drupalSettings']['geolocation']['maps'][$id] = [
-        'id' => $id,
-      ];
-
-      if (empty($locations)) {
-        return [];
-      }
-      else {
-        $elements['#centre'] = [
-          'lat' => $locations[0]['#position']['lat'],
-          'lng' => $locations[0]['#position']['lng'],
-        ];
+    }
+    else {
+      foreach ($locations as $delta => $location) {
+        $elements[$delta] = $element_pattern;
+        $elements[$delta]['#id'] = uniqid("map-" . $delta . "-");
+        $elements[$delta]['content'] = $location;
       }
     }
 

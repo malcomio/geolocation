@@ -2,7 +2,6 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 
@@ -104,31 +103,15 @@ class ControlGeocoder extends ControlMapFeatureBase {
         '#prefix' => '<div id="geocoder-plugin-settings">',
         '#suffix' => '</div>',
       ]);
-
-      $form['#element_validate'][] = [$this, 'validateSettingsForm'];
     }
 
     return $form;
   }
 
   /**
-   * Validate form.
-   *
-   * @param array $element
-   *   Form element to check.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current form state.
-   * @param array $form
-   *   Current form.
+   * {@inheritdoc}
    */
-  public function validateSettingsForm(array $element, FormStateInterface $form_state, array $form) {
-    $values = $form_state->getValues();
-    $parents = [];
-    if (!empty($element['#parents'])) {
-      $parents = $element['#parents'];
-      $values = NestedArray::getValue($values, $parents);
-    }
-
+  public function validateSettingsForm(array $values, FormStateInterface $form_state, array $parents) {
     if ($values['geocoder']) {
       /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
       $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
@@ -151,6 +134,26 @@ class ControlGeocoder extends ControlMapFeatureBase {
    */
   public function alterMap(array $render_array, array $feature_settings) {
     $render_array = parent::alterMap($render_array, $feature_settings);
+
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
+      [
+        'library' => [
+          'geolocation_google_maps/geolocation.control_geocoder',
+        ],
+        'drupalSettings' => [
+          'geolocation' => [
+            'maps' => [
+              $render_array['#id'] => [
+                'control_geocoder' => [
+                  'enable' => TRUE,
+                ],
+              ],
+            ],
+          ],
+        ],
+      ]
+    );
 
     $feature_settings = $this->getSettings($feature_settings);
 

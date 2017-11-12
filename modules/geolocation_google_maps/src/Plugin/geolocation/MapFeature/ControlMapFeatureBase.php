@@ -2,7 +2,6 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation\MapFeatureBase;
 use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
@@ -45,14 +44,7 @@ abstract class ControlMapFeatureBase extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function validateSettingsForm(array $element, FormStateInterface $form_state, array $form) {
-    $values = $form_state->getValues();
-    $parents = [];
-    if (!empty($element['#parents'])) {
-      $parents = $element['#parents'];
-      $values = NestedArray::getValue($values, $parents);
-    }
-
+  public function validateSettingsForm(array $values, FormStateInterface $form_state, array $parents) {
     if (!in_array($values['position'], array_keys(GoogleMaps::getControlPositions()))) {
       $form_state->setErrorByName(implode('][', $parents), $this->t('No valid position.'));
     }

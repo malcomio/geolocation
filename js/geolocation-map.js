@@ -68,7 +68,11 @@
           return;
         }
 
-        map.addReadyCallback(function (map) {
+        map.addLoadedCallback(function (map) {
+          $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
+            map.addControl(control);
+          });
+
           map.removeMapMarkers();
 
           var locations = map.loadMarkersFromContainer();
@@ -79,18 +83,10 @@
 
           map.wrapper.find('.geolocation-location').hide();
 
-          $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
-            map.addControl(control);
-          });
-
           // Set the already processed flag.
           map.wrapper.addClass('geolocation-map-processed');
-        });
 
-        map.addLoadedCallback(function (map) {
-          $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
-            map.addControl(control);
-          });
+          map.setCenterByBehavior();
         });
 
       });

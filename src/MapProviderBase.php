@@ -6,6 +6,8 @@ use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\SortArray;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Class MapProviderBase.
@@ -152,6 +154,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
         ],
       ],
     ];
+    $form['map_features']['#element_validate'][] = [$this, 'validateMapFeatureForms'];
 
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
       $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
@@ -210,8 +213,41 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
 
     uasort($form['map_features'], [SortArray::class, 'sortByWeightProperty']);
 
-
     return $form;
+  }
+
+  /**
+   * Validate form.
+   *
+   * @param array $element
+   *   Form element to check.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
+   * @param array $form
+   *   Current form.
+   */
+  public function validateMapFeatureForms(array $element, FormStateInterface $form_state, array $form) {
+    $values = $form_state->getValues();
+
+    $parents = [];
+    if (!empty($element['#parents'])) {
+      $parents = $element['#parents'];
+      $values = NestedArray::getValue($values, $parents);
+    }
+
+    foreach ($this->mapFeatureManager->getMapFeaturesByMapType($this->getPluginId()) as $feature_id => $feature_definition) {
+      if (!empty($values[$feature_id]['enabled'])) {
+        $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
+        if (
+          $feature
+        && method_exists($feature, 'validateSettingsForm')
+        ) {
+          $feature_parents = $parents;
+          array_push($feature_parents, $feature_id, 'settings');
+          $feature->validateSettingsForm($values[$feature_id]['settings'], $form_state, $feature_parents);
+        }
+      }
+    }
   }
 
   /**

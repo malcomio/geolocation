@@ -220,8 +220,9 @@
       }
     },
     getNextDelta: function() {
-      var lastDelta = this.getAllInputs().length - 1;
-      var input = input.last;
+      var inputs = this.getAllInputs();
+      var lastDelta = inputs.length - 1;
+      var input = inputs.eq(lastDelta);
       if (
         input.find('input.geolocation-map-input-longitude').val()
         || input.find('input.geolocation-map-input-latitude').val()
@@ -260,7 +261,13 @@
       input.find('input.geolocation-map-input-longitude').val(location.lng);
       input.find('input.geolocation-map-input-latitude').val(location.lat);
     },
-    removeMarker: function (delta) {},
+    removeMarker: function (delta) {
+      var marker = this.getMarkerByDelta(delta);
+
+      if (marker) {
+        this.map.removeMapMarker(marker);
+      }
+    },
     removeInput: function (delta) {
       var input = this.getInputByDelta(delta);
       input.find('input.geolocation-map-input-longitude').val('');

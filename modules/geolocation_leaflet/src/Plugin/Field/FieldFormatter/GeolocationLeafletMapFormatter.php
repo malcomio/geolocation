@@ -2,10 +2,6 @@
 
 namespace Drupal\geolocation_leaflet\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Render\Element;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\geolocation_leaflet\Plugin\geolocation\MapProvider\Leaflet;
 use Drupal\geolocation\Plugin\Field\FieldFormatter\GeolocationMapFormatterBase;
 
 /**
@@ -28,64 +24,5 @@ class GeolocationLeafletMapFormatter extends GeolocationMapFormatterBase {
    * {@inheritdoc}
    */
   protected $mapProviderId = 'leaflet';
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function defaultSettings() {
-    $settings = parent::defaultSettings();
-    $settings += Leaflet::getDefaultSettings();
-
-    return $settings;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
-    $settings = $this->getSettings();
-
-    $form = parent::settingsForm($form, $form_state);
-
-    $form += $this->mapProvider->getSettingsForm($settings, 'fields[' . $this->fieldDefinition->getName() . '][settings_edit_form][settings][');
-
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function settingsSummary() {
-    $settings = $this->getSettings();
-
-    $summary = parent::settingsSummary();
-    $summary = array_merge($summary, $this->mapProvider->getSettingsSummary($settings));
-
-    return $summary;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = parent::viewElements($items, $langcode);
-
-    $settings = $this->getSettings();
-
-    $leaflet_settings = $this->mapProvider->getSettings($settings);
-
-    if (!empty($settings['common_map'])) {
-      $elements['#maptype'] = 'leaflet';
-      $elements['#settings'] = $leaflet_settings;
-    }
-    else {
-      foreach (Element::children($elements) as $delta => $element) {
-        $elements[$delta]['#maptype'] = 'leaflet';
-        $elements['#settings'] = $leaflet_settings;
-      }
-    }
-
-    return $elements;
-  }
 
 }

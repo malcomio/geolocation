@@ -7,21 +7,21 @@
   'use strict';
 
   /**
-   * GeolocationGoogleMapWidget element.
+   * GeolocationLeafletMapWidget element.
    *
    * @constructor
    * @augments {GeolocationMapWidgetBase}
    * @implements {GeolocationMapWidgetInterface}
    * @inheritDoc
    */
-  function GeolocationGoogleMapWidget(widgetSettings) {
+  function GeolocationLeafletMapWidget(widgetSettings) {
     Drupal.geolocation.widget.GeolocationMapWidgetBase.call(this, widgetSettings);
 
     return this;
   }
-  GeolocationGoogleMapWidget.prototype = Object.create(Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype);
-  GeolocationGoogleMapWidget.prototype.constructor = GeolocationGoogleMapWidget;
-  GeolocationGoogleMapWidget.prototype.addMarker = function (location, delta) {
+  GeolocationLeafletMapWidget.prototype = Object.create(Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype);
+  GeolocationLeafletMapWidget.prototype.constructor = GeolocationLeafletMapWidget;
+  GeolocationLeafletMapWidget.prototype.addMarker = function (location, delta) {
     Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype.addMarker.call(this, location, delta);
 
     var that = this;
@@ -39,16 +39,15 @@
         '@longitude': location.lng
       }),
       setMarker: true,
-      label: (delta + 1).toString(),
-      delta: delta,
       draggable: true
     });
+    marker.delta = delta;
 
-    marker.addListener('dragend', function(e) {
-      that.updateInput({lat: Number(e.latLng.lat()), lng: Number(e.latLng.lng())}, marker.delta);
+    marker.on('dragend', function(e) {
+      that.updateInput({lat: Number(e.latlng.lat), lng: Number(e.latlng.lng)}, marker.delta);
     });
 
-    marker.addListener('click', function() {
+    marker.on('click', function() {
       that.removeInput(marker.delta);
       that.removeMarker(marker.delta);
       that.locationRemovedCallback(marker.delta);
@@ -56,17 +55,16 @@
 
     return marker;
   };
-  GeolocationGoogleMapWidget.prototype.updateMarker = function (location, delta) {
+  GeolocationLeafletMapWidget.prototype.updateMarker = function (location, delta) {
     Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype.updateMarker.call(this, delta);
 
-    /** @param {GoogleMarker} marker */
     var marker = this.getMarkerByDelta(delta);
-    marker.setPosition(location);
+    marker.setLatLng(location);
 
     return marker;
   };
-  Drupal.geolocation.widget.GeolocationGoogleMapWidget = GeolocationGoogleMapWidget;
+  Drupal.geolocation.widget.GeolocationLeafletMapWidget = GeolocationLeafletMapWidget;
 
-  Drupal.geolocation.widget.addWidgetProvider('google', 'GeolocationGoogleMapWidget');
+  Drupal.geolocation.widget.addWidgetProvider('geolocation_leaflet', 'GeolocationLeafletMapWidget');
 
 })(jQuery, Drupal);

@@ -24,6 +24,7 @@
         var widgetWrapper = $(item);
         widgetSettings.wrapper = widgetWrapper;
         widgetSettings.id = widgetWrapper.attr('id');
+        widgetSettings.type = widgetWrapper.data('widget-type');
 
         if (
           widgetWrapper.length === 0
@@ -109,20 +110,21 @@
 
         widget.map.addReadyCallback(function (map) {
           widget.loadMarkersFromInput();
+          widget.map.fitMapToMarkers();
         });
 
         // Add the click responders for setting the value.
         var singleClick;
 
-        widget.map.addClickCallback(function (e) {
+        widget.map.addClickCallback(function (location) {
 
           // Create 500ms timeout to wait for double click.
           singleClick = setTimeout(function () {
             var delta = widget.getNextDelta();
             if (delta || delta === 0) {
-              widget.addInput({lat: Number(e.latLng.lat()), lng: Number(e.latLng.lng())});
-              widget.addMarker({lat: Number(e.latLng.lat()), lng: Number(e.latLng.lng())}, delta);
-              widget.locationAddedCallback({lat: Number(e.latLng.lat()), lng: Number(e.latLng.lng())}, delta);
+              widget.addInput(location);
+              widget.addMarker(location, delta);
+              widget.locationAddedCallback(location, delta);
             }
           }, 500);
 

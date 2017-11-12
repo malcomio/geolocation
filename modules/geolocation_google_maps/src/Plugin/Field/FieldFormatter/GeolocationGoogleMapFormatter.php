@@ -65,18 +65,6 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary() {
-    $settings = $this->getSettings();
-
-    $summary = parent::settingsSummary();
-    $summary = array_merge($summary, $this->mapProvider->getSettingsSummary($settings));
-
-    return $summary;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = parent::viewElements($items, $langcode);
 

@@ -75,6 +75,17 @@
 
     /** @property {LeafletMap} leafletMap */
     this.leafletMap = leafletMap;
+
+    this.addLoadedCallback(function(map) {
+      map.leafletMap.on('click', function(e) {
+        map.clickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
+      });
+
+      map.leafletMap.on('contextmenu', function(e) {
+        map.contextClickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
+      });
+    });
+
     this.loadedCallback(this, this.id);
 
     this.readyCallback();
@@ -95,16 +106,17 @@
     /** @param {LeafletMarker} */
     var currentMarker = L.marker([markerSettings.position.lat, markerSettings.position.lng], markerSettings).addTo(this.leafletMap);
 
-    currentMarker.bindPopup(markerSettings.infoWindowContent);
-
     this.mapMarkers.push(currentMarker);
 
     return currentMarker;
   };
+  GeolocationLeafletMap.prototype.removeMapMarker = function (marker) {
+    Drupal.geolocation.GeolocationMapBase.prototype.removeMapMarker.call(this, marker);
+    this.leafletMap.removeLayer(marker);
+  };
   GeolocationLeafletMap.prototype.fitMapToMarkers = function (locations) {
 
     locations = locations || this.mapMarkers;
-
     if (locations.length === 0) {
       return;
     }

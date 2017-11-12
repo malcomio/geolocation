@@ -246,6 +246,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
           'geolocation-widget-input',
           'geolocation-widget-input-' . $delta,
         ],
+        'data-geolocation-widget-input-delta' => $delta,
       ],
     ];
 
@@ -312,13 +313,17 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       '#weight' => -10,
       '#settings' => $settings[$this->mapProviderSettingsFormId],
       '#id' => $id . '-map',
+      '#maptype' => $this->mapProviderId,
     ];
+
+    $map_settings = $this->mapProvider->getSettings($settings[$this->mapProviderSettingsFormId]);
 
     if ($settings['allow_override_map_settings']) {
       if ($this->mapProvider) {
-        $mapProviderSettings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
+        $overriden_map_settings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
+        // $values[0]['data'][$this->mapProviderSettingsFormId]
         $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
-          $mapProviderSettings,
+          $overriden_map_settings,
           [
             'fields',
             $this->fieldDefinition->getName(),
@@ -328,6 +333,8 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
         );
       }
     }
+
+    $element['map_container']['map']['#settings'] = $map_settings;
 
     return $element;
   }
@@ -339,7 +346,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     $values = parent::massageFormValues($values, $form, $form_state);
 
     if (!empty($this->settings['allow_override_map_settings'])) {
-      if (!empty($values['google_map_settings'])) {
+      if (!empty($values[$this->mapProviderSettingsFormId])) {
         $values[0]['data'][$this->mapProviderSettingsFormId] = $values[$this->mapProviderSettingsFormId];
       }
     }

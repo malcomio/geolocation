@@ -66,16 +66,6 @@ class GeolocationGoogleWidget extends GeolocationMapWidgetBase {
       ]
     );
 
-    $settings = $this->getSettings();
-
-    if (empty($settings[$this->mapProviderSettingsFormId])) {
-      $settings[$this->mapProviderSettingsFormId] = [];
-    }
-
-    $google_map_settings = $this->mapProvider->getSettings($settings[$this->mapProviderSettingsFormId]);
-
-    $element['map_container']['map']['#settings'] = $google_map_settings;
-
     return $element;
   }
 

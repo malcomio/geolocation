@@ -3,6 +3,7 @@
 namespace Drupal\geolocation;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines an interface for geolocation MapFeature plugins.
@@ -51,6 +52,18 @@ interface MapFeatureInterface extends PluginInspectionInterface {
    *   A form array to be integrated in whatever.
    */
   public function getSettingsForm(array $settings, array $parents);
+
+  /**
+   * Validate Feature Form.
+   *
+   * @param array $values
+   *   Feature values.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form State.
+   * @param array $parents
+   *   Element parents.
+   */
+  public function validateSettingsForm(array $values, FormStateInterface $form_state, array $parents);
 
   /**
    * Alter render array.

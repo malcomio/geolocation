@@ -40,6 +40,7 @@ class Leaflet extends MapProviderBase {
    * {@inheritdoc}
    */
   public function getSettingsSummary(array $settings) {
+    $settings = $this->getSettings($settings);
     $summary = parent::getSettingsSummary($settings);
     $summary[] = $this->t('Zoom level: @zoom', ['@zoom' => $settings['zoom']]);
     $summary[] = $this->t('Height: @height', ['@height' => $settings['height']]);

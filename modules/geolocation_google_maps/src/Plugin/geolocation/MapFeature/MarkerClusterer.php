@@ -2,7 +2,6 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation\MapFeatureBase;
@@ -65,29 +64,13 @@ class MarkerClusterer extends MapFeatureBase {
       '#default_value' => $settings['max_zoom'],
     ];
 
-    $form['#element_validate'][] = [$this, 'validateSettingsForm'];
-
     return $form;
   }
 
   /**
-   * Validate form.
-   *
-   * @param array $element
-   *   Form element to check.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current form state.
-   * @param array $form
-   *   Current form.
+   * {@inheritdoc}
    */
-  public function validateSettingsForm(array $element, FormStateInterface $form_state, array $form) {
-    $values = $form_state->getValues();
-    $parents = [];
-    if (!empty($element['#parents'])) {
-      $parents = $element['#parents'];
-      $values = NestedArray::getValue($values, $parents);
-    }
-
+  public function validateSettingsForm(array $values, FormStateInterface $form_state, array $parents) {
     $marker_clusterer_styles = $values['styles'];
     if (!empty($marker_clusterer_styles)) {
       $style_parents = $parents;

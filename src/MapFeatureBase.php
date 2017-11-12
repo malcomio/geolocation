@@ -5,6 +5,7 @@ namespace Drupal\geolocation;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Class MapFeatureBase.
@@ -58,6 +59,18 @@ abstract class MapFeatureBase extends PluginBase implements MapFeatureInterface,
 
     return $form;
   }
+
+  /**
+   * Validate Feature Form.
+   *
+   * @param array $values
+   *   Feature values.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form State.
+   * @param array $parents
+   *   Element parents.
+   */
+  public function validateSettingsForm(array $values, FormStateInterface $form_state, array $parents) {}
 
   /**
    * {@inheritdoc}

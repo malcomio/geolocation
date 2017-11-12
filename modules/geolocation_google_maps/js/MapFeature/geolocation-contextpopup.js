@@ -39,6 +39,10 @@
               return;
             }
 
+            if (map.wrapper.hasClass('geolocation-map-contextpopup-processed')) {
+              return;
+            }
+
             map.addReadyCallback(function (map) {
 
               /** @param {jQuery} */
@@ -49,13 +53,13 @@
               /**
                * Context popup handling.
                *
-               * @param {GoogleMapLatLng} latLng - Coordinates.
+               * @param {GeolocationCoordinates} location - Coordinates.
                * @return {GoogleMapPoint} - Pixel offset against top left corner of map container.
                */
-              map.googleMap.fromLatLngToPixel = function (latLng) {
+              map.googleMap.fromLocationToPixel = function (location) {
                 var numTiles = 1 << map.googleMap.getZoom();
                 var projection = map.googleMap.getProjection();
-                var worldCoordinate = projection.fromLatLngToPoint(latLng);
+                var worldCoordinate = projection.fromLatLngToPoint(new google.maps.LatLng(location.lat, location.lng));
                 var pixelCoordinate = new google.maps.Point(
                   worldCoordinate.x * numTiles,
                   worldCoordinate.y * numTiles);
@@ -76,27 +80,29 @@
                 );
               };
 
-              map.addClickCallback(function (event) {
+              map.addClickCallback(function (location) {
                 if (typeof contextContainer !== 'undefined') {
                   contextContainer.hide();
                 }
               });
 
-              map.addContextClickCallback(function (event) {
+              map.addContextClickCallback(function (location) {
                 var content = Drupal.formatString(mapSettings.context_popup.content, {
-                  '@lat': event.latLng.lat(),
-                  '@lng': event.latLng.lng()
+                  '@lat': location.lat,
+                  '@lng': location.lng
                 });
 
                 contextContainer.html(content);
 
                 if (content.length > 0) {
-                  var pos = map.googleMap.fromLatLngToPixel(event.latLng);
+                  var pos = map.googleMap.fromLocationToPixel(location);
                   contextContainer.show();
                   contextContainer.css('left', pos.x);
                   contextContainer.css('top', pos.y);
                 }
               });
+
+              map.wrapper.addClass('geolocation-map-contextpopup-processed');
             });
           }
         }

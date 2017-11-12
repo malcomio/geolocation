@@ -24,14 +24,14 @@
  * Callback when map is clicked.
  *
  * @callback GeolocationMapClickCallback
- * @param {Event} event - Click event.
+ * @param {GeolocationCoordinates} location - Click location.
  */
 
 /**
  * Callback when map is right-clicked.
  *
  * @callback GeolocationMapContextClickCallback
- * @param {Event} event - Click event.
+ * @param {GeolocationCoordinates} location - Click location.
  */
 
 /**
@@ -241,18 +241,14 @@
 
       switch (centreBehavior) {
         case 'preset':
-          this.addReadyCallback(function (map) {
-            map.setCenterByCoordinates({
-              lat: map.lat,
-              lng: map.lng
-            });
+          this.setCenterByCoordinates({
+            lat: this.lat,
+            lng: this.lng
           });
           break;
 
         case 'fitlocations':
-          this.addLoadedCallback(function (map) {
-            map.fitMapToMarkers();
-          });
+          this.fitMapToMarkers();
           break;
 
         case 'fitboundaries':
@@ -269,9 +265,7 @@
               west: this.wrapper.data('centre-lng-south-west')
             };
             // Centre handling
-            this.addReadyCallback(function (map) {
-              map.fitBoundaries(centerBounds);
-            });
+            this.fitBoundaries(centerBounds);
           }
           break;
 
@@ -279,9 +273,7 @@
           if (navigator.geolocation) {
             var that = this;
             navigator.geolocation.getCurrentPosition(function (position) {
-              that.addLoadedCallback(function (map) {
-                map.setCenterByCoordinates({lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)}, parseInt(position.coords.accuracy));
-              });
+              that.setCenterByCoordinates({lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)}, parseInt(position.coords.accuracy));
             });
           }
           break;
@@ -294,7 +286,20 @@
       // Stub.
     },
     removeMapMarker: function (marker) {
-      // Stub.
+      var that = this;
+      $.each(
+        this.mapMarkers,
+
+        /**
+         * @param {integer} index - Current index.
+         * @param {GoogleMarker} item - Current marker.
+         */
+        function (index, item) {
+          if (item === marker) {
+            that.mapMarkers.splice(Number(index), 1);
+          }
+        }
+      );
     },
     removeMapMarkers: function () {
       // Stub.
@@ -305,30 +310,30 @@
     fitBoundaries: function (boundaries) {
       // Stub.
     },
-    clickCallback: function (event) {
+    clickCallback: function (location) {
       this.clickCallbacks = this.clickCallbacks || [];
       $.each(this.clickCallbacks, function (index, callback) {
-        callback(event);
+        callback(location);
       });
     },
     addClickCallback: function (callback) {
       this.clickCallbacks = this.clickCallbacks || [];
       this.clickCallbacks.push(callback);
     },
-    doubleClickCallback: function (event) {
+    doubleClickCallback: function (location) {
       this.doubleClickCallbacks = this.doubleClickCallbacks || [];
       $.each(this.doubleClickCallbacks, function (index, callback) {
-        callback(event);
+        callback(location);
       });
     },
     addDoubleClickCallback: function (callback) {
       this.doubleClickCallbacks = this.doubleClickCallbacks || [];
       this.doubleClickCallbacks.push(callback);
     },
-    contextClickCallback: function (event) {
+    contextClickCallback: function (location) {
       this.contextClickCallbacks = this.contextClickCallbacks || [];
       $.each(this.contextClickCallbacks, function (index, callback) {
-        callback(event);
+        callback(location);
       });
     },
     addContextClickCallback: function (callback) {
@@ -454,7 +459,6 @@
       return false;
     }
 
-    map.setCenterByBehavior(mapSettings.centreBehavior);
     return map;
   }
 

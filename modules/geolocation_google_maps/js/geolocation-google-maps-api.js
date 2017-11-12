@@ -305,12 +305,12 @@
       /** @property {GoogleMap} googleMap */
       map.googleMap = googleMap;
 
-      google.maps.event.addListener(map.googleMap, 'click', function (event) {
-        map.clickCallback(event);
+      google.maps.event.addListener(map.googleMap, 'click', function (e) {
+        map.clickCallback({lat: e.latLng.lat(), lng: e.latLng.lng()});
       });
 
-      google.maps.event.addListener(map.googleMap, 'rightclick', function (event) {
-        map.contextClickCallback(event);
+      google.maps.event.addListener(map.googleMap, 'rightclick', function (e) {
+        map.contextClickCallback({lat: e.latLng.lat(), lng: e.latLng.lng()});
       });
 
       if (map.settings.google_map_settings.scrollwheel && map.settings.google_map_settings.preferScrollingToZooming) {
@@ -352,8 +352,6 @@
       }
     }
 
-    var that = this;
-
     markerSettings.position = new google.maps.LatLng(parseFloat(markerSettings.position.lat), parseFloat(markerSettings.position.lng));
 
     markerSettings.map = this.googleMap;
@@ -367,7 +365,6 @@
       }
     }
 
-    // Add the marker to the map.
     /** @type {GoogleMarker} */
     var currentMarker = new google.maps.Marker(markerSettings);
 
@@ -376,20 +373,7 @@
     return currentMarker;
   };
   GeolocationGoogleMap.prototype.removeMapMarker = function (marker) {
-    var that = this;
-    $.each(
-      this.mapMarkers,
-
-      /**
-       * @param {integer} index - Current index.
-       * @param {GoogleMarker} item - Current marker.
-       */
-      function (index, item) {
-        if (item === marker) {
-          that.mapMarkers.splice(Number(index), 1);
-        }
-      }
-    );
+    Drupal.geolocation.GeolocationMapBase.prototype.removeMapMarker.call(this, marker);
 
     marker.setMap(null);
   };
@@ -410,7 +394,6 @@
   GeolocationGoogleMap.prototype.fitMapToMarkers = function (locations) {
 
     locations = locations || this.mapMarkers;
-
     if (locations.length === 0) {
       return;
     }
