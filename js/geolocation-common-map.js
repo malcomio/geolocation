@@ -159,29 +159,33 @@
 
     Drupal.detachBehaviors(viewWrapper.get(0), settings);
 
-    var commonMapStyle = false;
+    var map = null;
 
+    // Retain existing map if possible, to avoid jumping and improve UX.
     if (
       newContent.find('.geolocation-map-container').length > 0
       && viewWrapper.find('.geolocation-map-container').length > 0
     ) {
-      commonMapStyle = true;
-    }
-
-    if (commonMapStyle) {
-      // Retain existing map if possible, to avoid jumping and improve UX.
       newContent.find('.geolocation-map-container').first().remove();
-      var map = viewWrapper.find('.geolocation-map-container').first();
+      map = viewWrapper.find('.geolocation-map-container').first();
       map.insertBefore(viewWrapper);
     }
 
     viewWrapper.replaceWith(newContent);
 
-    if (commonMapStyle) {
+    // Retain existing map if possible, to avoid jumping and improve UX.
+    if (
+      newContent.find('.geolocation-map-container').length > 0
+      && viewWrapper.find('.geolocation-map-container').length > 0
+    ) {
       map.prependTo(viewWrapper.find('.geolocation-map-wrapper'));
     }
 
+    // Attach all JavaScript behaviors to the new content, if it was
+    // successfully added to the page, this if statement allows
+    // `#ajax['wrapper']` to be optional.
     if (newContent.parents('html').length > 0) {
+      // Apply any settings from the returned JSON if available.
       Drupal.attachBehaviors(newContent.get(0), settings);
     }
   };
