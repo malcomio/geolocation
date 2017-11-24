@@ -50,10 +50,9 @@ class AjaxResponseSubscriber implements EventSubscriberInterface {
       }
     }
 
-    $page_change = $event->getRequest()->query->get('page', FALSE);
-
     $commands = &$response->getCommands();
     foreach ($commands as $delta => &$command) {
+
       // Substitute the 'replace' method without our custom jQuery method which
       // will allow views content to be injected one after the other.
       if (
@@ -67,7 +66,10 @@ class AjaxResponseSubscriber implements EventSubscriberInterface {
       }
 
       // Stop the view from scrolling to the top of the page.
-      if ($page_change === FALSE && $command['command'] === 'viewsScrollTop') {
+      if (
+        $command['command'] === 'viewsScrollTop'
+        && $event->getRequest()->query->get('page', FALSE) === FALSE
+      ) {
         unset($commands[$delta]);
       }
     }

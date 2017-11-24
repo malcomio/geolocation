@@ -148,35 +148,41 @@
   Drupal.AjaxCommands.prototype.geolocationCommonMapsUpdate = function (ajax, response, status) {
 
     // See function comment for code origin first before any changes!
-    var $wrapper = response.selector ? $(response.selector) : $(ajax.wrapper);
+    var viewWrapper = response.selector ? $(response.selector) : $(ajax.wrapper);
     var settings = response.settings || ajax.settings || drupalSettings;
 
-    var $new_content_wrapped = $('<div></div>').html(response.data);
-    var $new_content = $new_content_wrapped.contents();
+    var newContent = $('<div></div>').html(response.data).contents();
 
-    if ($new_content.length !== 1 || $new_content.get(0).nodeType !== 1) {
-      $new_content = $new_content.parent();
+    if (newContent.length !== 1 || newContent.get(0).nodeType !== 1) {
+      newContent = newContent.parent();
     }
 
-    Drupal.detachBehaviors($wrapper.get(0), settings);
+    Drupal.detachBehaviors(viewWrapper.get(0), settings);
 
-    // Retain existing map if possible, to avoid jumping and improve UX.
+    var commonMapStyle = false;
+
     if (
-      $new_content.find('.geolocation-map-container').length > 0
-      && $wrapper.find('.geolocation-map-container').length > 0
+      newContent.find('.geolocation-map-container').length > 0
+      && viewWrapper.find('.geolocation-map-container').length > 0
     ) {
-      var detachedMap = $wrapper.find('.geolocation-map-container').first().detach();
-      $new_content.find('.geolocation-map-container').first().replaceWith(detachedMap);
+      commonMapStyle = true;
     }
 
-    $wrapper.replaceWith($new_content);
+    if (commonMapStyle) {
+      // Retain existing map if possible, to avoid jumping and improve UX.
+      newContent.find('.geolocation-map-container').first().remove();
+      var map = viewWrapper.find('.geolocation-map-container').first();
+      map.insertBefore(viewWrapper);
+    }
 
-    // Attach all JavaScript behaviors to the new content, if it was
-    // successfully added to the page, this if statement allows
-    // `#ajax['wrapper']` to be optional.
-    if ($new_content.parents('html').length > 0) {
-      // Apply any settings from the returned JSON if available.
-      Drupal.attachBehaviors($new_content.get(0), settings);
+    viewWrapper.replaceWith(newContent);
+
+    if (commonMapStyle) {
+      map.prependTo(viewWrapper.find('.geolocation-map-wrapper'));
+    }
+
+    if (newContent.parents('html').length > 0) {
+      Drupal.attachBehaviors(newContent.get(0), settings);
     }
   };
 
