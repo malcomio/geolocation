@@ -30,6 +30,12 @@ class GoogleCommonMap extends CommonMapBase {
 
     $build = parent::render();
 
+    if ($this->view->getRequest()->get('geolocation_common_map_google_bounds_changed')) {
+      $build['#centre'] = [
+        'behavior' => 'preserve',
+      ];
+    }
+
     $build['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($build['#attached']) ? [] : $build['#attached'],
       [

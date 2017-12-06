@@ -85,7 +85,6 @@
           });
 
           map.wrapper.find('.geolocation-location').hide();
-
           map.setCenterByBehavior();
         });
 

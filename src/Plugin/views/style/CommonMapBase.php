@@ -6,7 +6,6 @@ use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\views\ResultRow;
-use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\SortArray;
 
@@ -458,7 +457,7 @@ abstract class CommonMapBase extends StylePluginBase {
   protected function defineOptions() {
     $options = parent::defineOptions();
 
-    $options['even_empty'] = ['default' => '0'];
+    $options['even_empty'] = ['default' => '1'];
     $options['geolocation_field'] = ['default' => ''];
     $options['title_field'] = ['default' => ''];
     $options['icon_field'] = ['default' => ''];
@@ -751,6 +750,14 @@ abstract class CommonMapBase extends StylePluginBase {
       ];
     }
 
+    $form['marker_icon_path'] = [
+      '#group' => 'style_options][advanced_settings',
+      '#type' => 'textfield',
+      '#title' => $this->t('Marker icon path'),
+      '#description' => $this->t('Set relative or absolute path to custom marker icon. Tokens supported. Empty for default.'),
+      '#default_value' => $this->options['marker_icon_path'],
+    ];
+
     if ($id_options) {
       $form['marker_scroll_to_result'] = [
         '#group' => 'style_options][advanced_settings',
@@ -786,14 +793,6 @@ abstract class CommonMapBase extends StylePluginBase {
       '#title' => $this->t('Show views result row number in marker'),
       '#type' => 'checkbox',
       '#default_value' => $this->options['marker_row_number'],
-    ];
-
-    $form['marker_icon_path'] = [
-      '#group' => 'style_options][advanced_settings',
-      '#type' => 'textfield',
-      '#title' => $this->t('Marker icon path'),
-      '#description' => $this->t('Set relative or absolute path to custom marker icon. Tokens supported. Empty for default.'),
-      '#default_value' => $this->options['marker_icon_path'],
     ];
 
     if ($this->mapProvider) {

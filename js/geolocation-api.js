@@ -235,11 +235,28 @@
       this.container = mapSettings.wrapper.find('.geolocation-map-container').first();
       this.lat = mapSettings.lat;
       this.lng = mapSettings.lng;
+      this.centreBehavior = mapSettings.centreBehavior;
+      this.updatedCallback();
+    },
+    updatedCallback: function () {
+      this.updatedCallbacks = this.updatedCallbacks || [];
+      var that = this;
+      $.each(this.updatedCallbacks, function (index, callback) {
+        callback(that);
+      });
+      this.updatedCallbacks = [];
+    },
+    addUpdatedCallback: function (callback) {
+      this.updatedCallbacks = this.updatedCallbacks || [];
+      this.updatedCallbacks.push(callback);
     },
     setCenterByBehavior: function (centreBehavior) {
       centreBehavior = centreBehavior || this.centreBehavior;
 
       switch (centreBehavior) {
+        case 'preserve':
+          break;
+
         case 'preset':
           this.setCenterByCoordinates({
             lat: this.lat,
