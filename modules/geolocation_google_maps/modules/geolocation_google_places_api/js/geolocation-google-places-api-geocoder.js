@@ -140,7 +140,7 @@
     attach: function (context) {
       var attribution_block = $('#geolocation-google-places-api-attribution');
       if (attribution_block.length === 0) {
-        console.err("Geolocation Google Places API attribution block missing."); // eslint-disable-line no-console
+        console.error("Geolocation Google Places API attribution block missing."); // eslint-disable-line no-console
         return;
       }
 

@@ -407,7 +407,7 @@
         /** @type {GeolocationMapMarker} */
         var location = {
           position: position,
-          title: locationWrapper.find('.location-title').text(),
+          title: locationWrapper.find('.location-title').text().trim(),
           setMarker: true,
           locationWrapper: locationWrapper
         };
