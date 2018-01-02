@@ -255,16 +255,18 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
    */
   public function alterRenderArray(array $render_array, array $map_settings) {
 
-    uasort($map_settings['map_features'], '\Drupal\Component\Utility\SortArray::sortByWeightElement');
+    if (!empty($map_settings['map_features'])) {
+      uasort($map_settings['map_features'], '\Drupal\Component\Utility\SortArray::sortByWeightElement');
 
-    foreach ($map_settings['map_features'] as $feature_id => $feature_settings) {
-      if (!empty($feature_settings['enabled'])) {
-        $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
-        if ($feature) {
-          if (empty($feature_settings['settings'])) {
-            $feature_settings['settings'] = $feature->getSettings([]);
+      foreach ($map_settings['map_features'] as $feature_id => $feature_settings) {
+        if (!empty($feature_settings['enabled'])) {
+          $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
+          if ($feature) {
+            if (empty($feature_settings['settings'])) {
+              $feature_settings['settings'] = $feature->getSettings([]);
+            }
+            $render_array = $feature->alterMap($render_array, $feature_settings['settings']);
           }
-          $render_array = $feature->alterMap($render_array, $feature_settings['settings']);
         }
       }
     }
