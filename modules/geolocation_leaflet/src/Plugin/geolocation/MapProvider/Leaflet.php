@@ -103,7 +103,7 @@ class Leaflet extends MapProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $map_settings) {
+  public function alterRenderArray(array $render_array, array $map_settings, array $context = []) {
 
     $map_settings = $this->getSettings($map_settings);
 
@@ -127,7 +127,7 @@ class Leaflet extends MapProviderBase {
       ]
     );
 
-    $render_array = parent::alterRenderArray($render_array, $map_settings);
+    $render_array = parent::alterRenderArray($render_array, $map_settings, $context);
 
     return $render_array;
   }

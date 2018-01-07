@@ -226,7 +226,7 @@
   }
 
   GeolocationMapBase.prototype = {
-    addControl: function (element, positionOnMap, index) {
+    addControl: function (element) {
       // Stub.
     },
     update: function (mapSettings) {

@@ -143,14 +143,29 @@
 
 /**
  * @typedef {Object} GoogleMap
+ *
+ * @property {Object} MapTypeControlStyle
+ * @property {String} MapTypeControlStyle.HORIZONTAL_BAR
+ * @property {String} MapTypeControlStyle.DROPDOWN_MENU
+ * @property {String} MapTypeControlStyle.DEFAULT
+ *
  * @property {Object} ZoomControlStyle
  * @property {String} ZoomControlStyle.LARGE
+ * @property {String} ZoomControlStyle.SMALL
  *
  * @property {Object} ControlPosition
- * @property {String} ControlPosition.LEFT_TOP
  * @property {String} ControlPosition.TOP_LEFT
- * @property {String} ControlPosition.RIGHT_BOTTOM
+ * @property {String} ControlPosition.TOP_CENTER
+ * @property {String} ControlPosition.TOP_RIGHT
+ * @property {String} ControlPosition.LEFT_TOP
+ * @property {String} ControlPosition.LEFT_CENTER
+ * @property {String} ControlPosition.LEFT_BOTTOM
+ * @property {String} ControlPosition.BOTTOM_LEFT
+ * @property {String} ControlPosition.BOTTOM_CENTER
+ * @property {String} ControlPosition.BOTTOM_RIGHT
+ * @property {String} ControlPosition.RIGHT_TOP
  * @property {String} ControlPosition.RIGHT_CENTER
+ * @property {String} ControlPosition.RIGHT_RIGHT
  *
  * @property {Object} MapTypeId
  * @property {String} MapTypeId.ROADMAP
@@ -240,13 +255,12 @@
     var defaultGoogleSettings = {
       scrollwheel: false,
       panControl: false,
-      mapTypeControl: true,
+      mapTypeControl: false,
+      zoomControl: false,
       scaleControl: false,
       streetViewControl: false,
-      overviewMapControl: false,
       rotateControl: false,
       fullscreenControl: false,
-      zoomControl: true,
       mapTypeId: 'roadmap',
       zoom: 2,
       maxZoom: 20,
@@ -281,24 +295,15 @@
         minZoom: map.settings.google_map_settings.minZoom,
         center: center,
         mapTypeId: google.maps.MapTypeId[map.settings.google_map_settings.type],
-        mapTypeControlOptions: {
-          position: google.maps.ControlPosition.RIGHT_BOTTOM
-        },
+        mapTypeControl: map.settings.google_map_settings.mapTypeControl,
+        zoomControl: map.settings.google_map_settings.zoomControl,
+        streetViewControl: map.settings.google_map_settings.streetViewControl,
         rotateControl: map.settings.google_map_settings.rotateControl,
         fullscreenControl: map.settings.google_map_settings.fullscreenControl,
-        zoomControl: map.settings.google_map_settings.zoomControl,
-        zoomControlOptions: {
-          style: google.maps.ZoomControlStyle.LARGE,
-          position: google.maps.ControlPosition.RIGHT_CENTER
-        },
-        streetViewControl: map.settings.google_map_settings.streetViewControl,
-        streetViewControlOptions: {
-          position: google.maps.ControlPosition.RIGHT_CENTER
-        },
-        mapTypeControl: map.settings.google_map_settings.mapTypeControl,
+        scaleControl: map.settings.google_map_settings.scaleControl,
+        panControl: map.settings.google_map_settings.panControl,
         scrollwheel: map.settings.google_map_settings.scrollwheel,
         disableDoubleClickZoom: map.settings.google_map_settings.disableDoubleClickZoom,
-        styles: map.settings.google_map_settings.style,
         gestureHandling: map.settings.google_map_settings.gestureHandling
       });
 
@@ -505,9 +510,19 @@
   /**
    * @inheritDoc
    */
-  GeolocationGoogleMap.prototype.addControl = function (element, positionOnMap) {
-    positionOnMap = positionOnMap || google.maps.ControlPosition.TOP_LEFT;
-    this.googleMap.controls[positionOnMap].push(element);
+  GeolocationGoogleMap.prototype.addControl = function (element) {
+    element = $(element);
+
+    var position = google.maps.ControlPosition.TOP_LEFT;
+
+    if (typeof element.data('googleMapControlPosition') !== 'undefined' ) {
+      var customPosition = element.data('googleMapControlPosition');
+      if (typeof google.maps.ControlPosition[customPosition] !== 'undefined') {
+        position = google.maps.ControlPosition[customPosition];
+      }
+    }
+
+    this.googleMap.controls[position].push(element.get(0));
   };
 
   Drupal.geolocation.GeolocationGoogleMap = GeolocationGoogleMap;

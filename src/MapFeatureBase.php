@@ -61,21 +61,14 @@ abstract class MapFeatureBase extends PluginBase implements MapFeatureInterface,
   }
 
   /**
-   * Validate Feature Form.
-   *
-   * @param array $values
-   *   Feature values.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Form State.
-   * @param array $parents
-   *   Element parents.
+   * {@inheritdoc}
    */
   public function validateSettingsForm(array $values, FormStateInterface $form_state, array $parents) {}
 
   /**
    * {@inheritdoc}
    */
-  public function alterMap(array $render_array, array $feature_settings) {
+  public function alterMap(array $render_array, array $feature_settings, array $context) {
     return $render_array;
   }
 

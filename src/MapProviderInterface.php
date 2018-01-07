@@ -59,10 +59,12 @@ interface MapProviderInterface extends PluginInspectionInterface {
    *   Render array.
    * @param array $map_settings
    *   The current map settings.
+   * @param array $context
+   *   Context like field formatter, field widget or view.
    *
    * @return array
    *   Render attachments.
    */
-  public function alterRenderArray(array $render_array, array $map_settings);
+  public function alterRenderArray(array $render_array, array $map_settings, array $context);
 
 }

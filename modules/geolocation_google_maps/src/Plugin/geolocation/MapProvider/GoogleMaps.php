@@ -144,10 +144,6 @@ class GoogleMaps extends MapProviderBase {
         'minZoom' => static::$MINZOOMLEVEL,
         'maxZoom' => static::$MAXZOOMLEVEL,
         'rotateControl' => FALSE,
-        'mapTypeControl' => TRUE,
-        'streetViewControl' => TRUE,
-        'zoomControl' => TRUE,
-        'fullscreenControl' => FALSE,
         'scrollwheel' => TRUE,
         'disableDoubleClickZoom' => FALSE,
         'height' => '400px',
@@ -156,6 +152,12 @@ class GoogleMaps extends MapProviderBase {
         'gestureHandling' => 'auto',
         'map_features' => [
           'marker_infowindow' => [
+            'enabled' => TRUE,
+          ],
+          'control_zoom' => [
+            'enabled' => TRUE,
+          ],
+          'control_maptype' => [
             'enabled' => TRUE,
           ],
         ],
@@ -193,10 +195,6 @@ class GoogleMaps extends MapProviderBase {
     $settings = parent::getSettings($settings);
 
     $settings['rotateControl'] = (bool) $settings['rotateControl'];
-    $settings['mapTypeControl'] = (bool) $settings['mapTypeControl'];
-    $settings['streetViewControl'] = (bool) $settings['streetViewControl'];
-    $settings['zoomControl'] = (bool) $settings['zoomControl'];
-    $settings['fullscreenControl'] = (bool) $settings['fullscreenControl'];
     $settings['scrollwheel'] = (bool) $settings['scrollwheel'];
     $settings['disableDoubleClickZoom'] = (bool) $settings['disableDoubleClickZoom'];
     $settings['preferScrollingToZooming'] = (bool) $settings['preferScrollingToZooming'];
@@ -325,40 +323,12 @@ class GoogleMaps extends MapProviderBase {
       '#type' => 'fieldset',
       '#title' => $this->t('Controls'),
     ];
-    $form['mapTypeControl'] = [
-      '#group' => $parents_string . 'control_settings',
-      '#type' => 'checkbox',
-      '#title' => $this->t('Map type control'),
-      '#description' => $this->t('Allow the user to change the map type.'),
-      '#default_value' => $settings['mapTypeControl'],
-    ];
-    $form['streetViewControl'] = [
-      '#group' => $parents_string . 'control_settings',
-      '#type' => 'checkbox',
-      '#title' => $this->t('Street view control'),
-      '#description' => $this->t('Allow the user to switch to google street view.'),
-      '#default_value' => $settings['streetViewControl'],
-    ];
-    $form['zoomControl'] = [
-      '#group' => $parents_string . 'control_settings',
-      '#type' => 'checkbox',
-      '#title' => $this->t('Zoom control'),
-      '#description' => $this->t('Show zoom controls.'),
-      '#default_value' => $settings['zoomControl'],
-    ];
     $form['rotateControl'] = [
       '#group' => $parents_string . 'control_settings',
       '#type' => 'checkbox',
       '#title' => $this->t('Rotate control'),
       '#description' => $this->t('Show rotate control.'),
       '#default_value' => $settings['rotateControl'],
-    ];
-    $form['fullscreenControl'] = [
-      '#group' => $parents_string . 'control_settings',
-      '#type' => 'checkbox',
-      '#title' => $this->t('Fullscreen control'),
-      '#description' => $this->t('Show fullscreen control.'),
-      '#default_value' => $settings['fullscreenControl'],
     ];
 
     /*
@@ -425,7 +395,7 @@ class GoogleMaps extends MapProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $map_settings) {
+  public function alterRenderArray(array $render_array, array $map_settings, array $context = []) {
 
     $map_settings = $this->getSettings($map_settings);
 
@@ -450,7 +420,7 @@ class GoogleMaps extends MapProviderBase {
       ]
     );
 
-    $render_array = parent::alterRenderArray($render_array, $map_settings);
+    $render_array = parent::alterRenderArray($render_array, $map_settings, $context);
 
     return $render_array;
   }

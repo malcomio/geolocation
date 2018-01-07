@@ -43,27 +43,6 @@ geolocation.drawing:
   dependencies:
     - geolocation_google_maps/googlemapsapi
 
-# ControlRecenter support.
-geolocation.control_recenter:
-  js:
-    js/MapFeature/geolocation-control-recenter.js: {}
-  dependencies:
-    - geolocation_google_maps/googlemapsapi
-
-# ControlLocate support.
-geolocation.control_locate:
-  js:
-    js/MapFeature/geolocation-control-locate.js: {}
-  dependencies:
-    - geolocation_google_maps/googlemapsapi
-
-# ControlGeocoder support.
-geolocation.control_geocoder:
-  js:
-    js/MapFeature/geolocation-control-geocoder.js: {}
-  dependencies:
-    - geolocation_google_maps/googlemapsapi
-
 # ClientLocationIndicator support.
 geolocation.client_location_indicator:
   js:
@@ -160,5 +139,51 @@ geolocation.maptypestyle:
 geolocation.mapdisablepoi:
   js:
     js/MapFeature/geolocation-mapdisablepoi.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
+#
+# Map Features - Controls
+#
+
+# Control MapType.
+geolocation.control_maptype:
+  js:
+    js/MapFeature/geolocation-control-maptype.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
+# Control Zoom.
+geolocation.control_zoom:
+  js:
+    js/MapFeature/geolocation-control-zoom.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
+# Control StreetView.
+geolocation.control_streetview:
+  js:
+    js/MapFeature/geolocation-control-streetview.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
+# ControlRecenter support.
+geolocation.control_recenter:
+  js:
+    js/MapFeature/geolocation-control-recenter.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
+# ControlLocate support.
+geolocation.control_locate:
+  js:
+    js/MapFeature/geolocation-control-locate.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
+# ControlGeocoder support.
+geolocation.control_geocoder:
+  js:
+    js/MapFeature/geolocation-control-geocoder.js: {}
   dependencies:
     - geolocation_google_maps/googlemapsapi

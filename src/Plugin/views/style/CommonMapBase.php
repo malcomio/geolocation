@@ -189,6 +189,7 @@ abstract class CommonMapBase extends StylePluginBase {
           'geolocation/geolocation.commonmap',
         ],
       ],
+      '#context' => ['view' => $this],
     ];
 
     /*

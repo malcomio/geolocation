@@ -153,8 +153,8 @@ class GoogleMarkerIcon extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function alterMap(array $render_array, array $feature_settings) {
-    $render_array = parent::alterMap($render_array, $feature_settings);
+  public function alterMap(array $render_array, array $feature_settings, array $context = []) {
+    $render_array = parent::alterMap($render_array, $feature_settings, $context);
 
     $feature_settings = $this->getSettings($feature_settings);
 

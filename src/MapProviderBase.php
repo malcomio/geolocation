@@ -238,10 +238,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
     foreach ($this->mapFeatureManager->getMapFeaturesByMapType($this->getPluginId()) as $feature_id => $feature_definition) {
       if (!empty($values[$feature_id]['enabled'])) {
         $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
-        if (
-          $feature
-        && method_exists($feature, 'validateSettingsForm')
-        ) {
+        if ($feature && method_exists($feature, 'validateSettingsForm')) {
           $feature_parents = $parents;
           array_push($feature_parents, $feature_id, 'settings');
           $feature->validateSettingsForm(empty($values[$feature_id]['settings']) ? [] : $values[$feature_id]['settings'], $form_state, $feature_parents);
@@ -253,7 +250,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
   /**
    * {@inheritdoc}
    */
-  public function alterRenderArray(array $render_array, array $map_settings) {
+  public function alterRenderArray(array $render_array, array $map_settings, array $context = []) {
 
     if (!empty($map_settings['map_features'])) {
       uasort($map_settings['map_features'], '\Drupal\Component\Utility\SortArray::sortByWeightElement');
@@ -265,7 +262,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
             if (empty($feature_settings['settings'])) {
               $feature_settings['settings'] = $feature->getSettings([]);
             }
-            $render_array = $feature->alterMap($render_array, $feature_settings['settings']);
+            $render_array = $feature->alterMap($render_array, $feature_settings['settings'], $context);
           }
         }
       }

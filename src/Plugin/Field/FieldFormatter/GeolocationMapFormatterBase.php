@@ -239,6 +239,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       '#centre' => [
         'behavior' => 'fitlocations',
       ],
+      '#context' => ['formatter' => $this],
     ];
 
     if (!empty($settings['common_map'])) {

@@ -9,7 +9,7 @@ use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 /**
  * Class ControlMapFeatureBase.
  */
-abstract class ControlMapFeatureBase extends MapFeatureBase {
+abstract class ControlElementBase extends MapFeatureBase {
 
   /**
    * {@inheritdoc}
@@ -24,7 +24,7 @@ abstract class ControlMapFeatureBase extends MapFeatureBase {
    * {@inheritdoc}
    */
   public function getSettingsForm(array $settings, array $parents) {
-    $form = [];
+    $form = parent::getSettingsForm($settings, $parents);
 
     $settings = array_replace_recursive(
       self::getDefaultSettings(),
@@ -48,17 +48,6 @@ abstract class ControlMapFeatureBase extends MapFeatureBase {
     if (!in_array($values['position'], array_keys(GoogleMaps::getControlPositions()))) {
       $form_state->setErrorByName(implode('][', $parents), $this->t('No valid position.'));
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function alterMap(array $render_array, array $feature_settings) {
-    $render_array['#controls'][$this->pluginId] = [
-      '#position' => $feature_settings['position'],
-    ];
-
-    return $render_array;
   }
 
 }

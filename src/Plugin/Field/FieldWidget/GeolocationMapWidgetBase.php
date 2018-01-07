@@ -314,14 +314,21 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       '#settings' => $settings[$this->mapProviderSettingsFormId],
       '#id' => $id . '-map',
       '#maptype' => $this->mapProviderId,
+      '#context' => ['widget' => $this],
     ];
-
-    $map_settings = $this->mapProvider->getSettings($settings[$this->mapProviderSettingsFormId]);
 
     if ($settings['allow_override_map_settings']) {
       if ($this->mapProvider) {
         $overriden_map_settings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
-        // $values[0]['data'][$this->mapProviderSettingsFormId]
+
+        if (!$items->isEmpty()) {
+          if (!empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])) {
+            $overriden_map_settings = $items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId];
+          }
+        }
+
+        $element['map']['#settings'] = $overriden_map_settings;
+
         $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
           $overriden_map_settings,
           [
@@ -333,8 +340,6 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
         );
       }
     }
-
-    $element['map_container']['map']['#settings'] = $map_settings;
 
     return $element;
   }

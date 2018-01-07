@@ -45,6 +45,7 @@ function geolocation_theme() {
         'id' => NULL,
         'children' => NULL,
         'controls' => NULL,
+        'context' => NULL,
       ],
     ],
     'geolocation_map_location' => [

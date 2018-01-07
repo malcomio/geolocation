@@ -72,10 +72,12 @@ interface MapFeatureInterface extends PluginInspectionInterface {
    *   Render array.
    * @param array $feature_settings
    *   The current feature settings.
+   * @param array $context
+   *   Context like field formatter, field widget or view.
    *
    * @return array
    *   Render array.
    */
-  public function alterMap(array $render_array, array $feature_settings);
+  public function alterMap(array $render_array, array $feature_settings, array $context);
 
 }

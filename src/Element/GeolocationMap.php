@@ -19,7 +19,7 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   '#description' => $this->t('Render element type "geolocation_map"'),
  *   '#maptype' => 'leaflet,
  *   '#centre' => [],
- *   '#id' => 'thisisanid',
+ *   '#id' => 'thisisanid','geoloca
  * ];
  * @endcode
  *
@@ -61,6 +61,7 @@ class GeolocationMap extends RenderElement {
       '#centre' => NULL,
       '#id' => NULL,
       '#controls' => NULL,
+      '#context' => [],
     ];
 
     return $info;
@@ -121,7 +122,12 @@ class GeolocationMap extends RenderElement {
       $render_array['#children'][] = $render_array[$child];
     }
 
-    $render_array = $map_provider->alterRenderArray($render_array, $map_settings);
+    $context = [];
+    if (!empty($render_array['#context'])) {
+      $context = $render_array['#context'];
+    }
+
+    $render_array = $map_provider->alterRenderArray($render_array, $map_settings, $context);
 
     $render_array['#attributes'] = new Attribute($render_array['#attributes']);
     $render_array['#attributes']->addClass('geolocation-map-wrapper');

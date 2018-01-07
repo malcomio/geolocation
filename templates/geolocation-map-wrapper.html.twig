@@ -2,9 +2,7 @@
     <div class="geolocation-map-controls">
       {% if controls is not empty %}
         {% for control in controls %}
-          <div class="geolocation-map-control">
-            {{ control }}
-          </div>
+          {{ control }}
         {% endfor %}
       {% endif %}
     </div>

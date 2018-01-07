@@ -15,7 +15,7 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   type = "google_maps",
  * )
  */
-class ControlGeocoder extends ControlMapFeatureBase {
+class ControlCustomGeocoder extends ControlCustomElementBase {
 
   /**
    * {@inheritdoc}
@@ -132,8 +132,8 @@ class ControlGeocoder extends ControlMapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function alterMap(array $render_array, array $feature_settings) {
-    $render_array = parent::alterMap($render_array, $feature_settings);
+  public function alterMap(array $render_array, array $feature_settings, array $context = []) {
+    $render_array = parent::alterMap($render_array, $feature_settings, $context);
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
@@ -169,7 +169,9 @@ class ControlGeocoder extends ControlMapFeatureBase {
       $geocoder_plugin->attachments($render_array['#id'])
     );
 
-    $render_array['#controls'][$this->pluginId]['#type'] = 'container';
+    $render_array['#controls'][$this->pluginId]['control_geocoder'] = [
+      '#type' => 'container',
+    ];
 
     /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
     $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
