@@ -58,7 +58,7 @@
 
             map.wrapper.addClass('geolocation-marker-infowindow-processed');
 
-            map.addReadyCallback(function (map) {
+            map.addLoadedCallback(function (map) {
               $.each(map.mapMarkers, function(index, currentMarker) {
                 if (typeof (currentMarker.locationWrapper) === 'undefined') {
                   return;

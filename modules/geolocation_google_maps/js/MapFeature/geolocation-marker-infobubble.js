@@ -79,7 +79,7 @@
               return;
             }
 
-            map.addReadyCallback(function (map) {
+            map.addLoadedCallback(function (map) {
               $.each(map.mapMarkers, function(index, currentMarker) {
 
                 var content = currentMarker.locationWrapper.find('.location-content').html();
