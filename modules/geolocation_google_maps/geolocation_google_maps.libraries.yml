@@ -121,8 +121,8 @@ geolocation.markerinfobubble:
     - geolocation_google_maps/googlemapsapi
     - geolocation_google_maps/infobubble
 
-# InfoBubble support.
-geolocation.markericon:
+# MarkerIconAdjustment support.
+geolocation.markericonadjustment:
   js:
     js/MapFeature/geolocation-marker-icon.js: {}
   dependencies:

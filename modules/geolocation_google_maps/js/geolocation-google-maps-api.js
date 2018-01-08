@@ -255,12 +255,8 @@
     var defaultGoogleSettings = {
       scrollwheel: false,
       panControl: false,
-      mapTypeControl: false,
-      zoomControl: false,
       scaleControl: false,
-      streetViewControl: false,
       rotateControl: false,
-      fullscreenControl: false,
       mapTypeId: 'roadmap',
       zoom: 2,
       maxZoom: 20,
@@ -295,11 +291,11 @@
         minZoom: map.settings.google_map_settings.minZoom,
         center: center,
         mapTypeId: google.maps.MapTypeId[map.settings.google_map_settings.type],
-        mapTypeControl: map.settings.google_map_settings.mapTypeControl,
-        zoomControl: map.settings.google_map_settings.zoomControl,
-        streetViewControl: map.settings.google_map_settings.streetViewControl,
+        mapTypeControl: false, // Handled by feature.
+        zoomControl: false, // Handled by feature.
+        streetViewControl: false, // Handled by feature.
         rotateControl: map.settings.google_map_settings.rotateControl,
-        fullscreenControl: map.settings.google_map_settings.fullscreenControl,
+        fullscreenControl: false, // Handled by feature.
         scaleControl: map.settings.google_map_settings.scaleControl,
         panControl: map.settings.google_map_settings.panControl,
         scrollwheel: map.settings.google_map_settings.scrollwheel,

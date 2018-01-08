@@ -22,7 +22,7 @@ class ControlGoogleMapType extends ControlGoogleElementBase {
   public static function getDefaultSettings() {
     $settings = parent::getDefaultSettings();
     $settings['style'] = 'DEFAULT';
-    $settings['position'] = 'RIGHT_CENTER';
+    $settings['position'] = 'RIGHT_BOTTOM';
 
     return $settings;
   }

@@ -138,7 +138,14 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
       '#title' => 'title table',
       '#description' => 'description table',
       '#header' => [
-        $this->t('Enable'),
+        [
+          'data' => $this->t('Enable'),
+          /*
+           This does not work as expected :( .
+           'sort' => 'asc',
+           'field' => 'enabled',
+          */
+        ],
         $this->t('Feature'),
         $this->t('Settings'),
         [

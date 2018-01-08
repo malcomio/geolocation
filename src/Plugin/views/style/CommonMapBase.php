@@ -189,7 +189,7 @@ abstract class CommonMapBase extends StylePluginBase {
           'geolocation/geolocation.commonmap',
         ],
       ],
-      '#context' => ['view' => $this],
+      '#context' => ['view' => $this->view],
     ];
 
     /*
@@ -412,10 +412,6 @@ abstract class CommonMapBase extends StylePluginBase {
         }
       }
     }
-    elseif (!empty($this->options['marker_icon_path'])) {
-      $icon_token_uri = $this->viewsTokenReplace($this->options['marker_icon_path'], $this->rowTokens[$row->index]);
-      $icon_url = file_url_transform_relative(file_create_url($icon_token_uri));
-    }
 
     $positions = [];
     foreach ($this->dataProviderManager->getDefinitions() as $dataProviderId => $dataProviderDefinition) {
@@ -475,7 +471,6 @@ abstract class CommonMapBase extends StylePluginBase {
       ],
     ];
     $options['centre'] = ['default' => ''];
-    $options['marker_icon_path'] = ['default' => ''];
 
     return $options;
   }
@@ -721,7 +716,7 @@ abstract class CommonMapBase extends StylePluginBase {
      */
 
     $form['advanced_settings'] = [
-      '#type' => 'details',
+      '#type' => 'fieldset',
       '#title' => $this->t('Advanced settings'),
     ];
 
@@ -750,14 +745,6 @@ abstract class CommonMapBase extends StylePluginBase {
         ],
       ];
     }
-
-    $form['marker_icon_path'] = [
-      '#group' => 'style_options][advanced_settings',
-      '#type' => 'textfield',
-      '#title' => $this->t('Marker icon path'),
-      '#description' => $this->t('Set relative or absolute path to custom marker icon. Tokens supported. Empty for default.'),
-      '#default_value' => $this->options['marker_icon_path'],
-    ];
 
     if ($id_options) {
       $form['marker_scroll_to_result'] = [

@@ -224,7 +224,7 @@ class GoogleMaps extends MapProviderBase {
    * {@inheritdoc}
    */
   public function getSettingsForm(array $settings, array $parents = []) {
-    $settings += self::getDefaultSettings();
+    $settings = $this->getSettings($settings);
     $parents_string = '';
     if ($parents) {
       $parents_string = implode('][', $parents) . '][';

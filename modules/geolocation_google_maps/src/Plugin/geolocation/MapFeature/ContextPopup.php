@@ -38,13 +38,6 @@ class ContextPopup extends MapFeatureBase {
       '#default_value' => $settings['content'],
     ];
 
-    if (\Drupal::service('module_handler')->moduleExists('token')) {
-      // Add the token UI from the token module if present.
-      $form['token_help'] = [
-        '#theme' => 'token_tree_link',
-      ];
-    }
-
     return $form;
   }
 
@@ -55,8 +48,13 @@ class ContextPopup extends MapFeatureBase {
     $render_array = parent::alterMap($render_array, $feature_settings, $context);
 
     $feature_settings = $this->getSettings($feature_settings);
-    //       $context_popup_content = \Drupal::token()->replace($this->options['context_popup_content']);
 
+    $data = [];
+    if (!empty($context['view'])) {
+      $data['view'] = $context['view'];
+    }
+
+    $content = \Drupal::token()->replace($feature_settings['content'], $data);
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
@@ -70,7 +68,7 @@ class ContextPopup extends MapFeatureBase {
               $render_array['#id'] => [
                 'context_popup' => [
                   'enable' => TRUE,
-                  'content' => $feature_settings['content'],
+                  'content' => $content,
                 ],
               ],
             ],

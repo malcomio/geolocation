@@ -2,6 +2,7 @@
  * @typedef {Object} MarkerIconSettings
  *
  * @property {String} enable
+ * @property {String} markerIconPath
  * @property {Array} anchor
  * @property {Number} anchor.x
  * @property {Number} anchor.y
@@ -46,20 +47,16 @@
             typeof mapSettings.marker_icon !== 'undefined'
             && mapSettings.marker_icon.enable
           ) {
-
             var map = Drupal.geolocation.getMapById(mapId);
 
             if (!map) {
               return;
             }
 
-            map.addReadyCallback(function (map) {
+            map.addLoadedCallback(function (map) {
               $.each(map.mapMarkers, function(index, currentMarker) {
-                var currentIcon = currentMarker.getIcon();
 
-                if (typeof currentIcon === 'undefined') {
-                  return;
-                }
+                var currentIcon = currentMarker.getIcon();
 
                 var anchorX = currentMarker.locationWrapper.data('marker-icon-anchor-x') || mapSettings.marker_icon.anchor.x;
                 var anchorY = currentMarker.locationWrapper.data('marker-icon-anchor-y') || mapSettings.marker_icon.anchor.y;
@@ -86,10 +83,20 @@
                   newIcon.scaledSize = new google.maps.Size(scaledSizeWidth, scaledSizeHeight);
                 }
 
-                if (typeof currentIcon === 'string') {
+                console.log(mapSettings.marker_icon.markerIconPath, "icon path");
+
+                if (typeof currentIcon === 'undefined') {
+                  if (typeof mapSettings.marker_icon.markerIconPath === 'string') {
+                    newIcon.url = mapSettings.marker_icon.markerIconPath;
+                  }
+                  else {
+                    return;
+                  }
+                }
+                else if (typeof currentIcon === 'string') {
                   newIcon.url = currentIcon;
                 }
-                else {
+                else if (typeof currentIcon.url === 'string') {
                   newIcon.url = currentIcon.url;
                 }
 
