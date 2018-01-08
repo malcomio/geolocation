@@ -65,7 +65,7 @@ class MarkerIcon extends MapFeatureBase {
     $form['marker_icon_path'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Icon path'),
-      '#description' => $this->t('Set relative or absolute path to custom marker icon. Tokens & Views replacement patterns supported. Empty for default.'),
+      '#description' => $this->t('Set relative or absolute path to custom marker icon. Tokens supported. Empty for default. Attention: In views contexts, additional icon source options are available in the style settings.'),
       '#default_value' => $settings['marker_icon_path'],
     ];
 
@@ -151,14 +151,6 @@ class MarkerIcon extends MapFeatureBase {
    * {@inheritdoc}
    */
   public function alterMap(array $render_array, array $feature_settings, array $context = []) {
-
-    /*
-    if (!empty($this->options['marker_icon_path'])) {
-      //$icon_token_uri = $this->viewsTokenReplace($this->options['marker_icon_path'], $this->rowTokens[$row->index]);
-      //$icon_url = file_url_transform_relative(file_create_url($icon_token_uri));
-    }
-    */
-
     $render_array = parent::alterMap($render_array, $feature_settings, $context);
 
     $feature_settings = $this->getSettings($feature_settings);
@@ -189,7 +181,13 @@ class MarkerIcon extends MapFeatureBase {
     );
 
     if (!empty($feature_settings['marker_icon_path'])) {
-      $render_array['#attached']['drupalSettings']['geolocation']['maps'][$render_array['#id']]['marker_icon']['markerIconPath'] = $feature_settings['marker_icon_path'];
+      $data = [];
+      if (!empty($context['view'])) {
+        $data['view'] = $context['view'];
+      }
+
+      $path = \Drupal::token()->replace($feature_settings['marker_icon_path'], $data);
+      $render_array['#attached']['drupalSettings']['geolocation']['maps'][$render_array['#id']]['marker_icon']['markerIconPath'] = $path;
     }
 
     return $render_array;
