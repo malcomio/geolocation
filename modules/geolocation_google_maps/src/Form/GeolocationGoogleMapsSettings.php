@@ -121,6 +121,13 @@ class GeolocationGoogleMapsSettings extends ConfigFormBase {
       '#description' => $this->t('If a supported language is set by Drupal, it will be handed over to Google Maps. Defaults to language parameter above if set. List of <a href=":google_languages_list">supported languages here</a>.', [':google_languages_list' => 'https://developers.google.com/maps/faq#languagesupport']),
     ];
 
+    $form['china_mode'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable China mode'),
+      '#default_value' => $config->get('china_mode') ? TRUE : FALSE,
+      '#description' => $this->t('Use the specific URLs required in the PR China. See explanation at <a href=":google_faq">Google FAQ</a>.', [':google_faq' => 'https://developers.google.com/maps/faq?hl=de#china_ws_access']),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -178,6 +185,7 @@ class GeolocationGoogleMapsSettings extends ConfigFormBase {
     $config->set('google_map_api_server_key', $form_state->getValue('google_map_api_server_key'));
 
     $config->set('use_current_language', $form_state->getValue('use_current_language'));
+    $config->set('china_mode', $form_state->getValue('china_mode'));
 
     $parameters = $form_state->getValue('parameters');
     unset($parameters['libraries']['add']);

@@ -2,6 +2,7 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\Geocoder;
 
+use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Component\Serialization\Json;
 use Drupal\geolocation\GeocoderBase;
@@ -255,7 +256,12 @@ class GoogleGeocodingAPI extends GeocoderBase {
     if (empty($address)) {
       return FALSE;
     }
-    $request_url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . $address;
+
+    $request_url = GoogleMaps::$GOOGLEMAPSAPIURLBASE;
+    if ($config->get('china_mode')) {
+      $request_url = GoogleMaps::$GOOGLEMAPSAPIURLBASECHINA;
+    }
+    $request_url .= '/maps/api/geocode/json?address=' . $address;
 
     if (!empty($config->get('google_map_api_server_key'))) {
       $request_url .= '&key=' . $config->get('google_map_api_key');

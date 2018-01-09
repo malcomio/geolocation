@@ -46,11 +46,18 @@ class GoogleMaps extends MapProviderBase {
   public static $TERRAIN = 'TERRAIN';
 
   /**
-   * Google maps url with default parameters.
+   * Google maps url.
    *
    * @var string
    */
-  public static $GOOGLEMAPSAPIURL = 'https://maps.googleapis.com/maps/api/js';
+  public static $GOOGLEMAPSAPIURLBASE = 'https://maps.googleapis.com';
+
+  /**
+   * Google maps url from PR China.
+   *
+   * @var string
+   */
+  public static $GOOGLEMAPSAPIURLBASECHINA = 'https://maps.google.cn';
 
   /**
    * Google map max zoom level.
@@ -102,11 +109,18 @@ class GoogleMaps extends MapProviderBase {
    *   Google Maps API URL
    */
   public function getGoogleMapsApiUrl() {
+    $config = \Drupal::config('geolocation_google_maps.settings');
+
+    $google_url = static::$GOOGLEMAPSAPIURLBASE;
+    if ($config->get('china_mode')) {
+      $google_url = static::$GOOGLEMAPSAPIURLBASECHINA;
+    }
+
     $parameters = [];
     foreach ($this->getGoogleMapsApiParameters() as $parameter => $value) {
       $parameters[$parameter] = is_array($value) ? implode(',', $value) : $value;
     }
-    $url = Url::fromUri(static::$GOOGLEMAPSAPIURL, [
+    $url = Url::fromUri($google_url . '/maps/api/js', [
       'query' => $parameters,
       'https' => TRUE,
     ]);

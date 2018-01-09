@@ -7,6 +7,7 @@ use Drupal\Component\Serialization\Json;
 use Drupal\geolocation\GeocoderBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 
 /**
  * Provides the Google Places API.
@@ -247,17 +248,21 @@ class GooglePlacesAPI extends GeocoderBase {
       return FALSE;
     }
 
-    $geolocationSettings = \Drupal::config('geolocation_google_maps.settings');
+    $config = \Drupal::config('geolocation_google_maps.settings');
 
-    $request_url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=' . $address;
+    $request_url = GoogleMaps::$GOOGLEMAPSAPIURLBASE;
+    if ($config->get('china_mode')) {
+      $request_url = GoogleMaps::$GOOGLEMAPSAPIURLBASECHINA;
+    }
+    $request_url .= '/maps/api/place/autocomplete/json?input=' . $address;
 
     $google_key = '';
 
-    if (!empty($geolocationSettings->get('google_map_api_server_key'))) {
-      $google_key = $geolocationSettings->get('google_map_api_server_key');
+    if (!empty($config->get('google_map_api_server_key'))) {
+      $google_key = $config->get('google_map_api_server_key');
     }
-    elseif (!empty($geolocationSettings->get('google_map_api_key'))) {
-      $google_key = $geolocationSettings->get('google_map_api_key');
+    elseif (!empty($config->get('google_map_api_key'))) {
+      $google_key = $config->get('google_map_api_key');
     }
 
     if (!empty($google_key)) {
@@ -266,8 +271,8 @@ class GooglePlacesAPI extends GeocoderBase {
     if (!empty($this->configuration['component_restrictions']['country'])) {
       $request_url .= '&components=country:' . $this->configuration['component_restrictions']['country'];
     }
-    if (!empty($geolocationSettings->get('google_map_custom_url_parameters')['language'])) {
-      $request_url .= '&language=' . $geolocationSettings->get('google_map_custom_url_parameters')['language'];
+    if (!empty($config->get('google_map_custom_url_parameters')['language'])) {
+      $request_url .= '&language=' . $config->get('google_map_custom_url_parameters')['language'];
     }
 
     try {
@@ -286,7 +291,11 @@ class GooglePlacesAPI extends GeocoderBase {
     }
 
     try {
-      $details_url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' . $result['predictions'][0]['place_id'];
+      $details_url = GoogleMaps::$GOOGLEMAPSAPIURLBASE;
+      if ($config->get('china_mode')) {
+        $details_url = GoogleMaps::$GOOGLEMAPSAPIURLBASECHINA;
+      }
+      $details_url .= '/maps/api/place/details/json?placeid=' . $result['predictions'][0]['place_id'];
 
       if (!empty($google_key)) {
         $details_url .= '&key=' . $google_key;
