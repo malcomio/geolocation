@@ -15,6 +15,8 @@
 (function ($, Drupal) {
   'use strict';
 
+  Drupal.geolocation = Drupal.geolocation || {};
+
   Drupal.geolocation.geocoder = Drupal.geolocation.geocoder || {};
 
   /**

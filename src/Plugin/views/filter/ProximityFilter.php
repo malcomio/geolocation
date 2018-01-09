@@ -96,6 +96,14 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
     parent::defaultExposeOptions();
 
     $this->options['expose']['label'] = $this->t('Distance in @units', ['@units' => $this->getProximityUnit() == 'km' ? 'kilometers' : 'miles']);
+    $this->options['expose']['input_by_geocoding_widget'] = ['default' => FALSE];
+    $this->options['expose']['geocoder_plugin_settings'] = [
+      'default' => [
+        'plugin_id' => '',
+        'settings' => [],
+      ],
+    ];
+
   }
 
   /**
@@ -230,7 +238,6 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
       ) {
 
         $geocoder_configuration = $this->options['expose']['geocoder_plugin_settings']['settings'];
-        $geocoder_configuration['label'] = $this->options['expose']['label'];
 
         /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
         $geocoder_plugin = $this->geolocationCore->getGeocoderManager()->getGeocoder(
