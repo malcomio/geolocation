@@ -371,26 +371,16 @@
 
     this.mapMarkers.push(currentMarker);
 
+    this.markerAddedCallback(currentMarker);
+
     return currentMarker;
   };
   GeolocationGoogleMap.prototype.removeMapMarker = function (marker) {
+    if (typeof marker === 'undefined') {
+      return;
+    }
     Drupal.geolocation.GeolocationMapBase.prototype.removeMapMarker.call(this, marker);
-
     marker.setMap(null);
-  };
-  GeolocationGoogleMap.prototype.removeMapMarkers = function () {
-    $.each(
-      this.mapMarkers,
-
-      /**
-       * @param {integer} index - Current index.
-       * @param {GoogleMarker} item - Current marker.
-       */
-      function (index, item) {
-        item.setMap(null);
-      }
-    );
-    this.mapMarkers = [];
   };
   GeolocationGoogleMap.prototype.fitMapToMarkers = function (locations) {
 

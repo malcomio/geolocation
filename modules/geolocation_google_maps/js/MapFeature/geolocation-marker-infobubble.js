@@ -79,51 +79,49 @@
               return;
             }
 
-            map.addLoadedCallback(function (map) {
-              $.each(map.mapMarkers, function(index, currentMarker) {
+            map.addMarkerAddedCallback(function (currentMarker) {
+              console.log('Adding infoBubble to marker');
+              var content = currentMarker.locationWrapper.find('.location-content').html();
 
-                var content = currentMarker.locationWrapper.find('.location-content').html();
+              if (content.length < 1) {
+                return;
+              }
 
-                if (content.length < 1) {
-                  return;
+              google.maps.event.addListener(currentMarker, 'click', function () {
+
+                if (typeof currentMarker.infoBubble === 'undefined') {
+                  currentMarker.infoBubble = new InfoBubble({
+                    map: map.googleMap,
+                    content: content,
+                    shadowStyle: mapSettings.marker_infobubble.shadowStyle,
+                    padding: mapSettings.marker_infobubble.padding,
+                    borderRadius: mapSettings.marker_infobubble.borderRadius,
+                    borderWidth: mapSettings.marker_infobubble.borderWidth,
+                    borderColor: mapSettings.marker_infobubble.borderColor,
+
+                    arrowSize: 10,
+                    arrowPosition: 30,
+                    arrowStyle: 2,
+
+                    hideCloseButton: !mapSettings.marker_infobubble.closeButton,
+                    closeButtonSrc: mapSettings.marker_infobubble.closeButtonSrc,
+                    backgroundClassName: 'infobubble',
+                    backgroundColor: mapSettings.marker_infobubble.backgroundColor,
+                    minWidth: mapSettings.marker_infobubble.minWidth,
+                    maxWidth: mapSettings.marker_infobubble.maxWidth,
+                    minHeight: mapSettings.marker_infobubble.minHeight,
+                    maxHeight: mapSettings.marker_infobubble.maxHeight
+                  });
                 }
 
-                google.maps.event.addListener(currentMarker, 'click', function () {
-
-                  if (typeof currentMarker.infoBubble === 'undefined') {
-                    currentMarker.infoBubble = new InfoBubble({
-                      map: map.googleMap,
-                      content: content,
-                      shadowStyle: mapSettings.marker_infobubble.shadowStyle,
-                      padding: mapSettings.marker_infobubble.padding,
-                      borderRadius: mapSettings.marker_infobubble.borderRadius,
-                      borderWidth: mapSettings.marker_infobubble.borderWidth,
-                      borderColor: mapSettings.marker_infobubble.borderColor,
-
-                      arrowSize: 10,
-                      arrowPosition: 30,
-                      arrowStyle: 2,
-
-                      hideCloseButton: !mapSettings.marker_infobubble.closeButton,
-                      closeButtonSrc: mapSettings.marker_infobubble.closeButtonSrc,
-                      backgroundClassName: 'infobubble',
-                      backgroundColor: mapSettings.marker_infobubble.backgroundColor,
-                      minWidth: mapSettings.marker_infobubble.minWidth,
-                      maxWidth: mapSettings.marker_infobubble.maxWidth,
-                      minHeight: mapSettings.marker_infobubble.minHeight,
-                      maxHeight: mapSettings.marker_infobubble.maxHeight
-                    });
+                if (mapSettings.marker_infobubble.closeOther) {
+                  if (typeof map.infoBubble !== 'undefined') {
+                    map.infoBubble.close();
                   }
+                  map.infoBubble = currentMarker.infoBubble;
+                }
 
-                  if (mapSettings.marker_infobubble.closeOther) {
-                    if (typeof map.infoBubble !== 'undefined') {
-                      map.infoBubble.close();
-                    }
-                    map.infoBubble = currentMarker.infoBubble;
-                  }
-
-                  currentMarker.infoBubble.open(map.googleMap, currentMarker);
-                });
+                currentMarker.infoBubble.open(map.googleMap, currentMarker);
               });
             });
           }

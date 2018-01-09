@@ -28,6 +28,13 @@
  */
 
 /**
+ * Callback when a marker is added or removed.
+ *
+ * @callback GeolocationMarkerCallback
+ * @param {GeolocationMapMarker} marker - Map marker.
+ */
+
+/**
  * Callback when map is right-clicked.
  *
  * @callback GeolocationMapContextClickCallback
@@ -177,6 +184,26 @@
  * @function
  * @name GeolocationMapInterface#addContextClickCallback
  * @param {GeolocationMapContextClickCallback} callback - Callback.
+ *
+ * Adds a callback that will be called on marker(s) being added.
+ * @function
+ * @name GeolocationMapInterface#addMarkerAddedCallback
+ * @param {GeolocationMarkerCallback} callback - Callback.
+ *
+ * Executes {GeolocationMarkerCallbacks} for this map.
+ * @function
+ * @name GeolocationMapInterface#markerAddedCallback
+ * @param {GeolocationMapMarker} marker - Map marker.
+ *
+ * Adds a callback that will be called before marker is removed.
+ * @function
+ * @name GeolocationMapInterface#addMarkerRemoveCallback
+ * @param {GeolocationMarkerCallback} callback - Callback.
+ *
+ * Executes {GeolocationMarkerCallbacks} for this map.
+ * @function
+ * @name GeolocationMapInterface#markerRemoveCallback
+ * @param {GeolocationMapMarker} marker - Map marker.
  */
 
 (function ($, Drupal) {
@@ -236,19 +263,6 @@
       this.lat = mapSettings.lat;
       this.lng = mapSettings.lng;
       this.centreBehavior = mapSettings.centreBehavior;
-      this.updatedCallback();
-    },
-    updatedCallback: function () {
-      this.updatedCallbacks = this.updatedCallbacks || [];
-      var that = this;
-      $.each(this.updatedCallbacks, function (index, callback) {
-        callback(that);
-      });
-      this.updatedCallbacks = [];
-    },
-    addUpdatedCallback: function (callback) {
-      this.updatedCallbacks = this.updatedCallbacks || [];
-      this.updatedCallbacks.push(callback);
     },
     setCenterByBehavior: function (centreBehavior) {
       centreBehavior = centreBehavior || this.centreBehavior;
@@ -313,13 +327,28 @@
          */
         function (index, item) {
           if (item === marker) {
+            that.markerRemoveCallback(marker);
             that.mapMarkers.splice(Number(index), 1);
           }
         }
       );
     },
     removeMapMarkers: function () {
-      // Stub.
+      var that = this;
+      $.each(
+        this.mapMarkers,
+
+        /**
+         * @param {integer} index - Current index.
+         * @param {GoogleMarker} item - Current marker.
+         */
+        function (index, item) {
+          if (typeof item === 'undefined') {
+            return;
+          }
+          that.removeMapMarker(item);
+        }
+      );
     },
     fitMapToMarkers: function () {
       // Stub.
@@ -374,6 +403,26 @@
         this.readyCallbacks = this.readyCallbacks || [];
         this.readyCallbacks.push(callback);
       }
+    },
+    markerAddedCallback: function (marker) {
+      this.markerAddedCallbacks = this.markerAddedCallbacks || [];
+      $.each(this.markerAddedCallbacks, function (index, callback) {
+        callback(marker);
+      });
+    },
+    addMarkerAddedCallback: function (callback) {
+      this.markerAddedCallbacks = this.markerAddedCallbacks || [];
+      this.markerAddedCallbacks.push(callback);
+    },
+    markerRemoveCallback: function (marker) {
+      this.markerRemoveCallbacks = this.markerRemoveCallbacks || [];
+      $.each(this.markerRemoveCallbacks, function (index, callback) {
+        callback(marker);
+      });
+    },
+    addMarkerRemoveCallback: function (callback) {
+      this.markerRemoveCallbacks = this.markerRemoveCallbacks || [];
+      this.markerRemoveCallbacks.push(callback);
     },
     loadedCallback: function () {
       this.loadedCallbacks = this.loadedCallbacks || [];

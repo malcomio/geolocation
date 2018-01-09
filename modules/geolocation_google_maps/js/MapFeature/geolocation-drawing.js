@@ -48,7 +48,8 @@
 
               var drawingSettings = mapSettings.drawing.settings;
 
-              if (drawingSettings.polygon) {
+
+              if (drawingSettings.polygon && drawingSettings.polygon !== '0') {
                 var polygon = new google.maps.Polygon({
                   paths: locations,
                   strokeColor: drawingSettings.strokeColor,
@@ -61,7 +62,7 @@
                 polygon.setMap(map.googleMap);
               }
 
-              if (drawingSettings.polyline) {
+              if (drawingSettings.polyline && drawingSettings.polyline !== '0') {
                 var polyline = new google.maps.Polyline({
                   path: locations,
                   strokeColor: drawingSettings.strokeColor,

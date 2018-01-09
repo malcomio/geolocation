@@ -58,41 +58,39 @@
 
             map.wrapper.addClass('geolocation-marker-infowindow-processed');
 
-            map.addLoadedCallback(function (map) {
-              $.each(map.mapMarkers, function(index, currentMarker) {
-                if (typeof (currentMarker.locationWrapper) === 'undefined') {
-                  return;
-                }
+            map.addMarkerAddedCallback(function (currentMarker) {
+              if (typeof (currentMarker.locationWrapper) === 'undefined') {
+                return;
+              }
 
-                var content = currentMarker.locationWrapper.find('.location-content');
+              var content = currentMarker.locationWrapper.find('.location-content');
 
-                if (content.length < 1) {
-                  return;
-                }
-                content = content.html();
+              if (content.length < 1) {
+                return;
+              }
+              content = content.html();
 
-                // Set the info popup text.
-                var currentInfoWindow = new google.maps.InfoWindow({
-                  content: content,
-                  disableAutoPan: mapSettings.marker_infowindow.disableAutoPan
-                });
-
-                currentMarker.addListener('click', function () {
-                  if (mapSettings.marker_infowindow.infoWindowSolitary) {
-                    if (typeof map.infoWindow !== 'undefined') {
-                      map.infoWindow.close();
-                    }
-                    map.infoWindow = currentInfoWindow;
-                  }
-                  currentInfoWindow.open(map.googleMap, currentMarker);
-                });
-
-                if (mapSettings.marker_infowindow.infoAutoDisplay) {
-                  google.maps.event.addListenerOnce(map.googleMap, 'tilesloaded', function () {
-                    google.maps.event.trigger(currentMarker, 'click');
-                  });
-                }
+              // Set the info popup text.
+              var currentInfoWindow = new google.maps.InfoWindow({
+                content: content,
+                disableAutoPan: mapSettings.marker_infowindow.disableAutoPan
               });
+
+              currentMarker.addListener('click', function () {
+                if (mapSettings.marker_infowindow.infoWindowSolitary) {
+                  if (typeof map.infoWindow !== 'undefined') {
+                    map.infoWindow.close();
+                  }
+                  map.infoWindow = currentInfoWindow;
+                }
+                currentInfoWindow.open(map.googleMap, currentMarker);
+              });
+
+              if (mapSettings.marker_infowindow.infoAutoDisplay) {
+                google.maps.event.addListenerOnce(map.googleMap, 'tilesloaded', function () {
+                  google.maps.event.trigger(currentMarker, 'click');
+                });
+              }
             });
           }
         }

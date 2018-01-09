@@ -57,16 +57,30 @@
               return;
             }
 
-            map.addLoadedCallback(function (map) {
-              new MarkerClusterer(
-                map.googleMap,
-                map.mapMarkers,
-                {
-                  imagePath: imagePath,
-                  styles: markerClustererStyles,
-                  maxZoom: parseInt(mapSettings.marker_clusterer.maxZoom)
-                }
-              );
+            map.addReadyCallback(function (map) {
+
+              if (typeof map.markerClusterer === 'undefined') {
+                console.log("MarkerClusterer added");
+                map.markerClusterer = new MarkerClusterer(
+                  map.googleMap,
+                  [],
+                  {
+                    imagePath: imagePath,
+                    styles: markerClustererStyles,
+                    maxZoom: parseInt(mapSettings.marker_clusterer.maxZoom)
+                  }
+                );
+              }
+
+              map.addMarkerAddedCallback(function (marker) {
+                console.log("Adding marker to cluster");
+
+                map.markerClusterer.addMarker(marker);
+              });
+
+              map.addMarkerRemoveCallback(function (marker) {
+                map.markerClusterer.removeMarker(marker);
+              });
             });
           }
         }
