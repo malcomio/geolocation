@@ -27,6 +27,7 @@ class GeolocationJavascriptTest extends JavascriptTestBase {
     'views',
     'views_test_config',
     'geolocation',
+    'geolocation_google_maps',
     'geolocation_test_views',
     'locale',
     'language',

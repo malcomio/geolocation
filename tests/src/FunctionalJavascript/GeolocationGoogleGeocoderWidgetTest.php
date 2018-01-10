@@ -26,6 +26,7 @@ class GeolocationGoogleGeocoderWidgetTest extends JavascriptTestBase {
     'node',
     'field',
     'geolocation',
+    'geolocation_google_maps',
   ];
 
   /**
