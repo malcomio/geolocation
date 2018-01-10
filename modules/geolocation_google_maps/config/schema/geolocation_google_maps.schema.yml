@@ -88,28 +88,12 @@ geolocation.map_provider.google_maps:
     rotateControl:
       type: boolean
       label: 'The state of the rotate control'
-    mapTypeControl:
-      type: boolean
-      label: 'Map controls'
-    streetViewControl:
-      type: boolean
-      label: 'Street view'
-    zoomControl:
-      type: boolean
-      label: 'Zoom control'
-    fullscreenControl:
-      type: boolean
-      label: 'The state of the fullscreen control'
     scrollwheel:
       type: boolean
       label: 'Scrool wheel'
     disableDoubleClickZoom:
       type: string
       label: 'Disable double click zoom'
-    # TODO: Deprecated, remove
-    draggable:
-      type: boolean
-      label: 'Draggable'
     height:
       type: string
       label: 'Height value'

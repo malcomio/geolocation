@@ -1,6 +1,6 @@
-field.formatter.settings.geolocation_map:
+geolocation.field.formatter.map.base:
   type: mapping
-  label: 'Geolocation Google Map Formatter'
+  label: 'Geolocation Map Formatter Base'
   mapping:
     set_marker:
       type: string
@@ -16,7 +16,7 @@ field.formatter.settings.geolocation_map:
       label: 'Info Text'
     use_overridden_map_settings:
       type: integer
-      label: 'Use overridden map settings optionally set by GoogleGeocoderWidget.'
+      label: 'Use overridden map settings.'
 
 field.formatter.settings.geolocation_token:
   type: mapping
@@ -26,9 +26,9 @@ field.formatter.settings.geolocation_token:
       type: text_format
       label: 'Tokenized text'
 
-geolocation.field.widget.map:
+geolocation.field.widget.map.base:
   type: mapping
-  label: 'Geolocation Google Geocoder Widget settings'
+  label: 'Geolocation Widget Base'
   mapping:
     default_longitude:
       type: string

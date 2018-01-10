@@ -14,6 +14,9 @@ geolocation_views_style:
     icon_field:
       type: string
       label: 'Icon Field'
+    show_raw_locations:
+      type: integer
+      label: 'Show raw locations'
     marker_scroll_to_result:
       type: integer
       label: 'Scroll instead of open bubble'
