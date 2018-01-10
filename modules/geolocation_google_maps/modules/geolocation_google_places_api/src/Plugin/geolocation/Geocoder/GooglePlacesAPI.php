@@ -4,7 +4,7 @@ namespace Drupal\geolocation_google_places_api\Plugin\geolocation\Geocoder;
 
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Component\Serialization\Json;
-use Drupal\geolocation\GeocoderBase;
+use Drupal\geolocation_google_maps\GoogleGeocoderBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
@@ -20,40 +20,9 @@ use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
  *   boundaryCapable = true,
  * )
  */
-class GooglePlacesAPI extends GeocoderBase {
+class GooglePlacesAPI extends GoogleGeocoderBase {
 
-  /**
-   * Google Maps Provider.
-   *
-   * @var \Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps
-   */
-  protected $googleMapsProvider = NULL;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->googleMapsProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider('google_maps');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getDefaultSettings() {
-    $default_settings = parent::getDefaultSettings();
-
-    $default_settings['component_restrictions'] = [
-      'route' => '',
-      'locality' => '',
-      'administrative_area' => '',
-      'postal_code' => '',
-      'country' => '',
-    ];
-
-    return $default_settings;
-  }
+  protected $geocoderId = 'googlePlacesAPI';
 
   /**
    * {@inheritdoc}
@@ -67,101 +36,10 @@ class GooglePlacesAPI extends GeocoderBase {
         'library' => [
           'geolocation_google_places_api/geolocation_google_places_api.geocoder.googleplacesapi',
         ],
-        'drupalSettings' => [
-          'geolocation' => [
-            'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
-            'geocoder' => [
-              'googlePlacesAPI' => [
-                'inputIds' => [
-                  $input_id,
-                ],
-              ],
-            ],
-          ],
-        ],
       ]
     );
 
-    if (!empty($this->configuration['component_restrictions'])) {
-      foreach ($this->configuration['component_restrictions'] as $component => $restriction) {
-        if (empty($restriction)) {
-          continue;
-        }
-
-        $attachments = BubbleableMetadata::mergeAttachments(
-          $attachments,
-          [
-            'drupalSettings' => [
-              'geolocation' => [
-                'geocoder' => [
-                  'googlePlacesAPI' => [
-                    'restrictions' => [
-                      $component => $restriction,
-                    ],
-                  ],
-                ],
-              ],
-            ],
-          ]
-        );
-      }
-    }
-
     return $attachments;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOptionsForm() {
-
-    $form = parent::getOptionsForm();
-
-    $settings = $this->getSettings();
-
-    $form += [
-      'description' => [
-        '#type' => 'html_tag',
-        '#tag' => 'span',
-        '#value' => $this->getPluginDefinition()['description'],
-      ],
-      'component_restrictions' => [
-        '#type' => 'fieldset',
-        '#title' => $this->t('Component Restrictions'),
-        'route' => [
-          '#type' => 'textfield',
-          '#default_value' => $settings['route'],
-          '#title' => $this->t('Route'),
-          '#size' => 15,
-        ],
-        'locality' => [
-          '#type' => 'textfield',
-          '#default_value' => $settings['locality'],
-          '#title' => $this->t('Locality'),
-          '#size' => 15,
-        ],
-        'administrativeArea' => [
-          '#type' => 'textfield',
-          '#default_value' => $settings['administrativeArea'],
-          '#title' => $this->t('Administrative Area'),
-          '#size' => 15,
-        ],
-        'postalCode' => [
-          '#type' => 'textfield',
-          '#default_value' => $settings['postalCode'],
-          '#title' => $this->t('Postal code'),
-          '#size' => 5,
-        ],
-        'country' => [
-          '#type' => 'textfield',
-          '#default_value' => $settings['country'],
-          '#title' => $this->t('Country'),
-          '#size' => 5,
-        ],
-      ],
-    ];
-
-    return $form;
   }
 
   /**

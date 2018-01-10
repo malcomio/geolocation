@@ -5,7 +5,7 @@ namespace Drupal\geolocation_google_maps\Plugin\geolocation\Geocoder;
 use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Component\Serialization\Json;
-use Drupal\geolocation\GeocoderBase;
+use Drupal\geolocation_google_maps\GoogleGeocoderBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 
@@ -20,90 +20,9 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   boundaryCapable = true,
  * )
  */
-class GoogleGeocodingAPI extends GeocoderBase {
+class GoogleGeocodingAPI extends GoogleGeocoderBase {
 
-  /**
-   * Google Maps Provider.
-   *
-   * @var \Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps
-   */
-  protected $googleMapsProvider = NULL;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getDefaultSettings() {
-    $default_settings = parent::getDefaultSettings();
-
-    $default_settings['components'] = [
-      'route' => '',
-      'locality' => '',
-      'administrative_area' => '',
-      'postal_code' => '',
-      'country' => '',
-    ];
-
-    return $default_settings;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->googleMapsProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider('google_maps');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOptionsForm() {
-
-    $settings = $this->getSettings();
-
-    $form = parent::getOptionsForm();
-
-    $form += [
-      'components' => [
-        '#type' => 'fieldset',
-        '#title' => $this->t('Component presets'),
-        '#description' => $this->t('See https://developers.google.com/maps/documentation/geocoding/intro#ComponentFiltering'),
-        'route' => [
-          '#type' => 'textfield',
-          '#default_value' => $settings['components']['route'],
-          '#title' => $this->t('Route'),
-          '#size' => 15,
-        ],
-        'locality' => [
-          '#type' => 'textfield',
-          '#default_value' => $settings['components']['locality'],
-          '#title' => $this->t('Locality'),
-          '#size' => 15,
-        ],
-        'administrative_area' => [
-          '#type' => 'textfield',
-          '#default_value' => $settings['components']['administrative_area'],
-          '#title' => $this->t('Administrative Area'),
-          '#size' => 15,
-        ],
-        'postal_code' => [
-          '#type' => 'textfield',
-          '#default_value' => $settings['components']['postal_code'],
-          '#title' => $this->t('Postal code'),
-          '#size' => 5,
-        ],
-        'country' => [
-          '#type' => 'textfield',
-          '#default_value' => $settings['components']['country'],
-          '#title' => $this->t('Country'),
-          '#size' => 5,
-        ],
-      ],
-    ];
-
-    return $form;
-  }
+  protected $geocoderId = 'googleGeocodingAPI';
 
   /**
    * {@inheritdoc}
@@ -117,45 +36,8 @@ class GoogleGeocodingAPI extends GeocoderBase {
         'library' => [
           'geolocation_google_maps/geocoder.googlegeocodingapi',
         ],
-        'drupalSettings' => [
-          'geolocation' => [
-            'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
-            'geocoder' => [
-              'googleGeocodingAPI' => [
-                'inputIds' => [
-                  $input_id,
-                ],
-              ],
-            ],
-          ],
-        ],
       ]
     );
-
-    if (!empty($this->configuration['component_restrictions'])) {
-      foreach ($this->configuration['component_restrictions'] as $component => $restriction) {
-        if (empty($restriction)) {
-          continue;
-        }
-
-        $attachments = $attachments = BubbleableMetadata::mergeAttachments(
-          $attachments,
-          [
-            'drupalSettings' => [
-              'geolocation' => [
-                'geocoder' => [
-                  'googleGeocodingAPI' => [
-                    'restrictions' => [
-                      $component => $restriction,
-                    ],
-                  ],
-                ],
-              ],
-            ],
-          ]
-        );
-      }
-    }
 
     return $attachments;
   }
@@ -269,9 +151,9 @@ class GoogleGeocodingAPI extends GeocoderBase {
     elseif (!empty($config->get('google_map_api_key'))) {
       $request_url .= '&key=' . $config->get('google_map_api_key');
     }
-    if (!empty($this->configuration['components'])) {
+    if (!empty($this->configuration['component_restrictions'])) {
       $request_url .= '&components=';
-      foreach ($this->configuration['components'] as $component_id => $component_value) {
+      foreach ($this->configuration['component_restrictions'] as $component_id => $component_value) {
         $request_url .= $component_id . ':' . $component_value . '|';
       }
     }

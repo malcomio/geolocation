@@ -8,6 +8,12 @@ geolocation_google_maps.settings:
     google_map_api_server_key:
       type: string
       label: 'Google Maps API Key'
+    use_current_language:
+      type: integer
+      label: 'Use current language'
+    china_mode:
+      type: integer
+      label: 'China mode'
     google_map_custom_url_parameters:
       type: mapping
       label: 'Additional Google Maps API parameters'
@@ -40,16 +46,10 @@ views.style.maps_common:
       label: 'Google Map settings'
 
 geolocation.geocoder.google_geocoding_api:
-  type: mapping
+  type: geolocation_geocoder
   label: 'Google Geocoding API'
   mapping:
-    label:
-      type: string
-      label: 'Label'
-    description:
-      type: string
-      label: 'Description'
-    components:
+    component_restrictions:
       type: mapping
       label: 'Components'
       mapping:

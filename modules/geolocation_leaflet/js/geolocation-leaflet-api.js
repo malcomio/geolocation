@@ -4,10 +4,6 @@
  */
 
 /**
- * @param {String} drupalSettings.geolocation.google_map_url
- */
-
-/**
  * @typedef {Object} L
  *
  * @property {Function} L

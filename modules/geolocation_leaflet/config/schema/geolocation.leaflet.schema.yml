@@ -1,3 +1,0 @@
-geolocation.map.provider.leaflet:
-  type: geolocation_map_provider
-  label: 'Leaflet map provider'

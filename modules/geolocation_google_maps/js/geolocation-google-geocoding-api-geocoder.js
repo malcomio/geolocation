@@ -4,7 +4,7 @@
  */
 
 /**
- * @property {Object} drupalSettings.geolocation.geocoder.googleGeocodingAPI.components
+ * @property {Object} drupalSettings.geolocation.geocoder.googleGeocodingAPI.componentRestrictions
  * @property {String[]} drupalSettings.geolocation.geocoder.googleGeocodingAPI.inputIds
  */
 
@@ -54,8 +54,8 @@
 
         var autocompleteResults = [];
         var componentRestrictions = {};
-        if (typeof drupalSettings.geolocation.geocoder.googleGeocodingAPI.components !== 'undefined') {
-          componentRestrictions = drupalSettings.geolocation.geocoder.googleGeocodingAPI.components;
+        if (typeof drupalSettings.geolocation.geocoder.googleGeocodingAPI.componentRestrictions !== 'undefined') {
+          componentRestrictions = drupalSettings.geolocation.geocoder.googleGeocodingAPI.componentRestrictions;
         }
 
         Drupal.geolocation.geocoder.googleGeocodingAPI.geocoder.geocode(

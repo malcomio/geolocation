@@ -4,7 +4,7 @@
  */
 
 /**
- * @property {Object} drupalSettings.geolocation.geocoder.googlePlacesAPI.restrictions
+ * @property {Object} drupalSettings.geolocation.geocoder.googlePlacesAPI.componentRestrictions
  */
 
 /**
@@ -54,8 +54,8 @@
       source: function (request, response) {
         var autocompleteResults = [];
         var componentRestrictions = {};
-        if (typeof drupalSettings.geolocation.geocoder.googlePlacesAPI.restrictions !== 'undefined') {
-          componentRestrictions = drupalSettings.geolocation.geocoder.googlePlacesAPI.restrictions;
+        if (typeof drupalSettings.geolocation.geocoder.googlePlacesAPI.componentRestrictions !== 'undefined') {
+          componentRestrictions = drupalSettings.geolocation.geocoder.googlePlacesAPI.componentRestrictions;
         }
 
         Drupal.geolocation.geocoder.googlePlacesAPI.autocompleteService.getPlacePredictions(

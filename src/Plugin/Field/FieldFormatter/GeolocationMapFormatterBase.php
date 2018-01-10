@@ -62,7 +62,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $settings['common_map'] = TRUE;
     $settings['info_text'] = [
       'value' => '',
-      'format' => '',
+      'format' => filter_default_format(),
     ];
     $settings += parent::defaultSettings();
     $settings['use_overridden_map_settings'] = FALSE;
@@ -112,14 +112,19 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       '#type' => 'text_format',
       '#title' => $this->t('Marker info text'),
       '#description' => $this->t('When the marker is clicked, this text will be shown in a popup above it. Leave blank to not display. Token replacement supported.'),
-      '#default_value' => $settings['info_text']['value'],
-      '#format' => $settings['info_text']['format'],
       '#states' => [
         'visible' => [
           ':input[name="fields[' . $this->fieldDefinition->getName() . '][settings_edit_form][settings][set_marker]"]' => ['checked' => TRUE],
         ],
       ],
     ];
+    if (!empty($settings['info_text']['value'])) {
+      $form['info_text']['#default_value'] = $settings['info_text']['value'];
+    }
+
+    if (!empty($settings['info_text']['format'])) {
+      $form['info_text']['#format'] = $settings['info_text']['format'];
+    }
 
     $form['replacement_patterns'] = [
       '#type' => 'details',
@@ -173,9 +178,15 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $summary[] = $this->t('Marker set: @marker', ['@marker' => $settings['set_marker'] ? $this->t('Yes') : $this->t('No')]);
     if ($settings['set_marker']) {
       $summary[] = $this->t('Marker Title: @type', ['@type' => $settings['title']]);
-      $summary[] = $this->t('Marker Info Text: @type', [
-        '@type' => current(explode(chr(10), wordwrap(check_markup($settings['info_text']['value'], $settings['info_text']['format']), 30))),
-      ]);
+      if (
+        !empty($settings['info_text']['value'])
+        && !empty($settings['info_text']['format'])
+      ) {
+        $summary[] = $this->t('Marker Info Text: @type', [
+          '@type' => current(explode(chr(10), wordwrap(check_markup($settings['info_text']['value'], $settings['info_text']['format']), 30))),
+        ]);
+      }
+
       if (!empty($settings['common_map'])) {
         $summary[] = $this->t('Common Map Display: Yes');
       }
@@ -217,7 +228,19 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
       $location = [
         '#type' => 'geolocation_map_location',
-        'content' => [
+        '#title' => $title,
+        '#disable_marker' => empty($settings['set_marker']) ? TRUE : FALSE,
+        '#position' => [
+          'lat' => $item->lat,
+          'lng' => $item->lng,
+        ],
+      ];
+
+      if (
+        !empty($settings['info_text']['value'])
+        && !empty($settings['info_text']['format'])
+      ) {
+        $location['content'] = [
           '#type' => 'processed_text',
           '#text' => \Drupal::token()->replace(
             $settings['info_text']['value'],
@@ -228,14 +251,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
             ]
           ),
           '#format' => $settings['info_text']['format'],
-        ],
-        '#title' => $title,
-        '#disable_marker' => empty($settings['set_marker']) ? TRUE : FALSE,
-        '#position' => [
-          'lat' => $item->lat,
-          'lng' => $item->lng,
-        ],
-      ];
+        ];
+      }
 
       $locations[] = $location;
     }

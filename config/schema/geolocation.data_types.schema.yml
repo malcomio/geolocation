@@ -8,7 +8,20 @@ geolocation_map_provider:
         type: plugin.plugin_configuration.geolocation.map_feature.[%key]
         label: 'The settings for a map feature'
 
-
 geolocation.map_provider.*:
   type: geolocation_map_provider
   label: 'Empty map provider'
+
+geolocation_geocoder:
+  type: mapping
+  mapping:
+    label:
+      type: string
+      label: 'Label'
+    description:
+      type: string
+      label: 'Description'
+
+geolocation.geocoder.*:
+  type: geolocation_geocoder
+  label: 'Empty geocoder'

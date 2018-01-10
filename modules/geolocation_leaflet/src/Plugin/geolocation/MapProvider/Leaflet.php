@@ -6,7 +6,7 @@ use Drupal\geolocation\MapProviderBase;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides Google Maps.
+ * Provides Leaflet.
  *
  * @MapProvider(
  *   id = "leaflet",

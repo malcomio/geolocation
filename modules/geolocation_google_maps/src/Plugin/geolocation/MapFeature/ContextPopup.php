@@ -24,7 +24,7 @@ class ContextPopup extends MapFeatureBase {
     return [
       'content' => [
         'value' => '',
-        'format' => '',
+        'format' => filter_default_format(),
       ],
     ];
   }
@@ -40,9 +40,14 @@ class ContextPopup extends MapFeatureBase {
       '#type' => 'text_format',
       '#title' => $this->t('Context popup content'),
       '#description' => $this->t('A right click on the map will open a context popup with this content. Tokens supported. Additionally "@lat, @lng" will be replaced dynamically.'),
-      '#default_value' => $settings['content']['value'],
-      '#format' => $settings['content']['format'],
     ];
+    if (!empty($settings['content']['value'])) {
+      $form['content']['#default_value'] = $settings['content']['value'];
+    }
+
+    if (!empty($settings['content']['format'])) {
+      $form['content']['#format'] = $settings['content']['format'];
+    }
 
     return $form;
   }
@@ -60,7 +65,15 @@ class ContextPopup extends MapFeatureBase {
       $token_context['view'] = $context['view'];
     }
 
-    $content = check_markup(\Drupal::token()->replace($feature_settings['content']['value'], $token_context), $feature_settings['content']['format']);
+    if (
+      !empty($settings['content']['value'])
+      && !empty($settings['content']['format'])
+    ) {
+      $content = check_markup(\Drupal::token()->replace($feature_settings['content']['value'], $token_context), $feature_settings['content']['format']);
+    }
+    else {
+      return $render_array;
+    }
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],

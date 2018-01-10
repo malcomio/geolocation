@@ -81,7 +81,7 @@ geolocation_views_style:
       type: string
       label: 'Map provider ID'
     map_provider_settings:
-      type: geolocation.map.provider.[%parent.type]
+      type: geolocation.map.provider.[%parent.map_provider_id]
 
 views.field.geolocation_field:
   type: views.field.field
@@ -126,15 +126,8 @@ views.field.geolocation_field_proximity:
           type: string
           label: 'Geolocation geocoding widget'
         settings:
-          type: mapping
-          label: 'Settings'
-          mapping:
-            components:
-              type: sequence
-              label: 'Components'
-              sequence:
-                type: string
-                label: 'Address component'
+          type: geolocation.geocoder.[%parent.plugin_id]
+
 
 views.filter.geolocation_filter_boundary:
   type: views_filter
@@ -171,15 +164,7 @@ views.filter.geolocation_filter_boundary:
               type: string
               label: 'Geolocation geocoding widget'
             settings:
-              type: mapping
-              label: 'Settings'
-              mapping:
-                components:
-                  type: sequence
-                  label: 'Components'
-                  sequence:
-                    type: string
-                    label: 'Address component'
+              type: geolocation.geocoder.[%parent.plugin_id]
 
 views.filter.geolocation_filter_proximity:
   type: views_filter
@@ -212,6 +197,22 @@ views.filter.geolocation_filter_proximity:
     value:
       type: views.filter_value.numeric
       label: 'Proximity Value'
+    expose:
+      type: mapping
+      label: 'Expose settings'
+      mapping:
+        input_by_geocoding_widget:
+          type: integer
+          label: 'Enable geocoding widget'
+        geocoder_plugin_settings:
+          type: mapping
+          label: 'Geocoding widget settings'
+          mapping:
+            plugin_id:
+              type: string
+              label: 'Geolocation geocoding widget'
+            settings:
+              type: geolocation.geocoder.[%parent.plugin_id]
 
 views.filter.group_item.geolocation_filter_proximity:
   type: views_filter_group_item
