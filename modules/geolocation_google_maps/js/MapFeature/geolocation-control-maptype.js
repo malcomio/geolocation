@@ -35,6 +35,10 @@
           ) {
             var map = Drupal.geolocation.getMapById(mapId);
 
+            if (!map) {
+              return;
+            }
+
             map.addLoadedCallback(function (map) {
               var options = {
                 mapTypeControlOptions: {

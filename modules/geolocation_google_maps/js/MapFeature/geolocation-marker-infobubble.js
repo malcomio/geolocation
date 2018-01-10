@@ -50,7 +50,7 @@
   'use strict';
 
   /**
-   * CMarker InfoBubble.
+   * Marker InfoBubble.
    *
    * @type {Drupal~behavior}
    *
@@ -80,7 +80,6 @@
             }
 
             map.addMarkerAddedCallback(function (currentMarker) {
-              console.log('Adding infoBubble to marker');
               var content = currentMarker.locationWrapper.find('.location-content').html();
 
               if (content.length < 1) {

@@ -12,7 +12,7 @@ field.formatter.settings.geolocation_map:
       type: string
       label: 'Title'
     info_text:
-      type: string
+      type: text_format
       label: 'Info Text'
     use_overridden_map_settings:
       type: integer
@@ -23,7 +23,7 @@ field.formatter.settings.geolocation_token:
   label: 'Geolocation Token Formatter'
   mapping:
     tokenized_text:
-      type: string
+      type: text_format
       label: 'Tokenized text'
 
 geolocation.field.widget.map:

@@ -25,6 +25,10 @@
           ) {
             var map = Drupal.geolocation.getMapById(mapId);
 
+            if (!map) {
+              return;
+            }
+
             /**
              * Update the view depending on dynamic map settings and capability.
              *
@@ -46,6 +50,7 @@
               && !map.container.hasClass('geolocation-common-map-google-processed')
             ) {
               map.container.addClass('geolocation-common-map-google-processed');
+
               map.addLoadedCallback(function (map) {
                 var geolocationMapIdleTimer;
                 map.googleMap.addListener('bounds_changed', function () {

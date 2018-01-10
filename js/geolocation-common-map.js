@@ -55,6 +55,10 @@
 
           var map = Drupal.geolocation.getMapById(mapId);
 
+          if (!map) {
+            return;
+          }
+
           /*
            * Hide form if requested.
            */
@@ -82,6 +86,7 @@
             typeof commonMapSettings.markerScrollToResult !== 'undefined'
             && commonMapSettings.markerScrollToResult === true
           ) {
+
             map.addLoadedCallback(function (map) {
               $.each(map.mapMarkers, function (index, marker) {
                 marker.addListener('click', function () {

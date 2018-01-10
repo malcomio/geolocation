@@ -76,7 +76,7 @@ plugin.plugin_configuration.geolocation.map_feature.context_popup:
       label: 'Settings'
       mapping:
         content:
-          type: string
+          type: text_format
           label: 'Content'
 
 geolocation_google_maps.map_control_feature_settings:

@@ -60,7 +60,6 @@
             map.addReadyCallback(function (map) {
 
               if (typeof map.markerClusterer === 'undefined') {
-                console.log("MarkerClusterer added");
                 map.markerClusterer = new MarkerClusterer(
                   map.googleMap,
                   [],
@@ -73,8 +72,6 @@
               }
 
               map.addMarkerAddedCallback(function (marker) {
-                console.log("Adding marker to cluster");
-
                 map.markerClusterer.addMarker(marker);
               });
 

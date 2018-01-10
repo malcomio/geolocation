@@ -60,7 +60,10 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $settings['title'] = '';
     $settings['set_marker'] = TRUE;
     $settings['common_map'] = TRUE;
-    $settings['info_text'] = '';
+    $settings['info_text'] = [
+      'value' => '',
+      'format' => '',
+    ];
     $settings += parent::defaultSettings();
     $settings['use_overridden_map_settings'] = FALSE;
 
@@ -106,10 +109,11 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     ];
 
     $form['info_text'] = [
-      '#type' => 'textarea',
+      '#type' => 'text_format',
       '#title' => $this->t('Marker info text'),
       '#description' => $this->t('When the marker is clicked, this text will be shown in a popup above it. Leave blank to not display. Token replacement supported.'),
-      '#default_value' => $settings['info_text'],
+      '#default_value' => $settings['info_text']['value'],
+      '#format' => $settings['info_text']['format'],
       '#states' => [
         'visible' => [
           ':input[name="fields[' . $this->fieldDefinition->getName() . '][settings_edit_form][settings][set_marker]"]' => ['checked' => TRUE],
@@ -170,7 +174,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     if ($settings['set_marker']) {
       $summary[] = $this->t('Marker Title: @type', ['@type' => $settings['title']]);
       $summary[] = $this->t('Marker Info Text: @type', [
-        '@type' => current(explode(chr(10), wordwrap($settings['info_text'], 30))),
+        '@type' => current(explode(chr(10), wordwrap(check_markup($settings['info_text']['value'], $settings['info_text']['format']), 30))),
       ]);
       if (!empty($settings['common_map'])) {
         $summary[] = $this->t('Common Map Display: Yes');
@@ -210,16 +214,20 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       if (empty($title)) {
         $title = $item->lat . ', ' . $item->lng;
       }
-      $content = \Drupal::token()
-        ->replace($settings['info_text'], $token_context, [
-          'callback' => [$this, 'geolocationItemTokens'],
-          'clear' => TRUE,
-        ]);
 
       $location = [
         '#type' => 'geolocation_map_location',
         'content' => [
-          '#markup' => $content,
+          '#type' => 'processed_text',
+          '#text' => \Drupal::token()->replace(
+            $settings['info_text']['value'],
+            $token_context,
+            [
+              'callback' => [$this, 'geolocationItemTokens'],
+              'clear' => TRUE,
+            ]
+          ),
+          '#format' => $settings['info_text']['format'],
         ],
         '#title' => $title,
         '#disable_marker' => empty($settings['set_marker']) ? TRUE : FALSE,
