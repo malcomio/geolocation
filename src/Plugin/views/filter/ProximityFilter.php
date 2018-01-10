@@ -645,7 +645,7 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
    */
   public function getLatitudeValue() {
     $proximity_center = $this->getProximityCenterBySource();
-    if (!is_null($proximity_center['latitude'])) {
+    if (isset($proximity_center['latitude']) && !is_null($proximity_center['latitude'])) {
       return $proximity_center['latitude'];
     }
     return NULL;
@@ -659,9 +659,10 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
    */
   public function getLongitudeValue() {
     $proximity_center = $this->getProximityCenterBySource();
-    if (!is_null($proximity_center['longitude'])) {
+    if (isset($proximity_center['longitude']) && !is_null($proximity_center['longitude'])) {
       return $proximity_center['longitude'];
     }
+
     return NULL;
   }
 

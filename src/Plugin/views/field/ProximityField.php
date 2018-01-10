@@ -372,11 +372,13 @@ class ProximityField extends NumericField implements ContainerFactoryPluginInter
   public function query() {
     /** @var \Drupal\views\Plugin\views\query\Sql $query */
     $query = $this->query;
+
+    $units = $this->options['proximity_units'];
+
     switch ($this->options['proximity_source']) {
       case 'user_input':
         $latitude = $this->view->getRequest()->get('proximity_lat', '');
         $longitude = $this->view->getRequest()->get('proximity_lng', '');
-        $units = $this->options['proximity_units'];
         break;
 
       case 'filter':
@@ -397,7 +399,6 @@ class ProximityField extends NumericField implements ContainerFactoryPluginInter
         if ($filter->value['lng_south_west'] > $filter->value['lng_north_east']) {
           $longitude = $longitude == 0 ? 180 : fmod((fmod((($longitude + 180) - -180), 360) + 360), 360) + -180;
         }
-        $units = $this->options['proximity_units'];
         break;
 
       case 'argument':
@@ -437,20 +438,11 @@ class ProximityField extends NumericField implements ContainerFactoryPluginInter
         $values = reset($values);
         $latitude = $values['lat'];
         $longitude = $values['lng'];
-        $units = $this->options['proximity_units'];
         break;
 
       default:
         $latitude = $this->options['proximity_lat'];
         $longitude = $this->options['proximity_lng'];
-        $units = $this->options['proximity_units'];
-    }
-
-    if (
-      !is_numeric($latitude)
-      || !is_numeric($longitude)
-    ) {
-      return;
     }
 
     // Get the earth radius from the units.
