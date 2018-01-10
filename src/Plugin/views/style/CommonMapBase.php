@@ -403,7 +403,7 @@ abstract class CommonMapBase extends StylePluginBase {
             /** @var \Drupal\image\Entity\ImageStyle $style */
             $style = ImageStyle::load($image_items[0]['rendered']['#image_style']);
             if (!empty($style)) {
-              $icon_url = $style->buildUrl($file_uri);
+              $icon_url = file_url_transform_relative($style->buildUrl($file_uri));
             }
             else {
               $icon_url = file_url_transform_relative(file_create_url($file_uri));
