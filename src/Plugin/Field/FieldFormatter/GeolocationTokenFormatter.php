@@ -95,14 +95,17 @@ class GeolocationTokenFormatter extends FormatterBase {
     ];
 
     $elements = [];
+    $elements['test'] = [
+      '#markup' => 'Hallo Welt',
+    ];
     foreach ($items as $delta => $item) {
       $token_context['geolocation_current_item'] = $item;
 
       $tokenized_text = $this->getSetting('tokenized_text');
 
       if (
-        !empty($settings['tokenized_text']['value'])
-        && !empty($settings['tokenized_text']['format'])
+        !empty($tokenized_text['value'])
+        && !empty($tokenized_text['format'])
       ) {
         $elements[$delta] = [
           '#type' => 'processed_text',

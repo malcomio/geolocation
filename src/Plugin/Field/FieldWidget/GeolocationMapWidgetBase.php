@@ -257,6 +257,27 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       ];
     }
 
+    if (
+      $delta == 0
+      && $this->getSetting('allow_override_map_settings')
+      && $this->mapProvider
+    ) {
+      $overriden_map_settings = empty($this->getSetting($this->mapProviderSettingsFormId)) ? [] : $this->getSetting($this->mapProviderSettingsFormId);
+
+      if (!empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])) {
+        $overriden_map_settings = $items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId];
+      }
+
+      $element[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
+        $overriden_map_settings,
+        [
+          $this->fieldDefinition->getName(),
+          0,
+          $this->mapProviderSettingsFormId,
+        ]
+      );
+    }
+
     return $element;
   }
 
@@ -317,28 +338,11 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       '#context' => ['widget' => $this],
     ];
 
-    if ($settings['allow_override_map_settings']) {
-      if ($this->mapProvider) {
-        $overriden_map_settings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
-
-        if (!$items->isEmpty()) {
-          if (!empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])) {
-            $overriden_map_settings = $items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId];
-          }
-        }
-
-        $element['map']['#settings'] = $overriden_map_settings;
-
-        $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
-          $overriden_map_settings,
-          [
-            'fields',
-            $this->fieldDefinition->getName(),
-            'settings_edit_form',
-            'settings',
-          ]
-        );
-      }
+    if (
+      $this->getSetting('allow_override_map_settings')
+      && !empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
+    ) {
+      $element['map']['#settings'] = $items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId];
     }
 
     return $element;
@@ -351,8 +355,9 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     $values = parent::massageFormValues($values, $form, $form_state);
 
     if (!empty($this->settings['allow_override_map_settings'])) {
-      if (!empty($values[$this->mapProviderSettingsFormId])) {
-        $values[0]['data'][$this->mapProviderSettingsFormId] = $values[$this->mapProviderSettingsFormId];
+      if (!empty($values[0][$this->mapProviderSettingsFormId])) {
+        $values[0]['data'][$this->mapProviderSettingsFormId] = $values[0][$this->mapProviderSettingsFormId];
+        unset($values[0][$this->mapProviderSettingsFormId]);
       }
     }
 

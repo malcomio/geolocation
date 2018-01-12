@@ -12,6 +12,24 @@ geolocation.map_provider.*:
   type: geolocation_map_provider
   label: 'Empty map provider'
 
+geolocation.map_feature_settings:
+  type: mapping
+  label: 'Default processor configuration'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enabled yes/no/maybe'
+    weight:
+      type: integer
+      label: 'Weight'
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+
+plugin.plugin_configuration.geolocation.map_feature.*:
+  type: geolocation.map_feature_settings
+
 geolocation_geocoder:
   type: mapping
   mapping:

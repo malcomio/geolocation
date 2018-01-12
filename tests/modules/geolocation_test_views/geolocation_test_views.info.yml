@@ -5,6 +5,7 @@ description: 'Support module for Geolocation Views tests'
 package: Testing
 dependencies:
   - geolocation
+  - geolocation_google_maps
   - views
   - node
   - field

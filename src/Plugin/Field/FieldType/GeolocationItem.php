@@ -126,21 +126,4 @@ class GeolocationItem extends FieldItemBase {
     $this->get('lng_rad')->setValue(deg2rad($this->get('lng')->getValue()));
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setValue($values, $notify = TRUE) {
-    // Unserialize the values.
-    // @todo The storage controller should take care of this, see
-    //   SqlContentEntityStorage::loadFieldItems, see
-    //   https://www.drupal.org/node/2232427
-    if (
-      !empty($values['data'])
-      && is_string($values['data'])
-    ) {
-      $values['data'] = unserialize($values['data']);
-    }
-    parent::setValue($values, $notify);
-  }
-
 }

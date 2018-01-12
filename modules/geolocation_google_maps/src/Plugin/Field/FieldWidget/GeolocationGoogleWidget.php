@@ -38,9 +38,7 @@ class GeolocationGoogleWidget extends GeolocationMapWidgetBase {
 
     $settings['google_map_settings']['map_features']['control_geocoder'] = [
       'enabled' => TRUE,
-      'settings' => [
-        'weight' => -100,
-      ],
+      'weight' => -100,
     ];
     $settings['google_map_settings']['map_features']['control_recenter']['enabled'] = TRUE;
     $settings['google_map_settings']['map_features']['control_locate']['enabled'] = TRUE;
@@ -54,7 +52,6 @@ class GeolocationGoogleWidget extends GeolocationMapWidgetBase {
   public function form(FieldItemListInterface $items, array &$form, FormStateInterface $form_state, $get_delta = NULL) {
     $element = parent::form($items, $form, $form_state, $get_delta);
 
-    // TODO: pluginId is weired for compatibility reasons. Overriding for now.
     $element['#attributes']['data-widget-type'] = 'google';
 
     $element['#attached'] = BubbleableMetadata::mergeAttachments(

@@ -106,11 +106,11 @@ display:
           proximity_geocoder_plugin_settings:
             plugin_id: google_geocoding_api
             settings:
-              components:
+              component_restrictions:
                 route: ''
                 locality: ''
-                administrativeArea: ''
-                postalCode: ''
+                administrative_area: ''
+                postal_code: ''
                 country: ''
           id: field_geolocation_demo_single_proximity
           table: node__field_geolocation_demo_single

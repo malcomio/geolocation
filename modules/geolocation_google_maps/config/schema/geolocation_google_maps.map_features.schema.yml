@@ -1,21 +1,3 @@
-geolocation.map_feature_settings:
-  type: mapping
-  label: 'Default processor configuration'
-  mapping:
-    enabled:
-      type: boolean
-      label: 'Enabled yes/no/maybe'
-    weight:
-      type: integer
-      label: 'Weight'
-    settings:
-      type: mapping
-      label: 'Settings'
-      mapping:
-
-plugin.plugin_configuration.geolocation.map_feature.*:
-  type: geolocation.map_feature_settings
-
 plugin.plugin_configuration.geolocation.map_feature.drawing:
   type: geolocation.map_feature_settings
   label: 'Common map draw settings'
