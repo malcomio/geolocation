@@ -19,7 +19,7 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   '#description' => $this->t('Render element type "geolocation_map"'),
  *   '#maptype' => 'leaflet,
  *   '#centre' => [],
- *   '#id' => 'thisisanid','geoloca
+ *   '#id' => 'thisisanid',
  * ];
  * @endcode
  *

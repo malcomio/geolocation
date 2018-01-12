@@ -11,12 +11,9 @@ use Drupal\Core\Form\FormStateInterface;
  * Usage example:
  * @code
  * $form['map'] = [
- *   '#type' => 'geolocation_map',
- *   '#prefix' => $this->t('Geolocation Map Render Element'),
- *   '#description' => $this->t('Render element type "geolocation_map"'),
- *   '#maptype' => 'leaflet,
- *   '#centre' => [],
- *   '#id' => 'thisisanid',
+ *   '#type' => 'geolocation_input',
+ *   '#prefix' => $this->t('Geolocation Input'),
+ *   '#description' => $this->t('Form element type "geolocation_input"'),
  * ];
  * @endcode
  *

@@ -73,7 +73,10 @@ class DemoFormattersController extends ControllerBase {
       'field_definition' => $field_definition,
       'configuration' => [
         'settings' => [
-          'tokenized_text' => 'The date is [current-date:html_date] and the latitude value [geolocation_current_item:lat]',
+          'tokenized_text' => [
+            'value' => 'The latitude value of this item is: [geolocation_current_item:lat]',
+            'format' => filter_default_format(),
+          ],
         ],
         'third_party_settings' => [],
       ],

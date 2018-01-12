@@ -95,9 +95,6 @@ class GeolocationTokenFormatter extends FormatterBase {
     ];
 
     $elements = [];
-    $elements['test'] = [
-      '#markup' => 'Hallo Welt',
-    ];
     foreach ($items as $delta => $item) {
       $token_context['geolocation_current_item'] = $item;
 
