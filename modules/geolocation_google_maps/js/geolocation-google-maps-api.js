@@ -508,7 +508,41 @@
       }
     }
 
-    this.googleMap.controls[position].push(element.get(0));
+    var controlAdded = false;
+    var controlIndex = 0;
+    this.googleMap.controls[position].forEach(function (controlElement, index) {
+      if (element.get(0).getAttribute("class") === controlElement.getAttribute("class")) {
+        controlAdded = true;
+        controlIndex = index;
+      }
+    });
+
+    if (!controlAdded) {
+      this.googleMap.controls[position].push(element.get(0));
+      return element;
+    }
+    else {
+      // May cause issues.
+      // this.googleMap.controls[position].setAt(controlIndex, element.get(0));
+      element.remove();
+
+      return this.googleMap.controls[position].getAt(controlIndex);
+    }
+  };
+
+  /**
+   * @inheritDoc
+   */
+  GeolocationGoogleMap.prototype.removeControls = function () {
+    $.each(this.googleMap.controls, function (index, item) {
+      if (typeof item === 'undefined') {
+        return;
+      }
+
+      if (typeof item.clear === 'function') {
+        item.clear();
+      }
+    });
   };
 
   Drupal.geolocation.GeolocationGoogleMap = GeolocationGoogleMap;

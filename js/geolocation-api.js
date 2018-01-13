@@ -90,12 +90,15 @@
  */
 
 /**
- * Update existing map by settings.
+ * Add control to map, identified by classes.
  * @function
  * @name GeolocationMapInterface#addControl
  * @param {jQuery} element - Control element.
- * @param {string} [positionOnMap] - Control element positionOnMap.
- * @param {integer} [index] - Control element index.
+ * @return {jQuery} - Added or existing element.
+ *
+ * Remove controls from map.
+ * @function
+ * @name GeolocationMapInterface#removeControls
  *
  * Update existing map by settings.
  * @function
@@ -254,6 +257,9 @@
 
   GeolocationMapBase.prototype = {
     addControl: function (element) {
+      // Stub.
+    },
+    removeControls: function () {
       // Stub.
     },
     update: function (mapSettings) {
