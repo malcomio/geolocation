@@ -168,7 +168,7 @@ class GeolocationJavascriptTest extends JavascriptTestBase {
     $edit = ['language_interface[enabled][language-url]' => '1'];
     $this->drupalPostForm('admin/config/regional/language/detection', $edit, t('Save settings'));
 
-    $this->drupalGet('fr/node/4');
+    $this->drupalGetFilterGoogleKey('fr/node/4');
     $this->assertSession()->elementExists('css', 'html[lang="fr"]');
 
     $anchor = $this->assertSession()->waitForElement('css', 'a[href^="https://maps.google.com"][href*="hl="]', 3000);
