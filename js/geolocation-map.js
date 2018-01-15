@@ -51,7 +51,7 @@
         }
 
         if (typeof drupalSettings.geolocation === 'undefined') {
-          console.err("Bailing out for lack of settings.");  // eslint-disable-line no-console
+          console.error("Bailing out for lack of settings.");  // eslint-disable-line no-console
           return;
         }
 

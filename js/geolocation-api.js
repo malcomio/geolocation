@@ -416,9 +416,18 @@
         callback(marker);
       });
     },
-    addMarkerAddedCallback: function (callback) {
+    addMarkerAddedCallback: function (callback, executeExistingMarkers) {
+      executeExistingMarkers = executeExistingMarkers || true;
       this.markerAddedCallbacks = this.markerAddedCallbacks || [];
       this.markerAddedCallbacks.push(callback);
+      if (
+        typeof this.mapMarkers !== 'undefined'
+        && executeExistingMarkers
+      ) {
+        $.each(this.mapMarkers, function (index, marker) {
+          callback(marker);
+        });
+      }
     },
     markerRemoveCallback: function (marker) {
       this.markerRemoveCallbacks = this.markerRemoveCallbacks || [];

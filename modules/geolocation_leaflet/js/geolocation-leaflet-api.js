@@ -38,8 +38,8 @@
  * @typedef {Object} LeafletMarker
  *
  * @property {Function} bindPopup
+ * @property {Function} openPopup
  */
-
 
 (function ($, Drupal) {
   'use strict';
@@ -55,6 +55,12 @@
    * @prop {Object} settings.leaflet_settings - Leaflet specific settings.
    */
   function GeolocationLeafletMap(mapSettings) {
+    //
+    if (typeof L === 'undefined') {
+      console.error('Leaflet library not loaded. Bailing out.'); // eslint-disable-line no-console
+      return;
+    }
+
     this.type = 'leaflet';
 
     Drupal.geolocation.GeolocationMapBase.call(this, mapSettings);
@@ -103,8 +109,10 @@
   GeolocationLeafletMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationLeafletMap.prototype.constructor = GeolocationLeafletMap;
   GeolocationLeafletMap.prototype.setMapMarker = function (markerSettings) {
-    if (markerSettings.setMarker === false) {
-      return;
+    if (typeof markerSettings.setMarker !== 'undefined') {
+      if (markerSettings.setMarker === false) {
+        return;
+      }
     }
 
     if (typeof markerSettings.icon === 'string') {
@@ -114,9 +122,13 @@
     }
 
     /** @param {LeafletMarker} */
-    var currentMarker = L.marker([markerSettings.position.lat, markerSettings.position.lng], markerSettings).addTo(this.leafletMap);
+    var currentMarker = L.marker([parseFloat(markerSettings.position.lat), parseFloat(markerSettings.position.lng)], markerSettings).addTo(this.leafletMap);
+
+    currentMarker.locationWrapper = markerSettings.locationWrapper;
 
     this.mapMarkers.push(currentMarker);
+
+    this.markerAddedCallback(currentMarker);
 
     return currentMarker;
   };
@@ -135,7 +147,6 @@
 
     this.leafletMap.fitBounds(group.getBounds());
   };
-
 
   Drupal.geolocation.GeolocationLeafletMap = GeolocationLeafletMap;
   Drupal.geolocation.addMapProvider('leaflet', 'GeolocationLeafletMap');

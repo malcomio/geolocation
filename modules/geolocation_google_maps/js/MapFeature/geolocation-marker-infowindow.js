@@ -52,12 +52,6 @@
               return;
             }
 
-            if (map.wrapper.hasClass('geolocation-marker-infowindow-processed')) {
-              return;
-            }
-
-            map.wrapper.addClass('geolocation-marker-infowindow-processed');
-
             map.addMarkerAddedCallback(function (currentMarker) {
               if (typeof (currentMarker.locationWrapper) === 'undefined') {
                 return;

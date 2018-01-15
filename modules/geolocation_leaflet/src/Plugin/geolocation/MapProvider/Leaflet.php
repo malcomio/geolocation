@@ -20,11 +20,14 @@ class Leaflet extends MapProviderBase {
    * {@inheritdoc}
    */
   public static function getDefaultSettings() {
-    return [
-      'zoom' => 10,
-      'height' => '400px',
-      'width' => '100%',
-    ];
+    return array_replace_recursive(
+      parent::getDefaultSettings(),
+      [
+        'zoom' => 10,
+        'height' => '400px',
+        'width' => '100%',
+      ]
+    );
   }
 
   /**

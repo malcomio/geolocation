@@ -29,3 +29,14 @@ widget.api.leaflet:
     js/geolocation-widget-leaflet-api.js: { scope: footer }
   dependencies:
     - geolocation/geolocation.widget.api
+
+#
+# Map Features
+#
+
+# MarkerPopup support.
+mapfeature.markerpopup:
+  js:
+    js/MapFeature/geolocation-marker-popup.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
