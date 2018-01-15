@@ -10,6 +10,7 @@ dependencies:
     - system.menu.geolocation-demo
     - taxonomy.vocabulary.geolocation_demo_taxonomy
   module:
+    - geolocation
     - geolocation_google_maps
     - node
     - taxonomy

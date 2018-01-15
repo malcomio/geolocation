@@ -2,19 +2,20 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.teaser
     - field.storage.node.field_geolocation_demo_single
     - node.type.geolocation_default_article
     - system.menu.geolocation-demo
   enforced:
     module:
-      - geolocation_google_maps_demo
+      - geolocation_leaflet_demo
   module:
     - geolocation
-    - geolocation_google_maps
+    - geolocation_leaflet
     - node
     - user
-id: geolocation_demo_proximity_filter_sort
-label: 'Geolocation Demo - Proximity Filter & Sort'
+id: geolocation_demo_leaflet_common_map
+label: 'Geolocation Demo - Leaflet CommonMap'
 module: views
 description: ''
 tag: 'Geolocation Demo'
@@ -32,6 +33,9 @@ display:
         type: perm
         options:
           perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
       query:
         type: views_query
         options:
@@ -51,75 +55,113 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       pager:
-        type: some
+        type: mini
         options:
           items_per_page: 10
           offset: 0
+          id: 0
+          total_pages: null
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          tags:
+            previous: ‹‹
+            next: ››
       style:
-        type: default
+        type: geolocation_leaflet
         options:
-          grouping: {  }
-          row_class: ''
-          default_row_class: true
+          geolocation_field: field_geolocation_demo_single
+          title_field: title
+          centre:
+            fit_bounds:
+              enable: true
+              weight: 0
+            first_row:
+              weight: 0
+              enable: false
+            fixed_value:
+              weight: 0
+              settings:
+                latitude: ''
+                longitude: ''
+              enable: false
+            client_location:
+              weight: 0
+              enable: false
+              settings:
+                update_map: '0'
+          even_empty: 1
+          marker_icon_path: ''
+          marker_row_number: 0
+          leaflet_settings:
+            height: 444px
+            width: 100%
+            zoom: '10'
       row:
-        type: fields
+        type: 'entity:node'
         options:
-          default_field_elements: true
-          inline:
-            field_geolocation_demo_single_proximity: field_geolocation_demo_single_proximity
-          separator: ''
-          hide_empty: false
+          view_mode: teaser
       fields:
         title:
           id: title
           table: node_field_data
           field: title
+          entity_type: node
+          entity_field: title
+          label: ''
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim: false
+            word_boundary: false
+            ellipsis: false
+            strip_tags: false
+            html: false
+          hide_empty: false
+          empty_zero: false
+          settings:
+            link_to_entity: true
+          plugin_id: field
           relationship: none
           group_type: group
           admin_label: ''
-          label: ''
           exclude: false
           element_type: ''
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
           empty: ''
-          hide_empty: false
-          empty_zero: false
           hide_alter_empty: true
-          plugin_id: field
-          entity_type: node
-          entity_field: title
-        field_geolocation_demo_single_proximity:
-          proximity_source: user_input
-          proximity_lat: ''
-          proximity_lng: ''
-          proximity_units: km
-          proximity_filter: field_geolocation_demo_single_proximity
-          proximity_argument: field_geolocation_demo_single_proximity
-          entity_id_argument: field_geolocation_demo_single_proximity
-          boundary_filter: ''
-          proximity_geocoder: 1
-          proximity_geocoder_plugin_settings:
-            plugin_id: google_geocoding_api
-            settings:
-              component_restrictions:
-                route: ''
-                locality: ''
-                administrative_area: ''
-                postal_code: ''
-                country: ''
-          id: field_geolocation_demo_single_proximity
+          click_sort_column: value
+          type: string
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_geolocation_demo_single:
+          id: field_geolocation_demo_single
           table: node__field_geolocation_demo_single
-          field: field_geolocation_demo_single_proximity
+          field: field_geolocation_demo_single
           relationship: none
           group_type: group
           admin_label: ''
-          label: Distance
+          label: ''
           exclude: false
           alter:
             alter_text: false
@@ -152,69 +194,12 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: true
-          empty_zero: true
-          hide_alter_empty: true
-          set_precision: true
-          precision: 2
-          decimal: .
-          separator: ','
-          format_plural: false
-          format_plural_string: "1\x03@count"
-          prefix: ''
-          suffix: km
-          plugin_id: geolocation_field_proximity
-        field_geolocation_demo_single:
-          id: field_geolocation_demo_single
-          table: node__field_geolocation_demo_single
-          field: field_geolocation_demo_single
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: true
-            text: 'Use as starting point'
-            make_link: true
-            path: 'geolocation-demo/proximity_filter_and_sort?proximity_lat={{ field_geolocation_demo_single__lat }}&proximity_lng={{ field_geolocation_demo_single__lng }}'
-            absolute: true
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: 'Proximity to here'
-            rel: ''
-            link_class: 'btn button'
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
           element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
           empty: ''
-          hide_empty: true
+          hide_empty: false
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: ''
@@ -240,68 +225,36 @@ display:
           entity_type: node
           entity_field: status
           id: status
+          expose:
+            operator: ''
           group: 1
         type:
           id: type
           table: node_field_data
           field: type
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: in
           value:
             geolocation_default_article: geolocation_default_article
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
           entity_type: node
           entity_field: type
           plugin_id: bundle
       sorts:
-        field_geolocation_demo_single_proximity:
-          proximity_field: field_geolocation_demo_single_proximity
-          id: field_geolocation_demo_single_proximity
-          table: node__field_geolocation_demo_single
-          field: field_geolocation_demo_single_proximity
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          order: DESC
+          entity_type: node
+          entity_field: created
+          plugin_id: date
           relationship: none
           group_type: group
           admin_label: ''
-          order: ASC
           exposed: false
           expose:
             label: ''
-          plugin_id: geolocation_sort_proximity
-      title: 'Geolocation Demo - Proximity Field & Sort'
-      header:
-        area:
-          id: area
-          table: views
-          field: area
-          plugin_id: text
+          granularity: second
+      title: 'Leaflet CommonMap'
+      header: {  }
       footer: {  }
       empty: {  }
       relationships: {  }
@@ -312,6 +265,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -322,11 +276,11 @@ display:
     display_title: Page
     position: 1
     display_options:
-      path: geolocation-demo/proximity_filter_and_sort
       display_extenders: {  }
+      path: geolocation-demo/leaflet-commonmap
       menu:
         type: normal
-        title: 'Proximity Filter & Sort'
+        title: 'Leaflet CommonMap'
         description: ''
         expanded: false
         parent: ''
@@ -338,6 +292,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags:
