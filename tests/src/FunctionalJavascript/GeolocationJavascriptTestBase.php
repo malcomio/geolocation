@@ -2,12 +2,19 @@
 
 namespace Drupal\Tests\geolocation\FunctionalJavascript;
 
+use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
 use Zumba\GastonJS\Exception\JavascriptError;
+use Drupal\FunctionalJavascriptTests\DrupalSelenium2Driver;
 
 /**
  * Support tests using Google Maps API.
  */
-trait GeolocationGoogleTestTrait {
+abstract class GeolocationJavascriptTestBase extends JavascriptTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $minkDefaultDriverClass = DrupalSelenium2Driver::class;
 
   /**
    * Filter the missing key Google Maps API error.
