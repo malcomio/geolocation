@@ -602,7 +602,7 @@ display:
               map_type_style:
                 weight: 0
                 settings:
-                  style: '""'
+                  style: '[]'
                 enabled: false
               control_zoom:
                 enabled: true

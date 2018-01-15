@@ -23,7 +23,7 @@ class MapTypeStyle extends MapFeatureBase {
    */
   public static function getDefaultSettings() {
     return [
-      'style' => '',
+      'style' => '[]',
     ];
   }
 
@@ -60,7 +60,7 @@ class MapTypeStyle extends MapFeatureBase {
     $form['style'] = [
       '#title' => $this->t('JSON styles'),
       '#type' => 'textarea',
-      '#default_value' => json_encode($settings['style']),
+      '#default_value' => $settings['style'],
       '#description' => $this->t('A JSON encoded styles array to customize the presentation of the Google Map. See the <a href=":styling">Styled Map</a> section of the Google Maps website for further information.', [
         ':styling' => 'https://developers.google.com/maps/documentation/javascript/styling',
       ]),
