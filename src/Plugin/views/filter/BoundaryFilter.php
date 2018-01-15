@@ -181,7 +181,6 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
     ) {
 
       $geocoder_configuration = $this->options['expose']['geocoder_plugin_settings']['settings'];
-      $geocoder_configuration['label'] = $this->options['expose']['label'];
 
       /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
       $geocoder_plugin = $this->geolocationCore->getGeocoderManager()->getGeocoder(
