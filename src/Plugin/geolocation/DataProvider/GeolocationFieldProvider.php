@@ -4,12 +4,11 @@ namespace Drupal\geolocation\Plugin\geolocation\DataProvider;
 
 use Drupal\geolocation\DataProviderInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\geolocation\Plugin\views\field\GeolocationField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 
 /**
- * Provides Google Maps.
+ * Provides default geolocation field.
  *
  * @DataProvider(
  *   id = "geolocation_field_provider",

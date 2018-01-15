@@ -164,7 +164,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
         [
           'action' => 'order',
           'relationship' => 'sibling',
-          'group' => 'geolocation-google-map-feature-option-weight',
+          'group' => 'geolocation-map-feature-option-weight',
         ],
       ],
     ];
@@ -204,7 +204,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
           '#title_display' => 'invisible',
           '#size' => 4,
           '#default_value' => $weight,
-          '#attributes' => ['class' => ['geolocation-google-map-feature-option-weight']],
+          '#attributes' => ['class' => ['geolocation-map-feature-option-weight']],
         ],
       ];
 
