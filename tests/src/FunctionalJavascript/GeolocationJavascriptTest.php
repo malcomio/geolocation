@@ -152,7 +152,7 @@ class GeolocationJavascriptTest extends JavascriptTestBase {
     $this->drupalGet('admin/config/services/geolocation/google_maps');
 
     // Enable the checkbox to use current language.
-    $edit = ['use_current_language' => 1];
+    $edit = ['use_current_language' => TRUE];
     $this->drupalPostForm(NULL, $edit, t('Save configuration'));
 
     // Add and set French as the language. See from LanguageSwitchingTest.
@@ -171,7 +171,8 @@ class GeolocationJavascriptTest extends JavascriptTestBase {
     $this->drupalGetFilterGoogleKey('fr/node/4');
     $this->assertSession()->elementExists('css', 'html[lang="fr"]');
 
-    $anchor = $this->assertSession()->waitForElement('css', 'a[href^="https://maps.google.com"][href*="hl="]', 3000);
+    $anchor = $this->assertSession()->waitForElement('css', 'a[href^="https://maps.google.com"][href*="hl="]');
+    $this->assertNotEmpty($anchor, "Wait for GoogleMaps to be loaded.");
     // To control the test messages, search inside the anchor's href.
     // This is achieved by looking for the "hl" parameter in an anchor's href:
     // https://maps.google.com/maps?ll=54,49&z=10&t=m&hl=fr&gl=US&mapclient=apiv3
