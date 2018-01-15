@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Sth sth dark side.
+ */
+
+function geolocation_update_8201(&$sandbox) {
+  // Enable geolocation_google_maps.
+  if (!\Drupal::service('module_handler')->moduleExists('geolocation_google_maps')) {
+    \Drupal::service('module_installer')->install(['geolocation_google_maps']);
+  }
+  drupal_flush_all_caches();
+}
