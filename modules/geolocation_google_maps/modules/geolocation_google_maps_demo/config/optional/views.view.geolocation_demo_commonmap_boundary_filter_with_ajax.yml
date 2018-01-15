@@ -534,9 +534,9 @@ display:
             height: 400px
             width: 100%
             type: ROADMAP
-            zoom: '3'
-            maxZoom: '18'
-            minZoom: '0'
+            zoom: 3
+            maxZoom: 18
+            minZoom: 0
             rotateControl: false
             scrollwheel: true
             gestureHandling: auto
@@ -597,7 +597,7 @@ display:
                 settings:
                   image_path: ''
                   styles: ''
-                  max_zoom: '15'
+                  max_zoom: 15
                 enabled: false
               map_type_style:
                 weight: 0

@@ -77,13 +77,13 @@ geolocation.map_provider.google_maps:
       type: string
       label: 'Google map type'
     zoom:
-      type: string
+      type: integer
       label: 'Zoom level'
     minZoom:
-      type: string
+      type: integer
       label: 'Min Zoom'
     maxZoom:
-      type: string
+      type: integer
       label: 'Max Zoom'
     rotateControl:
       type: boolean

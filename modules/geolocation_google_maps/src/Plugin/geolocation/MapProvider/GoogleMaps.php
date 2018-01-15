@@ -285,46 +285,49 @@ class GoogleMaps extends MapProviderBase {
     ];
     $form['zoom'] = [
       '#group' => $parents_string . 'general_settings',
-      '#type' => 'select',
+      '#type' => 'number',
+      '#min' => static::$MINZOOMLEVEL,
+      '#max' => static::$MAXZOOMLEVEL,
       '#title' => $this->t('Zoom level'),
-      '#options' => range(static::$MINZOOMLEVEL, static::$MAXZOOMLEVEL),
-      '#description' => $this->t('The initial resolution at which to display the map, where zoom 0 corresponds to a map of the Earth fully zoomed out, and higher zoom levels zoom in at a higher resolution.'),
+      '#description' => $this->t('The initial resolution at which to display the map, where zoom 0 corresponds to a map of the Earth fully zoomed out, and higher zoom levels zoom in at a higher resolution up to 20 for streetlevel.'),
       '#default_value' => $settings['zoom'],
       '#process' => [
         ['\Drupal\Core\Render\Element\RenderElement', 'processGroup'],
-        ['\Drupal\Core\Render\Element\Select', 'processSelect'],
       ],
       '#pre_render' => [
+        ['\Drupal\Core\Render\Element\Number', 'preRenderNumber'],
         ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
       ],
     ];
     $form['maxZoom'] = [
       '#group' => $parents_string . 'general_settings',
-      '#type' => 'select',
+      '#type' => 'number',
+      '#min' => static::$MINZOOMLEVEL,
+      '#max' => static::$MAXZOOMLEVEL,
       '#title' => $this->t('Max Zoom level'),
-      '#options' => range(static::$MINZOOMLEVEL, static::$MAXZOOMLEVEL),
-      '#description' => $this->t('The maximum zoom level which will be displayed on the map. If omitted, or set to null, the maximum zoom from the current map type is used instead.'),
+      '#description' => $this->t('The maximum zoom level of the map. If omitted, or set to null, the default maximum zoom from the current map type is used instead.'),
       '#default_value' => $settings['maxZoom'],
       '#process' => [
         ['\Drupal\Core\Render\Element\RenderElement', 'processGroup'],
-        ['\Drupal\Core\Render\Element\Select', 'processSelect'],
       ],
       '#pre_render' => [
+        ['\Drupal\Core\Render\Element\Number', 'preRenderNumber'],
         ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
       ],
     ];
     $form['minZoom'] = [
       '#group' => $parents_string . 'general_settings',
-      '#type' => 'select',
+      '#type' => 'number',
+      '#min' => static::$MINZOOMLEVEL,
+      '#max' => static::$MAXZOOMLEVEL,
       '#title' => $this->t('Min Zoom level'),
-      '#options' => range(static::$MINZOOMLEVEL, static::$MAXZOOMLEVEL),
-      '#description' => $this->t('The minimum zoom level which will be displayed on the map. If omitted, or set to null, the minimum zoom from the current map type is used instead.'),
+      '#description' => $this->t('The minimum zoom level of the map. If omitted, or set to null, the default minimum zoom from the current map type is used instead.'),
       '#default_value' => $settings['minZoom'],
       '#process' => [
         ['\Drupal\Core\Render\Element\RenderElement', 'processGroup'],
-        ['\Drupal\Core\Render\Element\Select', 'processSelect'],
       ],
       '#pre_render' => [
+        ['\Drupal\Core\Render\Element\Number', 'preRenderNumber'],
         ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
       ],
     ];

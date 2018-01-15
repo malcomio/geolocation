@@ -46,7 +46,7 @@ plugin.plugin_configuration.geolocation.map_feature.marker_clusterer:
           type: string
           label: 'Styles'
         max_zoom:
-          type: string
+          type: integer
           label: 'Max Zoom'
 
 plugin.plugin_configuration.geolocation.map_feature.context_popup:

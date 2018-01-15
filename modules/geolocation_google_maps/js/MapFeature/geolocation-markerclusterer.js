@@ -4,7 +4,7 @@
  * @property {String} enable
  * @property {String} imagePath
  * @property {Object} styles
- * @property {string} maxZoom
+ * @property {Number} maxZoom
  */
 
 (function ($, Drupal) {
