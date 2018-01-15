@@ -132,8 +132,15 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
       '#description' => $this->t('Additional map settings provided by %map_provider', ['%map_provider' => $this->pluginDefinition['name']]),
     ];
 
+    $map_features = $this->mapFeatureManager->getMapFeaturesByMapType($this->getPluginId());
+
+    if (empty($map_features)) {
+      return $form;
+    }
+
     $form['map_features'] = [
       '#type' => 'table',
+      '#weight' => 100,
       '#prefix' => $this->t('<h3>Map Features</h3>'),
       '#title' => 'title table',
       '#description' => 'description table',
@@ -163,7 +170,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
     ];
     $form['map_features']['#element_validate'][] = [$this, 'validateMapFeatureForms'];
 
-    foreach ($this->mapFeatureManager->getMapFeaturesByMapType('google_maps') as $feature_id => $feature_definition) {
+    foreach ($map_features as $feature_id => $feature_definition) {
       $feature = $this->mapFeatureManager->getMapFeature($feature_id, []);
       if (empty($feature)) {
         continue;

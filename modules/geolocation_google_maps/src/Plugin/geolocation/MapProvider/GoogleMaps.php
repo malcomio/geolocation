@@ -398,11 +398,6 @@ class GoogleMaps extends MapProviderBase {
       '#default_value' => $settings['disableDoubleClickZoom'],
     ];
 
-    // Push to bottom.
-    $map_features = $form['map_features'];
-    unset($form['map_features']);
-    $form['map_features'] = $map_features;
-
     return $form;
   }
 
