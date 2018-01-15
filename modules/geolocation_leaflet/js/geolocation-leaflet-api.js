@@ -14,10 +14,24 @@
  * @typedef {Object} LeafletMap
  *
  * @property {Function} tileLayer
+ * @property {Function} removeLayer
  * @property {Function} addTo
  * @property {Function} setView
  * @property {Function} featureGroup
  * @property {Function} marker
+ */
+
+/**
+ * @typedef {Object} LeafletMouseEvent
+ *
+ * @property {LeafletLatLng} latlng
+ */
+
+/**
+ * @typedef {Object} LeafletLatLng
+ *
+ * @property {Number} lat
+ * @property {Number} lng
  */
 
 /**
@@ -65,8 +79,8 @@
       zoom: this.settings.leaflet_settings.zoom
     });
 
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(leafletMap);
 
     /** @property {LeafletMap} leafletMap */
