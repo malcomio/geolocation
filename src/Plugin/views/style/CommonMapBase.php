@@ -370,12 +370,12 @@ abstract class CommonMapBase extends StylePluginBase {
   protected function getLocationsFromRow(ResultRow $row) {
     $locations = [];
 
-    if (!empty($title_field)) {
-      if (!empty($this->rendered_fields[$row->index][$title_field])) {
-        $title_build = $this->rendered_fields[$row->index][$title_field];
+    if (!empty($this->titleField)) {
+      if (!empty($this->rendered_fields[$row->index][$this->titleField])) {
+        $title_build = $this->rendered_fields[$row->index][$this->titleField];
       }
-      elseif (!empty($this->view->field[$title_field])) {
-        $title_build = $this->view->field[$title_field]->render($row);
+      elseif (!empty($this->view->field[$this->titleField])) {
+        $title_build = $this->view->field[$this->titleField]->render($row);
       }
     }
 
