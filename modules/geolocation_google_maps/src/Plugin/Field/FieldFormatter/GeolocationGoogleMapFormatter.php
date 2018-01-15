@@ -39,6 +39,7 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
    */
   public static function defaultSettings() {
     $settings = parent::defaultSettings();
+    $settings['use_overridden_map_settings'] = FALSE;
     $settings['google_map_settings'] = GoogleMaps::getDefaultSettings();
 
     return $settings;

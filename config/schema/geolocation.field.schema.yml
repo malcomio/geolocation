@@ -14,9 +14,6 @@ geolocation.field.formatter.map.base:
     info_text:
       type: text_format
       label: 'Info Text'
-    use_overridden_map_settings:
-      type: integer
-      label: 'Use overridden map settings.'
 
 field.formatter.settings.geolocation_token:
   type: mapping

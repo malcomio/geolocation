@@ -65,7 +65,6 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       'format' => filter_default_format(),
     ];
     $settings += parent::defaultSettings();
-    $settings['use_overridden_map_settings'] = FALSE;
 
     return $settings;
   }
@@ -89,14 +88,15 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $settings = $this->getSettings();
 
-    $form['set_marker'] = [
+    $element = [];
+
+    $element['set_marker'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Set map marker'),
-      '#description' => $this->t('The map will be centered on the stored location. Additionally a marker can be set at the exact location.'),
       '#default_value' => $settings['set_marker'],
     ];
 
-    $form['title'] = [
+    $element['title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Marker title'),
       '#description' => $this->t('When the cursor hovers on the marker, this title will be shown as description.'),
@@ -108,7 +108,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       ],
     ];
 
-    $form['info_text'] = [
+    $element['info_text'] = [
       '#type' => 'text_format',
       '#title' => $this->t('Marker info text'),
       '#description' => $this->t('When the marker is clicked, this text will be shown in a popup above it. Leave blank to not display. Token replacement supported.'),
@@ -119,14 +119,14 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       ],
     ];
     if (!empty($settings['info_text']['value'])) {
-      $form['info_text']['#default_value'] = $settings['info_text']['value'];
+      $element['info_text']['#default_value'] = $settings['info_text']['value'];
     }
 
     if (!empty($settings['info_text']['format'])) {
-      $form['info_text']['#format'] = $settings['info_text']['format'];
+      $element['info_text']['#format'] = $settings['info_text']['format'];
     }
 
-    $form['replacement_patterns'] = [
+    $element['replacement_patterns'] = [
       '#type' => 'details',
       '#title' => 'Replacement patterns',
       '#description' => $this->t('The following replacement patterns are available for the "Info text" and the "Hover title" settings.'),
@@ -137,14 +137,14 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       ],
     ];
 
-    $form['replacement_patterns']['token_geolocation'] = $this->getTokenHelp();
+    $element['replacement_patterns']['token_geolocation'] = $this->getTokenHelp();
 
     $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
     if (
       $cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED
       || $cardinality > 1
     ) {
-      $form['common_map'] = [
+      $element['common_map'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Display multiple values on a common map'),
         '#description' => $this->t('By default, each value will be displayed in a separate map. Settings this option displays all values on a common map instead. This settings is only useful on multi-value fields.'),
@@ -154,7 +154,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
     if ($this->mapProvider) {
       $mapProviderSettings = $settings[$this->mapProviderSettingsFormId];
-      $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
+      $element[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
         $mapProviderSettings,
         [
           'fields',
@@ -165,7 +165,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       );
     }
 
-    return $form;
+    return $element;
   }
 
   /**
@@ -268,10 +268,12 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     ];
 
     if (!empty($settings['common_map'])) {
-      $elements = $element_pattern;
-      $elements['#id'] = uniqid("map-");
+      $elements = [
+        0 => $element_pattern,
+      ];
+      $elements[0]['#id'] = uniqid("map-");
       foreach ($locations as $delta => $location) {
-        $elements[$delta] = $location;
+        $elements[0][$delta] = $location;
       }
     }
     else {
