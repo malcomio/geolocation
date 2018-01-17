@@ -20,6 +20,10 @@ services:
     class: Drupal\geolocation\MapProviderManager
     parent: default_plugin_manager
 
+  plugin.manager.geolocation.mapcenter:
+    class: Drupal\geolocation\MapCenterManager
+    parent: default_plugin_manager
+
   plugin.manager.geolocation.mapfeature:
     class: Drupal\geolocation\MapFeatureManager
     parent: default_plugin_manager

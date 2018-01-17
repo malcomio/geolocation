@@ -12,7 +12,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 class MapProviderManager extends DefaultPluginManager {
 
   /**
-   * Constructs an GeocoderManager object.
+   * Constructs an MapProviderManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -32,12 +32,12 @@ class MapProviderManager extends DefaultPluginManager {
    * Return MapProvider by ID.
    *
    * @param string $id
-   *   Geocoder ID.
+   *   MapProvider ID.
    * @param array $configuration
    *   Configuration.
    *
    * @return \Drupal\geolocation\MapProviderInterface|false
-   *   Geocoder instance.
+   *   MapProvider instance.
    */
   public function getMapProvider($id, array $configuration = []) {
     $definitions = $this->getDefinitions();

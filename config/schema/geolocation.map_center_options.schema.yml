@@ -1,0 +1,14 @@
+plugin.plugin_configuration.geolocation.map_feature.fixed_coordinates:
+  type: geolocation.map_center_option_settings
+  label: 'Fixed Coordinates'
+  mapping:
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        latitude:
+          type: float
+          label: 'Latitude'
+        longitude:
+          type: float
+          label: 'Longitude'

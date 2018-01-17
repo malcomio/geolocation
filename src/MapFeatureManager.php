@@ -13,7 +13,7 @@ use Drupal\Component\Utility\SortArray;
 class MapFeatureManager extends DefaultPluginManager {
 
   /**
-   * Constructs an GeocoderManager object.
+   * Constructs an MapFeatureManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -33,12 +33,12 @@ class MapFeatureManager extends DefaultPluginManager {
    * Return MapFeature by ID.
    *
    * @param string $id
-   *   Geocoder ID.
+   *   MapFeature ID.
    * @param array $configuration
    *   Configuration.
    *
    * @return \Drupal\geolocation\MapFeatureInterface|false
-   *   Geocoder instance.
+   *   MapFeature instance.
    */
   public function getMapFeature($id, array $configuration = []) {
     $definitions = $this->getDefinitions();

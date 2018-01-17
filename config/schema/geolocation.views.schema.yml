@@ -62,21 +62,10 @@ geolocation_views_style:
       label: 'Custom cluster styles'
     centre:
       type: sequence
-      label: 'Centre Option'
+      label: 'Center option settings'
       sequence:
-        type: mapping
-        mapping:
-          weight:
-            type: integer
-            label: 'Weight'
-          enable:
-            type: boolean
-            label: 'enable'
-          settings:
-            type: sequence
-            label: 'Settings'
-            sequence:
-              type: string
+        type: plugin.plugin_configuration.geolocation.map_center_option.[%key]
+        label: 'The settings for a map center option'
     map_provider_id:
       type: string
       label: 'Map provider ID'

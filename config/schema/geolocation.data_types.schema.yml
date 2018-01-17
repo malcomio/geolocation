@@ -30,6 +30,27 @@ geolocation.map_feature_settings:
 plugin.plugin_configuration.geolocation.map_feature.*:
   type: geolocation.map_feature_settings
 
+geolocation.map_center_option_settings:
+  type: mapping
+  label: 'Default processor configuration'
+  mapping:
+    enable:
+      type: boolean
+      label: 'Enabled yes/no/maybe'
+    weight:
+      type: integer
+      label: 'Weight'
+    map_center_id:
+      type: string
+      label: 'Map Center ID for this option'
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+
+plugin.plugin_configuration.geolocation.map_center_option.*:
+  type: geolocation.map_center_option_settings
+
 geolocation_geocoder:
   type: mapping
   mapping:
