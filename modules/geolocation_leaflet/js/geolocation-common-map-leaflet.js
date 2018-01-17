@@ -9,7 +9,7 @@
    * @prop {Drupal~behaviorAttach} attach
    *   Attaches common map style functionality to relevant elements.
    */
-  Drupal.behaviors.geolocationCommonMapGoogle = {
+  Drupal.behaviors.geolocationCommonMapLeaflet = {
     attach: function (context, drupalSettings) {
       $.each(
         drupalSettings.geolocation.commonMap,
@@ -47,14 +47,14 @@
              */
             if (
               map.container.length
-              && map.type === 'google_maps'
-              && !map.container.hasClass('geolocation-common-map-google-processed')
+              && map.type === 'leaflet'
+              && !map.container.hasClass('geolocation-common-map-leaflet-processed')
             ) {
-              map.container.addClass('geolocation-common-map-google-processed');
+              map.container.addClass('geolocation-common-map-leaflet-processed');
 
               map.addLoadedCallback(function (map) {
                 var geolocationMapIdleTimer;
-                map.googleMap.addListener('bounds_changed', function () {
+                map.leafletMap.on('moveend', function (e) {
                   clearTimeout(geolocationMapIdleTimer);
 
                   geolocationMapIdleTimer = setTimeout(
@@ -71,7 +71,7 @@
                         return;
                       }
 
-                      var currentBounds = map.googleMap.getBounds();
+                      var currentBounds = map.leafletMap.getBounds();
 
                       // Extract the view DOM ID from the view classes.
                       var matches = /(js-view-dom-id-\w+)/.exec(view.attr('class'));
@@ -90,10 +90,10 @@
 
                       // Add bounds.
                       var bound_parameters = {};
-                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_north_east]'] = currentBounds.getNorthEast().lat();
-                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_north_east]'] = currentBounds.getNorthEast().lng();
-                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_south_west]'] = currentBounds.getSouthWest().lat();
-                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_south_west]'] = currentBounds.getSouthWest().lng();
+                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_north_east]'] = currentBounds.getNorthEast().lat;
+                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_north_east]'] = currentBounds.getNorthEast().lng;
+                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_south_west]'] = currentBounds.getSouthWest().lat;
+                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_south_west]'] = currentBounds.getSouthWest().lng;
                       // Trigger geolocation bounds specific behavior.
                       bound_parameters['geolocation_common_map_bounds_changed'] = true;
                       ajaxSettings.submit = $.extend(

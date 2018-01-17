@@ -34,7 +34,7 @@ class LeafletCommonMap extends CommonMapBase {
       empty($build['#attached']) ? [] : $build['#attached'],
       [
         'library' => [
-          'geolocation_leaflet/geolocation.leaflet',
+          'geolocation_leaflet/commonmap.leaflet',
         ],
       ]
     );

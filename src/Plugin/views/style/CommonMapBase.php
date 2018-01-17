@@ -307,6 +307,12 @@ abstract class CommonMapBase extends StylePluginBase {
       $build['#centre'] = $centre ?: ['lat' => 0, 'lng' => 0];
     }
 
+    if ($this->view->getRequest()->get('geolocation_common_map_bounds_changed')) {
+      $build['#centre'] = [
+        'behavior' => 'preserve',
+      ];
+    }
+
     return $build;
   }
 
