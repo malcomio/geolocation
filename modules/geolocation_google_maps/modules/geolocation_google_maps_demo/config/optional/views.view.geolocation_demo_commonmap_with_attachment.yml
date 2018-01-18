@@ -493,8 +493,8 @@ display:
             fixed_value:
               weight: -7
               settings:
-                latitude: ''
-                longitude: ''
+                latitude: 0
+                longitude: 0
               enable: false
             client_location:
               weight: -6

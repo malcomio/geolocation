@@ -66,8 +66,8 @@ display:
             fixed_value:
               weight: -8
               settings:
-                latitude: '0'
-                longitude: '0'
+                latitude: 0
+                longitude: 0
               enable: false
             fit_bounds:
               enable: true

@@ -95,8 +95,8 @@ display:
             fixed_value:
               weight: 0
               settings:
-                latitude: ''
-                longitude: ''
+                latitude: 0
+                longitude: 0
               enable: false
             client_location:
               weight: 0

@@ -67,8 +67,8 @@ display:
               enable: true
               weight: -8
               settings:
-                latitude: '-33.45'
-                longitude: '-70.66'
+                latitude: -33.45
+                longitude: -70.66
             fit_bounds:
               weight: 0
               enable: false

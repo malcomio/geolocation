@@ -369,8 +369,8 @@ display:
               enable: true
               weight: 0
               settings:
-                latitude: ''
-                longitude: ''
+                latitude: 0
+                longitude: 0
             client_location:
               enable: true
               weight: 0
