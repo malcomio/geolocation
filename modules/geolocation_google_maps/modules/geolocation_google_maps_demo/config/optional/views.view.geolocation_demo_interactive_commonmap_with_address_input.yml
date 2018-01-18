@@ -541,7 +541,7 @@ display:
             scrollwheel: true
             gestureHandling: auto
             preferScrollingToZooming: false
-            disableDoubleClickZoom: '0'
+            disableDoubleClickZoom: false
             map_features:
               control_locate:
                 enabled: true
@@ -552,9 +552,9 @@ display:
                 enabled: true
                 weight: 0
                 settings:
-                  info_window_solitary: 1
-                  disable_auto_pan: 1
-                  info_auto_display: 0
+                  info_window_solitary: true
+                  disable_auto_pan: true
+                  info_auto_display: false
               marker_infobubble:
                 weight: 0
                 settings:
@@ -652,9 +652,9 @@ display:
                   strokeWeight: '2'
                   fillColor: '#FF0000'
                   fillOpacity: '0.35'
-                  polyline: '0'
-                  geodesic: '0'
-                  polygon: '0'
+                  polyline: false
+                  geodesic: false
+                  polygon: false
                 enabled: false
               map_disable_poi:
                 weight: 0

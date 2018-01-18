@@ -85,7 +85,7 @@ display:
             scrollwheel: true
             gestureHandling: auto
             preferScrollingToZooming: false
-            disableDoubleClickZoom: '0'
+            disableDoubleClickZoom: false
             map_features:
               control_locate:
                 weight: 0
@@ -96,9 +96,9 @@ display:
                 enabled: true
                 weight: 0
                 settings:
-                  info_window_solitary: 1
-                  disable_auto_pan: 1
-                  info_auto_display: 0
+                  info_window_solitary: true
+                  disable_auto_pan: true
+                  info_auto_display: false
               marker_infobubble:
                 weight: 0
                 settings:

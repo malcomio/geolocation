@@ -135,7 +135,7 @@ abstract class CommonMapBase extends StylePluginBase {
 
     if (empty($this->options['geolocation_field'])) {
       \Drupal::logger('geolocation')->error("The geolocation common map ' . $this->view->id() . ' views style was called without a geolocation field defined in the views style settings.");
-      \Drupal::messenger()->addMessage("The geolocation common map ' . $this->view->id() . ' views style was called without a geolocation field defined in the views style settings.", 'error');
+      // Enable after 8.5 release: \Drupal::messenger()->addMessage("The geolocation common map ' . $this->view->id() . ' views style was called without a geolocation field defined in the views style settings.", 'error');
       return [];
     }
 

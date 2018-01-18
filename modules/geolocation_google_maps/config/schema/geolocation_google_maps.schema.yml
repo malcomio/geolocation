@@ -12,7 +12,7 @@ geolocation_google_maps.settings:
       type: boolean
       label: 'Use current language'
     china_mode:
-      type: integer
+      type: boolean
       label: 'China mode'
     google_map_custom_url_parameters:
       type: mapping
@@ -92,7 +92,7 @@ geolocation.map_provider.google_maps:
       type: boolean
       label: 'Scrool wheel'
     disableDoubleClickZoom:
-      type: string
+      type: boolean
       label: 'Disable double click zoom'
     height:
       type: string
