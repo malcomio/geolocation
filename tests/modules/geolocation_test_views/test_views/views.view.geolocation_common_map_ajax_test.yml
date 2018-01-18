@@ -374,8 +374,6 @@ display:
             client_location:
               enable: true
               weight: 0
-              settings:
-                update_map: '0'
             boundary_filter_field_geolocation_boundary:
               enable: true
               weight: 0

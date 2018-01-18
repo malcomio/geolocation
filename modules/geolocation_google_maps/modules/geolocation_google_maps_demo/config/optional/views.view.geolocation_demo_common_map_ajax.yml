@@ -101,8 +101,6 @@ display:
             client_location:
               weight: 0
               enable: false
-              settings:
-                update_map: '0'
           even_empty: 0
           marker_icon_path: ''
           marker_row_number: 0
