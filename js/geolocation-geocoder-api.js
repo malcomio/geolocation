@@ -7,7 +7,7 @@
  * Callback for results in autocomplete field.
  *
  * @callback geolocationGeocoderResultCallback
- * @param {GoogleAddress} address - Google address.
+ * @param {google.maps.GeocoderResult} address - Google address.
  *
  * @callback geolocationGeocoderClearCallback
  */
@@ -22,7 +22,7 @@
   /**
    * Provides the callback that is called when geocoded results are found loads.
    *
-   * @param {GoogleAddress} result - first returned address
+   * @param {google.maps.GeocoderResult} result - first returned address
    * @param {string} elementId - Source ID.
    */
   Drupal.geolocation.geocoder.resultCallback = function (result, elementId) {

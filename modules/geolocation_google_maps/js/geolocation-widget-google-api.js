@@ -59,7 +59,7 @@
   GeolocationGoogleMapWidget.prototype.updateMarker = function (location, delta) {
     Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype.updateMarker.call(this, delta);
 
-    /** @param {GoogleMarker} marker */
+    /** @param {google.map.Marker} marker */
     var marker = this.getMarkerByDelta(delta);
     marker.setPosition(location);
 

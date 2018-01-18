@@ -11,6 +11,7 @@ geolocation.api:
   dependencies:
     - core/drupal
     - core/jquery
+    - core/jquery.once
 
 geolocation.geocoder.api:
   version: 8.x-1.x

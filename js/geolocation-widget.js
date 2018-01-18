@@ -19,17 +19,13 @@
     attach: function (context, drupalSettings) {
       $('.geolocation-map-widget', context).each(function (index, item) {
 
-        /** @type {GeolocationMapWidgetSettings} widgetSettings */
         var widgetSettings = {};
-        var widgetWrapper = $(item);
+        var widgetWrapper = $(item).once('geolocation-widget-processed');
         widgetSettings.wrapper = widgetWrapper;
         widgetSettings.id = widgetWrapper.attr('id');
         widgetSettings.type = widgetWrapper.data('widget-type');
 
-        if (
-          widgetWrapper.length === 0
-          || widgetWrapper.hasClass('geolocation-widget-processed')
-        ) {
+        if (widgetWrapper.length === 0) {
           return;
         }
 
@@ -63,8 +59,8 @@
           }
         }
 
-        widget.getAllInputs().each(function(index, input) {
-          input = $(input);
+        widget.getAllInputs().each(function(index, inputElement) {
+          var input = $(inputElement);
           var delta = widget.getAllInputs().index(input);
           var longitude = input.find('input.geolocation-map-input-longitude');
           var latitude = input.find('input.geolocation-map-input-latitude');
@@ -105,8 +101,6 @@
             }
           });
         });
-
-        widgetWrapper.addClass('geolocation-widget-processed');
 
         widget.map.addReadyCallback(function (map) {
           widget.loadMarkersFromInput();

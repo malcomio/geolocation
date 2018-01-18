@@ -22,9 +22,9 @@
  * @property {Function} open
  * @property {Function} close
  *
- * @property {bool} enable
- * @property {bool} closeButton
- * @property {bool} closeOther
+ * @property {Boolean} enable
+ * @property {Boolean} closeButton
+ * @property {Boolean} closeOther
  * @property {String} closeButtonSrc
  * @property {String} shadowStyle
  * @property {Number} padding

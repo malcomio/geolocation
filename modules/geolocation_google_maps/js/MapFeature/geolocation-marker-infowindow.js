@@ -2,9 +2,9 @@
  * @typedef {Object} MarkerInfoWindowSettings
  *
  * @property {String} enable
- * @property {bool} infoAutoDisplay
- * @property {bool} disableAutoPan
- * @property {bool} infoWindowSolitary
+ * @property {Boolean} infoAutoDisplay
+ * @property {Boolean} disableAutoPan
+ * @property {Boolean} infoWindowSolitary
  */
 
 /**
@@ -66,7 +66,7 @@
 
               // Set the info popup text.
               var currentInfoWindow = new google.maps.InfoWindow({
-                content: content,
+                content: content.toString(),
                 disableAutoPan: mapSettings.marker_infowindow.disableAutoPan
               });
 

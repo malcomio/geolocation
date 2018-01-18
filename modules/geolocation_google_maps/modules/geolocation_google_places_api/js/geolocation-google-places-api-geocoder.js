@@ -7,27 +7,6 @@
  * @property {Object} drupalSettings.geolocation.geocoder.googlePlacesAPI.componentRestrictions
  */
 
-/**
- * @name PlacePrediction
- * @property {String} description - Description
- * @property {String} place_id - Place ID
- */
-
-/**
- * @name PlaceResult
- * @augments GoogleAddress
- */
-
-/**
- * @property {Object} GoogleMap.places.PlacesServiceStatus
- * @property {String} GoogleMap.places.PlacesServiceStatus.OK
- *
- * @property {function():Object} GoogleMap.places.AutocompleteService
- * @property {function():Object} GoogleMap.places.PlacesService
- * @property {Function} GoogleMap.places.AutocompleteService.getPlacePredictions
- * @property {function(Object, Function)} GoogleMap.places.PlacesService.getDetails
- */
-
 (function ($, Drupal) {
   'use strict';
 
@@ -64,12 +43,6 @@
             componentRestrictions: componentRestrictions
           },
 
-          /**
-           * Google Places API geocode.
-           *
-           * @param {PlacePrediction[]} results - Returned results
-           * @param {string} status - Whether geocoding was successful
-           */
           function (results, status) {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
               $.each(results, function (index, result) {
@@ -98,16 +71,12 @@
             placeId: ui.item.place_id
           },
 
-          /**
-           * @param {PlaceResult} place GoogleAddress compatible place.
-           * @param {String} status GoogleGeocoderStatus
-           */
           function (place, status) {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
               if (typeof place.geometry.location === 'undefined') {
                 return;
               }
-              Drupal.geolocation.geocoder.resultCallback(place, $(event.target).data('source-identifier'));
+              Drupal.geolocation.geocoder.resultCallback(place, $(event.target).data('source-identifier').toString());
               $('.geolocation-geocoder-google-places-api-state[data-source-identifier="' + $(event.target).data('source-identifier') + '"]').val(1);
             }
           }
@@ -124,7 +93,7 @@
 
     autocomplete.on('input', function () {
       $('.geolocation-geocoder-google-places-api-state[data-source-identifier="' + $(this).data('source-identifier') + '"]').val(0);
-      Drupal.geolocation.geocoder.clearCallback($(this).data('source-identifier'));
+      Drupal.geolocation.geocoder.clearCallback($(this).data('source-identifier').toString());
     });
   };
 
@@ -146,7 +115,7 @@
 
       Drupal.geolocation.google.addLoadedCallback(function() {
         if (typeof Drupal.geolocation.geocoder.googlePlacesAPI.service === 'undefined') {
-          Drupal.geolocation.geocoder.googlePlacesAPI.service = new google.maps.places.PlacesService(attribution_block.get(0));
+          Drupal.geolocation.geocoder.googlePlacesAPI.service = new google.maps.places.PlacesService(attribution_block[0]);
           Drupal.geolocation.geocoder.googlePlacesAPI.autocompleteService = new google.maps.places.AutocompleteService();
 
           Drupal.geolocation.geocoder.googlePlacesAPI.attach(context);

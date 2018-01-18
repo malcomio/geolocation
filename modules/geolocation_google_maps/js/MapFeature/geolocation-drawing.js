@@ -2,6 +2,8 @@
  * @typedef {Object} DrawingSettings
  *
  * @property {String} enable
+ * @property {Boolean} polyline - Draw polyline
+ * @property {Boolean} polygon - Draw polygone
  */
 
 (function ($, Drupal) {
@@ -37,8 +39,8 @@
             map.addReadyCallback(function (map) {
               var locations = [];
 
-              $('#' + map.id, context).find('.geolocation-location').each(function (index, location) {
-                location = $(location);
+              $('#' + map.id, context).find('.geolocation-location').each(function (index, locationElement) {
+                var location = $(locationElement);
                 locations.push(new google.maps.LatLng(Number(location.data('lat')), Number(location.data('lng'))));
               });
 

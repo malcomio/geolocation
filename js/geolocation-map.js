@@ -18,16 +18,13 @@
   Drupal.behaviors.geolocationMap = {
     attach: function (context, drupalSettings) {
       $('.geolocation-map-wrapper', context).each(function (index, item) {
-        var mapWrapper = $(item);
+        var mapWrapper = $(item).once('geolocation-map-processed');
         var mapSettings = {};
         mapSettings.centreBehavior = 'fitlocations';
         mapSettings.id = mapWrapper.attr('id');
         mapSettings.wrapper = mapWrapper;
 
-        if (
-          mapWrapper.length === 0
-          || mapWrapper.hasClass('geolocation-map-processed')
-        ) {
+        if (mapWrapper.length === 0) {
           return;
         }
 
@@ -67,9 +64,6 @@
           console.error(mapSettings, 'Geolocation - Couldn\'t initialize map.'); // eslint-disable-line no-console
           return;
         }
-
-        // Set the already processed flag.
-        map.wrapper.addClass('geolocation-map-processed');
 
         map.addLoadedCallback(function (map) {
           $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {

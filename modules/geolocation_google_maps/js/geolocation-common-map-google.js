@@ -74,7 +74,7 @@
                       var currentBounds = map.googleMap.getBounds();
 
                       // Extract the view DOM ID from the view classes.
-                      var matches = /(js-view-dom-id-\w+)/.exec(view.attr('class'));
+                      var matches = /(js-view-dom-id-\w+)/.exec(view.attr('class').toString());
                       var currentViewId = matches[1].replace('js-view-dom-id-', 'views_dom_id:');
 
                       var viewInstance = Drupal.views.instances[currentViewId];

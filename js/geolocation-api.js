@@ -57,7 +57,7 @@
 
 /**
  * @typedef {Object} GeolocationCoordinates
- *
+
  * @property {Number} lat
  * @property {Number} lng
  */
@@ -77,6 +77,7 @@
  * Interface for classes that represent a color.
  *
  * @interface GeolocationMapInterface
+ *
  * @property {Boolean} ready - True when map provider available and readyCallbacks executed.
  * @property {Boolean} loaded - True when map fully loaded and all loadCallbacks executed.
  * @property {String} id
@@ -87,126 +88,40 @@
  * @property {jQuery} wrapper
  * @property {jQuery} container
  * @property {Object[]} mapMarkers
- */
-
-/**
- * Add control to map, identified by classes.
- * @function
- * @name GeolocationMapInterface#addControl
- * @param {jQuery} element - Control element.
- * @return {jQuery} - Added or existing element.
  *
- * Remove controls from map.
- * @function
- * @name GeolocationMapInterface#removeControls
+ * @property {function({jQuery}):{jQuery}} addControl - Add control to map, identified by classes.
+ * @property {function()} removeControls - Remove controls from map.
  *
- * Update existing map by settings.
- * @function
- * @name GeolocationMapInterface#update
- * @param {GeolocationMapSettings} mapSettings - Settings to update by.
+ * @property {function()} loadedCallback - Executes {GeolocationMapLoadedCallback[]} for this map.
+ * @property {function({GeolocationMapLoadedCallback})} addLoadedCallback - Adds a callback that will be called when map is fully loaded.
+ * @property {function()} readyCallback - Executes {GeolocationMapReadyCallbacks[]} for this map.
+ * @property {function({GeolocationMapReadyCallback})} addReadyCallback - Adds a callback that will be called when map provider becomes available.
+ * @property {function({GeolocationMapSettings})} update - Update existing map by settings.
  *
- * Set marker on map.
- * @function
- * @name GeolocationMapInterface#setMapMarker
- * @param {GeolocationMapMarker} Settings for the marker.
- * @return {GeolocationMapMarker} - Created marker.
+ * @property {function({GeolocationMapMarker}):{GeolocationMapMarker}} setMapMarker - Set marker on map.
+ * @property {function({GeolocationMapMarker})} removeMapMarker - Remove single marker.
+ * @property {function()} removeMapMarkers - Remove all markers from map.
  *
- * Remove single marker.
- * @function
- * @name GeolocationMapInterface#removeMapMarker
- * @param {GeolocationMapMarker} Marker object.
+ * @property {function({string})} setCenterByBehavior - Center map by behavior.
+ * @property {function({GeolocationCoordinates}, [{Number}])} setCenterByCoordinates - Center map on coordinates.
+ * @property {function([{GeolocationMapMarker[]}])} fitMapToMarkers - Fit map to markers.
+ * @property {function({Object})} fitBoundaries - Fit map to bounds.
  *
- * Remove all markers from map.
- * @function
- * @name GeolocationMapInterface#removeMapMarkers
+ * @property {function({Event})} clickCallback - Executes {GeolocationMapClickCallbacks} for this map.
+ * @property {function({GeolocationMapClickCallback})} addClickCallback - Adds a callback that will be called when map is clicked.
  *
- * Center map by behavior.
- * @function
- * @name GeolocationMapInterface#setCenterByBehavior
- * @param {string} behavior - Behavior to center by.
+ * @property {function({Event})} doubleClickCallback - Executes {GeolocationMapClickCallbacks} for this map.
+ * @property {function({GeolocationMapClickCallback})} addDoubleClickCallback - Adds a callback that will be called on double click.
  *
- * Center map on coordinates.
- * @function
- * @name GeolocationMapInterface#setCenterByCoordinates
- * @param {GeolocationCoordinates} coordinates - Coordinates to center on.
- * @param {Number} [accuracy] - Optional accuracy in meter.
+ * @property {function({Event})} contextClickCallback - Executes {GeolocationMapContextClickCallbacks} for this map.
+ * @property {function({GeolocationMapContextClickCallback})} addContextClickCallback - Adds a callback that will be called when map is clicked.
  *
- * Fit map to markers.
- * @function
- * @name GeolocationMapInterface#fitMapToMarkers
- * @param {GeolocationMapMarker[]} [locations] Override using map.mapMarker.
+ * @property {function({Event})} markerAddedCallback - Executes {GeolocationMarkerCallback} for this map.
+ * @property {function({GeolocationMarkerCallback})} addMarkerAddedCallback - Adds a callback that will be called on marker(s) being added.
  *
- * Fit map to bounds.
- * @function
- * @name GeolocationMapInterface#fitBoundaries
- * @param {Object} boundaries - Override using map.mapMarker.
+ * @property {function({Event})} markerRemoveCallback - Executes {GeolocationMarkerCallback} for this map.
+ * @property {function({GeolocationMarkerCallback})} addMarkerRemoveCallback - Adds a callback that will be called before marker is removed.
  *
- * Executes {GeolocationMapLoadedCallback[]} for this map.
- * @function
- * @name GeolocationMapInterface#loadedCallback
- *
- * Adds a callback that will be called when map is fully loaded.
- * @function
- * @name GeolocationMapInterface#addLoadedCallback
- * @param {GeolocationMapLoadedCallback} callback - Callback.
- *
- * Executes {GeolocationMapReadyCallbacks} for this map.
- * @function
- * @name GeolocationMapInterface#readyCallback
- *
- * Adds a callback that will be called when map provider becomes available.
- * @function
- * @name GeolocationMapInterface#addReadyCallback
- * @param {GeolocationMapReadyCallback} callback - Callback.
- *
- * Executes {GeolocationMapClickCallbacks} for this map.
- * @function
- * @name GeolocationMapInterface#clickCallback
- * @param {Event} e - Event.
- *
- * Adds a callback that will be called when map is clicked.
- * @function
- * @name GeolocationMapInterface#addClickCallback
- * @param {GeolocationMapClickCallback} callback - Callback.
- *
- * Executes {GeolocationMapClickCallbacks} for this map.
- * @function
- * @name GeolocationMapInterface#doubleClickCallback
- * @param {Event} e - Event.
- *
- * Adds a callback that will be called on double click.
- * @function
- * @name GeolocationMapInterface#addDoubleClickCallback
- * @param {GeolocationMapClickCallback} callback - Callback.
- *
- * Executes {GeolocationMapContextClickCallbacks} for this map.
- * @function
- * @name GeolocationMapInterface#contextClickCallback
- *
- * Adds a callback that will be called when map is right-click.
- * @function
- * @name GeolocationMapInterface#addContextClickCallback
- * @param {GeolocationMapContextClickCallback} callback - Callback.
- *
- * Adds a callback that will be called on marker(s) being added.
- * @function
- * @name GeolocationMapInterface#addMarkerAddedCallback
- * @param {GeolocationMarkerCallback} callback - Callback.
- *
- * Executes {GeolocationMarkerCallbacks} for this map.
- * @function
- * @name GeolocationMapInterface#markerAddedCallback
- * @param {GeolocationMapMarker} marker - Map marker.
- *
- * Adds a callback that will be called before marker is removed.
- * @function
- * @name GeolocationMapInterface#addMarkerRemoveCallback
- * @param {GeolocationMarkerCallback} callback - Callback.
- *
- * Executes {GeolocationMarkerCallbacks} for this map.
- * @function
- * @name GeolocationMapInterface#markerRemoveCallback
- * @param {GeolocationMapMarker} marker - Map marker.
  */
 
 (function ($, Drupal) {
@@ -309,9 +224,10 @@
         case 'client_location':
           if (navigator.geolocation) {
             var that = this;
-            navigator.geolocation.getCurrentPosition(function (position) {
-              that.setCenterByCoordinates({lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)}, parseInt(position.coords.accuracy));
-            });
+            var successCallback = function (position) {
+              that.setCenterByCoordinates({lat: position.coords.latitude, lng: position.coords.longitude}, position.coords.accuracy);
+            };
+            navigator.geolocation.getCurrentPosition(successCallback);
           }
           break;
       }
@@ -416,18 +332,9 @@
         callback(marker);
       });
     },
-    addMarkerAddedCallback: function (callback, executeExistingMarkers) {
-      executeExistingMarkers = executeExistingMarkers || true;
+    addMarkerAddedCallback: function (callback) {
       this.markerAddedCallbacks = this.markerAddedCallbacks || [];
       this.markerAddedCallbacks.push(callback);
-      if (
-        typeof this.mapMarkers !== 'undefined'
-        && executeExistingMarkers
-      ) {
-        $.each(this.mapMarkers, function (index, marker) {
-          callback(marker);
-        });
-      }
     },
     markerRemoveCallback: function (marker) {
       this.markerRemoveCallbacks = this.markerRemoveCallbacks || [];
@@ -462,7 +369,9 @@
       this.wrapper.find('.geolocation-location').each(function (index, locationWrapper) {
 
         /** @type {jQuery} */
-        locationWrapper = $(locationWrapper);
+        var locationWrapperJquery = $(locationWrapper);
+
+        /** {GeolocationCoordinates */
         var position = {
           lat: Number(locationWrapper.data('lat')),
           lng: Number(locationWrapper.data('lng'))
@@ -473,7 +382,7 @@
           position: position,
           title: locationWrapper.find('.location-title').text().trim(),
           setMarker: true,
-          locationWrapper: locationWrapper
+          locationWrapper: locationWrapperJquery
         };
 
         if (typeof locationWrapper.data('icon') !== 'undefined') {

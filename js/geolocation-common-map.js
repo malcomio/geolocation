@@ -140,13 +140,13 @@
     var contentWrapper = response.selector ? $(response.selector) : $(ajax.wrapper);
     var settings = response.settings || ajax.settings || drupalSettings;
 
-    var newContent = $('<div></div>').html(response.data).contents();
+    var newContent = $(response.data);
 
     if (newContent.length !== 1 || newContent.get(0).nodeType !== 1) {
       newContent = newContent.parent();
     }
 
-    Drupal.detachBehaviors(contentWrapper.get(0), settings);
+    Drupal.detachBehaviors(contentWrapper[0], settings);
 
     var replaceMap = false;
     var existingMapContainer = null;
@@ -161,7 +161,7 @@
       existingMapContainer = contentWrapper.find('.geolocation-map-container').first().detach();
     }
 
-     contentWrapper.replaceWith(newContent);
+     contentWrapper.replaceWith(newContent.html());
 
     // Retain existing map if possible, to avoid jumping and improve UX.
     if (replaceMap) {
@@ -173,7 +173,7 @@
     // `#ajax['wrapper']` to be optional.
     if (newContent.parents('html').length > 0) {
       // Apply any settings from the returned JSON if available.
-      Drupal.attachBehaviors(newContent.get(0), settings);
+      Drupal.attachBehaviors(newContent[0], settings);
     }
   };
 

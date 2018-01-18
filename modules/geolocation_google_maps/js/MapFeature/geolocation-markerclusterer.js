@@ -66,7 +66,7 @@
                   {
                     imagePath: imagePath,
                     styles: markerClustererStyles,
-                    maxZoom: parseInt(mapSettings.marker_clusterer.maxZoom)
+                    maxZoom: mapSettings.marker_clusterer.maxZoom
                   }
                 );
               }

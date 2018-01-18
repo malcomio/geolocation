@@ -42,196 +42,6 @@
  * @property {String} info_text
  */
 
-/**
- * @typedef {Object} google
- * @property {GoogleMap} maps
- * @property {Object} event
- * @property {Function} addListener
- * @property {Function} addDomListener
- * @property {Function} addListenerOnce
- * @property {Function} addDomListenerOnce
- */
-
-/**
- * @typedef {Object} GoogleMapBounds
- * @property {function():GoogleMapLatLng} getNorthEast
- * @property {function():GoogleMapLatLng} getSouthWest
- * @property {function(GoogleMapBounds):Boolean} equals
- */
-
-/**
- * @typedef {Object} GoogleMapLatLng
- * @property {function():float} lat
- * @property {function():float} lng
- */
-
-/**
- * @typedef {Object} GoogleMapSize
- * @property {function():float} height
- * @property {function():float} width
- */
-
-/**
- * @typedef {Object} GoogleMapPoint
- * @property {function():float} x
- * @property {function():float} y
- */
-
-/**
- * @typedef {Object} GoogleMapSymbolPath
- * @property {String} BACKWARD_CLOSED_ARROW
- * @property {String} BACKWARD_OPEN_ARROW
- * @property {String} CIRCLE
- * @property {String} FORWARD_CLOSED_ARROW
- * @property {String} FORWARD_OPEN_ARROW
- */
-
-/**
- * @typedef {Object} AddressComponent
- * @property {String} long_name - Long component name
- * @property {String} short_name - Short component name
- * @property {String[]} types - Component type
- * @property {GoogleGeometry} geometry
- */
-
-/**
- * @typedef {Object} GoogleAddress
- * @property {AddressComponent[]} address_components - Components
- * @property {String} formatted_address - Formatted address
- * @property {GoogleGeometry} geometry - Geometry
- */
-
-/**
- * @typedef {Object} GoogleGeometry
- * @property {GoogleMapLatLng} location - Location
- * @property {String} location_type - Location type
- * @property {GoogleMapBounds} viewport - Viewport
- * @property {GoogleMapBounds} bounds - Bounds (optionally)
- */
-
-/**
- * @typedef {Object} GoogleMapProjection
- * @property {function(GoogleMapLatLng):GoogleMapPoint} fromLatLngToPoint
- */
-
-/**
- * @typedef {Object} GoogleMarkerSettings
- *
- * Settings from https://developers.google.com/maps/documentation/javascript/3.exp/reference#MarkerOptions:
- * @property {GoogleMap} map
- */
-
-/**
- * @typedef {Object} GoogleMarker
- * @extends {GeolocationMapMarker}
- * @property {Function} setPosition
- * @property {Function} setMap
- * @property {Function} setIcon
- * @property {Function} getIcon
- * @property {Function} setTitle
- * @property {Function} setLabel
- * @property {Function} addListener
- * @property {function():GoogleMapLatLng} getPosition
- */
-
-/**
- * @typedef {Object} GoogleCircle
- * @property {function():GoogleMapBounds} Circle.getBounds()
- * @property {function(GoogleMapLatLng)} Circle.setCenter()
- * @property {function(number)} Circle.setRadius()
- */
-
-/**
- * @typedef {Object} GoogleMap
- *
- * @property {Object} MapTypeControlStyle
- * @property {String} MapTypeControlStyle.HORIZONTAL_BAR
- * @property {String} MapTypeControlStyle.DROPDOWN_MENU
- * @property {String} MapTypeControlStyle.DEFAULT
- *
- * @property {Object} ZoomControlStyle
- * @property {String} ZoomControlStyle.LARGE
- * @property {String} ZoomControlStyle.SMALL
- *
- * @property {Object} ControlPosition
- * @property {String} ControlPosition.TOP_LEFT
- * @property {String} ControlPosition.TOP_CENTER
- * @property {String} ControlPosition.TOP_RIGHT
- * @property {String} ControlPosition.LEFT_TOP
- * @property {String} ControlPosition.LEFT_CENTER
- * @property {String} ControlPosition.LEFT_BOTTOM
- * @property {String} ControlPosition.BOTTOM_LEFT
- * @property {String} ControlPosition.BOTTOM_CENTER
- * @property {String} ControlPosition.BOTTOM_RIGHT
- * @property {String} ControlPosition.RIGHT_TOP
- * @property {String} ControlPosition.RIGHT_CENTER
- * @property {String} ControlPosition.RIGHT_RIGHT
- *
- * @property {Object} MapTypeId
- * @property {String} MapTypeId.ROADMAP
- *
- * @property {Function} LatLngBounds
- *
- * @function
- * @property Map
- *
- * @function
- * @property {function({GoogleMarkerSettings}):GoogleMarker} Marker
- *
- * @function
- * @property {function(string|number|float, string|number|float):GoogleMapLatLng} LatLng
- *
- * @function
- * @property {function(string|number|float, string|number|float):GoogleMapPoint} Point
- *
- * @function
- * @property {function(string|number|float, string|number|float):GoogleMapSize} Size
- *
- * @property {GoogleMapSymbolPath} SymbolPath
- *
- * @property {function(Object):GoogleCircle} Circle
- *
- * @property {function():GoogleMapProjection} getProjection
- *
- * @property {Function} fitBounds
- *
- * @property {Function} setCenter
- * @property {Function} setZoom
- * @property {Function} getZoom
- * @property {Function} setOptions
- *
- * @property {function():GoogleMapBounds} getBounds
- * @property {function():GoogleMapLatLng} getCenter
- */
-
-/**
- * @typedef {Object} GooglePolyline
- * @property {function(GoogleMap)} setMap
- */
-
-/**
- * @typedef {Object} GooglePolygon
- * @property {function(GoogleMap)} setMap
- */
-
-/**
- * @typedef {Object} GoogleMap
- * @property {function(Object):GooglePolyline} Polyline
- * @property {function(Object):GooglePolygon} Polygon
- */
-
-/**
- * @typedef {Object} CommonMapDrawSettings
- * @property {boolean} polyline
- * @property {string} strokeColor
- * @property {string} strokeOpacity
- * @property {string} strokeWeight
- * @property {boolean} geodesic
- * @property {boolean} polygon
- * @property {string} fillColor
- * @property {string} fillOpacity
- */
-
 (function ($, Drupal, drupalSettings) {
   'use strict';
 
@@ -274,10 +84,6 @@
       width: this.settings.google_map_settings.width
     });
 
-    this.settings.google_map_settings.zoom = parseInt(this.settings.google_map_settings.zoom);
-    this.settings.google_map_settings.maxZoom = parseInt(this.settings.google_map_settings.maxZoom);
-    this.settings.google_map_settings.minZoom = parseInt(this.settings.google_map_settings.minZoom);
-
     this.addReadyCallback(function (map) {
       // Get the center point.
       var center = new google.maps.LatLng(map.lat, map.lng);
@@ -285,7 +91,7 @@
       /**
        * Create the map object and assign it to the map.
        */
-      var googleMap = new google.maps.Map(map.container.get(0), {
+      var googleMap = new google.maps.Map(map.container[0], {
         zoom: map.settings.google_map_settings.zoom,
         maxZoom: map.settings.google_map_settings.maxZoom,
         minZoom: map.settings.google_map_settings.minZoom,
@@ -303,12 +109,16 @@
         gestureHandling: map.settings.google_map_settings.gestureHandling
       });
 
-      /** @property {GoogleMap} googleMap */
+      /** @property {google.maps.Map} googleMap */
       map.googleMap = googleMap;
 
-      google.maps.event.addListener(map.googleMap, 'click', function (e) {
-        map.clickCallback({lat: e.latLng.lat(), lng: e.latLng.lng()});
-      });
+      google.maps.event.addListener(
+        map.googleMap,
+        'click',
+        function (e) {
+          map.clickCallback({lat: e.latLng.lat(), lng: e.latLng.lng()});
+        }
+      );
 
       google.maps.event.addListener(map.googleMap, 'rightclick', function (e) {
         map.contextClickCallback({lat: e.latLng.lat(), lng: e.latLng.lng()});
@@ -353,7 +163,7 @@
       }
     }
 
-    markerSettings.position = new google.maps.LatLng(parseFloat(markerSettings.position.lat), parseFloat(markerSettings.position.lng));
+    markerSettings.position = new google.maps.LatLng(markerSettings.position.lat, markerSettings.position.lng);
 
     markerSettings.map = this.googleMap;
 
@@ -366,7 +176,7 @@
       }
     }
 
-    /** @type {GoogleMarker} */
+    /** @type {google.maps.Marker} */
     var currentMarker = new google.maps.Marker(markerSettings);
 
     this.mapMarkers.push(currentMarker);
@@ -397,7 +207,7 @@
 
       /**
        * @param {integer} index - Current index.
-       * @param {GoogleMarker} item - Current marker.
+       * @param {google.maps.Marker} item - Current marker.
        */
       function (index, item) {
         bounds.extend(item.getPosition());
@@ -414,10 +224,10 @@
   /**
    * Draw a circle representing the accuracy radius of HTML5 geolocation.
    *
-   * @param {GeolocationCoordinates|GoogleMapLatLng} location - Location to center on.
+   * @param {GeolocationCoordinates|google.maps.LatLng} location - Location to center on.
    * @param {int} accuracy - Accuracy in m.
    *
-   * @return {GoogleCircle} - Indicator circle.
+   * @return {google.maps.Circle} - Indicator circle.
    */
   GeolocationGoogleMap.prototype.addAccuracyIndicatorCircle = function (location, accuracy) {
     return new google.maps.Circle({
@@ -455,7 +265,7 @@
   /**
    * Re-center map, draw a circle indicating accuracy and slowly fade it out.
    *
-   * @param {GoogleMapLatLng} coordinates - A location (latLng) object from Google Maps API.
+   * @param {google.maps.LatLng} coordinates - A location (latLng) object from Google Maps API.
    * @param {int} accuracy - Accuracy in meter.
    */
   GeolocationGoogleMap.prototype.setCenterByCoordinates = function (coordinates, accuracy) {
@@ -511,14 +321,15 @@
     var controlAdded = false;
     var controlIndex = 0;
     this.googleMap.controls[position].forEach(function (controlElement, index) {
-      if (element.get(0).getAttribute("class") === controlElement.getAttribute("class")) {
+      var control = $(controlElement);
+      if (element.get(0).getAttribute("class") === control.getAttribute("class")) {
         controlAdded = true;
         controlIndex = index;
       }
     });
 
     if (!controlAdded) {
-      this.googleMap.controls[position].push(element.get(0));
+      this.googleMap.controls[position].push(element[0]);
       return element;
     }
     else {

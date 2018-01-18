@@ -46,80 +46,27 @@
  * @property {geolocationGeocoderLocationCallback[]} locationModifiedCallbacks
  * @property {geolocationGeocoderLocationCallback[]} locationRemovedCallbacks
  * @property {geolocationGeocoderClearCallback[]} clearCallbacks
- */
-
-/**
- * @function
- * @name GeolocationMapWidgetInterface#locationAddedCallback
- * @param {GeolocationCoordinates} location - first returned address
  *
- * Adds a callback that will be called when a location is set.
- * @function
- * @name GeolocationMapWidgetInterface#addLocationAddedCallback
- * @param {geolocationGeocoderLocationCallback} callback - The callback
+ * @property {function({GeolocationCoordinates})} locationAddedCallback - Executes all {geolocationGeocoderLocationCallback} callbacks.
+ * @property {function({geolocationGeocoderLocationCallback})} addLocationAddedCallback - Adds a callback that will be called when a location is set.
  *
- * @function
- * @name GeolocationMapWidgetInterface#locationModifiedCallback
- * @param {GeolocationCoordinates} location - first returned address
- * @param {int} delta - Delta
+ * @property {function({GeolocationCoordinates}, {int})} locationModifiedCallback - Executes all {geolocationGeocoderLocationCallback} modified callbacks.
+ * @property {function({geolocationGeocoderLocationCallback})} addLocationModifiedCallback - Adds a callback that will be called when a location is set.
  *
- * Adds a callback that will be called when a location is modified.
- * @function
- * @name GeolocationMapWidgetInterface#addLocationModifiedCallback
- * @param {geolocationGeocoderLocationCallback} callback - The callback
+ * @property {function({int})} locationRemovedCallback - Executes all {geolocationGeocoderLocationCallback} modified callbacks.
+ * @property {function({geolocationGeocoderLocationCallback})} addLocationRemovedCallback - Adds a callback that will be called when a location is removed.
  *
- * @function
- * @name GeolocationMapWidgetInterface#locationRemovedCallback
- * @param {int} delta - Delta
+ * @property {function():{GeolocationMapMarker[]}} loadMarkersFromInput - Load markers from input and add to map.
+ * @property {function({int}):{GeolocationMapMarker}} getMarkerByDelta - Get map marker by delta.
+ * @property {function():{int}} getNextDelta - Get next delta.
+ * @property {function({int}):{jQuery}} getInputByDelta - Get map input by delta.
  *
- * Adds a callback that will be called when a location is removed.
- * @function
- * @name GeolocationMapWidgetInterface#addLocationRemovedCallback
- * @param {geolocationGeocoderLocationCallback} callback - The callback
- *
- * Load markers from input and add to map.
- * @function
- * @name GeolocationMapWidgetInterface#loadMarkersFromInput
- *
- * Get map marker by delta.
- * @function
- * @name GeolocationMapWidgetInterface#getMarkerByDelta
- * @param {int} delta - Delta
- *
- * Get map marker by delta.
- * @function
- * @name GeolocationMapWidgetInterface#getNextDelta
- * @return {int}
- *
- * Get map input by delta.
- * @function
- * @name GeolocationMapWidgetInterface#getInputByDelta
- * @param {int} delta - Delta
- *
- * Add input.
- * @function
- * @name GeolocationMapWidgetInterface#addInput
- *
- * Add marker.
- * @function
- * @name GeolocationMapWidgetInterface#addMarker
- *
- * Update input.
- * @function
- * @name GeolocationMapWidgetInterface#updateInput
- *
- * Add input.
- * @function
- * @name GeolocationMapWidgetInterface#updateMarker
- *
- * Add input.
- * @function
- * @name GeolocationMapWidgetInterface#removeInput
- *
- * Add input.
- * @function
- * @name GeolocationMapWidgetInterface#removeMarker
- *
+ * @property {function({GeolocationCoordinates}, {int})} addInput - Add input.
+ * @property {function({GeolocationCoordinates}, {int})} updateInput - Update input.
+ * @property {function({int})} removeInput - Remove input.
+ * @property {function({GeolocationCoordinates}, {int})} addMarker - Add marker.
+ * @property {function({GeolocationCoordinates}, {int})} updateMarker - Update marker.
+ * @property {function({int})} removeMarker - Remove marker.
  */
 
 (function ($, Drupal) {
@@ -187,8 +134,8 @@
     },
     loadMarkersFromInput: function() {
       var that = this;
-      $('.geolocation-widget-input', this.wrapper).each(function(delta, input) {
-        input = $(input);
+      $('.geolocation-widget-input', this.wrapper).each(function(delta, inputElement) {
+        var input = $(inputElement);
         var lng = input.find('input.geolocation-map-input-longitude').val();
         var lat = input.find('input.geolocation-map-input-latitude').val();
 
