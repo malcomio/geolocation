@@ -8,7 +8,7 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 
 /**
- * Tests the Google Geocoder Token Formatter functionality.
+ * Tests the Token Formatter functionality.
  *
  * @group geolocation
  */
@@ -47,7 +47,7 @@ class GeolocationTokenFormatterTest extends GeolocationJavascriptTestBase {
 
     EntityFormDisplay::load('node.article.default')
       ->setComponent('field_geolocation', [
-        'type' => 'geolocation_googlegeocoder',
+        'type' => 'geolocation_latlng',
       ])
       ->save();
 
