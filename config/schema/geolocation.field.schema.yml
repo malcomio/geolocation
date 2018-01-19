@@ -8,6 +8,9 @@ geolocation.field.formatter.map.base:
     common_map:
       type: string
       label: 'Display results on a common map'
+    use_overridden_map_settings:
+      type: integer
+      label: 'Use overridden map settings.'
     title:
       type: string
       label: 'Title'

@@ -10,9 +10,6 @@ field.formatter.settings.geolocation_map:
   type: geolocation.field.formatter.map.base
   label: 'Geolocation Google Map formatter settings'
   mapping:
-    use_overridden_map_settings:
-      type: integer
-      label: 'Use overridden map settings.'
     google_map_settings:
       type: geolocation.map_provider.google_maps
       label: 'Google Maps settings.'

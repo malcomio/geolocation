@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation\GeolocationItemTokenTrait;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Render\Element;
 
 /**
  * Plugin base for Map based formatters.
@@ -64,6 +65,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       'value' => '',
       'format' => filter_default_format(),
     ];
+    $settings['use_overridden_map_settings'] = FALSE;
+
     $settings += parent::defaultSettings();
 
     return $settings;
@@ -151,6 +154,13 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
         '#default_value' => $settings['common_map'],
       ];
     }
+
+    $element['use_overridden_map_settings'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Use custom map settings if provided'),
+      '#description' => $this->t('The field map widget optionally allows to define custom map settings to use here.'),
+      '#default_value' => $settings['use_overridden_map_settings'],
+    ];
 
     if ($this->mapProvider) {
       $mapProviderSettings = $settings[$this->mapProviderSettingsFormId];
@@ -281,6 +291,24 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
         $elements[$delta] = $element_pattern;
         $elements[$delta]['#id'] = uniqid("map-" . $delta . "-");
         $elements[$delta]['content'] = $location;
+      }
+    }
+
+
+    if (
+      $settings['use_overridden_map_settings']
+      && !empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
+      && is_array($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
+    ) {
+      $map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId]);
+
+      if (!empty($settings['common_map'])) {
+        $elements[0]['#settings'] = $map_settings;
+      }
+      else {
+        foreach (Element::children($elements) as $delta => $element) {
+          $elements[$delta]['#settings'] = $map_settings;
+        }
       }
     }
 
