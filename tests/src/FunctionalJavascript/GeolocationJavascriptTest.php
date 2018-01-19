@@ -165,7 +165,7 @@ class GeolocationJavascriptTest extends GeolocationJavascriptTestBase {
     $edit = ['language_interface[enabled][language-url]' => '1'];
     $this->drupalPostForm('admin/config/regional/language/detection', $edit, t('Save settings'));
 
-    $this->drupalGetFilterGoogleKey('fr/node/4');
+    $this->drupalGet('fr/node/4');
     $this->assertSession()->elementExists('css', 'html[lang="fr"]');
 
     $anchor = $this->assertSession()->waitForElement('css', 'a[href^="https://maps.google.com"][href*="hl="]');
@@ -184,7 +184,7 @@ class GeolocationJavascriptTest extends GeolocationJavascriptTestBase {
    * Tests the CommonMap style.
    */
   public function testCommonMap() {
-    $this->drupalGetFilterGoogleKey('geolocation-test');
+    $this->drupalGet('geolocation-test');
 
     $this->assertSession()->elementExists('css', '.geolocation-map-container');
     $this->assertSession()->elementExists('css', '.geolocation-location');
@@ -197,7 +197,7 @@ class GeolocationJavascriptTest extends GeolocationJavascriptTestBase {
    * Tests the Google Maps formatter.
    */
   public function testGoogleMapFormatter() {
-    $this->drupalGetFilterGoogleKey('node/3');
+    $this->drupalGet('node/3');
 
     $this->assertSession()->elementExists('css', '.geolocation-map-container');
 
@@ -209,7 +209,7 @@ class GeolocationJavascriptTest extends GeolocationJavascriptTestBase {
    * Tests the Google Maps formatter.
    */
   public function testGoogleMapFormatterCustomSettings() {
-    $this->drupalGetFilterGoogleKey('node/4');
+    $this->drupalGet('node/4');
 
     $this->assertSession()->elementExists('css', '.geolocation-map-container');
     $this->assertSession()->elementAttributeContains('css', '.geolocation-map-container', 'style', 'height: 376px');
@@ -224,7 +224,7 @@ class GeolocationJavascriptTest extends GeolocationJavascriptTestBase {
     ]);
     $this->drupalLogin($admin_user);
     // Display creation form.
-    $this->drupalGetFilterGoogleKey('node/4/edit');
+    $this->drupalGet('node/4/edit');
 
     $this->assertSession()->fieldExists("field_geolocation[0][google_map_settings][height]");
 
@@ -235,7 +235,7 @@ class GeolocationJavascriptTest extends GeolocationJavascriptTestBase {
 
     $this->drupalPostForm(NULL, $edit, t('Save'));
 
-    $this->drupalGetFilterGoogleKey('node/4');
+    $this->drupalGet('node/4');
 
     $this->assertSession()->elementExists('css', '.geolocation-map-container');
     $this->assertSession()->elementAttributeContains('css', '.geolocation-map-container', 'style', 'height: 273px;');

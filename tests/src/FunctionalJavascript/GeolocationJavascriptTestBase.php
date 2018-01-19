@@ -14,7 +14,7 @@ abstract class GeolocationJavascriptTestBase extends JavascriptTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $minkDefaultDriverClass = DrupalSelenium2Driver::class;
+  // Enable after WebDriver on d.o: protected $minkDefaultDriverClass = DrupalSelenium2Driver::class;
 
   /**
    * Filter the missing key Google Maps API error.

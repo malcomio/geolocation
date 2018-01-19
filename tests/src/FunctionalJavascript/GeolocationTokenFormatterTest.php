@@ -22,7 +22,6 @@ class GeolocationTokenFormatterTest extends GeolocationJavascriptTestBase {
     'field',
     'filter',
     'geolocation',
-    'geolocation_google_maps',
   ];
 
   /**
