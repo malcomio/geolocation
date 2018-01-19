@@ -318,17 +318,18 @@
       }
     }
 
-    var controlAdded = false;
+    var controlAlreadyAdded = false;
     var controlIndex = 0;
     this.googleMap.controls[position].forEach(function (controlElement, index) {
       var control = $(controlElement);
-      if (element.get(0).getAttribute("class") === control.getAttribute("class")) {
-        controlAdded = true;
+      if (element[0].getAttribute("class") === control[0].getAttribute("class")) {
+        controlAlreadyAdded = true;
         controlIndex = index;
       }
     });
 
-    if (!controlAdded) {
+    if (!controlAlreadyAdded) {
+      element.show();
       this.googleMap.controls[position].push(element[0]);
       return element;
     }
