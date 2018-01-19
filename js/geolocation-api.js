@@ -366,10 +366,9 @@
     },
     loadMarkersFromContainer: function () {
       var locations = [];
-      this.wrapper.find('.geolocation-location').each(function (index, locationWrapper) {
+      this.wrapper.find('.geolocation-location').each(function (index, locationWrapperElement) {
 
-        /** @type {jQuery} */
-        var locationWrapperJquery = $(locationWrapper);
+        var locationWrapper = $(locationWrapperElement);
 
         /** {GeolocationCoordinates */
         var position = {
@@ -382,11 +381,11 @@
           position: position,
           title: locationWrapper.find('.location-title').text().trim(),
           setMarker: true,
-          locationWrapper: locationWrapperJquery
+          locationWrapper: locationWrapper
         };
 
         if (typeof locationWrapper.data('icon') !== 'undefined') {
-          location.icon = locationWrapper.data('icon');
+          location.icon = locationWrapper.data('icon').toString();
         }
 
         if (typeof locationWrapper.data('label') !== 'undefined') {

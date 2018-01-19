@@ -47,7 +47,6 @@
 
             map.addReadyCallback(function (map) {
 
-              /** @param {jQuery} */
               var contextContainer = jQuery('<div class="geolocation-context-popup"></div>');
               contextContainer.hide();
               contextContainer.appendTo(map.container);
@@ -56,7 +55,7 @@
                * Context popup handling.
                *
                * @param {GeolocationCoordinates} location - Coordinates.
-               * @return {GoogleMapPoint} - Pixel offset against top left corner of map container.
+               * @return {google.maps.Point} - Pixel offset against top left corner of map container.
                */
               map.googleMap.fromLocationToPixel = function (location) {
                 var numTiles = 1 << map.googleMap.getZoom();

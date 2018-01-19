@@ -40,7 +40,7 @@
                 locateButton.click(function (e) {
                   navigator.geolocation.getCurrentPosition(function (currentPosition) {
                     var currentLocation = new google.maps.LatLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
-                    map.setCenterByCoordinates(currentLocation, parseInt(currentPosition.coords.accuracy));
+                    map.setCenterByCoordinates(currentLocation, currentPosition.coords.accuracy);
                   });
                   e.preventDefault();
                 });

@@ -100,15 +100,6 @@ geolocation.map_provider.google_maps:
     width:
       type: string
       label: 'Width value'
-    info_auto_display:
-      type: boolean
-      label: 'Display info'
-    disableAutoPan:
-      type: boolean
-      label: 'Disable automatic panning for info window'
-    style:
-      type: string
-      label: 'JSON encoded style'
     preferScrollingToZooming:
       type: boolean
       label: 'Require user to click map before zooming'

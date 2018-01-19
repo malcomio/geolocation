@@ -213,6 +213,10 @@ class GoogleMaps extends MapProviderBase {
     $settings['disableDoubleClickZoom'] = (bool) $settings['disableDoubleClickZoom'];
     $settings['preferScrollingToZooming'] = (bool) $settings['preferScrollingToZooming'];
 
+    $settings['zoom'] = (int) $settings['zoom'];
+    $settings['minZoom'] = (int) $settings['minZoom'];
+    $settings['maxZoom'] = (int) $settings['maxZoom'];
+
     return $settings;
   }
 
