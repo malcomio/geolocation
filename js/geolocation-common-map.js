@@ -109,8 +109,38 @@
           }
         }
       );
-
     }
+  };
+
+  Drupal.geolocation.commonMap = Drupal.geolocation.commonMap || {};
+
+  Drupal.geolocation.commonMap.dynamicMapViewsAjaxSettings = function(commonMapSettings) {
+    // Make sure to load current form DOM element, which will change after every AJAX operation.
+    var view = $('.view-id-' + commonMapSettings.dynamic_map.update_view_id + '.view-display-id-' + commonMapSettings.dynamic_map.update_view_display_id);
+
+    if (typeof commonMapSettings.dynamic_map.boundary_filter === 'undefined') {
+      return;
+    }
+
+    // Extract the view DOM ID from the view classes.
+    var matches = /(js-view-dom-id-\w+)/.exec(view.attr('class').toString());
+    var currentViewId = matches[1].replace('js-view-dom-id-', 'views_dom_id:');
+
+    var viewInstance = Drupal.views.instances[currentViewId];
+    var ajaxSettings = $.extend(true, {}, viewInstance.element_settings);
+    ajaxSettings.progress.type = 'none';
+
+    var exposedForm = $('form#views-exposed-form-' + commonMapSettings.dynamic_map.update_view_id.replace(/_/g, '-') + '-' + commonMapSettings.dynamic_map.update_view_display_id.replace(/_/g, '-'));
+    if (exposedForm.length) {
+      // Add form values.
+      jQuery.each( exposedForm.serializeArray(), function( index, field ) {
+        var add = {};
+        add[field.name] = field.value;
+        ajaxSettings.submit = $.extend(ajaxSettings.submit, add);
+      });
+    }
+
+    return ajaxSettings;
   };
 
   /**
@@ -135,45 +165,27 @@
    *   The XMLHttpRequest status.
    */
   Drupal.AjaxCommands.prototype.geolocationCommonMapsUpdate = function (ajax, response, status) {
-
-    // See function comment for code origin first before any changes!
-    var contentWrapper = response.selector ? $(response.selector) : $(ajax.wrapper);
-    var settings = response.settings || ajax.settings || drupalSettings;
-
-    var newContent = $(response.data);
-
-    if (newContent.length !== 1 || newContent.get(0).nodeType !== 1) {
-      newContent = newContent.parent();
-    }
-
-    Drupal.detachBehaviors(contentWrapper[0], settings);
-
-    var replaceMap = false;
-    var existingMapContainer = null;
+    var $wrapper = response.selector ? $(response.selector) : $(ajax.wrapper);
 
     // Retain existing map if possible, to avoid jumping and improve UX.
     if (
-      newContent.find('.geolocation-map-container').length > 0
-      && contentWrapper.find('.geolocation-map-container').length > 0
+      $(response.data).find('.geolocation-map-container').length > 0
+      && $wrapper.find('.geolocation-map-container').length > 0
     ) {
-      replaceMap = true;
-      newContent.find('.geolocation-map-container').remove();
-      existingMapContainer = contentWrapper.find('.geolocation-map-container').first().detach();
+      var settings = response.settings || ajax.settings || drupalSettings;
+      var $existingMapContainer = $wrapper.find('.geolocation-map-container').first().detach();
+
+      var $newContent = $('<div></div>').html(response.data);
+      $newContent.find('.geolocation-map-container').remove();
+
+      Drupal.detachBehaviors($wrapper[0], settings);
+      $wrapper.replaceWith($newContent);
+
+      $newContent.find('.geolocation-map-wrapper').first().prepend($existingMapContainer);
+      Drupal.attachBehaviors($newContent[0], settings);
     }
-
-     contentWrapper.replaceWith(newContent.html());
-
-    // Retain existing map if possible, to avoid jumping and improve UX.
-    if (replaceMap) {
-      existingMapContainer.prependTo(newContent.find('.geolocation-map-wrapper'));
-    }
-
-    // Attach all JavaScript behaviors to the new content, if it was
-    // successfully added to the page, this if statement allows
-    // `#ajax['wrapper']` to be optional.
-    if (newContent.parents('html').length > 0) {
-      // Apply any settings from the returned JSON if available.
-      Drupal.attachBehaviors(newContent[0], settings);
+    else {
+      Drupal.AjaxCommands.prototype.insert.call(this, ajax, response, status);
     }
   };
 

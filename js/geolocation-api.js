@@ -116,10 +116,10 @@
  * @property {function({Event})} contextClickCallback - Executes {GeolocationMapContextClickCallbacks} for this map.
  * @property {function({GeolocationMapContextClickCallback})} addContextClickCallback - Adds a callback that will be called when map is clicked.
  *
- * @property {function({Event})} markerAddedCallback - Executes {GeolocationMarkerCallback} for this map.
+ * @property {function({GeolocationMapMarker})} markerAddedCallback - Executes {GeolocationMarkerCallback} for this map.
  * @property {function({GeolocationMarkerCallback})} addMarkerAddedCallback - Adds a callback that will be called on marker(s) being added.
  *
- * @property {function({Event})} markerRemoveCallback - Executes {GeolocationMarkerCallback} for this map.
+ * @property {function({GeolocationMapMarker})} markerRemoveCallback - Executes {GeolocationMarkerCallback} for this map.
  * @property {function({GeolocationMarkerCallback})} addMarkerRemoveCallback - Adds a callback that will be called before marker is removed.
  *
  */
@@ -152,6 +152,11 @@
     this.settings = mapSettings.settings || {};
     this.wrapper = mapSettings.wrapper;
     this.container = mapSettings.wrapper.find('.geolocation-map-container').first();
+
+    if (this.container.length !== 1) {
+      throw "Geolocation - Map container not found";
+    }
+
     this.ready = false;
     this.loaded = false;
     this.lat = mapSettings.lat;
@@ -245,7 +250,7 @@
 
         /**
          * @param {integer} index - Current index.
-         * @param {GoogleMarker} item - Current marker.
+         * @param {GeolocationMapMarker} item - Current marker.
          */
         function (index, item) {
           if (item === marker) {
@@ -257,12 +262,13 @@
     },
     removeMapMarkers: function () {
       var that = this;
+      var shallowCopy = $.extend({}, this.mapMarkers);
       $.each(
-        this.mapMarkers,
+        shallowCopy,
 
         /**
          * @param {integer} index - Current index.
-         * @param {GoogleMarker} item - Current marker.
+         * @param {GeolocationMapMarker} item - Current marker.
          */
         function (index, item) {
           if (typeof item === 'undefined') {
@@ -444,7 +450,12 @@
     }
 
     if (!map) {
-      console.error("Map could not be initialzed"); // eslint-disable-line no-console
+      console.error("Map could not be initialzed."); // eslint-disable-line no-console
+      return false;
+    }
+
+    if (map.container.length !== 1) {
+      console.error("Map container went away."); // eslint-disable-line no-console
       return false;
     }
 
@@ -475,6 +486,12 @@
         map = currentMap;
       }
     });
+
+    if (!map || map.container.length !== 1) {
+      console.error("Existing map could not be retrieved."); // eslint-disable-line no-console
+      return false;
+    }
+
     return map;
   };
 

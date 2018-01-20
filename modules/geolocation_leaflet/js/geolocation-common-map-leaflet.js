@@ -29,6 +29,11 @@
               return;
             }
 
+            if (map.container.hasClass('geolocation-common-map-leaflet-processed')) {
+              return;
+            }
+            map.container.addClass('geolocation-common-map-leaflet-processed');
+
             /**
              * Update the view depending on dynamic map settings and capability.
              *
@@ -48,52 +53,24 @@
             if (
               map.container.length
               && map.type === 'leaflet'
-              && !map.container.hasClass('geolocation-common-map-leaflet-processed')
             ) {
-              map.container.addClass('geolocation-common-map-leaflet-processed');
-
               map.addLoadedCallback(function (map) {
                 var geolocationMapIdleTimer;
-                map.leafletMap.on('moveend', function (e) {
+                map.leafletMap.on('moveend zoomend', /** @param {LeafletMouseEvent} e */function (e) {
                   clearTimeout(geolocationMapIdleTimer);
 
                   geolocationMapIdleTimer = setTimeout(
                     function () {
-                      // Make sure to load current form DOM element, which will change after every AJAX operation.
-                      var view = $('.view-id-' + commonMapSettings.dynamic_map.update_view_id + '.view-display-id-' + commonMapSettings.dynamic_map.update_view_display_id);
-                      var exposedForm = $('form#views-exposed-form-' + commonMapSettings.dynamic_map.update_view_id.replace(/_/g, '-') + '-' + commonMapSettings.dynamic_map.update_view_display_id.replace(/_/g, '-'));
-
-                      if (!exposedForm.length) {
-                        return;
-                      }
-
-                      if (typeof commonMapSettings.dynamic_map.boundary_filter === 'undefined') {
-                        return;
-                      }
-
-                      var currentBounds = map.leafletMap.getBounds();
-
-                      // Extract the view DOM ID from the view classes.
-                      var matches = /(js-view-dom-id-\w+)/.exec(view.attr('class'));
-                      var currentViewId = matches[1].replace('js-view-dom-id-', 'views_dom_id:');
-
-                      var viewInstance = Drupal.views.instances[currentViewId];
-                      var ajaxSettings = $.extend(true, {}, viewInstance.element_settings);
-                      ajaxSettings.progress.type = 'none';
-
-                      // Add form values.
-                      jQuery.each( exposedForm.serializeArray(), function( index, field ) {
-                        var add = {};
-                        add[field.name] = field.value;
-                        ajaxSettings.submit = $.extend(ajaxSettings.submit, add);
-                      });
+                      var ajaxSettings = Drupal.geolocation.commonMap.dynamicMapViewsAjaxSettings(commonMapSettings);
 
                       // Add bounds.
+                      var currentBounds = map.leafletMap.getBounds();
                       var bound_parameters = {};
                       bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_north_east]'] = currentBounds.getNorthEast().lat;
                       bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_north_east]'] = currentBounds.getNorthEast().lng;
                       bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_south_west]'] = currentBounds.getSouthWest().lat;
                       bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_south_west]'] = currentBounds.getSouthWest().lng;
+
                       // Trigger geolocation bounds specific behavior.
                       bound_parameters['geolocation_common_map_bounds_changed'] = true;
                       ajaxSettings.submit = $.extend(
