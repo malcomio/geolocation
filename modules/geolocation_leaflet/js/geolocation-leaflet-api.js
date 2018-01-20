@@ -3,44 +3,6 @@
  *   Javascript for leaflet integration.
  */
 
-/**
- * @typedef {Object} L
- *
- * @property {Function} L
- * @property {function(Object[]):Object} L.featureGroup
- */
-
-/**
- * @typedef {Object} LeafletMap
- *
- * @property {Function} tileLayer
- * @property {Function} removeLayer
- * @property {Function} addTo
- * @property {Function} setView
- * @property {Function} featureGroup
- * @property {Function} marker
- */
-
-/**
- * @typedef {Object} LeafletMouseEvent
- *
- * @property {LeafletLatLng} latlng
- */
-
-/**
- * @typedef {Object} LeafletLatLng
- *
- * @property {Number} lat
- * @property {Number} lng
- */
-
-/**
- * @typedef {Object} LeafletMarker
- *
- * @property {Function} bindPopup
- * @property {Function} openPopup
- */
-
 (function ($, Drupal) {
   'use strict';
 
@@ -55,7 +17,6 @@
    * @prop {Object} settings.leaflet_settings - Leaflet specific settings.
    */
   function GeolocationLeafletMap(mapSettings) {
-    //
     if (typeof L === 'undefined') {
       console.error('Leaflet library not loaded. Bailing out.'); // eslint-disable-line no-console
       return;
@@ -65,10 +26,12 @@
 
     Drupal.geolocation.GeolocationMapBase.call(this, mapSettings);
 
+    /**
+     *
+     * @type {MapOptions}
+     */
     var defaultLeafletSettings = {
-      zoom: 10,
-      height: '400px',
-      width: '100%'
+      zoom: 10
     };
 
     // Add any missing settings.
@@ -80,29 +43,32 @@
       width: this.settings.leaflet_settings.width
     });
 
+    /** @type {Map} */
     var leafletMap = L.map(this.container.get(0), {
       center: [this.lat, this.lng],
       zoom: this.settings.leaflet_settings.zoom
     });
 
+    var markerLayer = L.layerGroup().addTo(leafletMap);
+
     L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(leafletMap);
 
-    /** @property {LeafletMap} leafletMap */
     this.leafletMap = leafletMap;
+    this.markerLayer = markerLayer;
 
     this.addLoadedCallback(function(map) {
-      map.leafletMap.on('click', function(e) {
+      map.leafletMap.on('click', /** @param {LeafletMouseEvent} e */ function(e) {
         map.clickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
       });
 
-      map.leafletMap.on('contextmenu', function(e) {
+      map.leafletMap.on('contextmenu', /** @param {LeafletMouseEvent} e */ function(e) {
         map.contextClickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
       });
     });
 
-    this.loadedCallback(this, this.id);
+    this.loadedCallback();
 
     this.readyCallback();
   }
@@ -121,8 +87,8 @@
       });
     }
 
-    /** @param {LeafletMarker} */
-    var currentMarker = L.marker([parseFloat(markerSettings.position.lat), parseFloat(markerSettings.position.lng)], markerSettings).addTo(this.leafletMap);
+    /** @type {Marker} */
+    var currentMarker = L.marker([parseFloat(markerSettings.position.lat), parseFloat(markerSettings.position.lng)], markerSettings).addTo(this.markerLayer);
 
     currentMarker.locationWrapper = markerSettings.locationWrapper;
 
@@ -134,7 +100,7 @@
   };
   GeolocationLeafletMap.prototype.removeMapMarker = function (marker) {
     Drupal.geolocation.GeolocationMapBase.prototype.removeMapMarker.call(this, marker);
-    this.leafletMap.removeLayer(marker);
+    this.markerLayer.removeLayer(marker);
   };
   GeolocationLeafletMap.prototype.fitMapToMarkers = function (locations) {
 

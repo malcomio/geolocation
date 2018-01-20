@@ -87,14 +87,12 @@ display:
             fixed_value:
               weight: 0
               settings:
-                latitude: ''
-                longitude: ''
+                latitude: 0
+                longitude: 0
               enable: false
             client_location:
               weight: 0
               enable: false
-              settings:
-                update_map: '0'
           even_empty: 1
           marker_icon_path: ''
           marker_row_number: 0

@@ -2,7 +2,7 @@
  * @typedef {Object} LeafletMarkerPopupSettings
  *
  * @property {String} enable
- * @property {bool} infoAutoDisplay
+ * @property {Boolean} infoAutoDisplay
  */
 
 /**
@@ -34,7 +34,7 @@
         drupalSettings.geolocation.maps,
 
         /**
-         * @param {String} mapId - ID of current map
+         * @param {string} mapId - ID of current map
          * @param {Object} mapSettings - settings for current map
          * @param {LeafletMarkerPopupSettings} mapSettings.marker_popup - settings for current map
          */

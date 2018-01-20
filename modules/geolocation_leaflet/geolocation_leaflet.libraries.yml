@@ -47,3 +47,25 @@ mapfeature.markerpopup:
     js/MapFeature/geolocation-marker-popup.js: {}
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
+
+# MarkerClusterer support.
+leaflet.markerclusterer:
+  header: true
+  remote: https://github.com/Leaflet/Leaflet.markercluster
+  version: '1.2.0'
+  license:
+    name: MIT-LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      'https://unpkg.com/leaflet.markercluster@1.2.0/dist/MarkerCluster.css': { type: external, minified: true }
+      'https://unpkg.com/leaflet.markercluster@1.2.0/dist/MarkerCluster.Default.css': { type: external, minified: true }
+  js:
+    'https://unpkg.com/leaflet.markercluster@1.2.0/dist/leaflet.markercluster.js': { type: external, minified: true }
+
+mapfeature.markerclusterer:
+  js:
+    js/MapFeature/geolocation-marker-clusterer.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
+    - geolocation_leaflet/leaflet.markerclusterer

@@ -97,14 +97,12 @@ display:
             fixed_value:
               weight: 0
               settings:
-                latitude: ''
-                longitude: ''
+                latitude: 0
+                longitude: 0
               enable: false
             client_location:
               weight: 0
               enable: false
-              settings:
-                update_map: '0'
           even_empty: 0
           icon_field: field_geolocation_demo_term_icon
           marker_icon_path: ''
