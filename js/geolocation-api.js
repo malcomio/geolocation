@@ -429,13 +429,7 @@
      * Previously stored map.
      * @type {boolean|GeolocationMapInterface}
      */
-    var existingMap = false;
-
-    $.each(Drupal.geolocation.maps, function (index, map) {
-      if (map.id === mapSettings.id) {
-        existingMap = Drupal.geolocation.maps[index];
-      }
-    });
+    var existingMap = Drupal.geolocation.getMapById(mapSettings.id);
 
     if (reset === true || !existingMap) {
       if (typeof Drupal.geolocation[Drupal.geolocation.MapProviders[mapSettings.type]] !== 'undefined') {
@@ -454,8 +448,13 @@
       return false;
     }
 
+    if (typeof map.container === 'undefined') {
+      console.error("Map container not set."); // eslint-disable-line no-console
+      return false;
+    }
+
     if (map.container.length !== 1) {
-      console.error("Map container went away."); // eslint-disable-line no-console
+      console.error("Map container not unique."); // eslint-disable-line no-console
       return false;
     }
 
@@ -487,8 +486,17 @@
       }
     });
 
-    if (!map || map.container.length !== 1) {
-      console.error("Existing map could not be retrieved."); // eslint-disable-line no-console
+    if (!map) {
+      return false;
+    }
+
+    if (typeof map.container === 'undefined') {
+      console.error("Existing map container not set."); // eslint-disable-line no-console
+      return false;
+    }
+
+    if (map.container.length !== 1) {
+      console.error("Existing map container not unique."); // eslint-disable-line no-console
       return false;
     }
 

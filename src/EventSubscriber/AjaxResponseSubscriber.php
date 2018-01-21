@@ -63,7 +63,7 @@ class AjaxResponseSubscriber implements EventSubscriberInterface {
         && isset($command['selector'])
         && substr($command['selector'], 0, 16) === '.js-view-dom-id-'
       ) {
-        $command['command'] = 'geolocationCommonMapsUpdate';
+        $command['command'] = 'geolocationCommonMapUpdate';
       }
 
       // Stop the view from scrolling to the top of the page.

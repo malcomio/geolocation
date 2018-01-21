@@ -69,8 +69,6 @@
                       bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_south_west]'] = currentBounds.getSouthWest().lat();
                       bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_south_west]'] = currentBounds.getSouthWest().lng();
 
-                      // Trigger geolocation bounds specific behavior.
-                      bound_parameters['geolocation_common_map_bounds_changed'] = true;
                       ajaxSettings.submit = $.extend(
                         ajaxSettings.submit,
                         bound_parameters

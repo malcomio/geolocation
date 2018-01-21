@@ -161,14 +161,10 @@ abstract class CommonMapBase extends StylePluginBase {
       $this->idField = $this->options['id_field'];
     }
 
-    if (!empty($this->options['dynamic_map']['enabled'])) {
-      // TODO: Not unique enough, but uniqueid() screws with AJAX.
-      $this->mapId = $this->view->id() . '-' . $this->view->current_display;
-      $this->mapId = str_replace('_', '-', $this->mapId);
-    }
-    else {
-      $this->mapId = $this->view->dom_id;
-    }
+    // TODO: Not unique enough, but uniqueid() changes on every AJAX request.
+    // For the geolocationCommonMapBehavior to work, this has to stay identical.
+    $this->mapId = $this->view->id() . '-' . $this->view->current_display;
+    $this->mapId = str_replace('_', '-', $this->mapId);
 
     $map_settings = [];
     if (!empty($this->options[$this->mapProviderSettingsFormId])) {

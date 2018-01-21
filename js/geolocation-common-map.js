@@ -140,6 +140,9 @@
       });
     }
 
+    // Trigger geolocation bounds specific behavior.
+    ajaxSettings.submit = $.extend(ajaxSettings.submit, ['geolocation_common_map_bounds_changed']);
+
     return ajaxSettings;
   };
 
@@ -164,7 +167,7 @@
    * @param {number} [status]
    *   The XMLHttpRequest status.
    */
-  Drupal.AjaxCommands.prototype.geolocationCommonMapsUpdate = function (ajax, response, status) {
+  Drupal.AjaxCommands.prototype.geolocationCommonMapUpdate = function (ajax, response, status) {
     var $wrapper = response.selector ? $(response.selector) : $(ajax.wrapper);
 
     // Retain existing map if possible, to avoid jumping and improve UX.
