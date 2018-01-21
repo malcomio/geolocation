@@ -50,7 +50,11 @@
               return;
             }
 
-            map.addMarkerAddedCallback(function (currentMarker) {
+            var geolocationLeafletPopupHandler = function(currentMarker) {
+              if (typeof currentMarker.getPopup() !== 'undefined') {
+                return;
+              }
+
               if (typeof (currentMarker.locationWrapper) === 'undefined') {
                 return;
               }
@@ -65,6 +69,16 @@
               if (mapSettings.marker_popup.infoAutoDisplay) {
                 currentMarker.openPopup();
               }
+            };
+
+            map.addLoadedCallback(function (map) {
+              $.each(map.mapMarkers, function (index, currentMarker) {
+                geolocationLeafletPopupHandler(currentMarker);
+              });
+            });
+
+            map.addMarkerAddedCallback(function (currentMarker) {
+              geolocationLeafletPopupHandler(currentMarker);
             });
           }
         }
