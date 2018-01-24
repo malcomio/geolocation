@@ -32,6 +32,14 @@ widget.api.google:
   dependencies:
     - geolocation/geolocation.widget.api
 
+widget.google:
+  version: 1.x
+  js:
+    js/geolocation-google-maps-widget.js: { scope: footer }
+  dependencies:
+    - geolocation/geolocation.widget
+    - geolocation_google_maps/widget.api.google
+
 #
 # Map Features
 #

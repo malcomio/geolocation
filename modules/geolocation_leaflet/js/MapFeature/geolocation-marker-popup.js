@@ -71,7 +71,7 @@
               }
             };
 
-            map.addLoadedCallback(function (map) {
+            map.addPopulatedCallback(function (map) {
               $.each(map.mapMarkers, function (index, currentMarker) {
                 geolocationLeafletPopupHandler(currentMarker);
               });

@@ -39,6 +39,7 @@
  *
  * @interface GeolocationMapWidgetInterface
  * @property {GeolocationMapWidgetSettings} settings
+ * @property {String} id
  * @property {jQuery} wrapper
  * @property {jQuery} container
  * @property {Object[]} mapMarkers
@@ -61,7 +62,7 @@
  * @property {function():{int}} getNextDelta - Get next delta.
  * @property {function({int}):{jQuery}} getInputByDelta - Get map input by delta.
  *
- * @property {function({GeolocationCoordinates}, {int})} addInput - Add input.
+ * @property {function({GeolocationCoordinates}, {int}?)} addInput - Add input.
  * @property {function({GeolocationCoordinates}, {int})} updateInput - Update input.
  * @property {function({int})} removeInput - Remove input.
  * @property {function({GeolocationCoordinates}, {int})} addMarker - Add marker.
@@ -102,6 +103,7 @@
     this.cardinality = widgetSettings.cardinality || 1;
 
     this.map = widgetSettings.map;
+    this.id = widgetSettings.id;
 
     return this;
   }
@@ -254,7 +256,9 @@
       if (typeof Drupal.geolocation.widget[Drupal.geolocation.widget.widgetProviders[widgetSettings.type]] !== 'undefined') {
         var widgetProvider = Drupal.geolocation.widget[Drupal.geolocation.widget.widgetProviders[widgetSettings.type]];
         widget = new widgetProvider(widgetSettings);
-        Drupal.geolocation.widgets.push(this);
+        if (widget) {
+          Drupal.geolocation.widgets.push(widget);
+        }
       }
     }
     else {
@@ -278,6 +282,23 @@
 
   Drupal.geolocation.widget.addWidgetProvider = function (type, name) {
     Drupal.geolocation.widget.widgetProviders[type] = name;
+  };
+
+  /**
+   * Get widget by ID.
+   *
+   * @param {String} id - Widget ID to retrieve.
+   * @return {GeolocationMapWidgetInterface|boolean} - Retrieved widget or false.
+   */
+  Drupal.geolocation.widget.getWidgetById = function (id) {
+    var widget = false;
+    $.each(Drupal.geolocation.widgets, function (index, currentWidget) {
+      if (currentWidget.id === id) {
+        widget = currentWidget;
+      }
+    });
+
+    return widget;
   };
 
 })(jQuery, Drupal);

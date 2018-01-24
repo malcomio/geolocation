@@ -87,7 +87,7 @@
             && commonMapSettings.markerScrollToResult === true
           ) {
 
-            map.addLoadedCallback(function (map) {
+            map.addPopulatedCallback(function (map) {
               $.each(map.mapMarkers, function (index, marker) {
                 marker.addListener('click', function () {
                   var target = $('[data-location-id="' + location.data('location-id') + '"]:visible').first();

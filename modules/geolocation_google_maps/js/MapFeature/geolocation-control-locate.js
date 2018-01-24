@@ -33,14 +33,14 @@
           ) {
             var map = Drupal.geolocation.getMapById(mapId);
 
-            map.addReadyCallback(function (map) {
+            map.addInitializedCallback(function (map) {
               var locateButton = $('.geolocation-map-control .locate', map.wrapper);
 
               if (navigator.geolocation) {
                 locateButton.click(function (e) {
                   navigator.geolocation.getCurrentPosition(function (currentPosition) {
                     var currentLocation = new google.maps.LatLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
-                    map.setCenterByCoordinates(currentLocation, currentPosition.coords.accuracy);
+                    map.setCenterByCoordinates(currentLocation, currentPosition.coords.accuracy, 'google_control_locate');
                   });
                   e.preventDefault();
                 });

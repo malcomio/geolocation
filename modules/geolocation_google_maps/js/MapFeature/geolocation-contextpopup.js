@@ -45,7 +45,7 @@
 
             map.wrapper.addClass('geolocation-map-contextpopup-processed');
 
-            map.addReadyCallback(function (map) {
+            map.addInitializedCallback(function (map) {
 
               var contextContainer = jQuery('<div class="geolocation-context-popup"></div>');
               contextContainer.hide();

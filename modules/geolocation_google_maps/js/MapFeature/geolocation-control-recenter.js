@@ -33,7 +33,7 @@
           ) {
             var map = Drupal.geolocation.getMapById(mapId);
 
-            map.addReadyCallback(function (map) {
+            map.addInitializedCallback(function (map) {
               var recenterButton = $('.geolocation-map-control .recenter', map.wrapper);
               recenterButton.click(function (e) {
                 map.setCenterByBehavior();

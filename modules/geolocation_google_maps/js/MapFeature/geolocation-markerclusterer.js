@@ -57,8 +57,7 @@
               return;
             }
 
-            map.addReadyCallback(function (map) {
-
+            map.addPopulatedCallback(function (map) {
               if (typeof map.markerClusterer === 'undefined') {
                 map.markerClusterer = new MarkerClusterer(
                   map.googleMap,

@@ -52,7 +52,7 @@
             ) {
               map.container.addClass('geolocation-common-map-google-processed');
 
-              map.addLoadedCallback(function (map) {
+              map.addPopulatedCallback(function (map) {
                 var geolocationMapIdleTimer;
                 map.googleMap.addListener('bounds_changed', function () {
                   clearTimeout(geolocationMapIdleTimer);

@@ -41,7 +41,7 @@
             map.wrapper.addClass('geolocation-control-geocoder-processed');
 
             Drupal.geolocation.geocoder.addResultCallback(function(address) {
-              map.setCenterByCoordinates({lat: address.geometry.location.lat(), lng: address.geometry.location.lng()});
+              map.setCenterByCoordinates({lat: address.geometry.location.lat(), lng: address.geometry.location.lng()}, undefined, 'google_control_geocoder');
             }, mapId);
           }
         }

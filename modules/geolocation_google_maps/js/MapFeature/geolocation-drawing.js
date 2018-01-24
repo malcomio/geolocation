@@ -36,7 +36,7 @@
 
             var map = Drupal.geolocation.getMapById(mapId);
 
-            map.addReadyCallback(function (map) {
+            map.addInitializedCallback(function (map) {
               var locations = [];
 
               $('#' + map.id, context).find('.geolocation-location').each(function (index, locationElement) {

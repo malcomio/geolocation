@@ -34,7 +34,7 @@
           ) {
             var map = Drupal.geolocation.getMapById(mapId);
 
-            map.addReadyCallback(function (map) {
+            map.addInitializedCallback(function (map) {
               var clientLocationMarker = new google.maps.Marker({
                 clickable: false,
                 icon: {
@@ -58,11 +58,11 @@
                   clientLocationMarker.setPosition(currentLocation);
 
                   if (!indicatorCircle) {
-                    indicatorCircle = map.addAccuracyIndicatorCircle(currentLocation, parseInt(currentPosition.coords.accuracy));
+                    indicatorCircle = map.addAccuracyIndicatorCircle(currentLocation, parseInt(currentPosition.coords.accuracy.toString()));
                   }
                   else {
                     indicatorCircle.setCenter(currentLocation);
-                    indicatorCircle.setRadius(parseInt(currentPosition.coords.accuracy));
+                    indicatorCircle.setRadius(parseInt(currentPosition.coords.accuracy.toString()));
                   }
                 });
               }, 5000);

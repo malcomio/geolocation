@@ -44,14 +44,14 @@
 /**
  * Callback when map provider becomes available.
  *
- * @callback GeolocationMapReadyCallback
+ * @callback GeolocationMapInitializedCallback
  * @param {GeolocationMapInterface} map - Geolocation map.
  */
 
 /**
  * Callback when map fully loaded.
  *
- * @callback GeolocationMapLoadedCallback
+ * @callback GeolocationMapPopulatedCallback
  * @param {GeolocationMapInterface} map - Geolocation map.
  */
 
@@ -78,7 +78,7 @@
  *
  * @interface GeolocationMapInterface
  *
- * @property {Boolean} ready - True when map provider available and readyCallbacks executed.
+ * @property {Boolean} initialized - True when map provider available and initializedCallbacks executed.
  * @property {Boolean} loaded - True when map fully loaded and all loadCallbacks executed.
  * @property {String} id
  * @property {GeolocationMapSettings} settings
@@ -92,10 +92,10 @@
  * @property {function({jQuery}):{jQuery}} addControl - Add control to map, identified by classes.
  * @property {function()} removeControls - Remove controls from map.
  *
- * @property {function()} loadedCallback - Executes {GeolocationMapLoadedCallback[]} for this map.
- * @property {function({GeolocationMapLoadedCallback})} addLoadedCallback - Adds a callback that will be called when map is fully loaded.
- * @property {function()} readyCallback - Executes {GeolocationMapReadyCallbacks[]} for this map.
- * @property {function({GeolocationMapReadyCallback})} addReadyCallback - Adds a callback that will be called when map provider becomes available.
+ * @property {function()} populatedCallback - Executes {GeolocationMapPopulatedCallback[]} for this map.
+ * @property {function({GeolocationMapPopulatedCallback})} addPopulatedCallback - Adds a callback that will be called when map is fully loaded.
+ * @property {function()} initializedCallback - Executes {GeolocationMapInitializedCallbacks[]} for this map.
+ * @property {function({GeolocationMapInitializedCallback})} addInitializedCallback - Adds a callback that will be called when map provider becomes available.
  * @property {function({GeolocationMapSettings})} update - Update existing map by settings.
  *
  * @property {function({GeolocationMapMarker}):{GeolocationMapMarker}} setMapMarker - Set marker on map.
@@ -103,8 +103,8 @@
  * @property {function()} removeMapMarkers - Remove all markers from map.
  *
  * @property {function({string})} setCenterByBehavior - Center map by behavior.
- * @property {function({GeolocationCoordinates}, [{Number}])} setCenterByCoordinates - Center map on coordinates.
- * @property {function([{GeolocationMapMarker[]}])} fitMapToMarkers - Fit map to markers.
+ * @property {function({GeolocationCoordinates}, {Number}?, {string}?)} setCenterByCoordinates - Center map on coordinates.
+ * @property {function({GeolocationMapMarker[]}?)} fitMapToMarkers - Fit map to markers.
  * @property {function({Object})} fitBoundaries - Fit map to bounds.
  *
  * @property {function({Event})} clickCallback - Executes {GeolocationMapClickCallbacks} for this map.
@@ -157,8 +157,8 @@
       throw "Geolocation - Map container not found";
     }
 
-    this.ready = false;
-    this.loaded = false;
+    this.initialized = false;
+    this.populated = false;
     this.lat = mapSettings.lat;
     this.lng = mapSettings.lng;
     this.centreBehavior = mapSettings.centreBehavior;
@@ -201,7 +201,7 @@
           this.setCenterByCoordinates({
             lat: this.lat,
             lng: this.lng
-          });
+          }, undefined, 'initial_preset');
           break;
 
         case 'fitlocations':
@@ -230,18 +230,19 @@
           if (navigator.geolocation) {
             var that = this;
             var successCallback = function (position) {
-              that.setCenterByCoordinates({lat: position.coords.latitude, lng: position.coords.longitude}, position.coords.accuracy);
+              that.setCenterByCoordinates({lat: position.coords.latitude, lng: position.coords.longitude}, position.coords.accuracy, 'initial_client_location');
             };
             navigator.geolocation.getCurrentPosition(successCallback);
           }
           break;
       }
     },
-    setCenterByCoordinates: function (coordinates, accuracy) {
-      // Stub.
+    setCenterByCoordinates: function (coordinates, accuracy, identifier) {
+      this.centerUpdatedCallback(coordinates, accuracy, identifier);
     },
-    setMapMarker: function (markerSettings) {
-      // Stub.
+    setMapMarker: function (marker) {
+      this.mapMarkers.push(marker);
+      this.markerAddedCallback(marker);
     },
     removeMapMarker: function (marker) {
       var that = this;
@@ -314,23 +315,33 @@
       this.contextClickCallbacks = this.contextClickCallbacks || [];
       this.contextClickCallbacks.push(callback);
     },
-    readyCallback: function () {
-      this.readyCallbacks = this.readyCallbacks || [];
+    initializedCallback: function () {
+      this.initializedCallbacks = this.initializedCallbacks || [];
       var that = this;
-      $.each(this.readyCallbacks, function (index, callback) {
+      $.each(this.initializedCallbacks, function (index, callback) {
         callback(that);
       });
-      this.readyCallbacks = [];
-      this.ready = true;
+      this.initializedCallbacks = [];
+      this.initialized = true;
     },
-    addReadyCallback: function (callback) {
-      if (this.ready) {
+    addInitializedCallback: function (callback) {
+      if (this.initialized) {
         callback(this);
       }
       else {
-        this.readyCallbacks = this.readyCallbacks || [];
-        this.readyCallbacks.push(callback);
+        this.initializedCallbacks = this.initializedCallbacks || [];
+        this.initializedCallbacks.push(callback);
       }
+    },
+    centerUpdatedCallback: function (coordinates, accuracy, identifier) {
+      this.centerUpdatedCallbacks = this.centerUpdatedCallbacks || [];
+      $.each(this.centerUpdatedCallbacks, function (index, callback) {
+        callback(coordinates, accuracy, identifier);
+      });
+    },
+    addCenterUpdatedCallback: function (callback) {
+      this.centerUpdatedCallbacks = this.centerUpdatedCallbacks || [];
+      this.centerUpdatedCallbacks.push(callback);
     },
     markerAddedCallback: function (marker) {
       this.markerAddedCallbacks = this.markerAddedCallbacks || [];
@@ -352,22 +363,22 @@
       this.markerRemoveCallbacks = this.markerRemoveCallbacks || [];
       this.markerRemoveCallbacks.push(callback);
     },
-    loadedCallback: function () {
-      this.loadedCallbacks = this.loadedCallbacks || [];
+    populatedCallback: function () {
+      this.populatedCallbacks = this.populatedCallbacks || [];
       var that = this;
-      $.each(this.loadedCallbacks, function (index, callback) {
+      $.each(this.populatedCallbacks, function (index, callback) {
         callback(that);
       });
-      this.loadedCallbacks = [];
-      this.loaded = true;
+      this.populatedCallbacks = [];
+      this.populated = true;
     },
-    addLoadedCallback: function (callback) {
+    addPopulatedCallback: function (callback) {
       if (this.loaded) {
         callback(this);
       }
       else {
-        this.loadedCallbacks = this.loadedCallbacks || [];
-        this.loadedCallbacks.push(callback);
+        this.populatedCallbacks = this.populatedCallbacks || [];
+        this.populatedCallbacks.push(callback);
       }
     },
     loadMarkersFromContainer: function () {

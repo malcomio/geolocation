@@ -17,8 +17,8 @@
    */
   Drupal.behaviors.geolocationMap = {
     attach: function (context, drupalSettings) {
-      $('.geolocation-map-wrapper', context).each(function (index, item) {
-        var mapWrapper = $(item).once('geolocation-map-processed');
+      $('.geolocation-map-wrapper', context).once('geolocation-map-processed').each(function (index, item) {
+        var mapWrapper = $(item);
         var mapSettings = {};
         mapSettings.centreBehavior = 'fitlocations';
         mapSettings.id = mapWrapper.attr('id');
@@ -65,11 +65,10 @@
           return;
         }
 
-        map.addLoadedCallback(function (map) {
+        map.addInitializedCallback(function (map) {
           $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
             map.addControl(control);
           });
-
           map.removeMapMarkers();
 
           var locations = map.loadMarkersFromContainer();
@@ -81,8 +80,6 @@
           map.wrapper.find('.geolocation-location').hide();
           map.setCenterByBehavior();
         });
-
-
       });
     }
   };

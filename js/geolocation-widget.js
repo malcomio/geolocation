@@ -1,6 +1,6 @@
 /**
  * @file
- * Javascript for the Geolocation map formatter.
+ * Javascript for the Geolocation map widget.
  */
 
 (function ($, Drupal) {
@@ -8,22 +8,23 @@
   'use strict';
 
   /**
-   * Find and display all maps.
+   * Generic widget behavior.
    *
    * @type {Drupal~behavior}
    *
    * @prop {Drupal~behaviorAttach} attach
-   *   Attaches Geolocation Maps formatter functionality to relevant elements.
+   *   Attaches Geolocation widget functionality to relevant elements.
    */
   Drupal.behaviors.geolocationWidget = {
     attach: function (context, drupalSettings) {
-      $('.geolocation-map-widget', context).each(function (index, item) {
+      $('.geolocation-map-widget', context).once('geolocation-widget-processed').each(function (index, item) {
 
+        /** @type {GeolocationMapWidgetSettings} */
         var widgetSettings = {};
-        var widgetWrapper = $(item).once('geolocation-widget-processed');
+        var widgetWrapper = $(item);
         widgetSettings.wrapper = widgetWrapper;
-        widgetSettings.id = widgetWrapper.attr('id');
-        widgetSettings.type = widgetWrapper.data('widget-type');
+        widgetSettings.id = widgetWrapper.attr('id').toString();
+        widgetSettings.type = widgetWrapper.data('widget-type').toString();
 
         if (widgetWrapper.length === 0) {
           return;
@@ -102,9 +103,9 @@
           });
         });
 
-        widget.map.addReadyCallback(function (map) {
+        widget.map.addInitializedCallback(function (map) {
           widget.loadMarkersFromInput();
-          widget.map.fitMapToMarkers();
+          map.fitMapToMarkers();
         });
 
         // Add the click responders for setting the value.
@@ -118,7 +119,7 @@
             if (delta || delta === 0) {
               widget.addInput(location);
               widget.addMarker(location, delta);
-              widget.locationAddedCallback(location, delta);
+              widget.locationAddedCallback(location);
             }
           }, 500);
 

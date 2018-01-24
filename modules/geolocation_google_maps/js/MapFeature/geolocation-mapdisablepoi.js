@@ -38,7 +38,7 @@
 
             map.wrapper.addClass('geolocation-map-disable-poi-processed');
 
-            map.addReadyCallback(function (map) {
+            map.addInitializedCallback(function (map) {
 
               var styles = [];
               if (typeof map.googleMap.styles !== 'undefined') {

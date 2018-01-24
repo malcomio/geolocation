@@ -54,7 +54,7 @@
               map.container.length
               && map.type === 'leaflet'
             ) {
-              map.addLoadedCallback(function (map) {
+              map.addPopulatedCallback(function (map) {
                 var geolocationMapIdleTimer;
                 map.leafletMap.on('moveend zoomend', /** @param {LeafletMouseEvent} e */function (e) {
                   clearTimeout(geolocationMapIdleTimer);

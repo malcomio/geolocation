@@ -58,7 +58,7 @@
     this.leafletMap = leafletMap;
     this.markerLayer = markerLayer;
 
-    this.addLoadedCallback(function(map) {
+    this.addPopulatedCallback(function(map) {
       map.leafletMap.on('click', /** @param {LeafletMouseEvent} e */ function(e) {
         map.clickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
       });
@@ -68,12 +68,15 @@
       });
     });
 
-    this.loadedCallback();
-
-    this.readyCallback();
+    this.initializedCallback();
+    this.populatedCallback();
   }
   GeolocationLeafletMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationLeafletMap.prototype.constructor = GeolocationLeafletMap;
+  GeolocationLeafletMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
+    Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);
+    this.leafletMap.panTo(coordinates);
+  };
   GeolocationLeafletMap.prototype.setMapMarker = function (markerSettings) {
     if (typeof markerSettings.setMarker !== 'undefined') {
       if (markerSettings.setMarker === false) {
@@ -92,9 +95,7 @@
 
     currentMarker.locationWrapper = markerSettings.locationWrapper;
 
-    this.mapMarkers.push(currentMarker);
-
-    this.markerAddedCallback(currentMarker);
+    Drupal.geolocation.GeolocationMapBase.prototype.setMapMarker.call(this, currentMarker);
 
     return currentMarker;
   };

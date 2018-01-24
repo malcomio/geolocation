@@ -84,7 +84,7 @@
       width: this.settings.google_map_settings.width
     });
 
-    this.addReadyCallback(function (map) {
+    this.addInitializedCallback(function (map) {
       // Get the center point.
       var center = new google.maps.LatLng(map.lat, map.lng);
 
@@ -132,23 +132,22 @@
       }
 
       google.maps.event.addListenerOnce(map.googleMap, 'tilesloaded', function () {
-        map.loadedCallback();
+        map.populatedCallback();
       });
     });
 
-    if (this.ready) {
-      this.readyCallback();
+    if (this.initialized) {
+      this.initializedCallback();
     }
     else {
       var that = this;
       Drupal.geolocation.google.addLoadedCallback(function () {
-        that.readyCallback();
+        that.initializedCallback();
       });
 
       // Load Google Maps API and execute all callbacks.
       Drupal.geolocation.google.load();
     }
-
   }
   GeolocationGoogleMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationGoogleMap.prototype.constructor = GeolocationGoogleMap;
@@ -163,7 +162,7 @@
       }
     }
 
-    markerSettings.position = new google.maps.LatLng(markerSettings.position.lat, markerSettings.position.lng);
+    markerSettings.position = new google.maps.LatLng(Number(markerSettings.position.lat), Number(markerSettings.position.lng));
 
     markerSettings.map = this.googleMap;
 
@@ -179,9 +178,7 @@
     /** @type {google.maps.Marker} */
     var currentMarker = new google.maps.Marker(markerSettings);
 
-    this.mapMarkers.push(currentMarker);
-
-    this.markerAddedCallback(currentMarker);
+    Drupal.geolocation.GeolocationMapBase.prototype.setMapMarker.call(this, currentMarker);
 
     return currentMarker;
   };
@@ -220,36 +217,13 @@
       this.googleMap.fitBounds(boundaries);
     }
   };
-
-  /**
-   * Draw a circle representing the accuracy radius of HTML5 geolocation.
-   *
-   * @param {GeolocationCoordinates|google.maps.LatLng} location - Location to center on.
-   * @param {int} accuracy - Accuracy in m.
-   *
-   * @return {google.maps.Circle} - Indicator circle.
-   */
-  GeolocationGoogleMap.prototype.addAccuracyIndicatorCircle = function (location, accuracy) {
-    return new google.maps.Circle({
-      center: location,
-      radius: accuracy,
-      map: this.googleMap,
-      fillColor: '#4285F4',
-      fillOpacity: 0.15,
-      strokeColor: '#4285F4',
-      strokeOpacity: 0.3,
-      strokeWeight: 1,
-      clickable: false
-    });
-  };
-
   GeolocationGoogleMap.prototype.setCenterByBehavior = function (centreBehavior) {
     centreBehavior = centreBehavior || this.centreBehavior;
 
     Drupal.geolocation.GeolocationMapBase.prototype.setCenterByBehavior.call(this, centreBehavior);
     switch (centreBehavior) {
       case 'preset':
-        this.addReadyCallback(function (map) {
+        this.addInitializedCallback(function (map) {
           if (map.settings.google_map_settings.zoom) {
             google.maps.event.addListenerOnce(map.googleMap, 'zoom_changed', function () {
               if (map.settings.google_map_settings.zoom < map.googleMap.getZoom()) {
@@ -261,15 +235,8 @@
         break;
     }
   };
-
-  /**
-   * Re-center map, draw a circle indicating accuracy and slowly fade it out.
-   *
-   * @param {google.maps.LatLng} coordinates - A location (latLng) object from Google Maps API.
-   * @param {int} accuracy - Accuracy in meter.
-   */
-  GeolocationGoogleMap.prototype.setCenterByCoordinates = function (coordinates, accuracy) {
-    Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy);
+  GeolocationGoogleMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
+    Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);
 
     if (typeof accuracy === 'undefined') {
       this.googleMap.setCenter(coordinates);
@@ -302,10 +269,6 @@
       }
     }
   };
-
-  /**
-   * @inheritDoc
-   */
   GeolocationGoogleMap.prototype.addControl = function (element) {
     element = $(element);
 
@@ -341,10 +304,6 @@
       return this.googleMap.controls[position].getAt(controlIndex);
     }
   };
-
-  /**
-   * @inheritDoc
-   */
   GeolocationGoogleMap.prototype.removeControls = function () {
     $.each(this.googleMap.controls, function (index, item) {
       if (typeof item === 'undefined') {
@@ -361,9 +320,29 @@
   Drupal.geolocation.addMapProvider('google_maps', 'GeolocationGoogleMap');
 
   /**
-   * Adds a callback that will be called once the maps library is loaded.
+   * Draw a circle representing the accuracy radius of HTML5 geolocation.
    *
-   * @param {googleLoadedCallback} callback - The callback
+   * @param {GeolocationCoordinates|google.maps.LatLng} location - Location to center on.
+   * @param {int} accuracy - Accuracy in m.
+   *
+   * @return {google.maps.Circle} - Indicator circle.
+   */
+  GeolocationGoogleMap.prototype.addAccuracyIndicatorCircle = function (location, accuracy) {
+    return new google.maps.Circle({
+      center: location,
+      radius: accuracy,
+      map: this.googleMap,
+      fillColor: '#4285F4',
+      fillOpacity: 0.15,
+      strokeColor: '#4285F4',
+      strokeOpacity: 0.3,
+      strokeWeight: 1,
+      clickable: false
+    });
+  };
+
+  /**
+   * @inheritDoc
    */
   Drupal.geolocation.google.addLoadedCallback = function (callback) {
     Drupal.geolocation.google.loadedCallbacks = Drupal.geolocation.google.loadedCallbacks || [];

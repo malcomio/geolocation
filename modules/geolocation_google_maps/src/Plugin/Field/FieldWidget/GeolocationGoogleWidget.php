@@ -58,7 +58,7 @@ class GeolocationGoogleWidget extends GeolocationMapWidgetBase {
       $element['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/widget.api.google',
+          'geolocation_google_maps/widget.google',
         ],
       ]
     );

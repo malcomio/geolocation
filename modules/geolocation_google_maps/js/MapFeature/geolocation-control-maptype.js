@@ -39,7 +39,7 @@
               return;
             }
 
-            map.addLoadedCallback(function (map) {
+            map.addPopulatedCallback(function (map) {
               var options = {
                 mapTypeControlOptions: {
                   position: google.maps.ControlPosition[mapSettings.control_maptype.position],
