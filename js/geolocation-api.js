@@ -373,7 +373,7 @@
       this.populated = true;
     },
     addPopulatedCallback: function (callback) {
-      if (this.loaded) {
+      if (this.populated) {
         callback(this);
       }
       else {
