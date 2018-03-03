@@ -348,20 +348,20 @@ abstract class CommonMapBase extends StylePluginBase {
       $icon_field_handler = $this->view->field[$this->iconField];
       if (!empty($icon_field_handler)) {
         $image_items = $icon_field_handler->getItems($row);
-        if (!empty($image_items[0])) {
-          /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $item */
-          $item = $image_items[0]['rendered']['#item'];
-          if (!empty($item->entity)) {
-            $file_uri = $item->entity->getFileUri();
+        if (!empty($image_items[0]['rendered']['#item']->entity)) {
+          $file_uri = $image_items[0]['rendered']['#item']->entity->getFileUri();
 
+          $style = NULL;
+          if (!empty($image_items[0]['rendered']['#image_style'])) {
             /** @var \Drupal\image\Entity\ImageStyle $style */
             $style = ImageStyle::load($image_items[0]['rendered']['#image_style']);
-            if (!empty($style)) {
-              $icon_url = file_url_transform_relative($style->buildUrl($file_uri));
-            }
-            else {
-              $icon_url = file_url_transform_relative(file_create_url($file_uri));
-            }
+          }
+
+          if (!empty($style)) {
+            $icon_url = file_url_transform_relative($style->buildUrl($file_uri));
+          }
+          else {
+            $icon_url = file_url_transform_relative(file_create_url($file_uri));
           }
         }
       }
