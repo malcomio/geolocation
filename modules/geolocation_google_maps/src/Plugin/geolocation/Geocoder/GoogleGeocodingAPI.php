@@ -146,7 +146,7 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
     $request_url .= '/maps/api/geocode/json?address=' . $address;
 
     if (!empty($config->get('google_map_api_server_key'))) {
-      $request_url .= '&key=' . $config->get('google_map_api_key');
+      $request_url .= '&key=' . $config->get('google_map_api_server_key');
     }
     elseif (!empty($config->get('google_map_api_key'))) {
       $request_url .= '&key=' . $config->get('google_map_api_key');
@@ -173,6 +173,12 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
       $result['status'] != 'OK'
       || empty($result['results'][0]['geometry'])
     ) {
+      if (isset($result['error_message'])) {
+        \Drupal::logger('geolocation')->error(t('Unable to geocode "@address" with error: "@error".', [
+          '@address' => $address,
+          '@error' => $result['error_message'],
+        ]));
+      }
       return FALSE;
     }
 
