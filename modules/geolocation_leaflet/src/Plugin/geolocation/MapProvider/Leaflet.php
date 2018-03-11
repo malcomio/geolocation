@@ -36,6 +36,8 @@ class Leaflet extends MapProviderBase {
   public function getSettings(array $settings) {
     $settings = parent::getSettings($settings);
 
+    $settings['zoom'] = (int) $settings['zoom'];
+
     return $settings;
   }
 
@@ -58,7 +60,7 @@ class Leaflet extends MapProviderBase {
     $settings += self::getDefaultSettings();
     $parents_string = '';
     if ($parents) {
-      $parents_string = implode('][', $parents);
+      $parents_string = implode('][', $parents) . '][';
     }
 
     $form = parent::getSettingsForm($settings, $parents);
