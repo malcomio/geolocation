@@ -15,15 +15,21 @@ function geolocation_google_maps_requirements($phase) {
   if ($phase == 'runtime') {
     $requirements['geolocation_google_maps_api_key'] = [
       'title' => t('Geolocation - Google Maps API Key'),
-      'value' => t('A Google Maps API key is set in the <a href=":geolocation_google_maps_settings_url">Geolocation settings</a>, required to display any Google maps.', [':geolocation_google_maps_settings_url' => Url::fromRoute('geolocation_google_maps.settings')->toString()]),
+      'value' => t('Google Maps API key set'),
+      'description' => t('A Google Maps API key is set in the <a href=":geolocation_google_maps_settings_url">Geolocation settings</a>, required to display any Google maps.', [':geolocation_google_maps_settings_url' => Url::fromRoute('geolocation_google_maps.settings')->toString()]),
       'severity' => REQUIREMENT_OK,
     ];
 
     if (empty(\Drupal::config('geolocation_google_maps.settings')->get('google_map_api_key'))) {
-      $requirements['geolocation_google_maps_api_key']['value'] = t('A Google Maps API key required to display any Google maps is missing in the <a href=":geolocation_google_maps_settings_url">Geolocation settings</a>.', [':geolocation_google_maps_settings_url' => Url::fromRoute('geolocation_google_maps.settings')->toString()]);
+      $requirements['geolocation_google_maps_api_key']['value'] = t('Google Maps API key missing');
+      $requirements['geolocation_google_maps_api_key']['description'] = t('A Google Maps API key required to display any Google maps is missing in the <a href=":geolocation_google_maps_settings_url">Geolocation settings</a>.', [':geolocation_google_maps_settings_url' => Url::fromRoute('geolocation_google_maps.settings')->toString()]);
       $requirements['geolocation_google_maps_api_key']['severity'] = REQUIREMENT_WARNING;
     }
-
+    elseif (\Drupal::config('geolocation_google_maps.settings')->get('google_map_api_key') === 'AIzaSyBGosteHy-rau8K81IauvzrzI7yhlSu-2Y') {
+      $requirements['geolocation_google_maps_api_key']['value'] = t('Google Maps API Demo key use');
+      $requirements['geolocation_google_maps_api_key']['description'] = t('Do not use the Geolocation Google Maps API Demo key in the <a href=":geolocation_google_maps_settings_url">Geolocation settings</a>.', [':geolocation_google_maps_settings_url' => Url::fromRoute('geolocation_google_maps.settings')->toString()]);
+      $requirements['geolocation_google_maps_api_key']['severity'] = REQUIREMENT_ERROR;
+    }
   }
 
   return $requirements;
