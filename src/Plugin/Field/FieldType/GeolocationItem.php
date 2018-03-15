@@ -101,8 +101,8 @@ class GeolocationItem extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function generateSampleValue(FieldDefinitionInterface $field_definition) {
-    $values['lat'] = rand(-90, 90) - rand(0, 999999) / 1000000;
-    $values['lng'] = rand(-180, 180) - rand(0, 999999) / 1000000;
+    $values['lat'] = rand(-89, 90) - rand(0, 999999) / 1000000;
+    $values['lng'] = rand(-179, 180) - rand(0, 999999) / 1000000;
     return $values;
   }
 
