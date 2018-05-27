@@ -56,6 +56,7 @@
    * @inheritDoc
    *
    * @prop {GoogleMapSettings} settings.google_map_settings - Google Map specific settings.
+   * @prop {google.maps.Map} googleMap - Google Map.
    */
   function GeolocationGoogleMap(mapSettings) {
     this.type = 'google_maps';
@@ -109,7 +110,6 @@
         gestureHandling: map.settings.google_map_settings.gestureHandling
       });
 
-      /** @property {google.maps.Map} googleMap */
       map.googleMap = googleMap;
 
       google.maps.event.addListener(

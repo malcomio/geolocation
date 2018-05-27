@@ -1,7 +1,8 @@
 /**
  * @typedef {Object} MarkerIconSettings
  *
- * @property {String} enable
+ * @extends {GeolocationMapFeatureSettings}
+ *
  * @property {String} markerIconPath
  * @property {Array} anchor
  * @property {Number} anchor.x
@@ -34,74 +35,66 @@
    */
   Drupal.behaviors.geolocationMarkerIcon = {
     attach: function (context, drupalSettings) {
-      $.each(
-        drupalSettings.geolocation.maps,
+      Drupal.geolocation.executeFeatureOnAllMaps(
+        'marker_icon',
 
         /**
-         * @param {String} mapId - ID of current map
-         * @param {Object} mapSettings - settings for current map
-         * @param {MarkerIconSettings} mapSettings.marker_icon - settings for current map
+         * @param {GeolocationGoogleMap} map - Current map.
+         * @param {MarkerIconSettings} featureSettings - Settings for current feature.
          */
-        function (mapId, mapSettings) {
-          if (
-            typeof mapSettings.marker_icon !== 'undefined'
-            && mapSettings.marker_icon.enable
-          ) {
-            var map = Drupal.geolocation.getMapById(mapId);
+        function (map, featureSettings) {
+          map.addMarkerAddedCallback(function (currentMarker) {
+            var currentIcon = currentMarker.getIcon();
 
-            if (!map) {
-              return;
+            var anchorX = currentMarker.locationWrapper.data('marker-icon-anchor-x') || featureSettings.anchor.x;
+            var anchorY = currentMarker.locationWrapper.data('marker-icon-anchor-y') || featureSettings.anchor.y;
+            var labelOriginX = currentMarker.locationWrapper.data('marker-icon-label-origin-x') || featureSettings.labelOrigin.y;
+            var labelOriginY = currentMarker.locationWrapper.data('marker-icon-label-origin-y') || featureSettings.labelOrigin.y;
+            var originX = currentMarker.locationWrapper.data('marker-icon-origin-x') || featureSettings.origin.y;
+            var originY = currentMarker.locationWrapper.data('marker-icon-origin-y') || featureSettings.origin.y;
+            var sizeWidth = currentMarker.locationWrapper.data('marker-icon-size-width') || featureSettings.size.width;
+            var sizeHeight = currentMarker.locationWrapper.data('marker-icon-size-height') || featureSettings.size.height;
+            var scaledSizeWidth = currentMarker.locationWrapper.data('marker-icon-scaled-size-width') || featureSettings.scaledSize.width;
+            var scaledSizeHeight = currentMarker.locationWrapper.data('marker-icon-scaled-size-height') || featureSettings.scaledSize.height;
+
+            var newIcon = {
+              anchor: new google.maps.Point(anchorX, anchorY),
+              labelOrigin: new google.maps.Point(labelOriginX, labelOriginY),
+              origin: new google.maps.Point(originX, originY)
+            };
+
+            if (sizeWidth && sizeHeight) {
+              newIcon.size = new google.maps.Size(sizeWidth, sizeHeight);
             }
 
-            map.addMarkerAddedCallback(function (currentMarker) {
-              var currentIcon = currentMarker.getIcon();
+            if (scaledSizeWidth && scaledSizeHeight) {
+              newIcon.scaledSize = new google.maps.Size(scaledSizeWidth, scaledSizeHeight);
+            }
 
-              var anchorX = currentMarker.locationWrapper.data('marker-icon-anchor-x') || mapSettings.marker_icon.anchor.x;
-              var anchorY = currentMarker.locationWrapper.data('marker-icon-anchor-y') || mapSettings.marker_icon.anchor.y;
-              var labelOriginX = currentMarker.locationWrapper.data('marker-icon-label-origin-x') || mapSettings.marker_icon.labelOrigin.y;
-              var labelOriginY = currentMarker.locationWrapper.data('marker-icon-label-origin-y') || mapSettings.marker_icon.labelOrigin.y;
-              var originX = currentMarker.locationWrapper.data('marker-icon-origin-x') || mapSettings.marker_icon.origin.y;
-              var originY = currentMarker.locationWrapper.data('marker-icon-origin-y') || mapSettings.marker_icon.origin.y;
-              var sizeWidth = currentMarker.locationWrapper.data('marker-icon-size-width') || mapSettings.marker_icon.size.width;
-              var sizeHeight = currentMarker.locationWrapper.data('marker-icon-size-height') || mapSettings.marker_icon.size.height;
-              var scaledSizeWidth = currentMarker.locationWrapper.data('marker-icon-scaled-size-width') || mapSettings.marker_icon.scaledSize.width;
-              var scaledSizeHeight = currentMarker.locationWrapper.data('marker-icon-scaled-size-height') || mapSettings.marker_icon.scaledSize.height;
 
-              var newIcon = {
-                anchor: new google.maps.Point(anchorX, anchorY),
-                labelOrigin: new google.maps.Point(labelOriginX, labelOriginY),
-                origin: new google.maps.Point(originX, originY)
-              };
-
-              if (sizeWidth && sizeHeight) {
-                newIcon.size = new google.maps.Size(sizeWidth, sizeHeight);
+            if (typeof currentIcon === 'undefined') {
+              if (typeof featureSettings.markerIconPath === 'string') {
+                newIcon.url = featureSettings.markerIconPath;
               }
-
-              if (scaledSizeWidth && scaledSizeHeight) {
-                newIcon.scaledSize = new google.maps.Size(scaledSizeWidth, scaledSizeHeight);
+              else {
+                return;
               }
+            }
+            else if (typeof currentIcon === 'string') {
+              newIcon.url = currentIcon;
+            }
+            else if (typeof currentIcon.url === 'string') {
+              newIcon.url = currentIcon.url;
+            }
 
+            currentMarker.setIcon(newIcon);
+          });
 
-              if (typeof currentIcon === 'undefined') {
-                if (typeof mapSettings.marker_icon.markerIconPath === 'string') {
-                  newIcon.url = mapSettings.marker_icon.markerIconPath;
-                }
-                else {
-                  return;
-                }
-              }
-              else if (typeof currentIcon === 'string') {
-                newIcon.url = currentIcon;
-              }
-              else if (typeof currentIcon.url === 'string') {
-                newIcon.url = currentIcon.url;
-              }
-
-              currentMarker.setIcon(newIcon);
-            });
-          }
-        }
+          return true;
+        },
+        drupalSettings
       );
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 })(jQuery, Drupal);

@@ -1,7 +1,8 @@
 /**
  * @typedef {Object} MarkerInfoWindowSettings
  *
- * @property {String} enable
+ * @extends {GeolocationMapFeatureSettings}
+ *
  * @property {Boolean} infoAutoDisplay
  * @property {Boolean} disableAutoPan
  * @property {Boolean} infoWindowSolitary
@@ -32,63 +33,54 @@
    */
   Drupal.behaviors.geolocationMarkerInfoWindow = {
     attach: function (context, drupalSettings) {
-      $.each(
-        drupalSettings.geolocation.maps,
+      Drupal.geolocation.executeFeatureOnAllMaps(
+        'marker_infowindow',
 
         /**
-         * @param {String} mapId - ID of current map
-         * @param {Object} mapSettings - settings for current map
-         * @param {MarkerInfoWindowSettings} mapSettings.marker_infowindow - settings for current map
+         * @param {GeolocationGoogleMap} map - Current map.
+         * @param {MarkerInfoWindowSettings} featureSettings - Settings for current feature.
          */
-        function (mapId, mapSettings) {
-          if (
-            typeof mapSettings.marker_infowindow !== 'undefined'
-            && mapSettings.marker_infowindow.enable
-          ) {
-
-            var map = Drupal.geolocation.getMapById(mapId);
-
-            if (!map) {
+        function (map, featureSettings) {
+          map.addMarkerAddedCallback(function (currentMarker) {
+            if (typeof (currentMarker.locationWrapper) === 'undefined') {
               return;
             }
 
-            map.addMarkerAddedCallback(function (currentMarker) {
-              if (typeof (currentMarker.locationWrapper) === 'undefined') {
-                return;
-              }
+            var content = currentMarker.locationWrapper.find('.location-content');
 
-              var content = currentMarker.locationWrapper.find('.location-content');
+            if (content.length < 1) {
+              return;
+            }
+            content = content.html();
 
-              if (content.length < 1) {
-                return;
-              }
-              content = content.html();
-
-              // Set the info popup text.
-              var currentInfoWindow = new google.maps.InfoWindow({
-                content: content.toString(),
-                disableAutoPan: mapSettings.marker_infowindow.disableAutoPan
-              });
-
-              currentMarker.addListener('click', function () {
-                if (mapSettings.marker_infowindow.infoWindowSolitary) {
-                  if (typeof map.infoWindow !== 'undefined') {
-                    map.infoWindow.close();
-                  }
-                  map.infoWindow = currentInfoWindow;
-                }
-                currentInfoWindow.open(map.googleMap, currentMarker);
-              });
-
-              if (mapSettings.marker_infowindow.infoAutoDisplay) {
-                google.maps.event.addListenerOnce(map.googleMap, 'tilesloaded', function () {
-                  google.maps.event.trigger(currentMarker, 'click');
-                });
-              }
+            // Set the info popup text.
+            var currentInfoWindow = new google.maps.InfoWindow({
+              content: content.toString(),
+              disableAutoPan: featureSettings.disableAutoPan
             });
-          }
-        }
+
+            currentMarker.addListener('click', function () {
+              if (featureSettings.infoWindowSolitary) {
+                if (typeof map.infoWindow !== 'undefined') {
+                  map.infoWindow.close();
+                }
+                map.infoWindow = currentInfoWindow;
+              }
+              currentInfoWindow.open(map.googleMap, currentMarker);
+            });
+
+            if (featureSettings.infoAutoDisplay) {
+              google.maps.event.addListenerOnce(map.googleMap, 'tilesloaded', function () {
+                google.maps.event.trigger(currentMarker, 'click');
+              });
+            }
+          });
+
+          return true;
+        },
+        drupalSettings
       );
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 })(jQuery, Drupal);

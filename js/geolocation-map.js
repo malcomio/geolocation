@@ -16,6 +16,12 @@
    *   Attaches Geolocation Maps formatter functionality to relevant elements.
    */
   Drupal.behaviors.geolocationMap = {
+
+    /**
+     * @param context
+     * @param drupalSettings
+     * @param {Object} drupalSettings.geolocation
+     */
     attach: function (context, drupalSettings) {
       $('.geolocation-map-wrapper', context).once('geolocation-map-processed').each(function (index, item) {
         var mapWrapper = $(item);
@@ -81,7 +87,8 @@
           map.setCenterByBehavior();
         });
       });
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 
 })(jQuery, Drupal);

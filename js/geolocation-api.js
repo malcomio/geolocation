@@ -475,7 +475,7 @@
   Drupal.geolocation.Factory = Factory;
 
   /**
-   * @type {Object[]}
+   * @type {Object}
    */
   Drupal.geolocation.MapProviders = {};
 
@@ -487,6 +487,7 @@
    * Get map by ID.
    *
    * @param {String} id - Map ID to retrieve.
+   *
    * @return {GeolocationMapInterface|boolean} - Retrieved map or false.
    */
   Drupal.geolocation.getMapById = function (id) {
@@ -512,6 +513,73 @@
     }
 
     return map;
+  };
+
+  /**
+   * @typedef {Object} GeolocationMapFeatureSettings
+   *
+   * @property {String} id
+   * @property {boolean} enabled
+   * @property {boolean} executed
+   */
+
+  /**
+   * Callback when map is clicked.
+   *
+   * @callback GeolocationMapFeatureCallback
+   * @param {GeolocationMapInterface} map - Map.
+   * @param {GeolocationMapFeatureSettings} featureSettings - Settings.
+   *
+   * @return {boolean} - Executed successfully.
+   */
+
+  /**
+   * Get map by ID.
+   *
+   * @param {String} featureId - Map ID to retrieve.
+   * @param {GeolocationMapFeatureCallback} callback - Retrieved map or false.
+   * @param {Object} drupalSettings - Drupal settings.
+   */
+  Drupal.geolocation.executeFeatureOnAllMaps = function (featureId, callback, drupalSettings) {
+    if (typeof drupalSettings.geolocation === 'undefined') {
+      return false;
+    }
+
+    $.each(
+      drupalSettings.geolocation.maps,
+
+      /**
+       * @param {String} mapId - ID of current map
+       * @param {Object} mapSettings - settings for current map
+       * @param {GeolocationMapFeatureSettings} mapSettings[featureId] - Feature settings for current map
+       */
+      function (mapId, mapSettings) {
+        if (
+          typeof mapSettings[featureId] !== 'undefined'
+          && mapSettings[featureId].enable
+        ) {
+          if (typeof mapSettings[featureId].executed === 'undefined') {
+            mapSettings[featureId].executed = false;
+          }
+
+          if (mapSettings[featureId].executed) {
+            return;
+          }
+
+          var map = Drupal.geolocation.getMapById(mapId);
+
+          if (!map) {
+            return;
+          }
+
+          var result = callback(map, mapSettings[featureId]);
+
+          if (result === true) {
+            mapSettings[featureId].executed = true;
+          }
+        }
+      }
+    );
   };
 
 })(jQuery, Drupal);

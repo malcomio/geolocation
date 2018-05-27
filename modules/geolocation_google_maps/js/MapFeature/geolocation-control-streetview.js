@@ -1,8 +1,10 @@
 /**
  * @typedef {Object} ControlStreetViewSettings
  *
- * @property {String} enable
+ * @extends {GeolocationMapFeatureSettings}
+
  * @property {String} position
+ * @property {String} behavior
  */
 
 (function ($, Drupal) {
@@ -19,45 +21,37 @@
    */
   Drupal.behaviors.geolocationStreetViewControl = {
     attach: function (context, drupalSettings) {
-      $.each(
-        drupalSettings.geolocation.maps,
+      Drupal.geolocation.executeFeatureOnAllMaps(
+        'control_streetview',
 
         /**
-         * @param {String} mapId - ID of current map
-         * @param {Object} mapSettings - settings for current map
-         * @param {ControlStreetViewSettings} mapSettings.control_streetview - settings for current map
+         * @param {GeolocationGoogleMap} map - Current map.
+         * @param {ControlStreetViewSettings} featureSettings - Settings for current feature.
          */
-        function (mapId, mapSettings) {
-          if (
-            typeof mapSettings.control_streetview !== 'undefined'
-            && mapSettings.control_streetview.enable
-          ) {
-            var map = Drupal.geolocation.getMapById(mapId);
+        function (map, featureSettings) {
+          map.addPopulatedCallback(function (map) {
+            var options = {
+              streetViewControlOptions: {
+                position: google.maps.ControlPosition[featureSettings.position]
+              }
+            };
 
-            if (!map) {
-              return;
+            if (featureSettings.behavior === 'always') {
+              options.streetViewControl = true;
+            }
+            else {
+              options.streetViewControl = undefined;
             }
 
-            map.addPopulatedCallback(function (map) {
-              var options = {
-                streetViewControlOptions: {
-                  position: google.maps.ControlPosition[mapSettings.control_streetview.position]
-                }
-              };
+            map.googleMap.setOptions(options);
+          });
 
-              if (mapSettings.control_streetview.behavior === 'always') {
-                options.streetViewControl = true;
-              }
-              else {
-                options.streetViewControl = undefined;
-              }
-
-              map.googleMap.setOptions(options);
-            });
-          }
-        }
+          return true;
+        },
+        drupalSettings
       );
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 
 })(jQuery, Drupal);

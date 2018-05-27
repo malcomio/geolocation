@@ -1,9 +1,11 @@
 /**
  * @typedef {Object} ControlMapTypeSettings
  *
- * @property {String} enable
+ * @extends {GeolocationMapFeatureSettings}
+ *
  * @property {String} position
  * @property {String} style
+ * @property {String} behavior
  */
 
 (function ($, Drupal) {
@@ -20,46 +22,38 @@
    */
   Drupal.behaviors.geolocationMapTypeControl = {
     attach: function (context, drupalSettings) {
-      $.each(
-        drupalSettings.geolocation.maps,
+      Drupal.geolocation.executeFeatureOnAllMaps(
+        'control_maptype',
 
         /**
-         * @param {String} mapId - ID of current map
-         * @param {Object} mapSettings - settings for current map
-         * @param {ControlMapTypeSettings} mapSettings.control_maptype - settings for current map
+         * @param {GeolocationGoogleMap} map - Current map.
+         * @param {ControlMapTypeSettings} featureSettings - Settings for current feature.
          */
-        function (mapId, mapSettings) {
-          if (
-            typeof mapSettings.control_maptype !== 'undefined'
-            && mapSettings.control_maptype.enable
-          ) {
-            var map = Drupal.geolocation.getMapById(mapId);
+        function (map, featureSettings) {
+          map.addPopulatedCallback(function (map) {
+            var options = {
+              mapTypeControlOptions: {
+                position: google.maps.ControlPosition[featureSettings.position],
+                style: google.maps.MapTypeControlStyle[featureSettings.style]
+              }
+            };
 
-            if (!map) {
-              return;
+            if (featureSettings.behavior === 'always') {
+              options.mapTypeControl = true;
+            }
+            else {
+              options.mapTypeControl = undefined;
             }
 
-            map.addPopulatedCallback(function (map) {
-              var options = {
-                mapTypeControlOptions: {
-                  position: google.maps.ControlPosition[mapSettings.control_maptype.position],
-                  style: google.maps.MapTypeControlStyle[mapSettings.control_maptype.style]
-                }
-              };
+            map.googleMap.setOptions(options);
+          });
 
-              if (mapSettings.control_maptype.behavior === 'always') {
-                options.mapTypeControl = true;
-              }
-              else {
-                options.mapTypeControl = undefined;
-              }
-
-              map.googleMap.setOptions(options);
-            });
-          }
-        }
+          return true;
+        },
+        drupalSettings
       );
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 
 })(jQuery, Drupal);
