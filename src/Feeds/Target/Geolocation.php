@@ -33,8 +33,8 @@ class Geolocation extends FieldTargetBase {
   protected function prepareValue($delta, array &$values) {
     if (isset($values)) {
       if (isset($values['lat']) && isset($values['lng'])) {
-        $values['lat'] = trim($values['lat']);
-        $values['lng'] = trim($values['lng']);
+        $values['lat'] = floatval($values['lat']);
+        $values['lng'] = floatval($values['lng']);
         $values['lat_sin'] = sin(deg2rad($values['lat']));
         $values['lat_cos'] = cos(deg2rad($values['lat']));
         $values['lng_rad'] = deg2rad($values['lng']);
