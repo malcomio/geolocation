@@ -44,7 +44,8 @@
     marker.delta = delta;
 
     marker.on('dragend', function(e) {
-      that.updateInput({lat: Number(e.latlng.lat), lng: Number(e.latlng.lng)}, marker.delta);
+      var latLng = e.target.getLatLng();
+      that.updateInput({lat: latLng.lat, lng: latLng.lng}, marker.delta);
     });
 
     marker.on('click', function() {
