@@ -397,7 +397,8 @@ abstract class CommonMapBase extends StylePluginBase {
       }
 
       if ($this->options['marker_row_number']) {
-        $location['#marker_label'] = (int) $row->index + 1;
+        $markerOffset = $this->view->pager->getCurrentPage() * $this->view->pager->getItemsPerPage();
+        $location['#label'] = (int) $markerOffset + (int) $row->index + 1;
       }
 
       $locations[] = $location;
