@@ -24,19 +24,19 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
   /**
    * {@inheritdoc}
    */
-  protected $mapProviderId = 'google_maps';
+  static protected $mapProviderId = 'google_maps';
 
   /**
    * {@inheritdoc}
    */
-  protected $mapProviderSettingsFormId = 'google_map_settings';
+  static protected $mapProviderSettingsFormId = 'google_map_settings';
 
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
     $settings = parent::defaultSettings();
-    $settings['google_map_settings'] = GoogleMaps::getDefaultSettings();
+    $settings[static::$mapProviderSettingsFormId] = GoogleMaps::getDefaultSettings();
 
     return $settings;
   }

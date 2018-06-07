@@ -23,6 +23,11 @@ class GeolocationLeafletMapFormatter extends GeolocationMapFormatterBase {
   /**
    * {@inheritdoc}
    */
-  protected $mapProviderId = 'leaflet';
+  static protected $mapProviderId = 'leaflet';
+
+  /**
+   * {@inheritdoc}
+   */
+  static protected $mapProviderSettingsFormId = 'leaflet_settings';
 
 }

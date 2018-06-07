@@ -22,14 +22,14 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
    *
    * @var string
    */
-  protected $mapProviderId = FALSE;
+  static protected $mapProviderId = FALSE;
 
   /**
    * Map Provider Settings Form ID.
    *
    * @var string
    */
-  protected $mapProviderSettingsFormId = FALSE;
+  static protected $mapProviderSettingsFormId = 'map_settings';
 
   /**
    * Map Provider.
@@ -44,12 +44,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
 
-    if (!empty($this->mapProviderId)) {
-      $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider($this->mapProviderId, $this->getSettings());
-    }
-
-    if (empty($this->mapProviderSettingsFormId)) {
-      $this->mapProviderSettingsFormId = $this->mapProviderId . '_settings';
+    if (!empty(static::$mapProviderId)) {
+      $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider(static::$mapProviderId, $this->getSettings());
     }
   }
 
@@ -67,6 +63,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     ];
     $settings['use_overridden_map_settings'] = FALSE;
 
+    $settings[static::$mapProviderSettingsFormId] = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProviderDefaultSettings(static::$mapProviderId);
+
     $settings += parent::defaultSettings();
 
     return $settings;
@@ -78,8 +76,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
   public function getSettings() {
     $settings = parent::getSettings();
 
-    if (empty($settings[$this->mapProviderSettingsFormId])) {
-      $settings[$this->mapProviderSettingsFormId] = [];
+    if (empty($settings[static::$mapProviderSettingsFormId])) {
+      $settings[static::$mapProviderSettingsFormId] = [];
     }
 
     return $settings;
@@ -163,8 +161,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     ];
 
     if ($this->mapProvider) {
-      $mapProviderSettings = $settings[$this->mapProviderSettingsFormId];
-      $element[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
+      $mapProviderSettings = $settings[static::$mapProviderSettingsFormId];
+      $element[static::$mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
         $mapProviderSettings,
         [
           'fields',
@@ -202,7 +200,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       }
     }
 
-    $summary = array_replace_recursive($summary, $this->mapProvider->getSettingsSummary($settings[$this->mapProviderSettingsFormId]));
+    $summary = array_replace_recursive($summary, $this->mapProvider->getSettingsSummary($settings[static::$mapProviderSettingsFormId]));
 
     return $summary;
   }
@@ -269,8 +267,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
     $element_pattern = [
       '#type' => 'geolocation_map',
-      '#settings' => $settings[$this->mapProviderSettingsFormId],
-      '#maptype' => $this->mapProviderId,
+      '#settings' => $settings[static::$mapProviderSettingsFormId],
+      '#maptype' => static::$mapProviderId,
       '#centre' => [
         'behavior' => 'fitlocations',
       ],
@@ -297,10 +295,10 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
     if (
       $settings['use_overridden_map_settings']
-      && !empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
-      && is_array($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
+      && !empty($items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId])
+      && is_array($items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId])
     ) {
-      $map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId]);
+      $map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId]);
 
       if (!empty($settings['common_map'])) {
         $elements[0]['#settings'] = $map_settings;
