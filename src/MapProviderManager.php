@@ -57,4 +57,25 @@ class MapProviderManager extends DefaultPluginManager {
     return FALSE;
   }
 
+  /**
+   * Return MapProvider default ssettings by ID.
+   *
+   * @param string $id
+   *   MapProvider ID.
+   *
+   * @return array|false
+   *   MapProvider default settings.
+   */
+  public function getMapProviderDefaultSettings($id) {
+    $definitions = $this->getDefinitions();
+    if (empty($definitions[$id])) {
+      return FALSE;
+    }
+
+    /** @var \Drupal\geolocation\MapProviderInterface $classname */
+    $classname = $definitions[$id]['class'];
+
+    return $classname::getDefaultSettings();
+  }
+
 }

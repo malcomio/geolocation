@@ -31,14 +31,14 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
    *
    * @var string
    */
-  protected $mapProviderId = FALSE;
+  static protected $mapProviderId = FALSE;
 
   /**
    * Map Provider Settings Form ID.
    *
    * @var string
    */
-  protected $mapProviderSettingsFormId = FALSE;
+  static protected $mapProviderSettingsFormId = 'map_settings';
 
   /**
    * Map Provider.
@@ -68,13 +68,10 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
 
     $this->entityFieldManager = $entity_field_manager;
 
-    if (!empty($this->mapProviderId)) {
-      $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider($this->mapProviderId);
+    if (!empty(static::$mapProviderId)) {
+      $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider(static::$mapProviderId);
     }
 
-    if (empty($this->mapProviderSettingsFormId)) {
-      $this->mapProviderSettingsFormId = $this->mapProviderId . '_settings';
-    }
   }
 
   /**
@@ -114,6 +111,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       'auto_client_location_marker' => FALSE,
       'allow_override_map_settings' => FALSE,
     ];
+    $settings[static::$mapProviderSettingsFormId] = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProviderDefaultSettings(static::$mapProviderId);
     $settings += parent::defaultSettings();
 
     return $settings;
@@ -125,14 +123,14 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
   public function getSettings() {
     $settings = parent::getSettings();
     $map_settings = [];
-    if (!empty($settings[$this->mapProviderSettingsFormId])) {
-      $map_settings = $settings[$this->mapProviderSettingsFormId];
+    if (!empty($settings[static::$mapProviderSettingsFormId])) {
+      $map_settings = $settings[static::$mapProviderSettingsFormId];
     }
 
     $settings = NestedArray::mergeDeep(
       $settings,
       [
-        $this->mapProviderSettingsFormId => $this->mapProvider->getSettings($map_settings),
+        static::$mapProviderSettingsFormId => $this->mapProvider->getSettings($map_settings),
       ]
     );
 
@@ -173,14 +171,14 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     ];
 
     if ($this->mapProvider) {
-      $element[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
-        $settings[$this->mapProviderSettingsFormId],
+      $element[static::$mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
+        $settings[static::$mapProviderSettingsFormId],
         [
           'fields',
           $this->fieldDefinition->getName(),
           'settings_edit_form',
           'settings',
-          $this->mapProviderSettingsFormId,
+          static::$mapProviderSettingsFormId,
         ]
       );
     }
@@ -208,7 +206,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       $summary[] = $this->t('Users will be allowed to override the map settings for each content.');
     }
 
-    $map_provider_settings = empty($settings[$this->mapProviderSettingsFormId]) ? [] : $settings[$this->mapProviderSettingsFormId];
+    $map_provider_settings = empty($settings[static::$mapProviderSettingsFormId]) ? [] : $settings[static::$mapProviderSettingsFormId];
 
     $summary = array_replace_recursive($summary, $this->mapProvider->getSettingsSummary($map_provider_settings));
 
@@ -262,18 +260,18 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       && $this->getSetting('allow_override_map_settings')
       && $this->mapProvider
     ) {
-      $overriden_map_settings = empty($this->getSetting($this->mapProviderSettingsFormId)) ? [] : $this->getSetting($this->mapProviderSettingsFormId);
+      $overriden_map_settings = empty($this->getSetting(static::$mapProviderSettingsFormId)) ? [] : $this->getSetting(static::$mapProviderSettingsFormId);
 
-      if (!empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])) {
-        $overriden_map_settings = $items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId];
+      if (!empty($items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId])) {
+        $overriden_map_settings = $items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId];
       }
 
-      $element[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
+      $element[static::$mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
         $overriden_map_settings,
         [
           $this->fieldDefinition->getName(),
           0,
-          $this->mapProviderSettingsFormId,
+          static::$mapProviderSettingsFormId,
         ]
       );
     }
@@ -332,17 +330,17 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     $element['map'] = [
       '#type' => 'geolocation_map',
       '#weight' => -10,
-      '#settings' => $settings[$this->mapProviderSettingsFormId],
+      '#settings' => $settings[static::$mapProviderSettingsFormId],
       '#id' => $id . '-map',
-      '#maptype' => $this->mapProviderId,
+      '#maptype' => static::$mapProviderId,
       '#context' => ['widget' => $this],
     ];
 
     if (
       $this->getSetting('allow_override_map_settings')
-      && !empty($items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId])
+      && !empty($items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId])
     ) {
-      $element['map']['#settings'] = $items->get(0)->getValue()['data'][$this->mapProviderSettingsFormId];
+      $element['map']['#settings'] = $items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId];
     }
 
     return $element;
@@ -355,9 +353,9 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     $values = parent::massageFormValues($values, $form, $form_state);
 
     if (!empty($this->settings['allow_override_map_settings'])) {
-      if (!empty($values[0][$this->mapProviderSettingsFormId])) {
-        $values[0]['data'][$this->mapProviderSettingsFormId] = $values[0][$this->mapProviderSettingsFormId];
-        unset($values[0][$this->mapProviderSettingsFormId]);
+      if (!empty($values[0][static::$mapProviderSettingsFormId])) {
+        $values[0]['data'][static::$mapProviderSettingsFormId] = $values[0][static::$mapProviderSettingsFormId];
+        unset($values[0][static::$mapProviderSettingsFormId]);
       }
     }
 

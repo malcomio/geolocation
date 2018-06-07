@@ -45,7 +45,10 @@ class Leaflet extends MapProviderBase {
    * {@inheritdoc}
    */
   public function getSettingsSummary(array $settings) {
-    $settings = $this->getSettings($settings);
+    $settings = array_replace_recursive(
+      self::getDefaultSettings(),
+      $settings
+    );
     $summary = parent::getSettingsSummary($settings);
     $summary[] = $this->t('Zoom level: @zoom', ['@zoom' => $settings['zoom']]);
     $summary[] = $this->t('Height: @height', ['@height' => $settings['height']]);
@@ -60,7 +63,7 @@ class Leaflet extends MapProviderBase {
     $settings += self::getDefaultSettings();
     $parents_string = '';
     if ($parents) {
-      $parents_string = implode('][', $parents) . '][';
+      $parents_string = implode('][', $parents);
     }
 
     $form = parent::getSettingsForm($settings, $parents);

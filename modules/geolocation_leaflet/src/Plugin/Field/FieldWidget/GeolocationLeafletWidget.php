@@ -23,12 +23,12 @@ class GeolocationLeafletWidget extends GeolocationMapWidgetBase {
   /**
    * {@inheritdoc}
    */
-  protected $mapProviderId = 'leaflet';
+  static protected $mapProviderId = 'leaflet';
 
   /**
    * {@inheritdoc}
    */
-  protected $mapProviderSettingsFormId = 'leaflet_settings';
+  static protected $mapProviderSettingsFormId = 'leaflet_settings';
 
   /**
    * {@inheritdoc}

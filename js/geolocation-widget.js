@@ -11,6 +11,7 @@
    * Generic widget behavior.
    *
    * @type {Drupal~behavior}
+   * @type {Object} drupalSettings.geolocation
    *
    * @prop {Drupal~behaviorAttach} attach
    *   Attaches Geolocation widget functionality to relevant elements.
@@ -19,7 +20,6 @@
     attach: function (context, drupalSettings) {
       $('.geolocation-map-widget', context).once('geolocation-widget-processed').each(function (index, item) {
 
-        /** @type {GeolocationMapWidgetSettings} */
         var widgetSettings = {};
         var widgetWrapper = $(item);
         widgetSettings.wrapper = widgetWrapper;
@@ -38,6 +38,7 @@
         }
 
         if (typeof drupalSettings.geolocation.widgetSettings[widgetSettings.id] !== 'undefined') {
+          /** @type {GeolocationMapWidgetSettings} widgetSettings */
           widgetSettings = $.extend(drupalSettings.geolocation.widgetSettings[widgetSettings.id], widgetSettings);
         }
 
@@ -115,8 +116,20 @@
 
           // Create 500ms timeout to wait for double click.
           singleClick = setTimeout(function () {
-            var delta = widget.getNextDelta();
-            if (delta || delta === 0) {
+            if (widgetSettings.cardinality === 1) {
+              widget.updateInput(location, 0);
+              widget.updateMarker(location, 0);
+              widget.locationAddedCallback(location);
+            }
+            else {
+              var delta = widget.getNextDelta();
+              if (
+                  typeof delta === 'undefined'
+                  || delta === false
+              ) {
+                alert(Drupal.t('Maximum number of entries reached.'));
+                throw Error('Maximum number of entries reached.');
+              }
               widget.addInput(location);
               widget.addMarker(location, delta);
               widget.locationAddedCallback(location);

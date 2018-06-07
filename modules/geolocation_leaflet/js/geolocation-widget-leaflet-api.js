@@ -22,15 +22,14 @@
   GeolocationLeafletMapWidget.prototype = Object.create(Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype);
   GeolocationLeafletMapWidget.prototype.constructor = GeolocationLeafletMapWidget;
   GeolocationLeafletMapWidget.prototype.addMarker = function (location, delta) {
-    Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype.addMarker.call(this, location, delta);
-
-    var that = this;
-
-    // delta could legally be '0'.
-    if (typeof delta === 'undefined') {
-      delta = this.getNextDelta();
+    try {
+      Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype.addMarker.call(this, location, delta);
+    }
+    catch (Error) {
+      return;
     }
 
+    var that = this;
     var marker = this.map.setMapMarker({
       position: location,
       title: Drupal.t('[@delta] Latitude: @latitude Longitude: @longitude', {

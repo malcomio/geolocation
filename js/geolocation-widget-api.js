@@ -175,9 +175,13 @@
       if (
         input.find('input.geolocation-map-input-longitude').val()
         || input.find('input.geolocation-map-input-latitude').val()
-        && (lastDelta + 1) === this.cardinality
       ) {
-        alert(Drupal.t('Maximum number of entries reached.'));
+        if (
+            lastDelta + 1 < this.cardinality
+            || this.cardinality === -1
+        ) {
+          return lastDelta + 1;
+        }
         return false;
       }
       else {
@@ -185,10 +189,30 @@
         return lastDelta;
       }
     },
-    addMarker: function (location, delta) {},
-    addInput: function (location, delta) {
-      delta = delta || this.getNextDelta();
+    addMarker: function (location, delta) {
       if (typeof delta === 'undefined') {
+        delta = this.getNextDelta();
+      }
+
+      if (
+          typeof delta === 'undefined'
+          || delta === false
+      ) {
+        alert(Drupal.t('Maximum number of entries reached.'));
+        throw Error('Maximum number of entries reached.');
+      }
+      return delta;
+    },
+    addInput: function (location, delta) {
+      if (typeof delta === 'undefined') {
+        delta = this.getNextDelta();
+      }
+
+      if (
+        typeof delta === 'undefined'
+        || delta === false
+      ) {
+        alert(Drupal.t('Maximum number of entries reached.'));
         return;
       }
       var input = this.getInputByDelta(delta);
