@@ -31,14 +31,4 @@ class GeolocationGoogleMapFormatter extends GeolocationMapFormatterBase {
    */
   static protected $mapProviderSettingsFormId = 'google_map_settings';
 
-  /**
-   * {@inheritdoc}
-   */
-  public static function defaultSettings() {
-    $settings = parent::defaultSettings();
-    $settings[static::$mapProviderSettingsFormId] = GoogleMaps::getDefaultSettings();
-
-    return $settings;
-  }
-
 }
