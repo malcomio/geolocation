@@ -14,7 +14,7 @@ leaflet:
 
 # Leaflet integration library.
 geolocation.leaflet:
-  version: 8.x-1.x
+  version: 8.x-2.x
   dependencies:
     - core/drupalSettings
     - geolocation/geolocation.api

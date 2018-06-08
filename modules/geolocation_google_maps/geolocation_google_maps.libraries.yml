@@ -1,6 +1,6 @@
 # Geolocation Google Maps API integration library.
 googlemapsapi:
-  version: 8.x-1.x
+  version: 8.x-2.x
   dependencies:
     - core/drupalSettings
     - geolocation/geolocation.api
@@ -16,7 +16,7 @@ commonmap.google:
 
 # Google Maps geocoder function.
 geocoder.googlegeocodingapi:
-  version: 8.x-1.x
+  version: 8.x-2.x
   js:
     js/geolocation-google-geocoding-api-geocoder.js: {}
   dependencies:

@@ -5,7 +5,7 @@
 #
 
 geolocation.api:
-  version: 8.x-1.x
+  version: 8.x-2.x
   js:
     js/geolocation-api.js: {}
   dependencies:
@@ -14,7 +14,7 @@ geolocation.api:
     - core/jquery.once
 
 geolocation.geocoder.api:
-  version: 8.x-1.x
+  version: 8.x-2.x
   js:
     js/geolocation-geocoder-api.js: {}
   dependencies:
@@ -29,7 +29,7 @@ geolocation.widget.api:
     - geolocation/geolocation.api
 
 geolocation.widget:
-  version: 8.x-1.x
+  version: 8.x-2.x
   js:
     js/geolocation-widget.js: {}
   dependencies:
@@ -43,7 +43,7 @@ geolocation.widget:
 #
 
 geolocation.map:
-  version: 8.x-1.x
+  version: 8.x-2.x
   css:
     theme:
       css/geolocation-map.css: {}
@@ -70,7 +70,7 @@ geolocation.commonmap:
 
 #Geolocation views field geocoder function.
 geolocation.views.field.geocoder:
-  version: 8.x-1.x
+  version: 8.x-2.x
   js:
     js/geolocation-views-field-geocoder.js: {}
   dependencies:
@@ -78,7 +78,7 @@ geolocation.views.field.geocoder:
 
 # Geolocation views filter geocoder function.
 geolocation.views.filter.geocoder:
-  version: 8.x-1.x
+  version: 8.x-2.x
   js:
     js/geolocation-views-filter-geocoder.js: {}
   dependencies:
