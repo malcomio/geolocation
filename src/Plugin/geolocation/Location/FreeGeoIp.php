@@ -1,25 +1,25 @@
 <?php
 
-namespace Drupal\geolocation\Plugin\geolocation\MapCenter;
+namespace Drupal\geolocation\Plugin\geolocation\Location;
 
-use Drupal\geolocation\MapCenterInterface;
-use Drupal\geolocation\MapCenterBase;
+use Drupal\geolocation\LocationInterface;
+use Drupal\geolocation\LocationBase;
 
 /**
  * Fixed coordinates map center.
  *
- * @MapCenter(
+ * @Location(
  *   id = "freeogeoip",
  *   name = @Translation("freegoip.net Service"),
  *   description = @Translation("See http://freegeoip.net website. Limited to 15000 requests per hour."),
  * )
  */
-class FreeGeoIp extends MapCenterBase implements MapCenterInterface {
+class FreeGeoIp extends LocationBase implements LocationInterface {
 
   /**
    * {@inheritdoc}
    */
-  public function getMapCenter($center_option_id, array $center_option_settings, array $context = []) {
+  public function getCoordinates($center_option_id, array $center_option_settings, array $context = []) {
     $ip = \Drupal::request()->getClientIp();
     if (empty($ip)) {
       return [];
@@ -42,7 +42,6 @@ class FreeGeoIp extends MapCenterBase implements MapCenterInterface {
     return [
       'lat' => (float) $result['latitude'],
       'lng' => (float) $result['longitude'],
-      'behavior' => 'preset',
     ];
   }
 

@@ -8,11 +8,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class MapCenterBase.
+ * Class LocationBase.
  *
  * @package Drupal\geolocation
  */
-abstract class MapCenterBase extends PluginBase implements MapCenterInterface, ContainerFactoryPluginInterface {
+abstract class LocationBase extends PluginBase implements LocationInterface, ContainerFactoryPluginInterface {
 
   /**
    * {@inheritdoc}
@@ -59,7 +59,7 @@ abstract class MapCenterBase extends PluginBase implements MapCenterInterface, C
   /**
    * {@inheritdoc}
    */
-  public function getAvailableMapCenterOptions(array $context) {
+  public function getAvailableLocationOptions(array $context) {
     return [
       $this->getPluginId() => $this->getPluginDefinition()['name'],
     ];
@@ -68,7 +68,7 @@ abstract class MapCenterBase extends PluginBase implements MapCenterInterface, C
   /**
    * {@inheritdoc}
    */
-  public function getMapCenter($center_option_id, array $center_option_settings, array $context = []) {
+  public function getCoordinates($center_option_id, array $center_option_settings, array $context = []) {
     return [];
   }
 

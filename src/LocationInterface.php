@@ -5,9 +5,9 @@ namespace Drupal\geolocation;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
- * Defines an interface for geolocation MapCenter plugins.
+ * Defines an interface for geolocation Location plugins.
  */
-interface MapCenterInterface extends PluginInspectionInterface {
+interface LocationInterface extends PluginInspectionInterface {
 
   /**
    * Provide a populated settings array.
@@ -18,7 +18,7 @@ interface MapCenterInterface extends PluginInspectionInterface {
   public static function getDefaultSettings();
 
   /**
-   * Provide MapCenter option specific settings.
+   * Provide Location option specific settings.
    *
    * @param array $settings
    *   Current settings.
@@ -31,8 +31,8 @@ interface MapCenterInterface extends PluginInspectionInterface {
   /**
    * Settings form by ID and context.
    *
-   * @param int $center_option_id
-   *   MapCenter option ID.
+   * @param int $location_option_id
+   *   Location option ID.
    * @param array $context
    *   Current context.
    * @param array $settings
@@ -41,32 +41,34 @@ interface MapCenterInterface extends PluginInspectionInterface {
    * @return array
    *   A form array to be integrated in whatever.
    */
-  public function getSettingsForm($center_option_id, array $context, array $settings);
+  public function getSettingsForm($location_option_id, array $context, array $settings);
 
   /**
-   * For one MapCenter (i.e. boundary filter), return all options (all filters).
+   * For one Location (i.e. boundary filter), return all options (all filters).
    *
    * @param array $context
    *   Context like field formatter, field widget or view.
    *
    * @return array
-   *   Available center options indexed by ID.
+   *   Available location options indexed by ID.
    */
-  public function getAvailableMapCenterOptions(array $context);
+  public function getAvailableLocationOptions(array $context);
 
   /**
-   * Get map center.
+   * Get map location.
    *
-   * @param int $center_option_id
-   *   MapCenter option ID.
-   * @param array $center_option_settings
+   * @param int $location_option_id
+   *   Location option ID.
+   * @param array $location_option_settings
    *   The current feature settings.
    * @param array $context
    *   Context like field formatter, field widget or view.
    *
    * @return array
-   *   Center definition.
+   *   With content
+   *    'lat' => latitude
+   *    'lng' => longitude
    */
-  public function getMapCenter($center_option_id, array $center_option_settings, array $context);
+  public function getCoordinates($location_option_id, array $location_option_settings, array $context);
 
 }

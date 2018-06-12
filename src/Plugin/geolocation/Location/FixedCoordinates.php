@@ -1,22 +1,22 @@
 <?php
 
-namespace Drupal\geolocation\Plugin\geolocation\MapCenter;
+namespace Drupal\geolocation\Plugin\geolocation\Location;
 
-use Drupal\geolocation\MapCenterInterface;
-use Drupal\geolocation\MapCenterBase;
+use Drupal\geolocation\LocationInterface;
+use Drupal\geolocation\LocationBase;
 
 /**
  * Fixed coordinates map center.
  *
  * PluginID for compatibility with v1.
  *
- * @MapCenter(
+ * @Location(
  *   id = "fixed_value",
  *   name = @Translation("Fixed coordinates"),
  *   description = @Translation("Use preset fixed values as center."),
  * )
  */
-class FixedCoordinates extends MapCenterBase implements MapCenterInterface {
+class FixedCoordinates extends LocationBase implements LocationInterface {
 
   /**
    * {@inheritdoc}
@@ -57,17 +57,13 @@ class FixedCoordinates extends MapCenterBase implements MapCenterInterface {
   /**
    * {@inheritdoc}
    */
-  public function getMapCenter($center_option_id, array $center_option_settings, array $context = []) {
+  public function getCoordinates($center_option_id, array $center_option_settings, array $context = []) {
     $settings = $this->getSettings($center_option_settings);
 
-    return array_replace_recursive(
-      parent::getMapCenter($center_option_id, $center_option_settings, $context),
-      [
-        'lat' => (float) $settings['latitude'],
-        'lng' => (float) $settings['longitude'],
-        'behavior' => 'preset',
-      ]
-    );
+    return [
+      'lat' => (float) $settings['latitude'],
+      'lng' => (float) $settings['longitude'],
+    ];
   }
 
 }

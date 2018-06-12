@@ -130,7 +130,6 @@ class GoogleMaps extends GoogleMapsProviderBase {
 
     $form = parent::getSettingsForm($settings, $parents);
 
-
     $form['zoom']['#min'] = static::$MINZOOMLEVEL;
     $form['zoom']['#max'] = static::$MAXZOOMLEVEL;
     $form['maxZoom'] = [

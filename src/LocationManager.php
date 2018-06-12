@@ -10,10 +10,10 @@ use Drupal\Component\Utility\SortArray;
 /**
  * Search plugin manager.
  */
-class MapCenterManager extends DefaultPluginManager {
+class LocationManager extends DefaultPluginManager {
 
   /**
-   * Constructs an MapCenterManager object.
+   * Constructs an LocationManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -24,29 +24,29 @@ class MapCenterManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/geolocation/MapCenter', $namespaces, $module_handler, 'Drupal\geolocation\MapCenterInterface', 'Drupal\geolocation\Annotation\MapCenter');
-    $this->alterInfo('geolocation_mapcenter_info');
-    $this->setCacheBackend($cache_backend, 'geolocation_mapcenter');
+    parent::__construct('Plugin/geolocation/Location', $namespaces, $module_handler, 'Drupal\geolocation\LocationInterface', 'Drupal\geolocation\Annotation\Location');
+    $this->alterInfo('geolocation_location_info');
+    $this->setCacheBackend($cache_backend, 'geolocation_location');
   }
 
   /**
-   * Return MapCenter by ID.
+   * Return Location by ID.
    *
    * @param string $id
-   *   MapCenter ID.
+   *   Location ID.
    * @param array $configuration
    *   Configuration.
    *
-   * @return \Drupal\geolocation\MapCenterInterface|false
-   *   MapCenter instance.
+   * @return \Drupal\geolocation\LocationInterface|false
+   *   Location instance.
    */
-  public function getMapCenter($id, array $configuration = []) {
+  public function getLocationPlugin($id, array $configuration = []) {
     $definitions = $this->getDefinitions();
     if (empty($definitions[$id])) {
       return FALSE;
     }
     try {
-      /** @var \Drupal\geolocation\MapCenterInterface $instance */
+      /** @var \Drupal\geolocation\LocationInterface $instance */
       $instance = $this->createInstance($id, $configuration);
       if ($instance) {
         return $instance;
@@ -69,7 +69,7 @@ class MapCenterManager extends DefaultPluginManager {
    * @return array
    *   Form.
    */
-  public function getCenterOptionsForm(array $settings, array $context = []) {
+  public function getLocationOptionsForm(array $settings, array $context = []) {
     $form = [
       '#type' => 'table',
       '#prefix' => t('<h3>Centre options</h3>Please note: Each option will, if it can be applied, supersede any following option.'),
@@ -90,9 +90,9 @@ class MapCenterManager extends DefaultPluginManager {
     ];
 
     foreach ($this->getDefinitions() as $map_center_id => $map_center_definition) {
-      /** @var \Drupal\geolocation\MapCenterInterface $map_center */
+      /** @var \Drupal\geolocation\LocationInterface $mapCenter */
       $map_center = $this->createInstance($map_center_id);
-      foreach ($map_center->getAvailableMapCenterOptions($context) as $option_id => $label) {
+      foreach ($map_center->getAvailableLocationOptions($context) as $option_id => $label) {
         $option_enable_id = uniqid($option_id . '_enabled');
         $weight = isset($settings[$option_id]['weight']) ? $settings[$option_id]['weight'] : 0;
         $form[$option_id] = [
