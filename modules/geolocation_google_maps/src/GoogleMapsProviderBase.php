@@ -5,6 +5,11 @@ namespace Drupal\geolocation_google_maps;
 use Drupal\Core\Url;
 use Drupal\geolocation\MapProviderBase;
 
+/**
+ * Class GoogleMapsProviderBase.
+ *
+ * @package Drupal\geolocation_google_maps
+ */
 abstract class GoogleMapsProviderBase extends MapProviderBase {
 
   /**
@@ -65,7 +70,7 @@ abstract class GoogleMapsProviderBase extends MapProviderBase {
    * @return array
    *   Parameters
    */
-  public function getGoogleMapsApiParameters($additional_parameters = []) {
+  public function getGoogleMapsApiParameters(array $additional_parameters = []) {
     $config = \Drupal::config('geolocation_google_maps.settings');
     $geolocation_parameters = [
       'key' => $config->get('google_map_api_key'),
@@ -96,7 +101,7 @@ abstract class GoogleMapsProviderBase extends MapProviderBase {
    * @return string
    *   Google Maps API URL
    */
-  public function getGoogleMapsApiUrl($additional_parameters = []) {
+  public function getGoogleMapsApiUrl(array $additional_parameters = []) {
     $config = \Drupal::config('geolocation_google_maps.settings');
 
     $google_url = static::$GOOGLEMAPSAPIURLBASE;

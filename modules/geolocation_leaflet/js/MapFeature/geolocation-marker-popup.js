@@ -30,7 +30,7 @@
         function (map, featureSettings) {
           var geolocationLeafletPopupHandler = function(currentMarker) {
 
-            if (typeof currentMarker.getPopup() !== 'undefined') {
+            if (typeof currentMarker.getPopup === 'function') {
               return;
             }
 

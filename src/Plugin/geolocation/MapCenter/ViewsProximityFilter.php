@@ -15,7 +15,7 @@ use Drupal\views\Plugin\views\style\StylePluginBase;
  */
 class ViewsProximityFilter extends ViewsFilterCenterBase {
 
-  protected $views_filter_plugin_id = 'geolocation_filter_proximity';
+  protected $viewsFilterPluginId = 'geolocation_filter_proximity';
 
   /**
    * {@inheritdoc}

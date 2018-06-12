@@ -273,4 +273,11 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
     return $render_array;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public static function getControlPositions() {
+    return [];
+  }
+
 }

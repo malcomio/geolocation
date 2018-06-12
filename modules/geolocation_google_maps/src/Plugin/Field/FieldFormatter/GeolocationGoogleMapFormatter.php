@@ -2,7 +2,6 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\Field\FieldFormatter;
 
-use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 use Drupal\geolocation\Plugin\Field\FieldFormatter\GeolocationMapFormatterBase;
 
 /**

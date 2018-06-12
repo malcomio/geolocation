@@ -74,9 +74,9 @@ class MapCenterManager extends DefaultPluginManager {
       '#type' => 'table',
       '#prefix' => t('<h3>Centre options</h3>Please note: Each option will, if it can be applied, supersede any following option.'),
       '#header' => [
+        t('Weight'),
         t('Enable'),
         t('Option'),
-        t('Settings'),
         t('Settings'),
       ],
       '#attributes' => ['id' => 'geolocation-centre-options'],
@@ -102,6 +102,14 @@ class MapCenterManager extends DefaultPluginManager {
               'draggable',
             ],
           ],
+          'weight' => [
+            '#type' => 'weight',
+            '#title' => t('Weight for @option', ['@option' => $label]),
+            '#title_display' => 'invisible',
+            '#size' => 4,
+            '#default_value' => $weight,
+            '#attributes' => ['class' => ['geolocation-centre-option-weight']],
+          ],
           'enable' => [
             '#attributes' => [
               'id' => $option_enable_id,
@@ -112,17 +120,17 @@ class MapCenterManager extends DefaultPluginManager {
           'option' => [
             '#markup' => $label,
           ],
-          'weight' => [
-            '#type' => 'weight',
-            '#title' => t('Weight for @option', ['@option' => $label]),
-            '#title_display' => 'invisible',
-            '#size' => 4,
-            '#default_value' => $weight,
-            '#attributes' => ['class' => ['geolocation-centre-option-weight']],
+          'settings' => [
+            '#markup' => '',
           ],
           'map_center_id' => [
             '#type' => 'value',
             '#value' => $map_center_id,
+            '#wrapper_attributes' => [
+              'class' => [
+                'hidden',
+              ],
+            ],
           ],
         ];
 

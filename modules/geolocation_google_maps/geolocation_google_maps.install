@@ -8,6 +8,8 @@
 use Drupal\Core\Url;
 
 /**
+ * {@inheritdoc}
+ *
  * Implements hook_requirements().
  */
 function geolocation_google_maps_requirements($phase) {

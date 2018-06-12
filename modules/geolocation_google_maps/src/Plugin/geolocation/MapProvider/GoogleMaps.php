@@ -38,7 +38,7 @@ class GoogleMaps extends GoogleMapsProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getGoogleMapsApiParameters($additional_parameters = []) {
+  public function getGoogleMapsApiParameters(array $additional_parameters = []) {
     $parameters = parent::getGoogleMapsApiParameters($additional_parameters);
     $parameters['callback'] = 'Drupal.geolocation.google.load';
 

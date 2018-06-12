@@ -108,4 +108,5 @@ class GoogleStaticMaps extends GoogleMapsProviderBase {
 
     return $form;
   }
+
 }

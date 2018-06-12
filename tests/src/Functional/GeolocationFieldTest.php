@@ -95,4 +95,5 @@ class GeolocationFieldTest extends BrowserTestBase {
     $this->assertSession()->responseContains($lat);
     $this->assertSession()->responseContains($lng);
   }
+
 }

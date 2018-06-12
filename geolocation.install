@@ -5,6 +5,11 @@
  * Sth sth dark side.
  */
 
+/**
+ * {@inheritdoc}
+ *
+ * Implements hook_update_N();
+ */
 function geolocation_update_8201(&$sandbox) {
   // Enable geolocation_google_maps.
   if (!\Drupal::service('module_handler')->moduleExists('geolocation_google_maps')) {
