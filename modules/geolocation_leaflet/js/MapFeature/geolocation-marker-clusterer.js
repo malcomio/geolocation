@@ -1,9 +1,3 @@
-/**
- * @typedef {Object} LeafletMarkerClustererSettings
- *
- * @property {String} enable
- */
-
 (function ($, Drupal) {
 
   'use strict';
@@ -18,47 +12,33 @@
    */
   Drupal.behaviors.geolocationLeafletMarkerClusterer = {
     attach: function (context, drupalSettings) {
-      $.each(
-        drupalSettings.geolocation.maps,
+      Drupal.geolocation.executeFeatureOnAllMaps(
+        'leaflet_marker_clusterer',
 
         /**
-         * @param {String} mapId - ID of current map
-         * @param {Object} mapSettings - settings for current map
-         * @param {LeafletMarkerClustererSettings} mapSettings.leaflet_marker_clusterer - settings for current map
+         * @param {GeolocationLeafletMap} map - Current map.
+         * @param {GeolocationMapFeatureSettings} featureSettings - Settings for current feature.
          */
-        function (mapId, mapSettings) {
-          if (
-            typeof mapSettings.leaflet_marker_clusterer !== 'undefined'
-            && mapSettings.leaflet_marker_clusterer.enable
-          ) {
+        function (map, featureSettings) {
+          var cluster = L.markerClusterGroup();
+          map.leafletMap.removeLayer(map.markerLayer);
+          cluster.addLayer(map.markerLayer);
 
-            var map = Drupal.geolocation.getMapById(mapId);
+          map.leafletMap.addLayer(cluster);
 
-            if (!map) {
-              return;
-            }
+          map.addMarkerAddedCallback(function (currentMarker) {
+            cluster.addLayer(currentMarker);
+          });
 
-            if (map.container.hasClass('leaflet-marker-cluster-processed')) {
-              return;
-            }
-            map.container.addClass('leaflet-marker-cluster-processed');
+          map.addMarkerRemoveCallback(function (marker) {
+            cluster.removeLayer(marker);
+          });
 
-            var cluster = L.markerClusterGroup();
-            map.leafletMap.removeLayer(map.markerLayer);
-            cluster.addLayer(map.markerLayer);
-
-            map.leafletMap.addLayer(cluster);
-
-            map.addMarkerAddedCallback(function (currentMarker) {
-              cluster.addLayer(currentMarker);
-            });
-
-            map.addMarkerRemoveCallback(function (marker) {
-              cluster.removeLayer(marker);
-            });
-          }
-        }
+          return true;
+        },
+        drupalSettings
       );
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 })(jQuery, Drupal);

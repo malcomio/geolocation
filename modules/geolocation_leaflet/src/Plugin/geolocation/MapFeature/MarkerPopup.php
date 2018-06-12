@@ -59,7 +59,7 @@ class MarkerPopup extends MapFeatureBase {
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'marker_popup' => [
+                'leaflet_marker_popup' => [
                   'enable' => TRUE,
                   'infoAutoDisplay' => $feature_settings['info_auto_display'],
                 ],

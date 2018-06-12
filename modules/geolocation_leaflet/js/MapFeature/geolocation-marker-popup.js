@@ -1,19 +1,9 @@
 /**
  * @typedef {Object} LeafletMarkerPopupSettings
  *
- * @property {String} enable
+ * @extends {GeolocationMapFeatureSettings}
+ *
  * @property {Boolean} infoAutoDisplay
- */
-
-/**
- * @typedef {Object} LeafletPopup
- * @property {Function} open
- * @property {Function} close
- */
-
-/**
- * @property {LeafletPopup} GeolocationGoogleMap.infoWindow
- * @property {function({}):LeafletPopup} GeolocationGoogleMap.InfoWindow
  */
 
 (function ($, Drupal) {
@@ -30,59 +20,51 @@
    */
   Drupal.behaviors.geolocationLeafletMarkerPopup = {
     attach: function (context, drupalSettings) {
-      $.each(
-        drupalSettings.geolocation.maps,
+      Drupal.geolocation.executeFeatureOnAllMaps(
+        'leaflet_marker_popup',
 
         /**
-         * @param {string} mapId - ID of current map
-         * @param {Object} mapSettings - settings for current map
-         * @param {LeafletMarkerPopupSettings} mapSettings.marker_popup - settings for current map
+         * @param {GeolocationLeafletMap} map - Current map.
+         * @param {LeafletMarkerPopupSettings} featureSettings - Settings for current feature.
          */
-        function (mapId, mapSettings) {
-          if (
-            typeof mapSettings.marker_popup !== 'undefined'
-            && mapSettings.marker_popup.enable
-          ) {
+        function (map, featureSettings) {
+          var geolocationLeafletPopupHandler = function(currentMarker) {
 
-            var map = Drupal.geolocation.getMapById(mapId);
-
-            if (!map) {
+            if (typeof currentMarker.getPopup() !== 'undefined') {
               return;
             }
 
-            var geolocationLeafletPopupHandler = function(currentMarker) {
-              if (typeof currentMarker.getPopup() !== 'undefined') {
-                return;
-              }
+            if (typeof (currentMarker.locationWrapper) === 'undefined') {
+              return;
+            }
 
-              if (typeof (currentMarker.locationWrapper) === 'undefined') {
-                return;
-              }
+            var content = currentMarker.locationWrapper.find('.location-content');
 
-              var content = currentMarker.locationWrapper.find('.location-content');
+            if (content.length < 1) {
+              return;
+            }
+            currentMarker.bindPopup(content.html());
 
-              if (content.length < 1) {
-                return;
-              }
-              currentMarker.bindPopup(content.html());
+            if (featureSettings.infoAutoDisplay) {
+              currentMarker.openPopup();
+            }
+          };
 
-              if (mapSettings.marker_popup.infoAutoDisplay) {
-                currentMarker.openPopup();
-              }
-            };
-
-            map.addPopulatedCallback(function (map) {
-              $.each(map.mapMarkers, function (index, currentMarker) {
-                geolocationLeafletPopupHandler(currentMarker);
-              });
-            });
-
-            map.addMarkerAddedCallback(function (currentMarker) {
+          map.addPopulatedCallback(function (map) {
+            $.each(map.mapMarkers, function (index, currentMarker) {
               geolocationLeafletPopupHandler(currentMarker);
             });
-          }
-        }
+          });
+
+          map.addMarkerAddedCallback(function (currentMarker) {
+            geolocationLeafletPopupHandler(currentMarker);
+          });
+
+          return true;
+        },
+        drupalSettings
       );
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 })(jQuery, Drupal);
