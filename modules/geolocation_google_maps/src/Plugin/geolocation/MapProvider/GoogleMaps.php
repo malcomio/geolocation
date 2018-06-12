@@ -82,10 +82,7 @@ class GoogleMaps extends GoogleMapsProviderBase {
   }
 
   /**
-   * Return available control positions.
-   *
-   * @return array
-   *   Positions.
+   * {@inheritdoc}
    */
   public static function getControlPositions() {
     return [

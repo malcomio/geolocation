@@ -135,4 +135,16 @@ class Leaflet extends MapProviderBase {
     return $render_array;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public static function getControlPositions() {
+    return [
+      'topleft' => t('Top left'),
+      'topright' => t('Top right'),
+      'bottomleft' => t('Bottom left'),
+      'bottomright' => t('Bottom right'),
+    ];
+  }
+
 }

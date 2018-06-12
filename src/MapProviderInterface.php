@@ -67,4 +67,12 @@ interface MapProviderInterface extends PluginInspectionInterface {
    */
   public function alterRenderArray(array $render_array, array $map_settings, array $context);
 
+  /**
+   * Return available control positions.
+   *
+   * @return array|false
+   *   Positions.
+   */
+  public static function getControlPositions();
+
 }

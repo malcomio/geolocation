@@ -92,7 +92,8 @@
 
       // Load Google Maps API and execute all callbacks.
       Drupal.geolocation.google.load();
-    }
+    },
+    detach: function() {}
   };
 
 })(jQuery, Drupal);

@@ -39,7 +39,8 @@
           }
         });
       });
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 
 })(jQuery, Drupal);

@@ -327,7 +327,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       ]
     );
 
-    $element['map'] = [
+    $element['widget']['map'] = [
       '#type' => 'geolocation_map',
       '#weight' => -10,
       '#settings' => $settings[static::$mapProviderSettingsFormId],
@@ -347,6 +347,19 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
   }
 
   /**
+   * Return map provider.
+   *
+   * @return bool|\Drupal\geolocation\MapProviderInterface
+   *   Map provder or false.
+   */
+  public function getMapProvider() {
+    if ($this->mapProvider) {
+      return $this->mapProvider;
+    }
+    return FALSE;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
@@ -360,6 +373,13 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     }
 
     return $values;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getControlPositions() {
+    return FALSE;
   }
 
 }
