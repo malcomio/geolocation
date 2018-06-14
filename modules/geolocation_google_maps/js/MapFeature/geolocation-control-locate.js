@@ -18,7 +18,7 @@
           map.addInitializedCallback(function (map) {
             var locateButton = $('.geolocation-map-control .locate', map.wrapper);
 
-            if (navigator.geolocation) {
+            if (navigator.geolocation && window.location.protocol === 'https:') {
               locateButton.click(function (e) {
                 navigator.geolocation.getCurrentPosition(function (currentPosition) {
                   var currentLocation = new google.maps.LatLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
@@ -26,6 +26,9 @@
                 });
                 e.preventDefault();
               });
+            }
+            else {
+              locateButton.remove();
             }
           });
 
