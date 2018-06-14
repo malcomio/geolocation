@@ -219,10 +219,10 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $default_field_values = FALSE;
 
-    if (!empty($this->fieldDefinition->getDefaultValueLiteral()[0])) {
+    if (!empty($this->fieldDefinition->getDefaultValueLiteral()[$delta])) {
       $default_field_values = [
-        'lat' => $this->fieldDefinition->getDefaultValueLiteral()[0]['lat'],
-        'lng' => $this->fieldDefinition->getDefaultValueLiteral()[0]['lng'],
+        'lat' => $this->fieldDefinition->getDefaultValueLiteral()[$delta]['lat'],
+        'lng' => $this->fieldDefinition->getDefaultValueLiteral()[$delta]['lng'],
       ];
     }
 
