@@ -228,6 +228,8 @@ class GeolocationJavascriptTest extends GeolocationJavascriptTestBase {
 
     $this->assertSession()->fieldExists("field_geolocation[0][google_map_settings][height]");
 
+    $this->getSession()->getPage()->findById('edit-field-geolocation-0-google-map-settings')->click();
+
     $edit = [
       'title[0][value]' => $this->randomMachineName(),
       'field_geolocation[0][google_map_settings][height]' => '273px',
