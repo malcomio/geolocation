@@ -2,10 +2,13 @@
 
 namespace Drupal\geolocation_geofield\Plugin\geolocation\DataProvider;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemInterface;
+use Drupal\geofield\Plugin\Field\FieldType\GeofieldItem;
 use Drupal\geolocation\DataProviderBase;
+use Drupal\geolocation\DataProviderInterface;
 use Drupal\views\Plugin\views\field\EntityField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
-use Drupal\views\ResultRow;
 
 /**
  * Provides Google Maps.
@@ -16,12 +19,12 @@ use Drupal\views\ResultRow;
  *   description = @Translation("Geofield."),
  * )
  */
-class Geofield extends DataProviderBase {
+class Geofield extends DataProviderBase implements DataProviderInterface {
 
   /**
    * {@inheritdoc}
    */
-  public function isCommonMapViewsStyleOption(FieldPluginBase $views_field) {
+  public function isViewsGeoOption(FieldPluginBase $views_field) {
     if (
       $views_field instanceof EntityField
       && $views_field->getPluginId() == 'field'
@@ -42,25 +45,22 @@ class Geofield extends DataProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getPositionsFromViewsRow(FieldPluginBase $views_field, ResultRow $row) {
-    $positions = [];
+  public function isFieldGeoOption(FieldDefinitionInterface $fieldDefinition) {
+    return ($fieldDefinition->getType() == 'geofield');
+  }
 
-    $entity = $views_field->getEntity($row);
-
-    if (isset($entity->{$views_field->definition['field_name']})) {
-
-      /** @var \Drupal\Core\Field\FieldItemListInterface $geo_items */
-      $geo_items = $entity->{$views_field->definition['field_name']};
-
-      foreach ($geo_items as $item) {
-        $positions[] = [
-          'lat' => $item->get('lat')->getValue(),
-          'lng' => $item->get('lon')->getValue(),
-        ];
-      }
+  /**
+   * {@inheritdoc}
+   */
+  public function getPositionsFromItem(FieldItemInterface $fieldItem) {
+    if ($fieldItem instanceof GeofieldItem) {
+      return [
+        'lat' => $fieldItem->get('lat')->getValue(),
+        'lng' => $fieldItem->get('lon')->getValue(),
+      ];
     }
 
-    return $positions;
+    return FALSE;
   }
 
 }

@@ -5,6 +5,8 @@ namespace Drupal\geolocation;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\views\Plugin\views\field\FieldPluginBase;
+use Drupal\Core\Field\FieldDefinitionInterface;
 
 /**
  * Search plugin manager.
@@ -26,6 +28,68 @@ class DataProviderManager extends DefaultPluginManager {
     parent::__construct('Plugin/geolocation/DataProvider', $namespaces, $module_handler, 'Drupal\geolocation\DataProviderInterface', 'Drupal\geolocation\Annotation\DataProvider');
     $this->alterInfo('geolocation_dataprovider_info');
     $this->setCacheBackend($cache_backend, 'geolocation_dataprovider');
+  }
+
+  /**
+   * Return DataProvider by field type.
+   *
+   * @param \Drupal\views\Plugin\views\field\FieldPluginBase $viewField
+   *   Map type.
+   * @param array $configuration
+   *   Configuration.
+   *
+   * @return \Drupal\geolocation\DataProviderInterface|false
+   *   Data provider.
+   */
+  public function getDataProviderByViewsField(FieldPluginBase $viewField, array $configuration = []) {
+    $definitions = $this->getDefinitions();
+    try {
+      foreach ($definitions as $dataProviderId => $dataProviderDefinition) {
+        /** @var \Drupal\geolocation\DataProviderInterface $dataProvider */
+        $dataProvider = $this->createInstance($dataProviderId, $configuration);
+
+        if ($dataProvider->isViewsGeoOption($viewField)) {
+          $dataProvider->setViewsField($viewField);
+          return $dataProvider;
+        }
+      }
+    }
+    catch (\Exception $e) {
+      return FALSE;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Return DataProvider by field type.
+   *
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $fieldDefinition
+   *   Field definition.
+   * @param array $configuration
+   *   Configuration.
+   *
+   * @return \Drupal\geolocation\DataProviderInterface|false
+   *   Data provider.
+   */
+  public function getDataProviderByFieldDefinition(FieldDefinitionInterface $fieldDefinition, array $configuration = []) {
+    $definitions = $this->getDefinitions();
+    try {
+      foreach ($definitions as $dataProviderId => $dataProviderDefinition) {
+        /** @var \Drupal\geolocation\DataProviderInterface $dataProvider */
+        $dataProvider = $this->createInstance($dataProviderId, $configuration);
+
+        if ($dataProvider->isFieldGeoOption($fieldDefinition)) {
+          $dataProvider->setFieldDefinition($fieldDefinition);
+          return $dataProvider;
+        }
+      }
+    }
+    catch (\Exception $e) {
+      return FALSE;
+    }
+
+    return FALSE;
   }
 
 }

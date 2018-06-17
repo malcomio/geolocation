@@ -2,12 +2,14 @@
 
 namespace Drupal\geolocation;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\views\Plugin\views\field\FieldPluginBase;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\views\ResultRow;
+use Drupal\views\Plugin\views\field\FieldPluginBase;
 
 /**
  * Class DataProviderBase.
@@ -22,6 +24,20 @@ abstract class DataProviderBase extends PluginBase implements DataProviderInterf
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
   protected $entityFieldManager;
+
+  /**
+   * Views field.
+   *
+   * @var \Drupal\views\Plugin\views\field\FieldPluginBase
+   */
+  protected $viewsField;
+
+  /**
+   * Field definition.
+   *
+   * @var \Drupal\Core\Field\FieldDefinitionInterface
+   */
+  protected $fieldDefinition;
 
   /**
    * Constructs a new GeocoderBase object.
@@ -56,14 +72,74 @@ abstract class DataProviderBase extends PluginBase implements DataProviderInterf
   /**
    * {@inheritdoc}
    */
-  public function isCommonMapViewsStyleOption(FieldPluginBase $views_field) {
+  public function getTokenHelp(FieldDefinitionInterface $fieldDefinition = NULL) {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function replaceFieldItemTokens($text, FieldItemInterface $fieldItem) {
+    return $text;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isViewsGeoOption(FieldPluginBase $viewsField) {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getPositionsFromViewsRow(FieldPluginBase $views_field, ResultRow $row) {
+  public function getPositionsFromViewsRow(ResultRow $row, FieldPluginBase $viewsField = NULL) {
+    if (empty($viewsField)) {
+      $viewsField = $this->viewsField;
+    }
+
+    $positions = [];
+
+    $entity = $viewsField->getEntity($row);
+
+    if (isset($entity->{$viewsField->definition['field_name']})) {
+
+      /** @var \Drupal\Core\Field\FieldItemListInterface $geo_items */
+      $geo_items = $entity->{$viewsField->definition['field_name']};
+
+      foreach ($geo_items as $item) {
+        $positions[] = $this->getPositionsFromItem($item);
+      }
+    }
+
+    return $positions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setViewsField(FieldPluginBase $viewsField) {
+    $this->viewsField = $viewsField;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setFieldDefinition(FieldDefinitionInterface $fieldDefinition) {
+    $this->fieldDefinition = $fieldDefinition;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPositionsFromItem(FieldItemInterface $fieldItem) {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSettingsForm(array $settings, array $parents = []) {
     return [];
   }
 

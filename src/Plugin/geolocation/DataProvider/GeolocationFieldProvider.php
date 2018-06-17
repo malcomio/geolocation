@@ -2,10 +2,13 @@
 
 namespace Drupal\geolocation\Plugin\geolocation\DataProvider;
 
-use Drupal\geolocation\DataProviderInterface;
-use Drupal\Core\Plugin\PluginBase;
+use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
-use Drupal\views\ResultRow;
+use Drupal\geolocation\DataProviderInterface;
+use Drupal\geolocation\DataProviderBase;
+use Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem;
+use Drupal\geolocation\GeolocationCore;
 
 /**
  * Provides default geolocation field.
@@ -16,38 +19,200 @@ use Drupal\views\ResultRow;
  *   description = @Translation("Geolocation Field."),
  * )
  */
-class GeolocationFieldProvider extends PluginBase implements DataProviderInterface {
+class GeolocationFieldProvider extends DataProviderBase implements DataProviderInterface {
 
   /**
    * {@inheritdoc}
    */
-  public function isCommonMapViewsStyleOption(FieldPluginBase $views_field) {
+  public function getTokenHelp(FieldDefinitionInterface $fieldDefinition = NULL) {
+
+    if (empty($fieldDefinition)) {
+      $fieldDefinition = $this->fieldDefinition;
+    }
+
+    $element = [];
+
+    // Add the token UI from the token module if present.
+    $element['token_items'] = [
+      '#type' => 'table',
+      '#caption' => $this->t('Geolocation Item Tokens'),
+      '#header' => [$this->t('Token'), $this->t('Description')],
+    ];
+
+    // Value tokens.
+    $element['token_items'][] = [
+      'token' => [
+        '#plain_text' => '[geolocation_current_item:lat]',
+      ],
+      'description' => [
+        '#plain_text' => $this->t('Current value latitude'),
+      ],
+    ];
+    $element['token_items'][] = [
+      'token' => [
+        '#plain_text' => '[geolocation_current_item:lng]',
+      ],
+      'description' => [
+        '#plain_text' => $this->t('Current value longitude'),
+      ],
+    ];
+
+    // Sexagesimal tokens.
+    $element['token_items'][] = [
+      'token' => [
+        '#plain_text' => '[geolocation_current_item:lng_sex]',
+      ],
+      'description' => [
+        '#plain_text' => $this->t('Current value longitude in sexagesimal notation.'),
+      ],
+    ];
+    $element['token_items'][] = [
+      'token' => [
+        '#plain_text' => '[geolocation_current_item:lng_sex]',
+      ],
+      'description' => [
+        '#plain_text' => $this->t('Current value longitude in sexagesimal notation'),
+      ],
+    ];
+
+    // Raw tokens.
+    $element['token_items'][] = [
+      'token' => [
+        '#plain_text' => '[geolocation_current_item:lat_sin]',
+      ],
+      'description' => [
+        '#plain_text' => $this->t('Add description'),
+      ],
+    ];
+    $element['token_items'][] = [
+      'token' => [
+        '#plain_text' => '[geolocation_current_item:lat_cos]',
+      ],
+      'description' => [
+        '#plain_text' => $this->t('Add description'),
+      ],
+    ];
+    $element['token_items'][] = [
+      'token' => [
+        '#plain_text' => '[geolocation_current_item:lng_rad]',
+      ],
+      'description' => [
+        '#plain_text' => $this->t('Add description'),
+      ],
+    ];
+
+    $element['token_items'][] = [
+      'token' => [
+        '#plain_text' => '[geolocation_current_item:data:?]',
+      ],
+      'description' => [
+        '#plain_text' => $this->t('Data stored with the field item'),
+      ],
+    ];
+
+    if (
+      \Drupal::service('module_handler')->moduleExists('token')
+      && method_exists($fieldDefinition, 'getTargetEntityTypeId')
+    ) {
+      // Add the token UI from the token module if present.
+      $element['token_help'] = [
+        '#theme' => 'token_tree_link',
+        '#prefix' => $this->t('<h4>Tokens:</h4>'),
+        '#token_types' => [$fieldDefinition->getTargetEntityTypeId()],
+      ];
+    }
+
+    return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function replaceFieldItemTokens($text, FieldItemInterface $fieldItem) {
+    $token_context['geolocation_current_item'] = $fieldItem;
+
+    return \Drupal::token()->replace($text, $token_context, [
+      'callback' => [$this, 'geolocationItemTokens'],
+      'clear' => TRUE,
+    ]);
+  }
+
+  /**
+   * Token replacement support function, callback to token replacement function.
+   *
+   * @param array $replacements
+   *   An associative array variable containing mappings from token names to
+   *   values (for use with strtr()).
+   * @param array $data
+   *   Current item replacements.
+   * @param array $options
+   *   A keyed array of settings and flags to control the token replacement
+   *   process. See \Drupal\Core\Utility\Token::replace().
+   */
+  public function geolocationItemTokens(array &$replacements, array $data, array $options) {
+    if (isset($data['geolocation_current_item'])) {
+
+      /** @var \Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem $item */
+      $item = $data['geolocation_current_item'];
+      $replacements['[geolocation_current_item:lat]'] = $item->get('lat')->getValue();
+      $replacements['[geolocation_current_item:lat_sex]'] = GeolocationCore::decimalToSexagesimal($item->get('lat')->getValue());
+      $replacements['[geolocation_current_item:lng]'] = $item->get('lng')->getValue();
+      $replacements['[geolocation_current_item:lng_sex]'] = GeolocationCore::decimalToSexagesimal($item->get('lng')->getValue());
+      $replacements['[geolocation_current_item:lat_sin]'] = $item->get('lat_sin')->getValue();
+      $replacements['[geolocation_current_item:lat_cos]'] = $item->get('lat_cos')->getValue();
+      $replacements['[geolocation_current_item:lng_rad]'] = $item->get('lng_rad')->getValue();
+
+      // Handle data tokens.
+      $metadata = $item->get('data')->getValue();
+      if (is_array($metadata) || ($metadata instanceof \Traversable)) {
+        foreach ($metadata as $key => $value) {
+          try {
+            // Maybe there is values inside the values.
+            if (is_array($value) || ($value instanceof \Traversable)) {
+              foreach ($value as $deepkey => $deepvalue) {
+                if (is_string($deepvalue)) {
+                  $replacements['[geolocation_current_item:data:' . $key . ':' . $deepkey . ']'] = (string) $deepvalue;
+                }
+              }
+            }
+            else {
+              $replacements['[geolocation_current_item:data:' . $key . ']'] = (string) $value;
+            }
+          }
+          catch (\Exception $e) {
+            watchdog_exception('geolocation', $e);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isViewsGeoOption(FieldPluginBase $views_field) {
     return ($views_field->getPluginId() == 'geolocation_field');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getPositionsFromViewsRow(FieldPluginBase $views_field, ResultRow $row) {
-    $positions = [];
+  public function isFieldGeoOption(FieldDefinitionInterface $fieldDefinition) {
+    return ($fieldDefinition->getType() == 'geolocation');
+  }
 
-    /** @var \Drupal\geolocation\Plugin\views\field\GeolocationField $geolocation_field */
-    $entity = $views_field->getEntity($row);
-
-    if (isset($entity->{$views_field->definition['field_name']})) {
-
-      /** @var \Drupal\Core\Field\FieldItemListInterface $geo_items */
-      $geo_items = $entity->{$views_field->definition['field_name']};
-
-      foreach ($geo_items as $item) {
-        $positions[] = [
-          'lat' => $item->get('lat')->getValue(),
-          'lng' => $item->get('lng')->getValue(),
-        ];
-      }
+  /**
+   * {@inheritdoc}
+   */
+  public function getPositionsFromItem(FieldItemInterface $fieldItem) {
+    if ($fieldItem instanceof GeolocationItem) {
+      return [
+        'lat' => $fieldItem->get('lat')->getValue(),
+        'lng' => $fieldItem->get('lng')->getValue(),
+      ];
     }
 
-    return $positions;
+    return FALSE;
   }
 
 }

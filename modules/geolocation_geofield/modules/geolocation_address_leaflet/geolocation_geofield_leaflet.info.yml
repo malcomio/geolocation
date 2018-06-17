@@ -1,0 +1,7 @@
+name: Geolocation - Geofield - Leaflet
+type: module
+description: Geofield integration with Leaflet
+core: 8.x
+package: Geolocation
+dependencies:
+  - geolocation_geofield

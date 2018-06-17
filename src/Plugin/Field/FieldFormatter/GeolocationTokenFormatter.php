@@ -2,11 +2,11 @@
 
 namespace Drupal\geolocation\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Unicode;
-use Drupal\geolocation\GeolocationItemTokenTrait;
 
 /**
  * Plugin implementation of the 'geolocation_token' formatter.
@@ -22,7 +22,24 @@ use Drupal\geolocation\GeolocationItemTokenTrait;
  */
 class GeolocationTokenFormatter extends FormatterBase {
 
-  use GeolocationItemTokenTrait;
+  /**
+   * Data Provider.
+   *
+   * @var \Drupal\geolocation\DataProviderInterface
+   */
+  protected $dataProvider = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
+
+    $this->dataProvider = \Drupal::service('plugin.manager.geolocation.dataprovider')->getDataProviderByFieldDefinition($field_definition);
+    if (empty($this->dataProvider)) {
+      throw new \Exception('Geolocation data provider not found');
+    }
+  }
 
   /**
    * {@inheritdoc}
@@ -57,7 +74,7 @@ class GeolocationTokenFormatter extends FormatterBase {
       $form['tokenized_text']['#format'] = $settings['tokenized_text']['format'];
     }
 
-    $element['token_help'] = $this->getTokenHelp();
+    $element['token_help'] = $this->dataProvider->getTokenHelp();
 
     return $element;
   }
@@ -106,14 +123,7 @@ class GeolocationTokenFormatter extends FormatterBase {
       ) {
         $elements[$delta] = [
           '#type' => 'processed_text',
-          '#text' => \Drupal::token()->replace(
-            $tokenized_text['value'],
-            $token_context,
-            [
-              'callback' => [$this, 'geolocationItemTokens'],
-              'clear' => TRUE,
-            ]
-          ),
+          '#text' => $this->dataProvider->replaceFieldItemTokens($tokenized_text['value'], $item),
           '#format' => $tokenized_text['format'],
         ];
       }

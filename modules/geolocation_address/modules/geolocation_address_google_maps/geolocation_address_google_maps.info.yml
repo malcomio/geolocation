@@ -1,0 +1,7 @@
+name: Geolocation - Address - Google Maps
+type: module
+description: Address integration with Google Maps
+core: 8.x
+package: Geolocation
+dependencies:
+  - geolocation_address

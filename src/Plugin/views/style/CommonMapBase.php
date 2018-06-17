@@ -223,7 +223,9 @@ abstract class CommonMapBase extends StylePluginBase {
      * Add locations to output.
      */
     foreach ($this->view->result as $row_number => $row) {
-      $build['locations'][] = $this->getLocationsFromRow($row);
+      foreach ($this->getLocationsFromRow($row) as $location) {
+        $build['locations'][] = $location;
+      }
     }
 
     $centre = [];
@@ -370,16 +372,9 @@ abstract class CommonMapBase extends StylePluginBase {
       $icon_url = file_url_transform_relative(file_create_url($icon_token_uri));
     }
 
-    $positions = [];
-    foreach ($this->dataProviderManager->getDefinitions() as $dataProviderId => $dataProviderDefinition) {
-      /** @var \Drupal\geolocation\DataProviderInterface $dataProvider */
-      $dataProvider = $this->dataProviderManager->createInstance($dataProviderId);
-      if ($dataProvider->isCommonMapViewsStyleOption($this->view->field[$this->options['geolocation_field']])) {
-        $positions = array_merge($positions, $dataProvider->getPositionsFromViewsRow($this->view->field[$this->options['geolocation_field']], $row));
-      }
-    }
+    $dataProvider = $this->dataProviderManager->getDataProviderByViewsField($this->view->field[$this->options['geolocation_field']], $this->options['data_provider_settings']);
 
-    foreach ($positions as $position) {
+    foreach ($dataProvider->getPositionsFromViewsRow($row) as $position) {
       $location = [
         '#type' => 'geolocation_map_location',
         'content' => $this->view->rowPlugin->render($row),
@@ -414,6 +409,7 @@ abstract class CommonMapBase extends StylePluginBase {
 
     $options['even_empty'] = ['default' => '1'];
     $options['geolocation_field'] = ['default' => ''];
+    $options['data_provider_settings'] = ['default' => []];
     $options['title_field'] = ['default' => ''];
     $options['icon_field'] = ['default' => ''];
     $options['marker_scroll_to_result'] = ['default' => 0];
@@ -443,6 +439,7 @@ abstract class CommonMapBase extends StylePluginBase {
 
     $labels = $this->displayHandler->getFieldLabels();
     $geo_options = [];
+    $data_providers = [];
     $title_options = [];
     $icon_options = [];
     $id_options = [];
@@ -450,13 +447,16 @@ abstract class CommonMapBase extends StylePluginBase {
     $fields = $this->displayHandler->getHandlers('field');
     /** @var \Drupal\views\Plugin\views\field\FieldPluginBase[] $fields */
     foreach ($fields as $field_name => $field) {
-      foreach ($this->dataProviderManager->getDefinitions() as $dataProviderId => $dataProviderDefinition) {
-        /** @var \Drupal\geolocation\DataProviderInterface $dataProvider */
-        $dataProvider = $this->dataProviderManager->createInstance($dataProviderId);
-
-        if ($dataProvider->isCommonMapViewsStyleOption($field)) {
-          $geo_options[$field_name] = $labels[$field_name];
-        }
+      $data_provider_settings = [];
+      if (
+        $this->options['geolocation_field'] == $field_name
+        && !empty($this->options['data_provider_settings'])
+      ) {
+        $data_provider_settings = $this->options['data_provider_settings'];
+      }
+      if ($data_provider = $this->dataProviderManager->getDataProviderByViewsField($field, $data_provider_settings)) {
+        $geo_options[$field_name] = $field->adminLabel();
+        $data_providers[$field_name] = $data_provider;
       }
 
       if (!empty($field->options['type']) && $field->options['type'] == 'image') {
@@ -472,6 +472,8 @@ abstract class CommonMapBase extends StylePluginBase {
       }
     }
 
+    $form_state->setTemporaryValue('data_providers', $data_providers);
+
     $form['geolocation_field'] = [
       '#title' => $this->t('Geolocation source field'),
       '#type' => 'select',
@@ -479,7 +481,25 @@ abstract class CommonMapBase extends StylePluginBase {
       '#description' => $this->t("The source of geodata for each entity."),
       '#options' => $geo_options,
       '#required' => TRUE,
+      '#ajax' => [
+        'callback' => [get_class($this), 'addDataProviderSettingsFormAjax'],
+        'wrapper' => 'data-provider-settings',
+        'effect' => 'fade',
+      ],
     ];
+
+    if (!empty($data_providers[$this->options['geolocation_field']])) {
+      $data_provider = $data_providers[$this->options['geolocation_field']];
+      $form['data_provider_settings'] = $data_provider->getSettingsForm($this->options['data_provider_settings']);
+      $form['data_provider_settings']['#prefix'] = '<div id="data-provider-settings">';
+      $form['data_provider_settings']['#suffix'] = '</div>';
+    }
+    else {
+      $form['data_provider_settings'] = [
+        '#prefix' => '<div id="data-provider-settings">',
+        '#suffix' => '</div>',
+      ];
+    }
 
     $form['title_field'] = [
       '#title' => $this->t('Title source field'),
@@ -660,6 +680,60 @@ abstract class CommonMapBase extends StylePluginBase {
       $mapProviderSettings = empty($this->options[$this->mapProviderSettingsFormId]) ? [] : $this->options[$this->mapProviderSettingsFormId];
       $form[$this->mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm($mapProviderSettings, ['style_options', $this->mapProviderSettingsFormId]);
     }
+  }
+
+  /**
+   * Return settings array for data provider after select change.
+   *
+   * @param array $form
+   *   Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current From State.
+   *
+   * @return array|false
+   *   Settings form.
+   */
+  public function addDataProviderSettingsFormAjax(array $form, FormStateInterface $form_state) {
+    $data_providers = $form_state->getTemporaryValue('data_providers');
+
+    $triggering_element = $form_state->getTriggeringElement()['#parents'];
+    array_pop($triggering_element);
+
+    $target = $triggering_element;
+    $target[] = 'geolocation_field';
+    $geolocation_field = $form_state->getValue($target, '');
+
+    if (empty($data_providers[$geolocation_field])) {
+      return [];
+    }
+
+    $target = $triggering_element;
+    $target[] = 'settings';
+    $data_provider_settings = $form_state->getValue($target, []);
+
+    try {
+      /** @var \Drupal\geolocation\DataProviderInterface $data_provider */
+      $data_provider = $data_providers[$geolocation_field];
+    }
+    catch (\Exception $e) {
+    }
+
+    if (empty($data_provider)) {
+      $element = [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => t('Non-existing data provider plugin requested.'),
+      ];
+    }
+    else {
+      $element = $data_provider->getSettingsForm($data_provider_settings);
+    }
+
+    $element['#prefix'] = '<div id="data-provider-settings">';
+    $element['#suffix'] = '</div>';
+    $element['#flatten'] = TRUE;
+
+    return $element;
   }
 
 }

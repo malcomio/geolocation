@@ -1,0 +1,7 @@
+geolocation_address.address_formatter:
+  path: '/geolocation/address/formatter'
+  defaults:
+    _controller: 'Drupal\geolocation_address\Controller\AddressFormatterController:formatAddress'
+    _title: 'Geolocation Address Formatter'
+  requirements:
+    _permission: 'access content'

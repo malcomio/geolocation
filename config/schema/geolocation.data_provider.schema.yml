@@ -1,0 +1,3 @@
+geolocation.data_provider.geolocation:
+  type: geolocation_data_provider
+  label: 'Geolocation field'

@@ -5,7 +5,6 @@ namespace Drupal\geolocation\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\geolocation\GeolocationItemTokenTrait;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Render\Element;
@@ -14,8 +13,6 @@ use Drupal\Core\Render\Element;
  * Plugin base for Map based formatters.
  */
 abstract class GeolocationMapFormatterBase extends FormatterBase {
-
-  use GeolocationItemTokenTrait;
 
   /**
    * Map Provider ID.
@@ -39,6 +36,13 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
   protected $mapProvider = NULL;
 
   /**
+   * Data Provider.
+   *
+   * @var \Drupal\geolocation\DataProviderInterface
+   */
+  protected $dataProvider = NULL;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings) {
@@ -46,6 +50,13 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
     if (!empty(static::$mapProviderId)) {
       $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider(static::$mapProviderId, $this->getSettings());
+    }
+
+    $settings = $this->getSettings();
+
+    $this->dataProvider = \Drupal::service('plugin.manager.geolocation.dataprovider')->getDataProviderByFieldDefinition($field_definition, $settings['data_provider']);
+    if (empty($this->dataProvider)) {
+      throw new \Exception('Geolocation data provider not found');
     }
   }
 
@@ -57,6 +68,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $settings['title'] = '';
     $settings['set_marker'] = TRUE;
     $settings['common_map'] = TRUE;
+    $settings['data_provider'] = [];
     $settings['info_text'] = [
       'value' => '',
       'format' => filter_default_format(),
@@ -90,6 +102,17 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $settings = $this->getSettings();
 
     $element = [];
+
+    $data_provider_settings_form = $this->dataProvider->getSettingsForm($settings['data_provider'], [
+      'fields',
+      $this->fieldDefinition->getName(),
+      'settings_edit_form',
+      'settings',
+    ]);
+
+    if (!empty($data_provider_settings_form)) {
+      $element['data_provider'] = $data_provider_settings_form;
+    }
 
     $element['set_marker'] = [
       '#type' => 'checkbox',
@@ -138,7 +161,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       ],
     ];
 
-    $element['replacement_patterns']['token_geolocation'] = $this->getTokenHelp();
+    $element['replacement_patterns']['token_geolocation'] = $this->dataProvider->getTokenHelp();
 
     $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
     if (
@@ -217,21 +240,14 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
     $settings = $this->getSettings();
 
-    $token_context = [
-      $this->fieldDefinition->getTargetEntityTypeId() => $items->getEntity(),
-    ];
-
     $locations = [];
 
     foreach ($items as $delta => $item) {
-      $token_context['geolocation_current_item'] = $item;
+      $item_position = $this->dataProvider->getPositionsFromItem($item);
+      $title = $this->dataProvider->replaceFieldItemTokens($settings['title'], $item);
 
-      $title = \Drupal::token()->replace($settings['title'], $token_context, [
-        'callback' => [$this, 'geolocationItemTokens'],
-        'clear' => TRUE,
-      ]);
       if (empty($title)) {
-        $title = $item->lat . ', ' . $item->lng;
+        $title = $item_position['lat'] . ', ' . $item_position['lng'];
       }
 
       $location = [
@@ -239,8 +255,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
         '#title' => $title,
         '#disable_marker' => empty($settings['set_marker']) ? TRUE : FALSE,
         '#position' => [
-          'lat' => $item->lat,
-          'lng' => $item->lng,
+          'lat' => $item_position['lat'],
+          'lng' => $item_position['lng'],
         ],
       ];
 
@@ -250,14 +266,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       ) {
         $location['content'] = [
           '#type' => 'processed_text',
-          '#text' => \Drupal::token()->replace(
-            $settings['info_text']['value'],
-            $token_context,
-            [
-              'callback' => [$this, 'geolocationItemTokens'],
-              'clear' => TRUE,
-            ]
-          ),
+          '#text' => $this->dataProvider->replaceFieldItemTokens($settings['info_text']['value'], $item),
           '#format' => $settings['info_text']['format'],
         ];
       }

@@ -64,3 +64,17 @@ geolocation_geocoder:
 geolocation.geocoder.*:
   type: geolocation_geocoder
   label: 'Empty geocoder'
+
+geolocation_data_provider:
+  type: mapping
+  mapping:
+    label:
+      type: string
+      label: 'Label'
+    description:
+      type: string
+      label: 'Description'
+
+geolocation.data_provider.*:
+  type: geolocation_data_provider
+  label: 'Empty geocoder'

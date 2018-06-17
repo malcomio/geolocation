@@ -1,0 +1,10 @@
+field.formatter.settings.geolocation_address_google_map:
+  type: geolocation.field.formatter.map.base
+  label: 'Geolocation Address Google Map formatter settings'
+  mapping:
+    geocoder:
+      type: string
+      label: 'Geocoder plugin ID'
+    google_map_settings:
+      type: geolocation.map_provider.google_maps
+      label: 'Google Maps settings.'

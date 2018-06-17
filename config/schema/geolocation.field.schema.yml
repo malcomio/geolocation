@@ -5,6 +5,9 @@ geolocation.field.formatter.map.base:
     set_marker:
       type: string
       label: 'Set marker at map center'
+    data_provider:
+      type: geolocation.data_provider.geolocation
+      label: 'Data provider'
     common_map:
       type: string
       label: 'Display results on a common map'
