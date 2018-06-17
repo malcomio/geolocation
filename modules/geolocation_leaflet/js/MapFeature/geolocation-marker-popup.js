@@ -29,11 +29,6 @@
          */
         function (map, featureSettings) {
           var geolocationLeafletPopupHandler = function(currentMarker) {
-
-            if (typeof currentMarker.getPopup === 'function') {
-              return;
-            }
-
             if (typeof (currentMarker.locationWrapper) === 'undefined') {
               return;
             }

@@ -6,6 +6,7 @@ package: Testing
 dependencies:
   - geolocation
   - geolocation_google_maps
+  - geolocation_leaflet
   - views
   - node
   - field
