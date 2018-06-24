@@ -39,6 +39,9 @@
    *   Attaches common map style functionality to relevant elements.
    */
   Drupal.behaviors.geolocationCommonMap = {
+    /**
+     * @param {GeolocationSettings} drupalSettings.geolocation
+     */
     attach: function (context, drupalSettings) {
       if (typeof drupalSettings.geolocation === 'undefined') {
         return;
@@ -109,7 +112,8 @@
           }
         }
       );
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 
   Drupal.geolocation.commonMap = Drupal.geolocation.commonMap || {};

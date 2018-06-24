@@ -3,15 +3,6 @@
  *   Javascript for the plugin-based geocoder function.
  */
 
-/**
- * Callback for results in autocomplete field.
- *
- * @callback geolocationGeocoderResultCallback
- * @param {google.maps.GeocoderResult} address - Google address.
- *
- * @callback geolocationGeocoderClearCallback
- */
-
 (function ($, Drupal) {
   'use strict';
 

@@ -10,13 +10,17 @@
    *   Attaches common map style functionality to relevant elements.
    */
   Drupal.behaviors.geolocationCommonMapGoogle = {
+    /**
+     * @param {GeolocationSettings} drupalSettings.geolocation
+     */
     attach: function (context, drupalSettings) {
       $.each(
         drupalSettings.geolocation.commonMap,
 
         /**
          * @param {String} mapId - ID of current map
-         * @param {CommonMapSettings} commonMapSettings - settings for current map
+         * @param {CommonMapSettings} commonMapSettings - settings for current
+         *     map
          */
         function (mapId, commonMapSettings) {
           if (
@@ -30,15 +34,18 @@
             }
 
             /**
-             * Update the view depending on dynamic map settings and capability.
+             * Update the view depending on dynamic map settings and
+             * capability.
              *
-             * One of several states might occur now. Possible state depends on whether:
+             * One of several states might occur now. Possible state depends on
+             * whether:
              * - view using AJAX is enabled
              * - map view is the containing (page) view or an attachment
              * - the exposed form is present and contains the boundary filter
              * - map settings are consistent
              *
-             * Given these factors, map boundary changes can be handled in one of three ways:
+             * Given these factors, map boundary changes can be handled in one
+             * of three ways:
              * - trigger the views AJAX "RefreshView" command
              * - trigger the exposed form causing a regular POST reload
              * - fully reload the website
@@ -83,7 +90,8 @@
             }
           }
         });
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 
 })(jQuery, Drupal);

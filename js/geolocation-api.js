@@ -4,7 +4,13 @@
  */
 
 /**
- * @type {Object} drupalSettings.geolocation
+ * @typedef {Object} GeolocationSettings
+ *
+ * @property {GeolocationMapSettings[]} maps
+ */
+
+/**
+ * @type {GeolocationSettings} drupalSettings.geolocation
  */
 
 /**
