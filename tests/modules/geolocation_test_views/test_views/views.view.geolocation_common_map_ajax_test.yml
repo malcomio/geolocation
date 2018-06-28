@@ -377,7 +377,8 @@ display:
             boundary_filter_field_geolocation_boundary:
               enable: true
               weight: 0
-          google_map_settings:
+          map_provider_id: google_maps
+          map_provider_settings:
             height: 400px
             width: 100%
             type: ROADMAP

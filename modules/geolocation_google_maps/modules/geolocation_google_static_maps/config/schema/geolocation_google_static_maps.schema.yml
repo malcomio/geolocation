@@ -1,11 +1,3 @@
-views.style.google_static_common_map:
-  type: geolocation_views_style
-  label: 'Geolocation Google Static Map'
-  mapping:
-    google_static_maps_settings:
-      type: geolocation.map_provider.google_static_maps
-      label: 'Google Static Maps settings'
-
 geolocation.map_provider.google_static_maps:
   type: geolocation_map_provider
   label: 'Google Map settings'

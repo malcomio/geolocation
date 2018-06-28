@@ -165,10 +165,6 @@ class GoogleMaps extends GoogleMapsProviderBase {
       ],
     ];
 
-    /*
-     * Control settings.
-     */
-
     $form['control_settings'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Controls'),
@@ -181,14 +177,10 @@ class GoogleMaps extends GoogleMapsProviderBase {
       '#default_value' => $settings['rotateControl'],
     ];
 
-    /*
-     * Behavior settings.
-     */
     $form['behavior_settings'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Behavior'),
     ];
-
     $form['scrollwheel'] = [
       '#group' => $parents_string . 'behavior_settings',
       '#type' => 'checkbox',
@@ -266,6 +258,22 @@ class GoogleMaps extends GoogleMapsProviderBase {
     );
 
     $render_array = parent::alterRenderArray($render_array, $map_settings, $context);
+
+    return $render_array;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function alterCommonMap(array $render_array, array $map_settings, array $context) {
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
+      [
+        'library' => [
+          'geolocation_google_maps/commonmap.google',
+        ],
+      ]
+    );
 
     return $render_array;
   }

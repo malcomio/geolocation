@@ -276,6 +276,13 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
   /**
    * {@inheritdoc}
    */
+  public function alterCommonMap(array $render_array, array $map_settings, array $context) {
+    return $render_array;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function getControlPositions() {
     return [];
   }

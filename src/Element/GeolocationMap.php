@@ -122,13 +122,6 @@ class GeolocationMap extends RenderElement {
       $render_array['#children'][] = $render_array[$child];
     }
 
-    $context = [];
-    if (!empty($render_array['#context'])) {
-      $context = $render_array['#context'];
-    }
-
-    $render_array = $map_provider->alterRenderArray($render_array, $map_settings, $context);
-
     $render_array['#attributes'] = new Attribute($render_array['#attributes']);
     $render_array['#attributes']->addClass('geolocation-map-wrapper');
     $render_array['#attributes']->setAttribute('id', $render_array['#id']);
@@ -169,7 +162,42 @@ class GeolocationMap extends RenderElement {
       ]);
     }
 
+    $context = [];
+    if (!empty($render_array['#context'])) {
+      $context = $render_array['#context'];
+    }
+
+    $render_array = $map_provider->alterRenderArray($render_array, $map_settings, $context);
+
     return $render_array;
+  }
+
+  /**
+   * Recursively return all locations in render array.
+   *
+   * @param array $render_array
+   *   Geolocation Map render array.
+   *
+   * @return array
+   *   Geolocation Map Locations.
+   */
+  public static function getLocations(array $render_array) {
+    $locations = [];
+    if (
+      !empty($render_array['#type'])
+      && $render_array['#type'] == 'geolocation_map_location'
+    ) {
+      $locations[] = $render_array;
+    }
+    else {
+      foreach (Element::children($render_array) as $key) {
+        if (is_array($render_array[$key])) {
+          $locations = array_merge($locations, static::getLocations($render_array[$key]));
+        }
+      }
+    }
+
+    return $locations;
   }
 
 }

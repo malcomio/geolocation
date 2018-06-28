@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Plugin base for Map based formatters.
@@ -15,25 +16,25 @@ use Drupal\Core\Render\Element;
 abstract class GeolocationMapFormatterBase extends FormatterBase {
 
   /**
-   * Map Provider ID.
-   *
-   * @var string
-   */
-  static protected $mapProviderId = FALSE;
-
-  /**
-   * Map Provider Settings Form ID.
-   *
-   * @var string
-   */
-  static protected $mapProviderSettingsFormId = 'map_settings';
-
-  /**
    * Map Provider.
    *
    * @var \Drupal\geolocation\MapProviderInterface
    */
   protected $mapProvider = NULL;
+
+  /**
+   * Map Provider.
+   *
+   * @var \Drupal\geolocation\MapProviderManager
+   */
+  protected $mapProviderManager = NULL;
+
+  /**
+   * Data provider ID.
+   *
+   * @var string
+   */
+  static protected $dataProviderId = 'geolocation_field_provider';
 
   /**
    * Data Provider.
@@ -48,13 +49,15 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
 
-    if (!empty(static::$mapProviderId)) {
-      $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider(static::$mapProviderId, $this->getSettings());
-    }
-
     $settings = $this->getSettings();
 
-    $this->dataProvider = \Drupal::service('plugin.manager.geolocation.dataprovider')->getDataProviderByFieldDefinition($field_definition, $settings['data_provider']);
+    $this->mapProviderManager = \Drupal::service('plugin.manager.geolocation.mapprovider');
+
+    if (!empty($settings['map_provider_id'])) {
+      $this->mapProvider = $this->mapProviderManager->getMapProvider($settings['map_provider_id'], $settings['map_provider_settings']);
+    }
+
+    $this->dataProvider = \Drupal::service('plugin.manager.geolocation.dataprovider')->createInstance(static::$dataProviderId, $settings['data_provider_settings']);
     if (empty($this->dataProvider)) {
       throw new \Exception('Geolocation data provider not found');
     }
@@ -64,34 +67,24 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    $settings = [];
+    $settings = parent::defaultSettings();
     $settings['title'] = '';
     $settings['set_marker'] = TRUE;
     $settings['common_map'] = TRUE;
-    $settings['data_provider'] = [];
+    $settings['data_provider_settings'] = [];
+    $settings['map_provider_id'] = '';
+    if (\Drupal::moduleHandler()->moduleExists('geolocation_google_maps')) {
+      $settings['map_provider_id'] = 'google_maps';
+    }
+    elseif (\Drupal::moduleHandler()->moduleExists('geolocation_leaflet')) {
+      $settings['map_provider_id'] = 'leaflet';
+    }
+    $settings['map_provider_settings'] = [];
     $settings['info_text'] = [
       'value' => '',
       'format' => filter_default_format(),
     ];
     $settings['use_overridden_map_settings'] = FALSE;
-
-    $settings[static::$mapProviderSettingsFormId] = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProviderDefaultSettings(static::$mapProviderId);
-
-    $settings += parent::defaultSettings();
-
-    return $settings;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSettings() {
-    $settings = parent::getSettings();
-
-    if (empty($settings[static::$mapProviderSettingsFormId])) {
-      $settings[static::$mapProviderSettingsFormId] = [];
-    }
-
     return $settings;
   }
 
@@ -99,19 +92,24 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
+    $map_provider_options = $this->mapProviderManager->getMapProviderOptions();
+
+    if (empty($map_provider_options)) {
+      return [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => t("No map provider found."),
+      ];
+    }
+
     $settings = $this->getSettings();
 
     $element = [];
 
-    $data_provider_settings_form = $this->dataProvider->getSettingsForm($settings['data_provider'], [
-      'fields',
-      $this->fieldDefinition->getName(),
-      'settings_edit_form',
-      'settings',
-    ]);
+    $data_provider_settings_form = $this->dataProvider->getSettingsForm($settings['data_provider_settings'], []);
 
     if (!empty($data_provider_settings_form)) {
-      $element['data_provider'] = $data_provider_settings_form;
+      $element['data_provider_settings'] = $data_provider_settings_form;
     }
 
     $element['set_marker'] = [
@@ -183,18 +181,60 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       '#default_value' => $settings['use_overridden_map_settings'],
     ];
 
-    if ($this->mapProvider) {
-      $mapProviderSettings = $settings[static::$mapProviderSettingsFormId];
-      $element[static::$mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
-        $mapProviderSettings,
-        [
-          'fields',
-          $this->fieldDefinition->getName(),
-          'settings_edit_form',
-          'settings',
-        ]
-      );
+    $element['map_provider_id'] = [
+      '#type' => 'select',
+      '#options' => $map_provider_options,
+      '#title' => $this->t('Map Provider'),
+      '#default_value' => $settings['map_provider_id'],
+      '#ajax' => [
+        'callback' => [get_class($this->mapProviderManager), 'addSettingsFormAjax'],
+        'wrapper' => 'map-provider-settings',
+        'effect' => 'fade',
+      ],
+    ];
+
+    $element['map_provider_settings'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'span',
+      '#value' => t("No settings available."),
+    ];
+
+    $parents = [
+      'fields',
+      $this->fieldDefinition->getName(),
+      'settings_edit_form',
+      'settings',
+    ];
+
+    $map_provider_id = NestedArray::getValue($form_state->getUserInput(), array_merge($parents, ['map_provider_id']));
+    if (empty($map_provider_id)) {
+      $map_provider_id = $settings['map_provider_id'];
     }
+    if (empty($map_provider_id)) {
+      $map_provider_id = key($map_provider_options);
+    }
+
+    $map_provider_settings = NestedArray::getValue($form_state->getUserInput(), array_merge($parents, ['map_provider_settings']));
+    if (empty($map_provider_settings)) {
+      $map_provider_settings = $settings['map_provider_settings'];
+    }
+
+    if (!empty($map_provider_id)) {
+      $element['map_provider_settings'] = $this->mapProviderManager
+        ->createInstance($map_provider_id, $map_provider_settings)
+        ->getSettingsForm(
+          $map_provider_settings,
+          array_merge($parents, ['map_provider_settings'])
+        );
+    }
+
+    $element['map_provider_settings'] = array_replace(
+      $element['map_provider_settings'],
+      [
+        '#prefix' => '<div id="map-provider-settings">',
+        '#suffix' => '</div>',
+      ]
+    );
 
     return $element;
   }
@@ -223,7 +263,12 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       }
     }
 
-    $summary = array_replace_recursive($summary, $this->mapProvider->getSettingsSummary($settings[static::$mapProviderSettingsFormId]));
+    if ($this->mapProvider) {
+      $summary = array_replace_recursive($summary, $this->mapProvider->getSettingsSummary($settings['map_provider_settings']));
+    }
+    else {
+      $summary[] = $this->t('Attention: No map provider set!');
+    }
 
     return $summary;
   }
@@ -244,8 +289,11 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
     foreach ($items as $delta => $item) {
       $item_position = $this->dataProvider->getPositionsFromItem($item);
-      $title = $this->dataProvider->replaceFieldItemTokens($settings['title'], $item);
+      if (empty($item_position)) {
+        continue;
+      }
 
+      $title = $this->dataProvider->replaceFieldItemTokens($settings['title'], $item);
       if (empty($title)) {
         $title = $item_position['lat'] . ', ' . $item_position['lng'];
       }
@@ -276,8 +324,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
     $element_pattern = [
       '#type' => 'geolocation_map',
-      '#settings' => $settings[static::$mapProviderSettingsFormId],
-      '#maptype' => static::$mapProviderId,
+      '#settings' => $settings['map_provider_settings'],
+      '#maptype' => $settings['map_provider_id'],
       '#centre' => [
         'behavior' => 'fitlocations',
       ],
@@ -303,10 +351,10 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
     if (
       $settings['use_overridden_map_settings']
-      && !empty($items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId])
-      && is_array($items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId])
+      && !empty($items->get(0)->getValue()['data']['map_provider_settings'])
+      && is_array($items->get(0)->getValue()['data']['map_provider_settings'])
     ) {
-      $map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId]);
+      $map_settings = $this->mapProvider->getSettings($items->get(0)->getValue()['data']['map_provider_settings']);
 
       if (!empty($settings['common_map'])) {
         $elements[0]['#settings'] = $map_settings;

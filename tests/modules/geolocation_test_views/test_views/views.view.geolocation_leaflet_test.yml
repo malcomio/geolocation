@@ -48,7 +48,7 @@ display:
         options:
           offset: 0
       style:
-        type: geolocation_leaflet
+        type: maps_common
         options:
           geolocation_field: field_geolocation
           title_field: title
@@ -76,7 +76,8 @@ display:
           icon_field: ''
           marker_icon_path: ''
           marker_row_number: 0
-          leaflet_settings:
+          map_provider_id: leaflet
+          map_provider_settings:
             map_features:
               leaflet_marker_clusterer:
                 weight: 0

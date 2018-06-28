@@ -1,4 +1,4 @@
-geolocation_views_style:
+views.style.maps_common:
   type: views_style
   label: 'Geolocation CommonMap'
   mapping:
@@ -66,11 +66,18 @@ geolocation_views_style:
       sequence:
         type: plugin.plugin_configuration.geolocation.map_center_option.[%key]
         label: 'The settings for a map center option'
+    data_provider_id:
+      type: string
+      label: 'Data provider ID'
+    data_provider_settings:
+      type: geolocation.data_provider[%parent.data_provider_id]
+      label: 'Data provider settings'
     map_provider_id:
       type: string
       label: 'Map provider ID'
     map_provider_settings:
-      type: geolocation.map.provider.[%parent.map_provider_id]
+      type: geolocation.map_provider.[%parent.map_provider_id]
+      label: 'Map provider settings'
 
 views.field.geolocation_field:
   type: views.field.field
@@ -116,7 +123,6 @@ views.field.geolocation_field_proximity:
           label: 'Geolocation geocoding widget'
         settings:
           type: geolocation.geocoder.[%parent.plugin_id]
-
 
 views.filter.geolocation_filter_boundary:
   type: views_filter

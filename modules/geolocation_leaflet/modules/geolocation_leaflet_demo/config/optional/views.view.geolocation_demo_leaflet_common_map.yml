@@ -73,7 +73,7 @@ display:
             previous: ‹‹
             next: ››
       style:
-        type: geolocation_leaflet
+        type: maps_common
         options:
           geolocation_field: field_geolocation_demo_single
           title_field: title
@@ -96,7 +96,8 @@ display:
           even_empty: 1
           marker_icon_path: ''
           marker_row_number: 0
-          leaflet_settings:
+          map_provider_id: leaflet
+          map_provider_settings:
             height: 444px
             width: 100%
             zoom: '10'

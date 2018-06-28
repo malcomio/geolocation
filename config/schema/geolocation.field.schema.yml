@@ -20,6 +20,20 @@ geolocation.field.formatter.map.base:
     info_text:
       type: text_format
       label: 'Info Text'
+    map_provider_id:
+      type: string
+      label: 'Map provider ID'
+    map_provider_settings:
+      type: geolocation.map_provider.[%parent.map_provider_id]
+      label: 'Map provider settings'
+
+field.formatter.settings.geolocation_map:
+  type: geolocation.field.formatter.map.base
+  label: 'Geolocation Map Formatter'
+  mapping:
+    data_provider_settings:
+      label: 'Data provider settings'
+      type: geolocation.data_provider.geolocation_field_provider
 
 field.formatter.settings.geolocation_token:
   type: mapping

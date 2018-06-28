@@ -1,7 +1,0 @@
-name: Geolocation - Address - Leaflet
-type: module
-description: Address integration with Leaflet
-core: 8.x
-package: Geolocation
-dependencies:
-  - geolocation_address

@@ -7,6 +7,8 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Search plugin manager.
@@ -90,6 +92,27 @@ class DataProviderManager extends DefaultPluginManager {
     }
 
     return FALSE;
+  }
+
+  /**
+   * Return settings array for data provider after select change.
+   *
+   * @param array $form
+   *   Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current From State.
+   *
+   * @return array|false
+   *   Settings form.
+   */
+  public function addDataProviderSettingsFormAjax(array $form, FormStateInterface $form_state) {
+    $triggering_element_parents = $form_state->getTriggeringElement()['#array_parents'];
+
+    $settings_element_parents = $triggering_element_parents;
+    array_pop($settings_element_parents);
+    $settings_element_parents[] = 'data_provider_settings';
+
+    return NestedArray::getValue($form, $settings_element_parents);
   }
 
 }

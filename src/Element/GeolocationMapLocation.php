@@ -7,7 +7,7 @@ use Drupal\Core\Render\Element\RenderElement;
 use Drupal\Core\Template\Attribute;
 
 /**
- * Provides a render element to display a geolocation map.
+ * Provides a render element for a single geolocation map location.
  *
  * Usage example:
  * @code
@@ -15,9 +15,12 @@ use Drupal\Core\Template\Attribute;
  *   '#type' => 'geolocation_map_location',
  *   '#prefix' => $this->t('Geolocation Map Render Element'),
  *   '#description' => $this->t('Render element type "geolocation_map"'),
- *   '#maptype' => 'leaflet,
- *   '#centre' => [],
- *   '#id' => 'thisisanid',
+ *   '#title' => NULL,
+ *   '#position' => NULL,
+ *   '#id' => NULL,
+ *   '#hidden' => NULL,
+ *   '#icon' => NULL,
+ *   '#label' => NULL,
  * ];
  * @endcode
  *

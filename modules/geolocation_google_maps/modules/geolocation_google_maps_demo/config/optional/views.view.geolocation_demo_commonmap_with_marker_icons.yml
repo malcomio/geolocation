@@ -107,7 +107,8 @@ display:
           icon_field: field_geolocation_demo_term_icon
           marker_icon_path: ''
           marker_row_number: 0
-          google_map_settings:
+          map_provider_id: google_maps
+          map_provider_settings:
             height: 400px
             width: 100%
             type: ROADMAP

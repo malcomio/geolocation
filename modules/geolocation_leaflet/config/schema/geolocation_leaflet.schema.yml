@@ -1,11 +1,3 @@
-views.style.geolocation_leaflet:
-  type: geolocation_views_style
-  label: 'Leaflet common map'
-  mapping:
-    leaflet_settings:
-      type: geolocation.map_provider.leaflet
-      label: 'Leaflet settings'
-
 geolocation.map_provider.leaflet:
   type: geolocation_map_provider
   label: 'Leaflet settings'

@@ -244,6 +244,9 @@ abstract class GoogleMapsProviderBase extends MapProviderBase {
         ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
       ],
     ];
+    if ($parents_string) {
+      $form['zoom']['#group'] = $parents_string . 'general_settings';
+    }
 
     return $form;
   }

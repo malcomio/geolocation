@@ -66,9 +66,11 @@ class Leaflet extends MapProviderBase {
    */
   public function getSettingsForm(array $settings, array $parents = []) {
     $settings += self::getDefaultSettings();
-    $parents_string = '';
     if ($parents) {
       $parents_string = implode('][', $parents);
+    }
+    else {
+      $parents_string = NULL;
     }
 
     $form = parent::getSettingsForm($settings, $parents);
@@ -90,12 +92,12 @@ class Leaflet extends MapProviderBase {
       '#default_value' => $settings['width'],
     ];
     $form['zoom'] = [
+      '#group' => $parents_string,
       '#type' => 'select',
       '#title' => $this->t('Zoom level'),
       '#options' => range(0, 20),
       '#description' => $this->t('The initial resolution at which to display the map, where zoom 0 corresponds to a map of the Earth fully zoomed out, and higher zoom levels zoom in at a higher resolution.'),
       '#default_value' => $settings['zoom'],
-      '#group' => $parents_string,
       '#process' => [
         ['\Drupal\Core\Render\Element\RenderElement', 'processGroup'],
         ['\Drupal\Core\Render\Element\Select', 'processSelect'],
@@ -150,6 +152,22 @@ class Leaflet extends MapProviderBase {
       'bottomleft' => t('Bottom left'),
       'bottomright' => t('Bottom right'),
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function alterCommonMap(array $render_array, array $map_settings, array $context) {
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
+      [
+        'library' => [
+          'geolocation_leaflet/commonmap.leaflet',
+        ],
+      ]
+    );
+
+    return $render_array;
   }
 
 }

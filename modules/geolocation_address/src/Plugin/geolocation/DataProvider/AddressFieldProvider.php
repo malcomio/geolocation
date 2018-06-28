@@ -58,11 +58,15 @@ class AddressFieldProvider extends DataProviderBase implements DataProviderInter
       /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager */
       $entityFieldManager = \Drupal::service('entity_field.manager');
       $field_map = $entityFieldManager->getFieldMap();
-      if (!empty($field_map[$views_field->configuration['entity_type']])) {
-        if (!empty($field_map[$views_field->configuration['entity_type']][$views_field->configuration['field_name']])) {
-          if ($field_map[$views_field->configuration['entity_type']][$views_field->configuration['field_name']]['type'] == 'address') {
-            return TRUE;
-          }
+      if (
+        !empty($field_map)
+        &&!empty($views_field->configuration['entity_type'])
+        && !empty($views_field->configuration['field_name'])
+        && !empty($field_map[$views_field->configuration['entity_type']])
+        && !empty($field_map[$views_field->configuration['entity_type']][$views_field->configuration['field_name']])
+      ) {
+        if ($field_map[$views_field->configuration['entity_type']][$views_field->configuration['field_name']]['type'] == 'address') {
+          return TRUE;
         }
       }
     }

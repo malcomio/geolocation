@@ -262,8 +262,8 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     ) {
       $overriden_map_settings = empty($this->getSetting(static::$mapProviderSettingsFormId)) ? [] : $this->getSetting(static::$mapProviderSettingsFormId);
 
-      if (!empty($items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId])) {
-        $overriden_map_settings = $items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId];
+      if (!empty($items->get(0)->getValue()['data']['map_provider_settings'])) {
+        $overriden_map_settings = $items->get(0)->getValue()['data']['map_provider_settings'];
       }
 
       $element[static::$mapProviderSettingsFormId] = $this->mapProvider->getSettingsForm(
@@ -338,9 +338,9 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
 
     if (
       $this->getSetting('allow_override_map_settings')
-      && !empty($items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId])
+      && !empty($items->get(0)->getValue()['data']['map_provider_settings'])
     ) {
-      $element['map']['#settings'] = $items->get(0)->getValue()['data'][static::$mapProviderSettingsFormId];
+      $element['map']['#settings'] = $items->get(0)->getValue()['data']['map_provider_settings'];
     }
 
     return $element;
@@ -367,7 +367,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
 
     if (!empty($this->settings['allow_override_map_settings'])) {
       if (!empty($values[0][static::$mapProviderSettingsFormId])) {
-        $values[0]['data'][static::$mapProviderSettingsFormId] = $values[0][static::$mapProviderSettingsFormId];
+        $values[0]['data']['map_provider_settings'] = $values[0][static::$mapProviderSettingsFormId];
         unset($values[0][static::$mapProviderSettingsFormId]);
       }
     }

@@ -93,10 +93,6 @@ class DemoFormattersController extends ControllerBase {
 
     $moduleHandler = \Drupal::moduleHandler();
 
-    if ($moduleHandler->moduleExists('geolocation_leaflet')) {
-      $formatters[] = 'geolocation_leaflet_map';
-    }
-
     if ($moduleHandler->moduleExists('geolocation_google_maps')) {
       $formatters[] = 'geolocation_map';
     }

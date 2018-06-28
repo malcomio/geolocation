@@ -68,6 +68,21 @@ interface MapProviderInterface extends PluginInspectionInterface {
   public function alterRenderArray(array $render_array, array $map_settings, array $context);
 
   /**
+   * Alter common map build array.
+   *
+   * @param array $render_array
+   *   Render array.
+   * @param array $map_settings
+   *   The current map settings.
+   * @param array $context
+   *   Context like field formatter, field widget or view.
+   *
+   * @return array
+   *   Render attachments.
+   */
+  public function alterCommonMap(array $render_array, array $map_settings, array $context);
+
+  /**
    * Return available control positions.
    *
    * @return array|false

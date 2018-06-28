@@ -37,14 +37,6 @@ geolocation_google_maps.settings:
             type: string
             label: 'Library name'
 
-views.style.maps_common:
-  type: geolocation_views_style
-  label: 'Geolocation CommonMap'
-  mapping:
-    google_map_settings:
-      type: geolocation.map_provider.google_maps
-      label: 'Google Map settings'
-
 geolocation.geocoder.google_geocoding_api:
   type: geolocation_geocoder
   label: 'Google Geocoding API'

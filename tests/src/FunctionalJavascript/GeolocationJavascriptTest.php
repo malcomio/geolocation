@@ -120,7 +120,7 @@ class GeolocationJavascriptTest extends GeolocationJavascriptTestBase {
         'lat' => 54,
         'lng' => 49,
         'data' => [
-          'google_map_settings' => [
+          'map_provider_settings' => [
             'height' => '376px',
             'width' => '229px',
           ],
@@ -228,7 +228,9 @@ class GeolocationJavascriptTest extends GeolocationJavascriptTestBase {
 
     $this->assertSession()->fieldExists("field_geolocation[0][google_map_settings][height]");
 
-    $this->getSession()->getPage()->findById('edit-field-geolocation-0-google-map-settings')->click();
+    $this->getSession()->wait(6000);
+    $this->assertSession()->elementExists('css', '#edit-field-geolocation-0-google-map-settings > summary');
+    $this->getSession()->getPage()->find('css', '#edit-field-geolocation-0-google-map-settings > summary')->click();
 
     $edit = [
       'title[0][value]' => $this->randomMachineName(),
