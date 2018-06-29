@@ -174,9 +174,10 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
       || empty($result['results'][0]['geometry'])
     ) {
       if (isset($result['error_message'])) {
-        \Drupal::logger('geolocation')->error(t('Unable to geocode "@address" with error: "@error".', [
+        \Drupal::logger('geolocation')->error(t('Unable to geocode "@address" with error: "@error". Request URL: @url', [
           '@address' => $address,
           '@error' => $result['error_message'],
+          '@url' => $request_url,
         ]));
       }
       return FALSE;
