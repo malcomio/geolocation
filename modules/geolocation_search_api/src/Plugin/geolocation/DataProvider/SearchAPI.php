@@ -2,37 +2,43 @@
 
 namespace Drupal\geolocation_search_api\Plugin\geolocation\DataProvider;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\geolocation\DataProviderBase;
-use Drupal\views\Plugin\views\field\EntityField;
+use Drupal\search_api\Plugin\views\field\SearchApiEntityField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
+use Drupal\geolocation\DataProviderInterface;
+use Drupal\search_api\Entity\Index;
 
 /**
  * Provides Google Maps.
  *
  * @DataProvider(
  *   id = "search_api",
- *   name = @Translation("SearchAPI"),
- *   description = @Translation("SearchAPI."),
+ *   name = @Translation("Search API"),
+ *   description = @Translation("Search API indexed fields support, works with Search API Location module too."),
  * )
  */
-class SearchAPI extends DataProviderBase {
+class SearchAPI extends DataProviderBase implements DataProviderInterface {
 
   /**
    * {@inheritdoc}
    */
-  public function isCommonMapViewsStyleOption(FieldPluginBase $views_field) {
-    if (
-      $views_field instanceof EntityField
-      && $views_field->getPluginId() == 'search_api_field'
-    ) {
-      $field_storage_definitions = $this->entityFieldManager->getFieldStorageDefinitions($views_field->getEntityType());
-      if (!empty($field_storage_definitions[$views_field->field])) {
-        $field_storage_definition = $field_storage_definitions[$views_field->field];
+  public function isViewsGeoOption(FieldPluginBase $views_field) {
+    if ($views_field instanceof SearchApiEntityField) {
+      $index_id = str_replace('search_api_index_', '', $views_field->table);
+      $index = Index::load($index_id);
+      if (empty($index)) {
+        return FALSE;
+      }
 
-        if ($field_storage_definition->getType() == 'geolocation') {
-          return TRUE;
-        }
+      /** @var \Drupal\search_api\Item\FieldInterface $search_api_field */
+      $search_api_field = $index->getField($views_field->field);
+      if (empty($search_api_field)) {
+        return FALSE;
+      }
+      elseif ($search_api_field->getType() == 'location') {
+        return TRUE;
       }
     }
 
@@ -42,20 +48,38 @@ class SearchAPI extends DataProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getPositionsFromViewsRow(FieldPluginBase $views_field, ResultRow $row) {
+  public function isFieldGeoOption(FieldDefinitionInterface $fieldDefinition) {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPositionsFromViewsRow(ResultRow $row, FieldPluginBase $views_field = NULL) {
     $positions = [];
 
-    $entity = $views_field->getEntity($row);
+    if (!($views_field instanceof SearchApiEntityField)) {
+      return [];
+    }
 
-    if (isset($entity->{$views_field->definition['field_name']})) {
+    foreach ($views_field->getItems($row) as $item) {
+      if (!empty($item['value'])) {
+        $pieces = explode(',', $item['value']);
+        if (count($pieces) != 2) {
+          continue;
+        }
 
-      /** @var \Drupal\Core\Field\FieldItemListInterface $geo_items */
-      $geo_items = $entity->{$views_field->definition['field_name']};
-
-      foreach ($geo_items as $item) {
         $positions[] = [
-          'lat' => $item->get('lat')->getValue(),
-          'lng' => $item->get('lng')->getValue(),
+          'lat' => $pieces[0],
+          'lng' => $pieces[1],
+        ];
+      }
+      elseif (!empty($item['raw'])) {
+        /** @var \Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem $geolocation_item */
+        $geolocation_item = $item['raw'];
+        $positions[] = [
+          'lat' => $geolocation_item->get('lat')->getValue(),
+          'lng' => $geolocation_item->get('lng')->getValue(),
         ];
       }
     }

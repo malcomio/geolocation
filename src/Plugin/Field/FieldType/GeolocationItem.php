@@ -7,6 +7,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\TypedData\MapDataDefinition;
+use Drupal\geolocation\TypedData\GeolocationComputed;
 
 /**
  * Plugin implementation of the 'geolocation' field type.
@@ -94,6 +95,12 @@ class GeolocationItem extends FieldItemBase {
     $properties['data'] = MapDataDefinition::create()
       ->setLabel(t('Meta data'));
 
+    $properties['value'] = DataDefinition::create('string')
+      ->setLabel(t('Computed lat,lng value'))
+      ->setComputed(TRUE)
+      ->setInternal(FALSE)
+      ->setClass(GeolocationComputed::class);
+
     return $properties;
   }
 
@@ -113,6 +120,21 @@ class GeolocationItem extends FieldItemBase {
     $lat = $this->get('lat')->getValue();
     $lng = $this->get('lng')->getValue();
     return $lat === NULL || $lat === '' || $lng === NULL || $lng === '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getValue() {
+    // Update the values and return them.
+    foreach ($this->properties as $name => $property) {
+      $value = $property->getValue();
+      // Only write NULL values if the whole map is not NULL.
+      if (isset($this->values) || isset($value)) {
+        $this->values[$name] = $value;
+      }
+    }
+    return $this->values;
   }
 
   /**
