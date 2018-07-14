@@ -8,7 +8,6 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\geolocation\DataProviderInterface;
 use Drupal\geolocation\DataProviderBase;
 use Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem;
-use Drupal\geolocation\GeolocationCore;
 
 /**
  * Provides default geolocation field.
@@ -26,101 +25,25 @@ class GeolocationFieldProvider extends DataProviderBase implements DataProviderI
    */
   public function getTokenHelp(FieldDefinitionInterface $fieldDefinition = NULL) {
 
-    if (empty($fieldDefinition)) {
-      $fieldDefinition = $this->fieldDefinition;
-    }
+    $element = parent::getTokenHelp($fieldDefinition);
 
-    $element = [];
-
-    // Add the token UI from the token module if present.
-    $element['token_items'] = [
-      '#type' => 'table',
-      '#caption' => $this->t('Geolocation Item Tokens'),
-      '#header' => [$this->t('Token'), $this->t('Description')],
-    ];
-
-    // Value tokens.
     $element['token_items'][] = [
       'token' => [
-        '#plain_text' => '[geolocation_current_item:lat]',
+        '#plain_text' => '[geolocation_current_item:lat_sex]',
       ],
       'description' => [
-        '#plain_text' => $this->t('Current value latitude'),
-      ],
-    ];
-    $element['token_items'][] = [
-      'token' => [
-        '#plain_text' => '[geolocation_current_item:lng]',
-      ],
-      'description' => [
-        '#plain_text' => $this->t('Current value longitude'),
+        '#plain_text' => $this->t('Latitude value in sexagesimal notation'),
       ],
     ];
 
-    // Sexagesimal tokens.
     $element['token_items'][] = [
       'token' => [
         '#plain_text' => '[geolocation_current_item:lng_sex]',
       ],
       'description' => [
-        '#plain_text' => $this->t('Current value longitude in sexagesimal notation.'),
+        '#plain_text' => $this->t('Longitude value in sexagesimal notation'),
       ],
     ];
-    $element['token_items'][] = [
-      'token' => [
-        '#plain_text' => '[geolocation_current_item:lng_sex]',
-      ],
-      'description' => [
-        '#plain_text' => $this->t('Current value longitude in sexagesimal notation'),
-      ],
-    ];
-
-    // Raw tokens.
-    $element['token_items'][] = [
-      'token' => [
-        '#plain_text' => '[geolocation_current_item:lat_sin]',
-      ],
-      'description' => [
-        '#plain_text' => $this->t('Add description'),
-      ],
-    ];
-    $element['token_items'][] = [
-      'token' => [
-        '#plain_text' => '[geolocation_current_item:lat_cos]',
-      ],
-      'description' => [
-        '#plain_text' => $this->t('Add description'),
-      ],
-    ];
-    $element['token_items'][] = [
-      'token' => [
-        '#plain_text' => '[geolocation_current_item:lng_rad]',
-      ],
-      'description' => [
-        '#plain_text' => $this->t('Add description'),
-      ],
-    ];
-
-    $element['token_items'][] = [
-      'token' => [
-        '#plain_text' => '[geolocation_current_item:data:?]',
-      ],
-      'description' => [
-        '#plain_text' => $this->t('Data stored with the field item'),
-      ],
-    ];
-
-    if (
-      \Drupal::service('module_handler')->moduleExists('token')
-      && method_exists($fieldDefinition, 'getTargetEntityTypeId')
-    ) {
-      // Add the token UI from the token module if present.
-      $element['token_help'] = [
-        '#theme' => 'token_tree_link',
-        '#prefix' => $this->t('<h4>Tokens:</h4>'),
-        '#token_types' => [$fieldDefinition->getTargetEntityTypeId()],
-      ];
-    }
 
     return $element;
   }
@@ -131,36 +54,25 @@ class GeolocationFieldProvider extends DataProviderBase implements DataProviderI
   public function replaceFieldItemTokens($text, FieldItemInterface $fieldItem) {
     $token_context['geolocation_current_item'] = $fieldItem;
 
-    return \Drupal::token()->replace($text, $token_context, [
+    $text = \Drupal::token()->replace($text, $token_context, [
       'callback' => [$this, 'geolocationItemTokens'],
-      'clear' => TRUE,
+      'clear' => FALSE,
     ]);
+
+    return parent::replaceFieldItemTokens($text, $fieldItem);
   }
 
   /**
-   * Token replacement support function, callback to token replacement function.
-   *
-   * @param array $replacements
-   *   An associative array variable containing mappings from token names to
-   *   values (for use with strtr()).
-   * @param array $data
-   *   Current item replacements.
-   * @param array $options
-   *   A keyed array of settings and flags to control the token replacement
-   *   process. See \Drupal\Core\Utility\Token::replace().
+   * {@inheritdoc}
    */
   public function geolocationItemTokens(array &$replacements, array $data, array $options) {
     if (isset($data['geolocation_current_item'])) {
 
       /** @var \Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem $item */
       $item = $data['geolocation_current_item'];
-      $replacements['[geolocation_current_item:lat]'] = $item->get('lat')->getValue();
-      $replacements['[geolocation_current_item:lat_sex]'] = GeolocationCore::decimalToSexagesimal($item->get('lat')->getValue());
-      $replacements['[geolocation_current_item:lng]'] = $item->get('lng')->getValue();
-      $replacements['[geolocation_current_item:lng_sex]'] = GeolocationCore::decimalToSexagesimal($item->get('lng')->getValue());
-      $replacements['[geolocation_current_item:lat_sin]'] = $item->get('lat_sin')->getValue();
-      $replacements['[geolocation_current_item:lat_cos]'] = $item->get('lat_cos')->getValue();
-      $replacements['[geolocation_current_item:lng_rad]'] = $item->get('lng_rad')->getValue();
+
+      $replacements['[geolocation_current_item:lat_sex]'] = GeolocationItem::decimalToSexagesimal($item->get('lat')->getValue());
+      $replacements['[geolocation_current_item:lng_sex]'] = GeolocationItem::decimalToSexagesimal($item->get('lng')->getValue());
 
       // Handle data tokens.
       $metadata = $item->get('data')->getValue();
