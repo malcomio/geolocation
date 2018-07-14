@@ -28,14 +28,14 @@ geocoder.googlegeocodingapi:
 widget.api.google:
   version: 1.x
   js:
-    js/geolocation-widget-google-api.js: { scope: footer }
+    js/geolocation-widget-google-api.js: {}
   dependencies:
     - geolocation/geolocation.widget.api
 
 widget.google:
   version: 1.x
   js:
-    js/geolocation-google-maps-widget.js: { scope: footer }
+    js/geolocation-google-maps-widget.js: {}
   dependencies:
     - geolocation/geolocation.widget
     - geolocation_google_maps/widget.api.google
