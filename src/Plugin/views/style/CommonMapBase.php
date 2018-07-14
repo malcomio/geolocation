@@ -364,6 +364,7 @@ class CommonMapBase extends StylePluginBase {
     }
     elseif (!empty($this->options['marker_icon_path'])) {
       $icon_token_uri = $this->viewsTokenReplace($this->options['marker_icon_path'], $this->rowTokens[$row->index]);
+      $icon_token_uri = preg_replace('/\s+/', '', $icon_token_uri);
       $icon_url = file_url_transform_relative(file_create_url($icon_token_uri));
     }
 
