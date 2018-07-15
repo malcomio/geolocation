@@ -10,6 +10,9 @@
    *   Attaches common map style functionality to relevant elements.
    */
   Drupal.behaviors.geolocationCommonMapLeaflet = {
+    /**
+     * @param {GeolocationSettings} drupalSettings.geolocation
+     */
     attach: function (context, drupalSettings) {
       $.each(
         drupalSettings.geolocation.commonMap,
@@ -85,7 +88,8 @@
             }
           }
         });
-    }
+    },
+    detach: function (context, drupalSettings) {}
   };
 
 })(jQuery, Drupal);

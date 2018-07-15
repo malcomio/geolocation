@@ -177,7 +177,6 @@ class CommonMapBase extends StylePluginBase {
      * Dynamic map handling.
      */
     if (!empty($this->options['dynamic_map']['enabled'])) {
-
       if (
         !empty($this->options['dynamic_map']['update_target'])
         && $this->view->displayHandlers->has($this->options['dynamic_map']['update_target'])
@@ -194,7 +193,6 @@ class CommonMapBase extends StylePluginBase {
         'views_refresh_delay' => $this->options['dynamic_map']['views_refresh_delay'],
         'update_view_id' => $this->view->id(),
         'update_view_display_id' => $update_view_display_id,
-        'enable_refresh_event' => TRUE,
       ];
 
       if (substr($this->options['dynamic_map']['update_handler'], 0, strlen('boundary_filter_')) === 'boundary_filter_') {
@@ -295,7 +293,7 @@ class CommonMapBase extends StylePluginBase {
       $build['#centre'] = $centre ?: ['lat' => 0, 'lng' => 0];
     }
 
-    if ($this->view->getRequest()->get('geolocation_common_map_bounds_changed')) {
+    if ($this->view->getRequest()->get('geolocation_common_map_dynamic_view')) {
       $build['#centre'] = [
         'behavior' => 'preserve',
       ];
