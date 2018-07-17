@@ -33,7 +33,7 @@ commonmap.leaflet:
 widget.api.leaflet:
   version: 1.x
   js:
-    js/geolocation-widget-leaflet-api.js: { scope: footer }
+    js/geolocation-widget-leaflet-api.js: {}
   dependencies:
     - geolocation/geolocation.widget.api
 

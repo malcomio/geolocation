@@ -24,7 +24,7 @@ geolocation.geocoder.api:
 geolocation.widget.api:
   version: 1.x
   js:
-    js/geolocation-widget-api.js: { scope: footer }
+    js/geolocation-widget-api.js: {}
   dependencies:
     - geolocation/geolocation.api
 
@@ -97,4 +97,4 @@ geolocation.widgets.html5:
     theme:
       css/geolocation-widget-html5.css: {}
   js:
-    js/geolocation-widget-html5.js: { scope: footer }
+    js/geolocation-widget-html5.js: {}

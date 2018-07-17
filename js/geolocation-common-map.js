@@ -145,7 +145,7 @@
     }
 
     // Trigger geolocation bounds specific behavior.
-    ajaxSettings.submit = $.extend(ajaxSettings.submit, ['geolocation_common_map_bounds_changed']);
+    ajaxSettings.submit = $.extend(ajaxSettings.submit, {geolocation_common_map_dynamic_view: true});
 
     return ajaxSettings;
   };

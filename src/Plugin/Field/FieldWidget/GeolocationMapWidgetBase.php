@@ -327,7 +327,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       ]
     );
 
-    $element['widget']['map'] = [
+    $element['map'] = [
       '#type' => 'geolocation_map',
       '#weight' => -10,
       '#settings' => $settings[static::$mapProviderSettingsFormId],

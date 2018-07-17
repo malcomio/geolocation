@@ -61,6 +61,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     if (empty($this->dataProvider)) {
       throw new \Exception('Geolocation data provider not found');
     }
+    $this->dataProvider->setFieldDefinition($field_definition);
   }
 
   /**
@@ -151,7 +152,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $element['replacement_patterns'] = [
       '#type' => 'details',
       '#title' => 'Replacement patterns',
-      '#description' => $this->t('The following replacement patterns are available for the "Info text" and the "Hover title" settings.'),
+      '#description' => $this->t('The following replacement patterns are available.'),
       '#states' => [
         'visible' => [
           ':input[name="fields[' . $this->fieldDefinition->getName() . '][settings_edit_form][settings][set_marker]"]' => ['checked' => TRUE],

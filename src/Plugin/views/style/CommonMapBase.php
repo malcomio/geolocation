@@ -177,7 +177,6 @@ class CommonMapBase extends StylePluginBase {
      * Dynamic map handling.
      */
     if (!empty($this->options['dynamic_map']['enabled'])) {
-
       if (
         !empty($this->options['dynamic_map']['update_target'])
         && $this->view->displayHandlers->has($this->options['dynamic_map']['update_target'])
@@ -194,7 +193,6 @@ class CommonMapBase extends StylePluginBase {
         'views_refresh_delay' => $this->options['dynamic_map']['views_refresh_delay'],
         'update_view_id' => $this->view->id(),
         'update_view_display_id' => $update_view_display_id,
-        'enable_refresh_event' => TRUE,
       ];
 
       if (substr($this->options['dynamic_map']['update_handler'], 0, strlen('boundary_filter_')) === 'boundary_filter_') {
@@ -295,7 +293,7 @@ class CommonMapBase extends StylePluginBase {
       $build['#centre'] = $centre ?: ['lat' => 0, 'lng' => 0];
     }
 
-    if ($this->view->getRequest()->get('geolocation_common_map_bounds_changed')) {
+    if ($this->view->getRequest()->get('geolocation_common_map_dynamic_view')) {
       $build['#centre'] = [
         'behavior' => 'preserve',
       ];
@@ -364,6 +362,7 @@ class CommonMapBase extends StylePluginBase {
     }
     elseif (!empty($this->options['marker_icon_path'])) {
       $icon_token_uri = $this->viewsTokenReplace($this->options['marker_icon_path'], $this->rowTokens[$row->index]);
+      $icon_token_uri = preg_replace('/\s+/', '', $icon_token_uri);
       $icon_url = file_url_transform_relative(file_create_url($icon_token_uri));
     }
 
