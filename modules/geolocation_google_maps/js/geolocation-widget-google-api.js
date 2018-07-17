@@ -29,20 +29,24 @@
       return;
     }
 
-    var that = this;
     var marker = this.map.setMapMarker({
-      position: location,
-      title: Drupal.t('[@delta] Latitude: @latitude Longitude: @longitude', {
-        '@delta': delta.toString(),
-        '@latitude': location.lat,
-        '@longitude': location.lng
-      }),
-      setMarker: true,
-      label: (delta + 1).toString(),
-      delta: delta,
-      draggable: true
+      position: location
     });
+    marker = this.initializeMarker(marker, delta);
 
+    return marker;
+  };
+  GeolocationGoogleMapWidget.prototype.initializeMarker = function (marker, delta) {
+    var location = marker.getPosition();
+    marker.setTitle(Drupal.t('[@delta] Latitude: @latitude Longitude: @longitude', {
+      '@delta': delta,
+      '@latitude': location.lat(),
+      '@longitude': location.lng()
+    }));
+    marker.setDraggable(true);
+    marker.setLabel((delta + 1).toString());
+
+    var that = this;
     marker.addListener('dragend', function(e) {
       that.updateInput({lat: Number(e.latLng.lat()), lng: Number(e.latLng.lng())}, marker.delta);
     });

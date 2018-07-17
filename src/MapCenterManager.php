@@ -2,6 +2,7 @@
 
 namespace Drupal\geolocation;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -74,12 +75,14 @@ class MapCenterManager extends DefaultPluginManager {
       '#type' => 'table',
       '#prefix' => t('<h3>Centre options</h3>Please note: Each option will, if it can be applied, supersede any following option.'),
       '#header' => [
-        t('Weight'),
-        t('Enable'),
+        [
+          'data' => t('Enable'),
+          'colspan' => 2,
+        ],
         t('Option'),
         t('Settings'),
+        t('Weight'),
       ],
-      '#attributes' => ['id' => 'geolocation-centre-options'],
       '#tabledrag' => [
         [
           'action' => 'order',
@@ -93,22 +96,15 @@ class MapCenterManager extends DefaultPluginManager {
       /** @var \Drupal\geolocation\MapCenterInterface $map_center */
       $map_center = $this->createInstance($map_center_id);
       foreach ($map_center->getAvailableMapCenterOptions($context) as $option_id => $label) {
-        $option_enable_id = uniqid($option_id . '_enabled');
+        $option_enable_id = HTML::getUniqueId($option_id . '_enabled');
         $weight = isset($settings[$option_id]['weight']) ? $settings[$option_id]['weight'] : 0;
+
         $form[$option_id] = [
           '#weight' => $weight,
           '#attributes' => [
             'class' => [
               'draggable',
             ],
-          ],
-          'weight' => [
-            '#type' => 'weight',
-            '#title' => t('Weight for @option', ['@option' => $label]),
-            '#title_display' => 'invisible',
-            '#size' => 4,
-            '#default_value' => $weight,
-            '#attributes' => ['class' => ['geolocation-centre-option-weight']],
           ],
           'enable' => [
             '#attributes' => [
@@ -117,20 +113,23 @@ class MapCenterManager extends DefaultPluginManager {
             '#type' => 'checkbox',
             '#default_value' => isset($settings[$option_id]['enable']) ? $settings[$option_id]['enable'] : FALSE,
           ],
+          'map_center_id' => [
+            '#type' => 'value',
+            '#value' => $map_center_id,
+          ],
           'option' => [
             '#markup' => $label,
           ],
           'settings' => [
             '#markup' => '',
           ],
-          'map_center_id' => [
-            '#type' => 'value',
-            '#value' => $map_center_id,
-            '#wrapper_attributes' => [
-              'class' => [
-                'hidden',
-              ],
-            ],
+          'weight' => [
+            '#type' => 'weight',
+            '#title' => t('Weight for @option', ['@option' => $label]),
+            '#title_display' => 'invisible',
+            '#size' => 4,
+            '#default_value' => $weight,
+            '#attributes' => ['class' => ['geolocation-centre-option-weight']],
           ],
         ];
 
@@ -156,6 +155,90 @@ class MapCenterManager extends DefaultPluginManager {
     uasort($form, [SortArray::class, 'sortByWeightProperty']);
 
     return $form;
+  }
+
+  /**
+   * Get center values for map element.
+   *
+   * @param array $settings
+   *   Center option settings.
+   *
+   * @return array
+   *   Centre value.
+   */
+  public function getCenterValue(array $settings) {
+    $centre = [];
+
+    /*
+     * Centre handling.
+     */
+    foreach ($settings as $option_id => $option) {
+      // Ignore if not enabled.
+      if (empty($option['enable'])) {
+        continue;
+      }
+
+      // Compatibility to v1.
+      if (empty($option['map_center_id'])) {
+        $option['map_center_id'] = $option_id;
+      }
+
+      // Failsafe.
+      if (!$this->hasDefinition($option['map_center_id'])) {
+        $option['map_center_id'] = $option_id = 'fit_bounds';
+      }
+
+      /** @var \Drupal\geolocation\MapCenterInterface $map_center_plugin */
+      $map_center_plugin = $this->createInstance($option['map_center_id']);
+      $current_map_center = $map_center_plugin->getMapCenter($option_id, empty($option['settings']) ? [] : $option['settings'], ['views_style' => $this]);
+
+      if (
+        isset($current_map_center['behavior'])
+        && !isset($centre['behavior'])
+      ) {
+        $centre['behavior'] = $current_map_center['behavior'];
+      }
+
+      if (
+        (
+          !isset($centre['lat'])
+          && !isset($centre['lng'])
+        )
+        ||
+        (
+          !isset($centre['lat_north_east'])
+          && !isset($centre['lng_north_east'])
+          && !isset($centre['lat_south_west'])
+          && !isset($centre['lng_south_west'])
+        )
+      ) {
+        if (
+          isset($current_map_center['lat'])
+          && isset($current_map_center['lng'])
+        ) {
+          $centre['lat'] = $current_map_center['lat'];
+          $centre['lng'] = $current_map_center['lng'];
+        }
+        // Break if center bounds are already set.
+        elseif (
+          isset($centre['lat_north_east'])
+          && isset($centre['lng_north_east'])
+          && isset($centre['lat_south_west'])
+          && isset($centre['lng_south_west'])
+        ) {
+          $centre['lat_north_east'] = $current_map_center['lat_north_east'];
+          $centre['lng_north_east'] = $current_map_center['lng_north_east'];
+          $centre['lat_south_west'] = $current_map_center['lat_south_west'];
+          $centre['lng_south_west'] = $current_map_center['lng_south_west'];
+        }
+      }
+    }
+
+    if (empty($centre)) {
+      $centre = ['lat' => 0, 'lng' => 0];
+    }
+
+    return $centre;
   }
 
 }

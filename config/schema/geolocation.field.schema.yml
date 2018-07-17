@@ -47,30 +47,21 @@ geolocation.field.widget.map.base:
   type: mapping
   label: 'Geolocation Widget Base'
   mapping:
-    default_longitude:
-      type: string
-      label: 'Default Longitude'
-    default_latitude:
-      type: string
-      label: 'Default Latitude'
     auto_client_location:
       type: string
       label: 'Automatically use client location'
     auto_client_location_marker:
       type: string
       label: 'Automatically set marker as well'
-    populate_address_field:
-      type: string
-      label: 'Store address'
-    target_address_field:
-      type: string
-      label: 'Target address field name'
-    explicite_actions_address_field:
-      type: string
-      label: 'Explicite buttons'
     allow_override_map_settings:
       type: integer
       label: 'Allow override map settings.'
+    centre:
+      type: sequence
+      label: 'Center option settings'
+      sequence:
+        type: plugin.plugin_configuration.geolocation.map_center_option.[%key]
+        label: 'The settings for a map center option'
 
 field.value.geolocation:
   type: mapping

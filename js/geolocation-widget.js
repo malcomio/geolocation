@@ -61,6 +61,24 @@
           }
         }
 
+        widget.map.addPopulatedCallback(function (map) {
+          $.each(map.mapMarkers, function (index, item) {
+            item.delta = index;
+          });
+
+          if (
+            widgetSettings.autoClientLocationMarker
+            && navigator.geolocation && window.location.protocol === 'https:'
+          ) {
+            navigator.geolocation.getCurrentPosition(function (currentPosition) {
+              widget.addMarker({
+                lat: currentPosition.coords.latitude,
+                lng: currentPosition.coords.longitude
+              }, widget.getNextDelta());
+            });
+          }
+        });
+
         widget.getAllInputs().each(function(index, inputElement) {
           var input = $(inputElement);
           var delta = widget.getAllInputs().index(input);
@@ -102,11 +120,6 @@
               widget.map.fitMapToMarkers();
             }
           });
-        });
-
-        widget.map.addInitializedCallback(function (map) {
-          widget.loadMarkersFromInput();
-          map.fitMapToMarkers();
         });
 
         // Add the click responders for setting the value.

@@ -24,6 +24,15 @@
           return;
         }
 
+        widget.map.addPopulatedCallback(function (map) {
+          /**
+           * @var {google.maps.Marker} marker
+           */
+          $.each(map.mapMarkers, function (index, marker) {
+            widget.initializeMarker(marker, index);
+          });
+        });
+
         widget.map.addCenterUpdatedCallback(function(location, accuracy, identifier) {
           if (typeof identifier === 'undefined') {
             return;

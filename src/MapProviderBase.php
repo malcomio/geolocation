@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Component\Utility\Html;
 
 /**
  * Class MapProviderBase.
@@ -146,7 +147,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
         $this->t('Enable'),
         $this->t('Feature'),
         $this->t('Settings'),
-        $this->t('Settings'),
+        $this->t('Weight'),
       ],
       '#tabledrag' => [
         [
@@ -164,7 +165,7 @@ abstract class MapProviderBase extends PluginBase implements MapProviderInterfac
         continue;
       }
 
-      $feature_enable_id = uniqid($feature_id . '_enabled');
+      $feature_enable_id = Html::getUniqueId($feature_id . '_enabled');
       $weight = isset($settings['map_features'][$feature_id]['weight']) ? $settings['map_features'][$feature_id]['weight'] : 0;
 
       $form['map_features'][$feature_id] = [

@@ -2,6 +2,7 @@
 
 namespace Drupal\geolocation\Plugin\Field\FieldWidget;
 
+use Drupal\geolocation\MapCenterManager;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\Html;
@@ -48,6 +49,13 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
   protected $mapProvider = NULL;
 
   /**
+   * Map center manager.
+   *
+   * @var \Drupal\geolocation\MapCenterManager
+   */
+  protected $mapCenterManager = NULL;
+
+  /**
    * Constructs a WidgetBase object.
    *
    * @param string $plugin_id
@@ -62,11 +70,14 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
    *   Any third party settings.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   The entity field manager.
+   * @param \Drupal\geolocation\MapCenterManager $map_center_manager
+   *   Map center manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityFieldManagerInterface $entity_field_manager) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityFieldManagerInterface $entity_field_manager, MapCenterManager $map_center_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
 
     $this->entityFieldManager = $entity_field_manager;
+    $this->mapCenterManager = $map_center_manager;
 
     if (!empty(static::$mapProviderId)) {
       $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider(static::$mapProviderId);
@@ -84,7 +95,8 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('entity_field.manager')
+      $container->get('entity_field.manager'),
+      $container->get('plugin.manager.geolocation.mapcenter')
     );
   }
 
@@ -105,8 +117,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
    */
   public static function defaultSettings() {
     $settings = [
-      'default_longitude' => NULL,
-      'default_latitude' => NULL,
+      'centre' => [],
       'auto_client_location' => FALSE,
       'auto_client_location_marker' => FALSE,
       'allow_override_map_settings' => FALSE,
@@ -144,23 +155,11 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     $settings = $this->getSettings();
     $element = [];
 
-    $element['default_longitude'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Default Longitude'),
-      '#description' => $this->t('The default center point, before a value is set.'),
-      '#default_value' => $settings['default_longitude'],
-    ];
-
-    $element['default_latitude'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Default Latitude'),
-      '#description' => $this->t('The default center point, before a value is set.'),
-      '#default_value' => $settings['default_latitude'],
-    ];
+    $element['centre'] = $this->mapCenterManager->getCenterOptionsForm((array) $settings['centre'], ['widget' => $this]);
 
     $element['auto_client_location_marker'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Automatically set marker to client location as well'),
+      '#title' => $this->t('Automatically set marker to client location if available.'),
       '#default_value' => $settings['auto_client_location_marker'],
     ];
 
@@ -192,11 +191,6 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
   public function settingsSummary() {
     $summary = [];
     $settings = $this->getSettings();
-
-    $summary[] = $this->t('Default center longitude @default_longitude and latitude @default_latitude', [
-      '@default_longitude' => $settings['default_longitude'],
-      '@default_latitude' => $settings['default_latitude'],
-    ]);
 
     if (!empty($settings['auto_client_location_marker'])) {
       $summary[] = $this->t('Will set client location marker automatically by default');
@@ -334,7 +328,20 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       '#id' => $id . '-map',
       '#maptype' => static::$mapProviderId,
       '#context' => ['widget' => $this],
+      '#centre' => $this->mapCenterManager->getCenterValue($settings['centre']),
+      'locations' => [],
     ];
+
+    foreach ($items as $item) {
+      /** @var \Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem $item */
+      $element['map']['locations'][] = [
+        '#type' => 'geolocation_map_location',
+        '#position' => [
+          'lat' => $item->get('lat')->getValue(),
+          'lng' => $item->get('lng')->getValue(),
+        ],
+      ];
+    }
 
     if (
       $this->getSetting('allow_override_map_settings')
