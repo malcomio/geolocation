@@ -147,15 +147,10 @@ class ProximityField extends NumericField implements ContainerFactoryPluginInter
       ],
       '#states' => [
         'visible' => [
-          [
-            ['select[name="options[proximity_source]"]' => ['value' => 'direct_input']],
-            'or',
-            ['select[name="options[proximity_source]"]' => ['value' => 'boundary_filter']],
-            'or',
-            ['select[name="options[proximity_source]"]' => ['value' => 'entity_id_argument']],
-            'or',
-            ['select[name="options[proximity_source]"]' => ['value' => 'user_input']],
-          ],
+          ['select[name="options[proximity_source]"]' => ['value' => 'direct_input']],
+          ['select[name="options[proximity_source]"]' => ['value' => 'boundary_filter']],
+          ['select[name="options[proximity_source]"]' => ['value' => 'entity_id_argument']],
+          ['select[name="options[proximity_source]"]' => ['value' => 'user_input']],
         ],
       ],
     ];
