@@ -126,7 +126,7 @@ class GeolocationGoogleGeocoderWidgetTest extends GeolocationJavascriptTestBase 
   public function testGeocoderWidgetMapPresent() {
     $this->drupalLogin($this->adminUser);
 
-    $this->drupalGetFilterGoogleKey('node/3/edit');
+    $this->drupalGet('node/3/edit');
 
     $this->assertSession()->elementExists('css', '.geolocation-map-container');
 
@@ -150,7 +150,7 @@ class GeolocationGoogleGeocoderWidgetTest extends GeolocationJavascriptTestBase 
 
     $this->drupalLogin($this->adminUser);
 
-    $this->drupalGetFilterGoogleKey('node/add/article');
+    $this->drupalGet('node/add/article');
 
     $page = $this->getSession()->getPage();
     $page->findField('Title')->setValue('I am new');
