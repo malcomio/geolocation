@@ -1,0 +1,7 @@
+name: Geolocation - Here Maps
+type: module
+description: HERE Maps provider
+core: 8.x
+package: Geolocation
+dependencies:
+  - geolocation
