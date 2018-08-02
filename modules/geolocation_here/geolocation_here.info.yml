@@ -4,4 +4,4 @@ description: HERE Maps provider
 core: 8.x
 package: Geolocation
 dependencies:
-  - geolocation
+  - geolocation:geolocation

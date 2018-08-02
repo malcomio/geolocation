@@ -4,5 +4,5 @@ description: Use geofield in CommonMap views style
 core: 8.x
 package: Geolocation
 dependencies:
-  - geolocation
-  - geofield
+  - geolocation:geolocation
+  - geofield:geofield

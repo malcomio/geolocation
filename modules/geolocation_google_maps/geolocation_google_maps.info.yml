@@ -5,4 +5,4 @@ description: Google Maps integration
 package: Geolocation
 configure: geolocation_google_maps.settings
 dependencies:
-  - geolocation
+  - geolocation:geolocation
