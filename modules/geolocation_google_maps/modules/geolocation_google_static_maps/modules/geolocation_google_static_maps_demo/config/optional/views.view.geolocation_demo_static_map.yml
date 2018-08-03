@@ -64,13 +64,17 @@ display:
             first_row:
               weight: 0
               enable: false
+              map_center_id: location_plugins
             fixed_value:
+              map_center_id: location_plugins
               enable: false
               weight: 0
             fit_bounds:
+              map_center_id: fit_bounds
               weight: -9
               enable: true
             client_location:
+              map_center_id: client_location
               weight: 0
               enable: false
           even_empty: 0

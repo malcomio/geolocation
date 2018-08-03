@@ -21,11 +21,38 @@ class FitLocations extends MapCenterBase implements MapCenterInterface {
   /**
    * {@inheritdoc}
    */
-  public function getMapCenter($center_option_id, array $center_option_settings, array $context = []) {
-    return array_replace_recursive(
-      parent::getMapCenter($center_option_id, $center_option_settings, $context),
-      ['behavior' => 'fitlocations']
-    );
+  public static function getDefaultSettings() {
+    return [
+      'reset_zoom' => FALSE,
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSettingsForm($option_id = NULL, array $context = [], array $settings = []) {
+    $form = parent::getSettingsForm($option_id, $context, $settings);
+    $form['reset_zoom'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Reset zoom after fit.'),
+      '#default_value' => $settings['reset_zoom'],
+    ];
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function alterMap(array $map, $center_option_id, array $center_option_settings, array $context = []) {
+    $map = parent::alterMap($map, $center_option_id, $center_option_settings, $context);
+    $map['#attached'] = array_merge_recursive($map['#attached'], [
+      'library' => [
+        'geolocation/map_center.fitlocations',
+      ],
+    ]);
+
+    return $map;
   }
 
 }

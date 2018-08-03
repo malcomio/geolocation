@@ -7,6 +7,7 @@
  * @typedef {Object} GeolocationSettings
  *
  * @property {GeolocationMapSettings[]} maps
+ * @property {Object} mapCenter
  */
 
 /**
@@ -21,7 +22,7 @@
  * @property {Object} settings
  * @property {Number} lat
  * @property {Number} lng
- * @property {String} centreBehavior
+ * @property {Object[]} map_center
  * @property {jQuery} wrapper
  * @property {GeolocationMapMarker[]} mapMarkers
  */
@@ -90,7 +91,7 @@
  * @property {GeolocationMapSettings} settings
  * @property {Number} lat
  * @property {Number} lng
- * @property {String} centreBehavior
+ * @property {Object[]} mapCenter
  * @property {jQuery} wrapper
  * @property {jQuery} container
  * @property {Object[]} mapMarkers
@@ -107,8 +108,9 @@
  * @property {function({GeolocationMapMarker}):{GeolocationMapMarker}} setMapMarker - Set marker on map.
  * @property {function({GeolocationMapMarker})} removeMapMarker - Remove single marker.
  * @property {function()} removeMapMarkers - Remove all markers from map.
- *
- * @property {function({string})} setCenterByBehavior - Center map by behavior.
+ *s
+ * @property {function({string})} setZoom - Set zoom.
+ * @property {function({string})} setCenter - Center map by plugin.
  * @property {function({GeolocationCoordinates}, {Number}?, {string}?)} setCenterByCoordinates - Center map on coordinates.
  * @property {function({GeolocationMapMarker[]}?)} fitMapToMarkers - Fit map to markers.
  * @property {function({Object})} fitBoundaries - Fit map to bounds.
@@ -146,6 +148,8 @@
    */
   Drupal.geolocation.maps = Drupal.geolocation.maps || [];
 
+  Drupal.geolocation.mapCenter = Drupal.geolocation.mapCenter || {};
+
   /**
    * Geolocation map.
    *
@@ -167,7 +171,6 @@
     this.populated = false;
     this.lat = mapSettings.lat;
     this.lng = mapSettings.lng;
-    this.centreBehavior = mapSettings.centreBehavior;
 
     if (typeof mapSettings.id === 'undefined') {
       this.id = 'map' + Math.floor(Math.random() * 10000);
@@ -176,6 +179,7 @@
       this.id = mapSettings.id;
     }
 
+    this.mapCenter = mapSettings.map_center;
     this.mapMarkers = this.mapMarkers || [];
 
     return this;
@@ -194,54 +198,29 @@
       this.container = mapSettings.wrapper.find('.geolocation-map-container').first();
       this.lat = mapSettings.lat;
       this.lng = mapSettings.lng;
-      this.centreBehavior = mapSettings.centreBehavior;
-    },
-    setCenterByBehavior: function (centreBehavior) {
-      centreBehavior = centreBehavior || this.centreBehavior;
-
-      switch (centreBehavior) {
-        case 'preserve':
-          break;
-
-        case 'preset':
-          this.setCenterByCoordinates({
-            lat: this.lat,
-            lng: this.lng
-          }, undefined, 'initial_preset');
-          break;
-
-        case 'fitlocations':
-          this.fitMapToMarkers();
-          break;
-
-        case 'fitboundaries':
-          if (
-            this.wrapper.data('centre-lat-north-east')
-            && this.wrapper.data('centre-lng-north-east')
-            && this.wrapper.data('centre-lat-south-west')
-            && this.wrapper.data('centre-lng-south-west')
-          ) {
-            var centerBounds = {
-              north: this.wrapper.data('centre-lat-north-east'),
-              east: this.wrapper.data('centre-lng-north-east'),
-              south: this.wrapper.data('centre-lat-south-west'),
-              west: this.wrapper.data('centre-lng-south-west')
-            };
-            // Centre handling
-            this.fitBoundaries(centerBounds);
-          }
-          break;
-
-        case 'client_location':
-          if (navigator.geolocation) {
-            var that = this;
-            var successCallback = function (position) {
-              that.setCenterByCoordinates({lat: position.coords.latitude, lng: position.coords.longitude}, position.coords.accuracy, 'initial_client_location');
-            };
-            navigator.geolocation.getCurrentPosition(successCallback);
-          }
-          break;
+      if (typeof mapSettings.map_center !== 'undefined') {
+        this.mapCenter = mapSettings.map_center;
       }
+    },
+    setZoom: function (zoom) {
+      // Stub.
+    },
+    setCenter: function () {
+      var that = this;
+
+      /**
+       * @param {integer} weight
+       * @param {Object} centerOption
+       * @param {Object} centerOption.map_center_id
+       * @param {Object} centerOption.option_id
+       * @param {Object} centerOption.settings
+       *
+       */
+      $.each(this.mapCenter, function (weight, centerOption) {
+        if (typeof Drupal.geolocation.mapCenter[centerOption.map_center_id] === 'function') {
+          return Drupal.geolocation.mapCenter[centerOption.map_center_id](that, centerOption.option_id, centerOption.settings);
+        }
+      });
     },
     setCenterByCoordinates: function (coordinates, accuracy, identifier) {
       this.centerUpdatedCallback(coordinates, accuracy, identifier);

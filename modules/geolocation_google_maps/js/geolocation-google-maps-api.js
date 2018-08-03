@@ -217,23 +217,15 @@
       this.googleMap.fitBounds(boundaries);
     }
   };
-  GeolocationGoogleMap.prototype.setCenterByBehavior = function (centreBehavior) {
-    centreBehavior = centreBehavior || this.centreBehavior;
-
-    Drupal.geolocation.GeolocationMapBase.prototype.setCenterByBehavior.call(this, centreBehavior);
-    switch (centreBehavior) {
-      case 'preset':
-        this.addInitializedCallback(function (map) {
-          if (map.settings.google_map_settings.zoom) {
-            google.maps.event.addListenerOnce(map.googleMap, 'zoom_changed', function () {
-              if (map.settings.google_map_settings.zoom < map.googleMap.getZoom()) {
-                map.googleMap.setZoom(map.settings.google_map_settings.zoom);
-              }
-            });
-          }
-        });
-        break;
+  GeolocationGoogleMap.prototype.setZoom = function (zoom) {
+    if (typeof zoom === 'undefined') {
+      zoom = this.settings.google_map_settings.zoom;
     }
+    zoom = parseInt(zoom);
+    var that = this;
+    google.maps.event.addListenerOnce(this.googleMap, "idle", function() {
+      that.googleMap.setZoom(zoom);
+    });
   };
   GeolocationGoogleMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
     Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);

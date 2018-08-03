@@ -85,14 +85,19 @@ abstract class DataProviderBase extends PluginBase implements DataProviderInterf
     ];
 
     foreach ($fieldDefinition->getFieldStorageDefinition()->getColumns() as $id => $column) {
-      $element['token_items'][] = [
+      $item = [
         'token' => [
           '#plain_text' => '[geolocation_current_item:' . $id . ']',
         ],
-        'description' => [
-          '#plain_text' => $column['description'],
-        ],
       ];
+
+      if (!empty($column['description'])) {
+        $item['description'] = [
+          '#plain_text' => $column['description'],
+        ];
+      }
+
+      $element['token_items'][] = $item;
     }
 
     if (

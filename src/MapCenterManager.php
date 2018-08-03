@@ -73,7 +73,7 @@ class MapCenterManager extends DefaultPluginManager {
   public function getCenterOptionsForm(array $settings, array $context = []) {
     $form = [
       '#type' => 'table',
-      '#prefix' => t('<h3>Centre options</h3>Please note: Each option will, if it can be applied, supersede any following option.'),
+      '#prefix' => t('<h3>Centre override</h3>These options allow to override the default map centre. Each option will, if it can be applied, supersede any following option.'),
       '#header' => [
         [
           'data' => t('Enable'),
@@ -133,10 +133,14 @@ class MapCenterManager extends DefaultPluginManager {
           ],
         ];
 
+        $map_center_settings = [];
+        if (!empty($settings[$option_id]['settings'])) {
+          $map_center_settings = $settings[$option_id]['settings'];
+        }
         $option_form = $map_center->getSettingsForm(
           $option_id,
           $context,
-          empty($settings[$option_id]['settings']) ? [] : $settings[$option_id]['settings']
+          $map_center->getSettings($map_center_settings)
         );
 
         if (!empty($option_form)) {
@@ -160,14 +164,30 @@ class MapCenterManager extends DefaultPluginManager {
   /**
    * Get center values for map element.
    *
+   * @param array $map
+   *   Map render array.
    * @param array $settings
    *   Center option settings.
+   * @param array $context
+   *   Context.
    *
    * @return array
    *   Centre value.
    */
-  public function getCenterValue(array $settings) {
-    $centre = [];
+  public function alterMap(array $map, array $settings, array $context = []) {
+    $map = array_replace_recursive($map, [
+      '#attached' => [
+        'drupalSettings' => [
+          'geolocation' => [
+            'maps' => [
+              $map['#id'] => [
+                'map_center' => [],
+              ],
+            ],
+          ],
+        ],
+      ],
+    ]);
 
     /*
      * Centre handling.
@@ -183,62 +203,25 @@ class MapCenterManager extends DefaultPluginManager {
         $option['map_center_id'] = $option_id;
       }
 
-      // Failsafe.
       if (!$this->hasDefinition($option['map_center_id'])) {
-        $option['map_center_id'] = $option_id = 'fit_bounds';
+        continue;
       }
 
       /** @var \Drupal\geolocation\MapCenterInterface $map_center_plugin */
       $map_center_plugin = $this->createInstance($option['map_center_id']);
-      $current_map_center = $map_center_plugin->getMapCenter($option_id, empty($option['settings']) ? [] : $option['settings'], ['views_style' => $this]);
-
-      if (
-        isset($current_map_center['behavior'])
-        && !isset($centre['behavior'])
-      ) {
-        $centre['behavior'] = $current_map_center['behavior'];
-      }
-
-      if (
-        (
-          !isset($centre['lat'])
-          && !isset($centre['lng'])
-        )
-        ||
-        (
-          !isset($centre['lat_north_east'])
-          && !isset($centre['lng_north_east'])
-          && !isset($centre['lat_south_west'])
-          && !isset($centre['lng_south_west'])
-        )
-      ) {
-        if (
-          isset($current_map_center['lat'])
-          && isset($current_map_center['lng'])
-        ) {
-          $centre['lat'] = $current_map_center['lat'];
-          $centre['lng'] = $current_map_center['lng'];
-        }
-        // Break if center bounds are already set.
-        elseif (
-          isset($centre['lat_north_east'])
-          && isset($centre['lng_north_east'])
-          && isset($centre['lat_south_west'])
-          && isset($centre['lng_south_west'])
-        ) {
-          $centre['lat_north_east'] = $current_map_center['lat_north_east'];
-          $centre['lng_north_east'] = $current_map_center['lng_north_east'];
-          $centre['lat_south_west'] = $current_map_center['lat_south_west'];
-          $centre['lng_south_west'] = $current_map_center['lng_south_west'];
-        }
-      }
+      $map['#attached']['drupalSettings']['geolocation']['maps'][$map['#id']]['map_center'][$option['weight']] = [
+        'map_center_id' => $option['map_center_id'],
+        'option_id' => $option_id,
+        'settings' => isset($option['settings']) ? $option['settings'] : [],
+      ];
+      $map = $map_center_plugin->alterMap($map, $option_id, empty($option['settings']) ? [] : $option['settings'], $context);
     }
 
-    if (empty($centre)) {
-      $centre = ['lat' => 0, 'lng' => 0];
+    if (empty($map['#centre'])) {
+      $map['#centre'] = ['lat' => 0, 'lng' => 0];
     }
 
-    return $centre;
+    return $map;
   }
 
 }

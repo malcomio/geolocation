@@ -40,6 +40,8 @@ widget.google:
     - geolocation/geolocation.widget
     - geolocation_google_maps/widget.api.google
 
+
+
 #
 # Map Features
 #
@@ -149,6 +151,8 @@ geolocation.mapdisablepoi:
     js/MapFeature/geolocation-mapdisablepoi.js: {}
   dependencies:
     - geolocation_google_maps/googlemapsapi
+
+
 
 #
 # Map Features - Controls

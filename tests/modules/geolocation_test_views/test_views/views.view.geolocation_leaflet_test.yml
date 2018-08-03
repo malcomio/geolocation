@@ -54,24 +54,24 @@ display:
           title_field: title
           centre:
             freeogeoip:
+              map_center_id: location_plugins
               weight: 0
               enable: false
-              map_center_id: location_plugins
             fixed_value:
+              map_center_id: location_plugins
               weight: 0
               settings:
                 latitude: !!float 0
                 longitude: !!float 0
               enable: false
-              map_center_id: location_plugins
             fit_bounds:
+              map_center_id: fit_bounds
               weight: 0
               enable: true
-              map_center_id: fit_bounds
             client_location:
+              map_center_id: client_location
               weight: 0
               enable: false
-              map_center_id: client_location
           even_empty: 1
           icon_field: ''
           marker_icon_path: ''

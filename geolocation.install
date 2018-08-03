@@ -143,3 +143,53 @@ function geolocation_update_8202(&$sandbox) {
 
   drupal_flush_all_caches();
 }
+
+/**
+ * {@inheritdoc}
+ *
+ * Move centre behavior to new format in views.
+ */
+function geolocation_update_8203(&$sandbox) {
+  \Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
+
+  foreach (\Drupal::entityTypeManager()->getStorage('view')->loadMultiple() as $views_id => $view) {
+    $resave_view = FALSE;
+
+    /* @var \Drupal\views\Entity\View $view */
+    $displays = $view->get('display');
+    foreach ($displays as $display_id => $display) {
+      if (
+        !empty($display['display_options']['style']['type'])
+        && $display['display_options']['style']['type'] == 'maps_common'
+      ) {
+        if (empty($display['display_options']['style']['options']['centre'])) {
+          continue;
+        }
+
+        foreach ($display['display_options']['style']['options']['centre'] as $options_id => $value) {
+          switch ($options_id) {
+            case 'fixed_value':
+            case 'freeogeoip':
+              $displays[$display_id]['display_options']['style']['options']['centre'][$options_id]['map_center_id'] = 'location_plugins';
+              break;
+
+            default:
+              if (substr($options_id, 0, 16) == 'boundary_filter_') {
+                $displays[$display_id]['display_options']['style']['options']['centre'][$options_id]['map_center_id'] = 'views_boundary_filter';
+              }
+              else {
+                $displays[$display_id]['display_options']['style']['options']['centre'][$options_id]['map_center_id'] = $options_id;
+              }
+          }
+        }
+        $resave_view = TRUE;
+      }
+    }
+    if ($resave_view) {
+      $view->set('display', $displays);
+      $view->save();
+    }
+  }
+
+  drupal_flush_all_caches();
+}

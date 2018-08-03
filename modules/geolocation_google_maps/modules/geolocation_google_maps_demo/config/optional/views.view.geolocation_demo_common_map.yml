@@ -63,16 +63,20 @@ display:
             first_row:
               weight: -9
               enable: false
+              map_center_id: location_plugins
             fixed_value:
+              map_center_id: location_plugins
               enable: true
               weight: -8
               settings:
                 latitude: -33.45
                 longitude: -70.66
             fit_bounds:
+              map_center_id: fit_bounds
               weight: 0
               enable: false
             client_location:
+              map_center_id: client_location
               weight: 0
               enable: false
           even_empty: 0

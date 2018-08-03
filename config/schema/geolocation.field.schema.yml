@@ -20,6 +20,12 @@ geolocation.field.formatter.map.base:
     info_text:
       type: text_format
       label: 'Info Text'
+    centre:
+      type: sequence
+      label: 'Center option settings'
+      sequence:
+        type: plugin.plugin_configuration.geolocation.map_center_option.[%key]
+        label: 'The settings for a map center option'
     map_provider_id:
       type: string
       label: 'Map provider ID'

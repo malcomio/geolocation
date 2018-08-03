@@ -18,8 +18,6 @@
  * @name CommonMapSettings
  * @property {Object} settings
  * @property {CommonMapUpdateSettings} dynamic_map
- * @property {String} client_location.enable
- * @property {String} client_location.update_map
  * @property {Boolean} markerScrollToResult
  */
 

@@ -63,6 +63,23 @@ geolocation.commonmap:
     - geolocation/geolocation.map
 
 #
+# Map Center
+#
+map_center.fitlocations:
+  js:
+    js/MapCenter/fitlocations.js: {}
+
+map_center.client_location:
+  js:
+    js/MapCenter/client-location.js: {}
+
+map_center.fitboundary:
+  js:
+    js/MapCenter/fitboundary.js: {}
+
+
+
+#
 #
 # Views
 #

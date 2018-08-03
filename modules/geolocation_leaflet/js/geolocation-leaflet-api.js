@@ -73,6 +73,13 @@
   }
   GeolocationLeafletMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationLeafletMap.prototype.constructor = GeolocationLeafletMap;
+  GeolocationLeafletMap.prototype.setZoom = function (zoom) {
+    if (typeof zoom === 'undefined') {
+      zoom = this.settings.leaflet_settings.zoom;
+    }
+    zoom = parseInt(zoom);
+    this.leafletMap.setZoom(zoom);
+  };
   GeolocationLeafletMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
     Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);
     this.leafletMap.panTo(coordinates);

@@ -55,8 +55,10 @@ interface MapCenterInterface extends PluginInspectionInterface {
   public function getAvailableMapCenterOptions(array $context);
 
   /**
-   * Get map center.
+   * Alter map..
    *
+   * @param array $map
+   *   Map object.
    * @param int $center_option_id
    *   MapCenter option ID.
    * @param array $center_option_settings
@@ -65,8 +67,8 @@ interface MapCenterInterface extends PluginInspectionInterface {
    *   Context like field formatter, field widget or view.
    *
    * @return array
-   *   Center definition.
+   *   Map object.
    */
-  public function getMapCenter($center_option_id, array $center_option_settings, array $context);
+  public function alterMap(array $map, $center_option_id, array $center_option_settings, array $context);
 
 }

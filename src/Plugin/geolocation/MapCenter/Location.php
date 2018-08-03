@@ -82,7 +82,7 @@ class Location extends MapCenterBase implements MapCenterInterface {
   /**
    * {@inheritdoc}
    */
-  public function getMapCenter($center_option_id, array $center_option_settings, array $context = []) {
+  public function alterMap(array $map, $center_option_id, array $center_option_settings, array $context = []) {
     /** @var \Drupal\geolocation\LocationInterface $location */
     $location = $this->locationManager->createInstance($center_option_id);
 
@@ -91,9 +91,9 @@ class Location extends MapCenterBase implements MapCenterInterface {
       return FALSE;
     }
 
-    $map_center['behavior'] = 'preset';
+    $map['#centre'] = $map_center;
 
-    return $map_center;
+    return $map;
   }
 
 }

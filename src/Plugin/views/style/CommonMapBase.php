@@ -217,7 +217,7 @@ class CommonMapBase extends StylePluginBase {
       }
     }
 
-    $build['#centre'] = $this->mapCenterManager->getCenterValue($this->options['centre']);
+    $build = $this->mapCenterManager->alterMap($build, $this->options['centre'], ['views_style' => $this]);
 
     if ($this->view->getRequest()->get('geolocation_common_map_dynamic_view')) {
       $build['#centre'] = [

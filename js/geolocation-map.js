@@ -26,7 +26,6 @@
       $('.geolocation-map-wrapper', context).once('geolocation-map-processed').each(function (index, item) {
         var mapWrapper = $(item);
         var mapSettings = {};
-        mapSettings.centreBehavior = 'fitlocations';
         mapSettings.id = mapWrapper.attr('id');
         mapSettings.wrapper = mapWrapper;
 
@@ -47,10 +46,6 @@
 
         if (mapWrapper.data('map-type')) {
           mapSettings.type = mapWrapper.data('map-type');
-        }
-
-        if (mapWrapper.data('centre-behavior')) {
-          mapSettings.centreBehavior = mapWrapper.data('centre-behavior');
         }
 
         if (typeof drupalSettings.geolocation === 'undefined') {
@@ -82,9 +77,9 @@
           $.each(locations, function (index, location) {
             map.setMapMarker(location);
           });
+          map.setCenter();
 
           map.wrapper.find('.geolocation-location').hide();
-          map.setCenterByBehavior();
         });
       });
     },

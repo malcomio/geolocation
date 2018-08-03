@@ -328,9 +328,10 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       '#id' => $id . '-map',
       '#maptype' => static::$mapProviderId,
       '#context' => ['widget' => $this],
-      '#centre' => $this->mapCenterManager->getCenterValue($settings['centre']),
       'locations' => [],
     ];
+
+    $element['map'] = $this->mapCenterManager->alterMap($element['map'], $settings['centre']);
 
     foreach ($items as $item) {
       /** @var \Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem $item */

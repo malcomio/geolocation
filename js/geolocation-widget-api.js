@@ -23,7 +23,7 @@
 /**
  * Callback for location found or set by widget.
  *
- * @callback geolocationGeocoderLocationCallback
+ * @callback geolocationWidgetLocationCallback
  * @param {GeolocationCoordinates} location - Location.
  * @param {int} [delta] - Delta.
  */
@@ -43,19 +43,19 @@
  * @property {jQuery} wrapper
  * @property {jQuery} container
  * @property {Object[]} mapMarkers
- * @property {geolocationGeocoderLocationCallback[]} locationAddedCallbacks
- * @property {geolocationGeocoderLocationCallback[]} locationModifiedCallbacks
- * @property {geolocationGeocoderLocationCallback[]} locationRemovedCallbacks
+ * @property {geolocationWidgetLocationCallback[]} locationAddedCallbacks
+ * @property {geolocationWidgetLocationCallback[]} locationModifiedCallbacks
+ * @property {geolocationWidgetLocationCallback[]} locationRemovedCallbacks
  * @property {geolocationGeocoderClearCallback[]} clearCallbacks
  *
- * @property {function({GeolocationCoordinates})} locationAddedCallback - Executes all {geolocationGeocoderLocationCallback} callbacks.
- * @property {function({geolocationGeocoderLocationCallback})} addLocationAddedCallback - Adds a callback that will be called when a location is set.
+ * @property {function({GeolocationCoordinates})} locationAddedCallback - Executes all {geolocationWidgetLocationCallback} callbacks.
+ * @property {function({geolocationWidgetLocationCallback})} addLocationAddedCallback - Adds a callback that will be called when a location is set.
  *
- * @property {function({GeolocationCoordinates}, {int})} locationModifiedCallback - Executes all {geolocationGeocoderLocationCallback} modified callbacks.
- * @property {function({geolocationGeocoderLocationCallback})} addLocationModifiedCallback - Adds a callback that will be called when a location is set.
+ * @property {function({GeolocationCoordinates}, {int})} locationModifiedCallback - Executes all {geolocationWidgetLocationCallback} modified callbacks.
+ * @property {function({geolocationWidgetLocationCallback})} addLocationModifiedCallback - Adds a callback that will be called when a location is set.
  *
- * @property {function({int})} locationRemovedCallback - Executes all {geolocationGeocoderLocationCallback} modified callbacks.
- * @property {function({geolocationGeocoderLocationCallback})} addLocationRemovedCallback - Adds a callback that will be called when a location is removed.
+ * @property {function({int})} locationRemovedCallback - Executes all {geolocationWidgetLocationCallback} modified callbacks.
+ * @property {function({geolocationWidgetLocationCallback})} addLocationRemovedCallback - Adds a callback that will be called when a location is removed.
  *
  * @property {function():{GeolocationMapMarker[]}} loadMarkersFromInput - Load markers from input and add to map.
  * @property {function({int}):{GeolocationMapMarker}} getMarkerByDelta - Get map marker by delta.

@@ -513,18 +513,22 @@ display:
               enable: true
               weight: -10
             fit_bounds:
+              map_center_id: fit_bounds
               weight: -9
               enable: false
             first_row:
               weight: -8
               enable: false
+              map_center_id: location_plugins
             fixed_value:
+              map_center_id: location_plugins
               enable: true
               weight: -7
               settings:
                 latitude: 52
                 longitude: 13
             client_location:
+              map_center_id: client_location
               weight: -6
               enable: false
           even_empty: 1

@@ -360,18 +360,22 @@ display:
             views_refresh_delay: '1200'
           centre:
             fit_bounds:
+              map_center_id: fit_bounds
               enable: true
               weight: 0
             first_row:
+              map_center_id: location_plugins
               enable: true
               weight: 0
             fixed_value:
+              map_center_id: location_plugins
               enable: true
               weight: 0
               settings:
                 latitude: 0
                 longitude: 0
             client_location:
+              map_center_id: client_location
               enable: true
               weight: 0
             boundary_filter_field_geolocation_boundary:

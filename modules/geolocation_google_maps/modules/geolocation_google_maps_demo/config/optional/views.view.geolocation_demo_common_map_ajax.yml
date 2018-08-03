@@ -87,18 +87,22 @@ display:
           title_field: title
           centre:
             fit_bounds:
+              map_center_id: fit_bounds
               enable: true
               weight: 0
             first_row:
               weight: 0
               enable: false
+              map_center_id: location_plugins
             fixed_value:
               weight: 0
               settings:
                 latitude: 0
                 longitude: 0
               enable: false
+              map_center_id: location_plugins
             client_location:
+              map_center_id: client_location
               weight: 0
               enable: false
           even_empty: 0

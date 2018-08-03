@@ -93,10 +93,6 @@ class GeolocationMap extends RenderElement {
       }
     }
 
-    if (empty($render_array['#centre']['behavior'])) {
-      $render_array['#centre']['behavior'] = 'fitlocations';
-    }
-
     $map_provider = $this->mapProviderManager->getMapProvider($render_array['#maptype']);
 
     $map_settings = [];
@@ -126,7 +122,6 @@ class GeolocationMap extends RenderElement {
     $render_array['#attributes']->addClass('geolocation-map-wrapper');
     $render_array['#attributes']->setAttribute('id', $render_array['#id']);
     $render_array['#attributes']->setAttribute('data-map-type', $render_array['#maptype']);
-    $render_array['#attributes']->setAttribute('data-centre-behavior', $render_array['#centre']['behavior']);
 
     if (
       !empty($render_array['#centre']['lat'])

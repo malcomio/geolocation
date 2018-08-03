@@ -44,6 +44,13 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
   protected $dataProvider = NULL;
 
   /**
+   * MapCenter options manager.
+   *
+   * @var \Drupal\geolocation\MapCenterManager
+   */
+  protected $mapCenterManager = NULL;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings) {
@@ -52,6 +59,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $settings = $this->getSettings();
 
     $this->mapProviderManager = \Drupal::service('plugin.manager.geolocation.mapprovider');
+    $this->mapCenterManager = \Drupal::service('plugin.manager.geolocation.mapcenter');
 
     if (!empty($settings['map_provider_id'])) {
       $this->mapProvider = $this->mapProviderManager->getMapProvider($settings['map_provider_id'], $settings['map_provider_settings']);
@@ -80,6 +88,16 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     elseif (\Drupal::moduleHandler()->moduleExists('geolocation_leaflet')) {
       $settings['map_provider_id'] = 'leaflet';
     }
+    $settings['centre'] = [
+      'fit_bounds' => [
+        'enable' => TRUE,
+        'weight' => -101,
+        'map_center_id' => 'fit_bounds',
+        'settings' => [
+          'reset_zoom' => TRUE,
+        ],
+      ],
+    ];
     $settings['map_provider_settings'] = [];
     $settings['info_text'] = [
       'value' => '',
@@ -108,7 +126,6 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $element = [];
 
     $data_provider_settings_form = $this->dataProvider->getSettingsForm($settings['data_provider_settings'], []);
-
     if (!empty($data_provider_settings_form)) {
       $element['data_provider_settings'] = $data_provider_settings_form;
     }
@@ -175,12 +192,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       ];
     }
 
-    $element['use_overridden_map_settings'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Use custom map settings if provided'),
-      '#description' => $this->t('The field map widget optionally allows to define custom map settings to use here.'),
-      '#default_value' => $settings['use_overridden_map_settings'],
-    ];
+    $element['centre'] = $this->mapCenterManager->getCenterOptionsForm((array) $settings['centre'], ['formatter' => $this]);
 
     $element['map_provider_id'] = [
       '#type' => 'select',
@@ -236,6 +248,13 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
         '#suffix' => '</div>',
       ]
     );
+
+    $element['use_overridden_map_settings'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Use custom map settings if provided'),
+      '#description' => $this->t('The field map widget optionally allows to define custom map settings to use here.'),
+      '#default_value' => $settings['use_overridden_map_settings'],
+    ];
 
     return $element;
   }
@@ -328,7 +347,8 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       '#settings' => $settings['map_provider_settings'],
       '#maptype' => $settings['map_provider_id'],
       '#centre' => [
-        'behavior' => 'fitlocations',
+        'lat' => 0,
+        'lng' => 0,
       ],
       '#context' => ['formatter' => $this],
     ];
@@ -341,12 +361,16 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       foreach ($locations as $delta => $location) {
         $elements[0][$delta] = $location;
       }
+
+      $elements[0] = $this->mapCenterManager->alterMap($elements[0], $settings['centre'], ['formatter' => $this]);
     }
     else {
       foreach ($locations as $delta => $location) {
         $elements[$delta] = $element_pattern;
         $elements[$delta]['#id'] = uniqid("map-" . $delta . "-");
         $elements[$delta]['content'] = $location;
+
+        $elements[$delta] = $this->mapCenterManager->alterMap($elements[$delta], $settings['centre'], ['formatter' => $this]);
       }
     }
 
