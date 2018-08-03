@@ -111,7 +111,7 @@ class GeolocationCommonMapAjaxJavascriptTest extends GeolocationJavascriptTestBa
    * Tests the CommonMap style.
    */
   public function testCommonMap() {
-    $this->drupalGetFilterGoogleKey('geolocation-common-map-ajax-test');
+    $this->drupalGet('geolocation-common-map-ajax-test');
 
     $this->assertSession()->elementExists('css', '.geolocation-map-container');
     $this->assertSession()->elementExists('css', '.geolocation-location');
@@ -124,7 +124,7 @@ class GeolocationCommonMapAjaxJavascriptTest extends GeolocationJavascriptTestBa
    * Tests the CommonMap style.
    */
   public function testCommonMapAjax() {
-    $this->drupalGetFilterGoogleKey('geolocation-common-map-ajax-test');
+    $this->drupalGet('geolocation-common-map-ajax-test');
 
     $session = $this->getSession();
 

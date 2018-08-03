@@ -4,4 +4,4 @@ description: This implements <a href="https://developers.google.com/maps/documen
 core: 8.x
 package: Geolocation
 dependencies:
-  - geolocation_google_maps
+  - geolocation:geolocation_google_maps

@@ -61,7 +61,7 @@ class Geolocation extends FieldTargetBase {
       }
       catch (TargetValidationException $e) {
         // Validation failed.
-        drupal_set_message($e->getMessage(), 'error');
+        \Drupal::messenger()->addError($e->getMessage());
       }
     }
 

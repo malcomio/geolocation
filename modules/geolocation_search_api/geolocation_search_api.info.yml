@@ -4,5 +4,5 @@ description: Use search API in CommonMap views style
 core: 8.x
 package: Geolocation
 dependencies:
-  - geolocation
-  - search_api
+  - geolocation:geolocation
+  - search_api:search_api
