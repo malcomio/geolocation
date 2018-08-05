@@ -1,0 +1,13 @@
+diff --git a/src/Plugin/Field/FieldWidget/GeolocationMapWidgetBase.php b/src/Plugin/Field/FieldWidget/GeolocationMapWidgetBase.php
+index 286e946..9e0d772 100644
+--- a/src/Plugin/Field/FieldWidget/GeolocationMapWidgetBase.php
++++ b/src/Plugin/Field/FieldWidget/GeolocationMapWidgetBase.php
+@@ -253,6 +253,8 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
+       $delta == 0
+       && $this->getSetting('allow_override_map_settings')
+       && $this->mapProvider
++      // Hide on default value config settings form.
++      && !(!empty($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == 'field_config_form')
+     ) {
+       $overriden_map_settings = empty($this->getSetting(static::$mapProviderSettingsFormId)) ? [] : $this->getSetting(static::$mapProviderSettingsFormId);
+ 
