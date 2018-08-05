@@ -220,9 +220,12 @@ class CommonMapBase extends StylePluginBase {
     $build = $this->mapCenterManager->alterMap($build, $this->options['centre'], ['views_style' => $this]);
 
     if ($this->view->getRequest()->get('geolocation_common_map_dynamic_view')) {
-      $build['#centre'] = [
-        'behavior' => 'preserve',
-      ];
+      if (empty($build['#attributes'])) {
+        $build['#attributes'] = [];
+      }
+      $build['#attributes'] = array_replace_recursive($build['#attributes'], [
+        'data-preserve-map-center' => TRUE,
+      ]);
     }
 
     $build = $this->mapProviderManager

@@ -206,6 +206,10 @@
       // Stub.
     },
     setCenter: function () {
+      if (typeof this.wrapper.data('preserve-map-center') !== 'undefined') {
+        return;
+      }
+
       var that = this;
 
       /**
