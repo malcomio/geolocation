@@ -17,8 +17,6 @@ use Drupal\geolocation\LocationBase;
  */
 class ViewsProximityFilter extends LocationBase implements LocationInterface {
 
-  protected $viewsFilterPluginId = 'geolocation_filter_proximity';
-
   /**
    * {@inheritdoc}
    */
@@ -33,7 +31,7 @@ class ViewsProximityFilter extends LocationBase implements LocationInterface {
       $views_style = $context['views_style'];
       $filters = $views_style->displayHandler->getOption('filters');
       foreach ($filters as $filter_id => $filter) {
-        if ($filter['plugin_id'] == $this->viewsFilterPluginId) {
+        if ($filter['plugin_id'] == 'geolocation_filter_proximity') {
           /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase $filter_handler */
           $filter_handler = $views_style->displayHandler->getHandler('filter', $filter_id);
 

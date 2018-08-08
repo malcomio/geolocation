@@ -136,6 +136,19 @@ function geolocation_field_views_data(FieldStorageConfigInterface $field_storage
       'title' => t('Boundary (@field_name)', $args),
       'title short' => isset($field_coordinates_table_data['title short']) ? $field_coordinates_table_data['title short'] . t(":boundary") : '',
       'help' => isset($field_coordinates_table_data['help']) ? $field_coordinates_table_data['help'] : '',
+      'argument' => [
+        'id' => 'geolocation_argument_boundary',
+        'table' => $table_name,
+        'entity_type' => $entity_type_id,
+        'field_name' => $args['@field_name'] . '_boundary',
+        'real field' => $args['@field_name'],
+        'label' => t('Boundaries around !field_name', $args),
+        'empty field name' => '- No value -',
+        'additional fields' => [
+          $args['@field_name'] . '_lat',
+          $args['@field_name'] . '_lng',
+        ],
+      ],
       'filter' => [
         'id' => 'geolocation_filter_boundary',
         'table' => $table_name,

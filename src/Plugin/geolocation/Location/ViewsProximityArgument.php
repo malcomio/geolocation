@@ -17,8 +17,6 @@ use Drupal\geolocation\LocationBase;
  */
 class ViewsProximityArgument extends LocationBase implements LocationInterface {
 
-  protected $viewsArgumentPluginId = 'geolocation_argument_argument';
-
   /**
    * {@inheritdoc}
    */
@@ -33,7 +31,7 @@ class ViewsProximityArgument extends LocationBase implements LocationInterface {
       $views_style = $context['views_style'];
       $arguments = $views_style->displayHandler->getOption('arguments');
       foreach ($arguments as $argument_id => $argument) {
-        if ($argument['plugin_id'] == $this->viewsArgumentPluginId) {
+        if ($argument['plugin_id'] == 'geolocation_argument_argument') {
           /** @var \Drupal\views\Plugin\views\argument\ArgumentPluginBase $argument_handler */
           $argument_handler = $views_style->displayHandler->getHandler('argument', $argument_id);
 
