@@ -376,6 +376,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
     if (
       $settings['use_overridden_map_settings']
+      && !empty($items->get(0))
       && !empty($items->get(0)->getValue()['data']['map_provider_settings'])
       && is_array($items->get(0)->getValue()['data']['map_provider_settings'])
     ) {
