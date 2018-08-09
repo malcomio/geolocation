@@ -6,6 +6,7 @@
  * @property {Boolean} infoAutoDisplay
  * @property {Boolean} disableAutoPan
  * @property {Boolean} infoWindowSolitary
+ * @property {int} maxWidth
  */
 
 /**
@@ -53,11 +54,17 @@
             }
             content = content.html();
 
-            // Set the info popup text.
-            var currentInfoWindow = new google.maps.InfoWindow({
+            var markerInfoWindow = {
               content: content.toString(),
               disableAutoPan: featureSettings.disableAutoPan
-            });
+            };
+
+            if (featureSettings.maxWidth > 0) {
+              markerInfoWindow.maxWidth = featureSettings.maxWidth;
+            }
+
+            // Set the info popup text.
+            var currentInfoWindow = new google.maps.InfoWindow(markerInfoWindow);
 
             currentMarker.addListener('click', function () {
               if (featureSettings.infoWindowSolitary) {

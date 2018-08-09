@@ -90,6 +90,9 @@ plugin.plugin_configuration.geolocation.map_feature.marker_infowindow:
         info_auto_display:
           type: boolean
           label: 'Show info window on map start'
+        max_width:
+          type: integer
+          label: 'Max width'
 
 plugin.plugin_configuration.geolocation.map_feature.marker_icon:
   type: geolocation.map_feature_settings

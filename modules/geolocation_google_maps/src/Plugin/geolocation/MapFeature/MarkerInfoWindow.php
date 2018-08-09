@@ -25,6 +25,7 @@ class MarkerInfoWindow extends MapFeatureBase {
       'info_auto_display' => FALSE,
       'disable_auto_pan' => TRUE,
       'info_window_solitary' => TRUE,
+      'max_width' => '',
     ];
   }
 
@@ -50,6 +51,12 @@ class MarkerInfoWindow extends MapFeatureBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Disable automatic panning of map when info bubble is opened.'),
       '#default_value' => $settings['disable_auto_pan'],
+    ];
+    $form['max_width'] = [
+      '#type' => 'number',
+      '#min' => 0,
+      '#title' => $this->t('Max width in pixel. 0 to ignore.'),
+      '#default_value' => $settings['max_width'],
     ];
 
     return $form;
@@ -78,6 +85,7 @@ class MarkerInfoWindow extends MapFeatureBase {
                   'infoAutoDisplay' => $feature_settings['info_auto_display'],
                   'disableAutoPan' => $feature_settings['disable_auto_pan'],
                   'infoWindowSolitary' => $feature_settings['info_window_solitary'],
+                  'maxWidth' => $feature_settings['max_width'],
                 ],
               ],
             ],
