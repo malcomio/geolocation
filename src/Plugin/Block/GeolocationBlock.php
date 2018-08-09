@@ -9,6 +9,7 @@ use Drupal\Component\Utility\NestedArray;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\geolocation\MapCenterManager;
 use Drupal\geolocation\MapProviderManager;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Exposes a map rendered as a block.
@@ -302,6 +303,18 @@ class GeolocationBlock extends BlockBase implements ContainerFactoryPluginInterf
     $build = $this->mapCenterManager->alterMap($build, $this->configuration['centre'], ['block' => $this]);
 
     return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $dependencies = parent::calculateDependencies();
+    foreach ($this->configuration['locations'] as $index => $location) {
+      $filter_format = FilterFormat::load($location['marker_content']['format']);
+      $dependencies['config'][] = $filter_format->getConfigDependencyName();
+    }
+    return $dependencies;
   }
 
 }

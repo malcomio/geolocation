@@ -7,6 +7,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Unicode;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Plugin implementation of the 'geolocation_token' formatter.
@@ -130,6 +131,17 @@ class GeolocationTokenFormatter extends FormatterBase {
     }
 
     return $elements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $dependencies = parent::calculateDependencies();
+    $settings = $this->getSettings();
+    $filter_format = FilterFormat::load($settings['tokenized_text']['format']);
+    $dependencies['config'][] = $filter_format->getConfigDependencyName();
+    return $dependencies;
   }
 
 }

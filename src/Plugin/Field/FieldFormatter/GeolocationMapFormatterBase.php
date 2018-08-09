@@ -9,6 +9,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Plugin base for Map based formatters.
@@ -393,6 +394,17 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     }
 
     return $elements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $dependencies = parent::calculateDependencies();
+    $settings = $this->getSettings();
+    $filter_format = FilterFormat::load($settings['info_text']['format']);
+    $dependencies['config'][] = $filter_format->getConfigDependencyName();
+    return $dependencies;
   }
 
 }
