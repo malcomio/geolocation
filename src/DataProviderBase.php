@@ -10,6 +10,8 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views\ResultRow;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Component\Utility\Html;
 
 /**
  * Class DataProviderBase.
@@ -122,10 +124,28 @@ abstract class DataProviderBase extends PluginBase implements DataProviderInterf
   public function replaceFieldItemTokens($text, FieldItemInterface $fieldItem) {
     $token_context['geolocation_current_item'] = $fieldItem;
 
-    return \Drupal::token()->replace($text, $token_context, [
+    $entity = NULL;
+    try {
+      $entity = $fieldItem->getParent()->getParent()->getValue();
+    }
+    catch (\Exception $e) {
+
+    }
+
+    if (
+      is_object($entity)
+      && $entity instanceof ContentEntityInterface
+    ) {
+      $token_context[$entity->getEntityTypeId()] = $entity;
+    }
+
+    $text = \Drupal::token()->replace($text, $token_context, [
       'callback' => [$this, 'fieldItemTokens'],
       'clear' => TRUE,
     ]);
+    $text = Html::decodeEntities($text);
+
+    return $text;
   }
 
   /**
