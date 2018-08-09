@@ -48,6 +48,15 @@
           return;
         }
 
+        widget.map.addPopulatedCallback(function (map) {
+          /**
+           * @var {GeolocationMapMarker} marker
+           */
+          $.each(map.mapMarkers, function (index, marker) {
+            widget.initializeMarker(marker, index);
+          });
+        });
+
         var table = $('table.field-multiple-table', widgetWrapper);
 
         if (table.length) {
@@ -62,9 +71,8 @@
         }
 
         widget.map.addPopulatedCallback(function (map) {
-          $.each(map.mapMarkers, function (index, item) {
-            item.delta = index;
-          });
+          widget.loadMarkersFromInput();
+          widget.map.fitMapToMarkers();
 
           if (
             widgetSettings.autoClientLocationMarker
@@ -74,7 +82,7 @@
               widget.addMarker({
                 lat: currentPosition.coords.latitude,
                 lng: currentPosition.coords.longitude
-              }, widget.getNextDelta());
+              });
             });
           }
         });
@@ -122,37 +130,14 @@
           });
         });
 
-        // Add the click responders for setting the value.
-        var singleClick;
-
         widget.map.addClickCallback(function (location) {
-
-          // Create 500ms timeout to wait for double click.
-          singleClick = setTimeout(function () {
-            if (widgetSettings.cardinality === 1) {
-              widget.updateInput(location, 0);
-              widget.updateMarker(location, 0);
-              widget.locationAddedCallback(location);
-            }
-            else {
-              var delta = widget.getNextDelta();
-              if (
-                  typeof delta === 'undefined'
-                  || delta === false
-              ) {
-                alert(Drupal.t('Maximum number of entries reached.'));
-                throw Error('Maximum number of entries reached.');
-              }
-              widget.addInput(location);
-              widget.addMarker(location, delta);
-              widget.locationAddedCallback(location);
-            }
-          }, 500);
-
-        });
-
-        widget.map.addDoubleClickCallback(function () {
-          clearTimeout(singleClick);
+          var delta = widget.addInput(location);
+          if (delta === false) {
+            return;
+          }
+          widget.addMarker(location, delta);
+          widget.locationAddedCallback(location);
+          widget.map.fitMapToMarkers();
         });
       });
     }

@@ -62,10 +62,11 @@
  * @property {function():{int}} getNextDelta - Get next delta.
  * @property {function({int}):{jQuery}} getInputByDelta - Get map input by delta.
  *
- * @property {function({GeolocationCoordinates}, {int}?)} addInput - Add input.
+ * @property {function({GeolocationMapMarker}, {int}=):{int}} initializeMarker - Initialize markers.
+ * @property {function({GeolocationCoordinates}, {int}=):{int}} addInput - Add input.
  * @property {function({GeolocationCoordinates}, {int})} updateInput - Update input.
  * @property {function({int})} removeInput - Remove input.
- * @property {function({GeolocationCoordinates}, {int})} addMarker - Add marker.
+ * @property {function({GeolocationCoordinates}, {int}=):{int}} addMarker - Add marker.
  * @property {function({GeolocationCoordinates}, {int})} updateMarker - Update marker.
  * @property {function({int})} removeMarker - Remove marker.
  */
@@ -152,6 +153,7 @@
     getMarkerByDelta: function (delta) {
       delta = parseInt(delta) || 0;
       var marker = null;
+
       $.each(this.map.mapMarkers, function(index, currentMarker) {
         /** @param {GeolocationMapMarker} currentMarker */
         if (currentMarker.delta === delta) {
@@ -168,40 +170,69 @@
         return input;
       }
     },
-    getNextDelta: function() {
-      var inputs = this.getAllInputs();
-      var lastDelta = inputs.length - 1;
-      var input = inputs.eq(lastDelta);
-      if (
-        input.find('input.geolocation-map-input-longitude').val()
-        || input.find('input.geolocation-map-input-latitude').val()
-      ) {
-        if (
-            lastDelta + 1 < this.cardinality
-            || this.cardinality === -1
-        ) {
-          return lastDelta + 1;
-        }
-        return false;
+    getNextDelta: function(delta) {
+      if (this.cardinality === 1) {
+        return 0;
       }
-      else {
-        // TODO: multiple entries at the bottom might be empty.
-        return lastDelta;
-      }
-    },
-    addMarker: function (location, delta) {
+      var that = this;
+      var lastDelta = this.getAllInputs().length - 1;
+
       if (typeof delta === 'undefined') {
-        delta = this.getNextDelta();
+        delta = lastDelta;
       }
 
-      if (
-          typeof delta === 'undefined'
-          || delta === false
-      ) {
-        alert(Drupal.t('Maximum number of entries reached.'));
-        throw Error('Maximum number of entries reached.');
+      var input = this.getInputByDelta(delta);
+
+      // Failsafe.
+      if (input === false) {
+        return false;
       }
-      return delta;
+      // Current input already full.
+      else if (
+          input.find('input.geolocation-map-input-longitude').val()
+          || input.find('input.geolocation-map-input-latitude').val()
+      ) {
+        // Check if next input can used and add if required.
+        if (
+            (delta + 1) < this.cardinality
+            || this.cardinality === -1
+        ) {
+          // Check if new input required.
+          if ((delta + 1) > lastDelta) {
+            that.addNewEmptyInput();
+            alert("Please try again.");
+            return false;
+          }
+          else if ((delta + 1) === lastDelta) {
+            setTimeout(function() {
+              that.addNewEmptyInput();
+            }, 100);
+            return delta + 1;
+          }
+          else {
+            return delta + 1;
+          }
+        }
+        // No further inputs available.
+        alert(Drupal.t('Maximum number of entries reached.'));
+        return false;
+      }
+      // First input is empty, use it.
+      else if (delta === 0) {
+        setTimeout(function() {
+          that.addNewEmptyInput();
+        }, 100);
+        return 0;
+      }
+      else {
+        return this.getNextDelta(delta - 1);
+      }
+    },
+    addNewEmptyInput: function () {
+      var button = this.wrapper.find('[name="' + this.fieldName + '_add_more"]');
+      if (button.length) {
+        button.trigger("mousedown");
+      }
     },
     addInput: function (location, delta) {
       if (typeof delta === 'undefined') {
@@ -212,8 +243,7 @@
         typeof delta === 'undefined'
         || delta === false
       ) {
-        alert(Drupal.t('Maximum number of entries reached.'));
-        return;
+        return delta;
       }
       var input = this.getInputByDelta(delta);
       if (input) {
@@ -221,19 +251,28 @@
         input.find('input.geolocation-map-input-latitude').val(location.lat);
       }
 
-      var button = this.wrapper.find('[name="' + this.fieldName + '_add_more"]');
-      if (button.length) {
-        button.trigger("mousedown");
-      }
-
       return delta;
     },
-    updateMarker: function (location, delta) {},
+    initializeMarker: function (marker, delta) {
+      marker.delta = delta;
+    },
+    addMarker: function (location, delta) {
+      var marker = this.getMarkerByDelta(delta);
+      if (
+        typeof marker !== 'undefined'
+        && typeof marker !== false
+      ) {
+        if (marker) {
+          this.map.removeMapMarker(marker);
+        }
+      }
+    },
     updateInput: function (location, delta) {
       var input = this.getInputByDelta(delta);
       input.find('input.geolocation-map-input-longitude').val(location.lng);
       input.find('input.geolocation-map-input-latitude').val(location.lat);
     },
+    updateMarker: function (location, delta) {},
     removeMarker: function (delta) {
       var marker = this.getMarkerByDelta(delta);
 

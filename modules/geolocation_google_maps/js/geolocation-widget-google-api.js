@@ -22,11 +22,10 @@
   GeolocationGoogleMapWidget.prototype = Object.create(Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype);
   GeolocationGoogleMapWidget.prototype.constructor = GeolocationGoogleMapWidget;
   GeolocationGoogleMapWidget.prototype.addMarker = function (location, delta) {
-    try {
-      Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype.addMarker.call(this, location, delta);
-    }
-    catch (Error) {
-      return;
+    Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype.addMarker.call(this, location, delta);
+
+    if (typeof delta === 'undefined') {
+      delta = this.getNextDelta();
     }
 
     var marker = this.map.setMapMarker({
@@ -37,6 +36,8 @@
     return marker;
   };
   GeolocationGoogleMapWidget.prototype.initializeMarker = function (marker, delta) {
+    Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype.initializeMarker.call(this, marker, delta);
+
     var location = marker.getPosition();
     marker.setTitle(Drupal.t('[@delta] Latitude: @latitude Longitude: @longitude', {
       '@delta': delta,
@@ -60,7 +61,7 @@
     return marker;
   };
   GeolocationGoogleMapWidget.prototype.updateMarker = function (location, delta) {
-    Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype.updateMarker.call(this, delta);
+    Drupal.geolocation.widget.GeolocationMapWidgetBase.prototype.updateMarker.call(this, location, delta);
 
     /** @param {google.map.Marker} marker */
     var marker = this.getMarkerByDelta(delta);

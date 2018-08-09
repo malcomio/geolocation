@@ -112,13 +112,20 @@
 
       map.googleMap = googleMap;
 
-      google.maps.event.addListener(
-        map.googleMap,
-        'click',
-        function (e) {
+      var singleClick;
+      var timer;
+      google.maps.event.addListener(map.googleMap, 'click', function (e) {
+        // Create 500ms timeout to wait for double click.
+        singleClick = setTimeout(function () {
           map.clickCallback({lat: e.latLng.lat(), lng: e.latLng.lng()});
-        }
-      );
+        }, 500);
+        timer = Date.now();
+      });
+
+      google.maps.event.addListener(map.googleMap, 'dblclick', function (e) {
+        clearTimeout(singleClick);
+        map.doubleClickCallback({lat: e.latLng.lat(), lng: e.latLng.lng()});
+      });
 
       google.maps.event.addListener(map.googleMap, 'rightclick', function (e) {
         map.contextClickCallback({lat: e.latLng.lat(), lng: e.latLng.lng()});

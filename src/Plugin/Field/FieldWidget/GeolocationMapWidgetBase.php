@@ -335,17 +335,6 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
 
     $element['map'] = $this->mapCenterManager->alterMap($element['map'], $settings['centre']);
 
-    foreach ($items as $item) {
-      /** @var \Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem $item */
-      $element['map']['locations'][] = [
-        '#type' => 'geolocation_map_location',
-        '#position' => [
-          'lat' => $item->get('lat')->getValue(),
-          'lng' => $item->get('lng')->getValue(),
-        ],
-      ];
-    }
-
     if (
       $this->getSetting('allow_override_map_settings')
       && !empty($items->get(0)->getValue()['data']['map_provider_settings'])

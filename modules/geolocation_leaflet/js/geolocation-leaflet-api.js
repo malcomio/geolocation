@@ -59,8 +59,16 @@
     this.markerLayer = markerLayer;
 
     this.addPopulatedCallback(function(map) {
+      var singleClick;
       map.leafletMap.on('click', /** @param {LeafletMouseEvent} e */ function(e) {
-        map.clickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
+        singleClick = setTimeout(function () {
+          map.clickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
+        }, 500);
+      });
+
+      map.leafletMap.on('dblclick', /** @param {LeafletMouseEvent} e */ function (e) {
+        clearTimeout(singleClick);
+        map.doubleClickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
       });
 
       map.leafletMap.on('contextmenu', /** @param {LeafletMouseEvent} e */ function(e) {
@@ -89,6 +97,13 @@
       if (markerSettings.setMarker === false) {
         return;
       }
+    }
+
+    if (typeof markerSettings.label === 'string') {
+      marker.bindTooltip(markerSettings.label, {
+        permanent: true,
+        direction: 'top'
+      });
     }
 
     if (typeof markerSettings.icon === 'string') {
