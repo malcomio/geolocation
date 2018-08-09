@@ -76,9 +76,6 @@ abstract class GoogleMapsProviderBase extends MapProviderBase {
       'key' => $config->get('google_map_api_key'),
     ];
 
-    if (!empty($config->get('google_map_api_server_key'))) {
-      $geolocation_parameters['key'] = $config->get('google_map_api_server_key');
-    }
     $module_parameters = \Drupal::moduleHandler()->invokeAll('geolocation_google_maps_parameters') ?: [];
     $custom_parameters = $config->get('google_map_custom_url_parameters') ?: [];
 
