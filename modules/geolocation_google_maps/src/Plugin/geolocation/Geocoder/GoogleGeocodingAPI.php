@@ -56,6 +56,7 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
       '#placeholder' => $settings['description'],
       '#description' => $settings['description'],
       '#description_display' => 'after',
+      '#maxlength' => 256,
       '#size' => '25',
       '#attributes' => [
         'class' => [

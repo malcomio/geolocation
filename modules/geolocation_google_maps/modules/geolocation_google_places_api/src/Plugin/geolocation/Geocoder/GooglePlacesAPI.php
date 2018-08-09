@@ -53,6 +53,7 @@ class GooglePlacesAPI extends GoogleGeocoderBase {
       '#title' => $settings['label'],
       '#description' => $settings['description'],
       '#description_display' => 'after',
+      '#maxlength' => 256,
       '#attributes' => [
         'class' => [
           'form-autocomplete',
