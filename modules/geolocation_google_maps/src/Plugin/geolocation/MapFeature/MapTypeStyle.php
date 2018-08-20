@@ -30,29 +30,6 @@ class MapTypeStyle extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
-  public function getSettings(array $settings) {
-    $settings = parent::getSettings($settings);
-
-    // Convert JSON string to actual array before handing to Renderer.
-    if (!empty($settings['style'])) {
-      if (!is_array($settings['style'])) {
-        $json = json_decode($settings['style']);
-      }
-      else {
-        $json = $settings['style'];
-      }
-
-      if (is_array($json)) {
-        $settings['style'] = $json;
-      }
-    }
-
-    return $settings;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getSettingsForm(array $settings, array $parents) {
 
     $settings = $this->getSettings($settings);
