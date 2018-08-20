@@ -69,3 +69,15 @@ mapfeature.markerclusterer:
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
     - geolocation_leaflet/leaflet.markerclusterer
+
+#
+# Map Features - Controls
+#
+
+# Control Zoom
+mapfeature.control_zoom:
+  js:
+    js/MapFeature/geolocation-control-zoom.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
+

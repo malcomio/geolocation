@@ -27,6 +27,9 @@ class Leaflet extends MapProviderBase {
         'height' => '400px',
         'width' => '100%',
         'map_features' => [
+          'control_zoom' => [
+            'enabled' => TRUE,
+          ],
           'leaflet_marker_popup' => [
             'enabled' => TRUE,
           ],

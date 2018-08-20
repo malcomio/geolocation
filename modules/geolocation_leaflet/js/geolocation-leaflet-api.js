@@ -46,7 +46,8 @@
     /** @type {Map} */
     var leafletMap = L.map(this.container.get(0), {
       center: [this.lat, this.lng],
-      zoom: this.settings.leaflet_settings.zoom
+      zoom: this.settings.leaflet_settings.zoom,
+      zoomControl: false
     });
 
     var markerLayer = L.layerGroup().addTo(leafletMap);
