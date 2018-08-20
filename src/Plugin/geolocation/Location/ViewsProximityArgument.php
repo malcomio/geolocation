@@ -2,9 +2,9 @@
 
 namespace Drupal\geolocation\Plugin\geolocation\Location;
 
-use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\geolocation\LocationInterface;
 use Drupal\geolocation\LocationBase;
+use Drupal\geolocation\ViewsContextTrait;
 
 /**
  * Derive center from proximity argument.
@@ -17,25 +17,19 @@ use Drupal\geolocation\LocationBase;
  */
 class ViewsProximityArgument extends LocationBase implements LocationInterface {
 
+  use ViewsContextTrait;
+
   /**
    * {@inheritdoc}
    */
-  public function getAvailableLocationOptions(array $context) {
+  public function getAvailableLocationOptions($context) {
     $options = [];
 
-    if (
-      !empty($context['views_style'])
-      && is_a($context['views_style'], StylePluginBase::class)
-    ) {
-      /** @var \Drupal\views\Plugin\views\style\StylePluginBase $views_style */
-      $views_style = $context['views_style'];
-      $arguments = $views_style->displayHandler->getOption('arguments');
-      foreach ($arguments as $argument_id => $argument) {
-        if ($argument['plugin_id'] == 'geolocation_argument_argument') {
-          /** @var \Drupal\views\Plugin\views\argument\ArgumentPluginBase $argument_handler */
-          $argument_handler = $views_style->displayHandler->getHandler('argument', $argument_id);
-
-          $options[$argument_id] = $argument_handler->adminLabel();
+    if ($displayHandler = self::getViewsDisplayHandler($context)) {
+      /** @var \Drupal\views\Plugin\views\argument\ArgumentPluginBase $argument */
+      foreach ($displayHandler->getHandlers('argument') as $argument_id => $argument) {
+        if ($argument->getPluginId() == 'geolocation_argument_proximity') {
+          $options[$argument_id] = $this->t('Proximity argument') . ' - ' . $argument->adminLabel();
         }
       }
     }
@@ -46,19 +40,13 @@ class ViewsProximityArgument extends LocationBase implements LocationInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCoordinates($location_option_id, array $location_option_settings, array $context = []) {
-    if (
-      empty($context['views_style'])
-      || !is_a($context['views_style'], StylePluginBase::class)
-    ) {
+  public function getCoordinates($location_option_id, array $location_option_settings, $context = NULL) {
+    if (!($displayHandler = self::getViewsDisplayHandler($context))) {
       return parent::getCoordinates($location_option_id, $location_option_settings, $context);
     }
 
-    /** @var \Drupal\views\Plugin\views\style\StylePluginBase $views_style */
-    $views_style = $context['views_style'];
-
     /** @var \Drupal\geolocation\Plugin\views\argument\ProximityArgument $handler */
-    $handler = $views_style->displayHandler->getHandler('argument', $location_option_id);
+    $handler = $displayHandler->getHandler('argument', $location_option_id);
     if ($values = $handler->getParsedReferenceLocation()) {
       if (isset($values['lat']) && isset($values['lng'])) {
         return [

@@ -19,7 +19,7 @@ class ClientLocation extends MapCenterBase implements MapCenterInterface {
   /**
    * {@inheritdoc}
    */
-  public function alterMap(array $map, $center_option_id, array $center_option_settings, array $context = []) {
+  public function alterMap(array $map, $center_option_id, array $center_option_settings, $context = NULL) {
     $map = parent::alterMap($map, $center_option_id, $center_option_settings, $context);
     $map['#attached'] = array_merge_recursive($map['#attached'], [
       'library' => [

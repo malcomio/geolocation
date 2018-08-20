@@ -51,10 +51,10 @@ class Location extends MapCenterBase implements MapCenterInterface {
   /**
    * {@inheritdoc}
    */
-  public function getSettingsForm($option_id = NULL, array $context = [], array $settings = []) {
+  public function getSettingsForm($option_id = NULL, array $settings = [], $context = NULL) {
     /** @var \Drupal\geolocation\LocationInterface $location_plugin */
     $location_plugin = $this->locationManager->createInstance($option_id);
-    $form = $location_plugin->getSettingsForm($location_plugin->getPluginId(), $context, $settings);
+    $form = $location_plugin->getSettingsForm($location_plugin->getPluginId(), $settings, $context);
 
     return $form;
   }
@@ -62,12 +62,10 @@ class Location extends MapCenterBase implements MapCenterInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAvailableMapCenterOptions(array $context) {
+  public function getAvailableMapCenterOptions($context = NULL) {
     $options = [];
 
-    /*
-     * @var \Drupal\geolocation\LocationInterface $location_plugin
-     */
+    /** @var \Drupal\geolocation\LocationInterface $location_plugin */
     foreach ($this->locationManager->getDefinitions() as $location_plugin_id => $location_plugin_definition) {
       /** @var \Drupal\geolocation\LocationInterface $location_plugin */
       $location_plugin = $this->locationManager->createInstance($location_plugin_id);
@@ -82,7 +80,7 @@ class Location extends MapCenterBase implements MapCenterInterface {
   /**
    * {@inheritdoc}
    */
-  public function alterMap(array $map, $center_option_id, array $center_option_settings, array $context = []) {
+  public function alterMap(array $map, $center_option_id, array $center_option_settings, $context = NULL) {
     /** @var \Drupal\geolocation\LocationInterface $location */
     $location = $this->locationManager->createInstance($center_option_id);
 

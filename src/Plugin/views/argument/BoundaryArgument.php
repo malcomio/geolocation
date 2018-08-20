@@ -2,12 +2,10 @@
 
 namespace Drupal\geolocation\Plugin\views\argument;
 
-use Drupal\geolocation\GeolocationCore;
 use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
 use Drupal\views\Plugin\views\query\Sql;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\geolocation\BoundaryTrait;
 
 /**
  * Argument handler for geolocation boundary.
@@ -19,46 +17,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ViewsArgument("geolocation_argument_boundary")
  */
-class BoundaryArgument extends ArgumentPluginBase implements ContainerFactoryPluginInterface {
+class BoundaryArgument extends ArgumentPluginBase {
 
-  /**
-   * The GeolocationCore object.
-   *
-   * @var \Drupal\geolocation\GeolocationCore
-   */
-  protected $geolocationCore;
-
-  /**
-   * Constructs a Handler object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\geolocation\GeolocationCore $geolocation_core
-   *   The GeolocationCore object.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, GeolocationCore $geolocation_core) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->geolocationCore = $geolocation_core;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    /** @var \Drupal\geolocation\GeolocationCore $geolocation_core */
-    $geolocation_core = $container->get('geolocation.core');
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $geolocation_core
-    );
-  }
+  use BoundaryTrait;
 
   /**
    * {@inheritdoc}
@@ -98,7 +59,7 @@ class BoundaryArgument extends ArgumentPluginBase implements ContainerFactoryPlu
 
     $this->query->addWhereExpression(
       $group_by,
-      $this->geolocationCore->getBoundaryQueryFragment($this->ensureMyTable(), $this->realField, $lat_north_east, $lng_north_east, $lat_south_west, $lng_south_west)
+      self::getBoundaryQueryFragment($this->ensureMyTable(), $this->realField, $lat_north_east, $lng_north_east, $lat_south_west, $lng_south_west)
     );
   }
 

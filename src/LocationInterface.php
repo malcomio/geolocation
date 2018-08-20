@@ -33,26 +33,26 @@ interface LocationInterface extends PluginInspectionInterface {
    *
    * @param int $location_option_id
    *   Location option ID.
-   * @param array $context
-   *   Current context.
    * @param array $settings
    *   The current option settings.
+   * @param mixed $context
+   *   Current context.
    *
    * @return array
    *   A form array to be integrated in whatever.
    */
-  public function getSettingsForm($location_option_id, array $context, array $settings);
+  public function getSettingsForm($location_option_id, array $settings, $context = NULL);
 
   /**
    * For one Location (i.e. boundary filter), return all options (all filters).
    *
-   * @param array $context
+   * @param mixed $context
    *   Context like field formatter, field widget or view.
    *
    * @return array
    *   Available location options indexed by ID.
    */
-  public function getAvailableLocationOptions(array $context);
+  public function getAvailableLocationOptions($context);
 
   /**
    * Get map location.
@@ -61,7 +61,7 @@ interface LocationInterface extends PluginInspectionInterface {
    *   Location option ID.
    * @param array $location_option_settings
    *   The current feature settings.
-   * @param array $context
+   * @param mixed $context
    *   Context like field formatter, field widget or view.
    *
    * @return array
@@ -69,6 +69,6 @@ interface LocationInterface extends PluginInspectionInterface {
    *    'lat' => latitude
    *    'lng' => longitude
    */
-  public function getCoordinates($location_option_id, array $location_option_settings, array $context);
+  public function getCoordinates($location_option_id, array $location_option_settings, $context = NULL);
 
 }

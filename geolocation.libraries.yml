@@ -73,10 +73,21 @@ map_center.client_location:
   js:
     js/MapCenter/client-location.js: {}
 
-map_center.fitboundary:
+map_center.viewsBoundaryFilter:
   js:
-    js/MapCenter/fitboundary.js: {}
+    js/MapCenter/viewsBoundaryFilter.js: {}
 
+map_center.viewsBoundaryArgument:
+  js:
+    js/MapCenter/viewsBoundaryArgument.js: {}
+
+
+#
+# Location Input
+#
+location_input.client_location:
+  js:
+    js/LocationInput/client-location.js: {}
 
 
 #

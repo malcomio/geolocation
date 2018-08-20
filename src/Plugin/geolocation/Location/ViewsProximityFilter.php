@@ -2,9 +2,11 @@
 
 namespace Drupal\geolocation\Plugin\geolocation\Location;
 
-use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\geolocation\LocationInterface;
 use Drupal\geolocation\LocationBase;
+use Drupal\geolocation\LocationInputManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\geolocation\ViewsContextTrait;
 
 /**
  * Derive center from proximity filter.
@@ -17,25 +19,50 @@ use Drupal\geolocation\LocationBase;
  */
 class ViewsProximityFilter extends LocationBase implements LocationInterface {
 
+  use ViewsContextTrait;
+
+  /**
+   * Proximity center manager.
+   *
+   * @var \Drupal\geolocation\LocationInputManager
+   */
+  protected $locationInputManager;
+
   /**
    * {@inheritdoc}
    */
-  public function getAvailableLocationOptions(array $context) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, LocationInputManager $location_input_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->locationInputManager = $location_input_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('plugin.manager.geolocation.locationinput')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAvailableLocationOptions($context) {
     $options = [];
 
-    if (
-      !empty($context['views_style'])
-      && is_a($context['views_style'], StylePluginBase::class)
-    ) {
-      /** @var \Drupal\views\Plugin\views\style\StylePluginBase $views_style */
-      $views_style = $context['views_style'];
-      $filters = $views_style->displayHandler->getOption('filters');
-      foreach ($filters as $filter_id => $filter) {
-        if ($filter['plugin_id'] == 'geolocation_filter_proximity') {
-          /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase $filter_handler */
-          $filter_handler = $views_style->displayHandler->getHandler('filter', $filter_id);
-
-          $options[$filter_id] = $filter_handler->adminLabel();
+    if ($displayHandler = self::getViewsDisplayHandler($context)) {
+      /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase $filter */
+      foreach ($displayHandler->getHandlers('filter') as $delta => $filter) {
+        if (
+          $filter->getPluginId() === 'geolocation_filter_proximity'
+          && $filter !== $context
+        ) {
+          $options[$delta] = $this->t('Proximity filter') . ' - ' . $filter->adminLabel();
         }
       }
     }
@@ -46,27 +73,20 @@ class ViewsProximityFilter extends LocationBase implements LocationInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCoordinates($location_option_id, array $location_option_settings, array $context = []) {
-    if (
-      empty($context['views_style'])
-      || !is_a($context['views_style'], StylePluginBase::class)
-    ) {
+  public function getCoordinates($location_option_id, array $location_option_settings, $context = NULL) {
+    if (!($displayHandler = self::getViewsDisplayHandler($context))) {
       return parent::getCoordinates($location_option_id, $location_option_settings, $context);
     }
 
-    /** @var \Drupal\views\Plugin\views\style\StylePluginBase $views_style */
-    $views_style = $context['views_style'];
-
-    /** @var \Drupal\geolocation\Plugin\views\filter\ProximityFilter $handler */
-    $handler = $views_style->displayHandler->getHandler('filter', $location_option_id);
-    if (isset($handler->value['lat']) && isset($handler->value['lng'])) {
-      return [
-        'lat' => (float) $handler->getLatitudeValue(),
-        'lng' => (float) $handler->getLongitudeValue(),
-      ];
+    $filter = $displayHandler->getHandler('filter', $location_option_id);
+    if (empty($filter)) {
+      return parent::getCoordinates($location_option_id, $location_option_settings, $context);
     }
-
-    return parent::getCoordinates($location_option_id, $location_option_settings, $context);
+    $center_form_value = [];
+    if (!empty($filter->value['center'])) {
+      $center_form_value = $filter->value['center'];
+    }
+    return $this->locationInputManager->getCoordinates($center_form_value, $filter->options['location_input'], $filter);
   }
 
 }

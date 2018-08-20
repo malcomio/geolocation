@@ -57,7 +57,7 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
       '#description' => $settings['description'],
       '#description_display' => 'after',
       '#maxlength' => 256,
-      '#size' => '25',
+      '#size' => 25,
       '#attributes' => [
         'class' => [
           'form-autocomplete',

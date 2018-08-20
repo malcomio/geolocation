@@ -28,6 +28,7 @@ class GeolocationInput extends FormElement {
     $class = get_class($this);
     return [
       '#input' => TRUE,
+      '#default_value' => NULL,
       '#process' => [
         [$class, 'processGeolocation'],
         [$class, 'processGroup'],
@@ -61,7 +62,21 @@ class GeolocationInput extends FormElement {
       'lng' => '',
     ];
 
-    if (!empty($element['#default_value'])) {
+    if (
+      $element['#defaults_loaded']
+      && isset($element['#value']['lat'])
+      && isset($element['#value']['lng'])
+    ) {
+      $default_field_values = [
+        'lat' => $element['#value']['lat'],
+        'lng' => $element['#value']['lng'],
+      ];
+    }
+    elseif (
+      !empty($element['#default_value'])
+      && isset($element['#default_value']['lat'])
+      && isset($element['#default_value']['lng'])
+    ) {
       $default_field_values = [
         'lat' => $element['#default_value']['lat'],
         'lng' => $element['#default_value']['lng'],

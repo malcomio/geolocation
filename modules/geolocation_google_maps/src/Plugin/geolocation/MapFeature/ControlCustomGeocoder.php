@@ -173,12 +173,6 @@ class ControlCustomGeocoder extends ControlCustomElementBase {
       '#type' => 'container',
     ];
 
-    /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
-    $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')
-      ->getGeocoder(
-        $feature_settings['geocoder'],
-        $feature_settings['settings']
-      );
     $geocoder_plugin->formAttachGeocoder($render_array['#controls'][$this->pluginId], $render_array['#id']);
 
     return $render_array;

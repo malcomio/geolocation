@@ -39,8 +39,18 @@ class GeolocationField extends EntityField {
    */
   protected function addSelfTokens(&$tokens, $item) {
     $tokens = parent::addSelfTokens($tokens, $item);
-    $tokens['{{ ' . $this->options['id'] . '__lat_sex }}'] = GeolocationItem::decimalToSexagesimal($item['lat']);
-    $tokens['{{ ' . $this->options['id'] . '__lng_sex }}'] = GeolocationItem::decimalToSexagesimal($item['lng']);
+    if (empty($item['raw'])) {
+      return;
+    }
+
+    /** @var \Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem $geolocationItem */
+    $geolocationItem = $item['raw'];
+    if ($geolocationItem->isEmpty()) {
+      return;
+    }
+
+    $tokens['{{ ' . $this->options['id'] . '__lat_sex }}'] = GeolocationItem::decimalToSexagesimal($geolocationItem->get('lat')->getValue());
+    $tokens['{{ ' . $this->options['id'] . '__lng_sex }}'] = GeolocationItem::decimalToSexagesimal($geolocationItem->get('lat')->getValue());
   }
 
 }

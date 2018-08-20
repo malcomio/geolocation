@@ -76,7 +76,23 @@ abstract class GeocoderBase extends PluginBase implements GeocoderInterface {
    * {@inheritdoc}
    */
   public function formAttachGeocoder(array &$render_array, $element_name) {
-    return NULL;
+    $settings = $this->getSettings();
+
+    $render_array['geolocation_geocoder_address'] = [
+      '#type' => 'search',
+      '#title' => $settings['label'] ?: $this->t('Address'),
+      '#placeholder' => $settings['label'] ?: $this->t('Address'),
+      '#description' => $settings['description'] ?: $this->t('Enter an address to retrieve location.'),
+      '#description_display' => 'after',
+      '#maxlength' => 256,
+      '#size' => 25,
+      '#attributes' => [
+        'class' => [
+          'geolocation-geocoder-base',
+        ],
+        'data-source-identifier' => $element_name,
+      ],
+    ];
   }
 
   /**
@@ -90,7 +106,10 @@ abstract class GeocoderBase extends PluginBase implements GeocoderInterface {
    * {@inheritdoc}
    */
   public function formProcessInput(array &$input, $element_name) {
-    return TRUE;
+    if (empty($input['geolocation_geocoder_address'])) {
+      return FALSE;
+    }
+    return $this->geocode($input['geolocation_geocoder_address']);
   }
 
   /**

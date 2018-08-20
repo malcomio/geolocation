@@ -2,9 +2,9 @@
 
 namespace Drupal\geolocation\Plugin\geolocation\MapCenter;
 
-use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\geolocation\MapCenterInterface;
 use Drupal\geolocation\MapCenterBase;
+use Drupal\geolocation\ViewsContextTrait;
 
 /**
  * Derive center from boundary filter.
@@ -17,26 +17,21 @@ use Drupal\geolocation\MapCenterBase;
  */
 class ViewsBoundaryFilter extends MapCenterBase implements MapCenterInterface {
 
+  use ViewsContextTrait;
+
   /**
    * {@inheritdoc}
    */
-  public function getAvailableMapCenterOptions(array $context) {
+  public function getAvailableMapCenterOptions($context) {
     $options = [];
 
-    if (
-      !empty($context['views_style'])
-      && is_a($context['views_style'], StylePluginBase::class)
-    ) {
-      /** @var \Drupal\views\Plugin\views\style\StylePluginBase $views_style */
-      $views_style = $context['views_style'];
-      $filters = $views_style->displayHandler->getOption('filters');
-      foreach ($filters as $filter_id => $filter) {
-        if ($filter['plugin_id'] == 'geolocation_filter_boundary') {
-          /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase $filter_handler */
-          $filter_handler = $views_style->displayHandler->getHandler('filter', $filter_id);
+    if ($displayHandler = self::getViewsDisplayHandler($context)) {
+      /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase $filter */
+      foreach ($displayHandler->getHandlers('filter') as $filter_id => $filter) {
+        if ($filter->getPluginId() == 'geolocation_filter_boundary') {
 
           // Preserve compatibility to v1.
-          $options['boundary_filter_' . $filter_id] = $filter_handler->adminLabel();
+          $options['boundary_filter_' . $filter_id] = $this->t('Boundary filter') . ' - ' . $filter->adminLabel();
         }
       }
     }
@@ -47,21 +42,15 @@ class ViewsBoundaryFilter extends MapCenterBase implements MapCenterInterface {
   /**
    * {@inheritdoc}
    */
-  public function alterMap(array $map, $center_option_id, array $center_option_settings, array $context = []) {
+  public function alterMap(array $map, $center_option_id, array $center_option_settings, $context = NULL) {
     $map = parent::alterMap($map, $center_option_id, $center_option_settings, $context);
 
-    if (
-      empty($context['views_style'])
-      || !is_a($context['views_style'], StylePluginBase::class)
-    ) {
+    if (!($displayHandler = self::getViewsDisplayHandler($context))) {
       return $map;
     }
 
-    /** @var \Drupal\views\Plugin\views\style\StylePluginBase $views_style */
-    $views_style = $context['views_style'];
-
     /** @var \Drupal\geolocation\Plugin\views\filter\ProximityFilter $handler */
-    $handler = $views_style->displayHandler->getHandler('filter', $center_option_id);
+    $handler = $displayHandler->getHandler('filter', substr($center_option_id, 16));
     if (
       isset($handler->value['lat_north_east'])
       && $handler->value['lat_north_east'] !== ""
@@ -74,7 +63,7 @@ class ViewsBoundaryFilter extends MapCenterBase implements MapCenterInterface {
     ) {
       $map['#attached'] = array_merge_recursive($map['#attached'], [
         'library' => [
-          'geolocation/map_center.fitboundary',
+          'geolocation/map_center.viewsBoundaryFilter',
         ],
         'drupalSettings' => [
           'geolocation' => [

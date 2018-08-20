@@ -2,9 +2,9 @@
 
 namespace Drupal\geolocation\Plugin\geolocation\Location;
 
-use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\geolocation\LocationInterface;
 use Drupal\geolocation\LocationBase;
+use Drupal\geolocation\ViewsContextTrait;
 
 /**
  * Derive center from first row.
@@ -17,19 +17,16 @@ use Drupal\geolocation\LocationBase;
  */
 class FirstRow extends LocationBase implements LocationInterface {
 
+  use ViewsContextTrait;
+
   /**
    * {@inheritdoc}
    */
-  public function getAvailableLocationOptions(array $context) {
+  public function getAvailableLocationOptions($context) {
     $options = [];
 
-    if (
-      !empty($context['views_style'])
-      && is_a($context['views_style'], StylePluginBase::class)
-    ) {
-      /** @var \Drupal\views\Plugin\views\style\StylePluginBase $views_style */
-      $views_style = $context['views_style'];
-      if ($views_style->getPluginId() == 'maps_common') {
+    if ($displayHandler = self::getViewsDisplayHandler($context)) {
+      if ($displayHandler->getPlugin('style')->getPluginId() == 'maps_common') {
         $options['first_row'] = t('First row');
       }
     }
@@ -40,21 +37,17 @@ class FirstRow extends LocationBase implements LocationInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCoordinates($location_option_id, array $location_option_settings, array $context = []) {
-    if (
-      empty($context['views_style'])
-      || !is_a($context['views_style'], StylePluginBase::class)
-    ) {
+  public function getCoordinates($location_option_id, array $location_option_settings, $context = NULL) {
+    if (!($displayHandler = self::getViewsDisplayHandler($context))) {
       return parent::getCoordinates($location_option_id, $location_option_settings, $context);
     }
-
-    /** @var \Drupal\views\Plugin\views\style\StylePluginBase $views_style */
-    $views_style = $context['views_style'];
+    $views_style = $displayHandler->getPlugin('style');
 
     if (empty($views_style->options['geolocation_field'])) {
       return parent::getCoordinates($location_option_id, $location_option_settings, $context);
     }
 
+    /** @var \Drupal\geolocation\Plugin\views\field\GeolocationField $geolocation_field */
     $geolocation_field = $views_style->view->field[$views_style->options['geolocation_field']];
 
     if (empty($geolocation_field)) {

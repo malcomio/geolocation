@@ -33,26 +33,26 @@ interface MapCenterInterface extends PluginInspectionInterface {
    *
    * @param int $center_option_id
    *   MapCenter option ID.
-   * @param array $context
-   *   Current context.
    * @param array $settings
    *   The current option settings.
+   * @param mixed $context
+   *   Current context.
    *
    * @return array
    *   A form array to be integrated in whatever.
    */
-  public function getSettingsForm($center_option_id, array $context, array $settings);
+  public function getSettingsForm($center_option_id, array $settings, $context = NULL);
 
   /**
    * For one MapCenter (i.e. boundary filter), return all options (all filters).
    *
-   * @param array $context
+   * @param mixed $context
    *   Context like field formatter, field widget or view.
    *
    * @return array
    *   Available center options indexed by ID.
    */
-  public function getAvailableMapCenterOptions(array $context);
+  public function getAvailableMapCenterOptions($context);
 
   /**
    * Alter map..
@@ -63,12 +63,12 @@ interface MapCenterInterface extends PluginInspectionInterface {
    *   MapCenter option ID.
    * @param array $center_option_settings
    *   The current feature settings.
-   * @param array $context
+   * @param mixed $context
    *   Context like field formatter, field widget or view.
    *
    * @return array
    *   Map object.
    */
-  public function alterMap(array $map, $center_option_id, array $center_option_settings, array $context);
+  public function alterMap(array $map, $center_option_id, array $center_option_settings, $context = NULL);
 
 }

@@ -48,18 +48,6 @@ views.style.maps_common:
         update_target:
           type: string
           label: 'Display to update'
-    context_popup_content:
-      type: string
-      label: 'Context Popup content'
-    marker_clusterer:
-      type: integer
-      label: 'Cluster markers'
-    marker_clusterer_image_path:
-      type: string
-      label: 'Path to cluster base images'
-    marker_clusterer_styles:
-      type: string
-      label: 'Custom cluster styles'
     centre:
       type: sequence
       label: 'Center option settings'
@@ -87,42 +75,24 @@ views.field.geolocation_field_proximity:
   type: views.field.numeric
   label: 'Geolocation Proximity Field'
   mapping:
-    proximity_source:
+    display_unit:
       type: string
-      label: 'Proximity Field Source'
-    proximity_lat:
-      type: string
-      label: 'Proximity Latitude'
-    proximity_lng:
-      type: string
-      label: 'Proximity Longitude'
-    proximity_units:
-      type: string
-      label: 'Proximity Units'
-    proximity_filter:
-      type: string
-      label: 'Proximity Filter'
-    proximity_argument:
-      type: string
-      label: 'Proximity Argument'
-    boundary_filter:
-      type: string
-      label: 'Boundary Filter'
-    entity_id_argument:
-      type: string
-      label: 'Proximity Entity ID argument'
-    proximity_geocoder:
-      type: integer
-      label: 'Enable geocoding widget'
-    proximity_geocoder_plugin_settings:
-      type: mapping
-      label: 'Geocoding widget settings'
-      mapping:
-        plugin_id:
-          type: string
-          label: 'Geolocation geocoding widget'
-        settings:
-          type: geolocation.geocoder.[%parent.plugin_id]
+      label: 'Distance'
+    center:
+      type: sequence
+      label: 'Location input settings'
+      sequence:
+        type: plugin.plugin_configuration.geolocation.location.[location_plugin_id]
+
+views.field.geolocation_field_proximity_form:
+  type: views.field.geolocation_field_proximity
+  label: 'Geolocation Proximity Form Field'
+  mapping:
+    center:
+      type: sequence
+      label: 'Location input settings'
+      sequence:
+        type: plugin.plugin_configuration.geolocation.location_input.[location_input_id]
 
 views.filter.geolocation_filter_boundary:
   type: views_filter
@@ -161,53 +131,28 @@ views.filter.geolocation_filter_boundary:
             settings:
               type: geolocation.geocoder.[%parent.plugin_id]
 
+views.filter_value.geolocation_filter_proximity:
+  type: views.filter_value.numeric
+  label: 'Group by Distance'
+  mapping:
+    center:
+      type: string
+
 views.filter.geolocation_filter_proximity:
-  type: views_filter
+  type: views.filter.numeric
   label: 'Geolocation Proximity Filter'
   mapping:
-    proximity_source:
+    unit:
       type: string
-      label: 'Proximity Field Source'
-    proximity_lat:
-      type: string
-      label: 'Proximity Latitude'
-    proximity_lng:
-      type: string
-      label: 'Proximity Longitude'
-    proximity_units:
-      type: string
-      label: 'Proximity Units'
-    proximity_argument:
-      type: string
-      label: 'Proximity Argument'
-    entity_id_argument:
-      type: string
-      label: 'Proximity Entity ID argument'
-    boundary_filter:
-      type: string
-      label: 'Boundary Filter'
-    client_location:
-      type: boolean
-      label: 'Ask client for location first'
+      label: 'Distance'
+    location_input:
+      type: sequence
+      label: 'Location input settings'
+      sequence:
+        type: plugin.plugin_configuration.geolocation.location_input.[location_input_id]
     value:
-      type: views.filter_value.numeric
+      type: views.filter_value.geolocation_filter_proximity
       label: 'Proximity Value'
-    expose:
-      type: mapping
-      label: 'Expose settings'
-      mapping:
-        input_by_geocoding_widget:
-          type: integer
-          label: 'Enable geocoding widget'
-        geocoder_plugin_settings:
-          type: mapping
-          label: 'Geocoding widget settings'
-          mapping:
-            plugin_id:
-              type: string
-              label: 'Geolocation geocoding widget'
-            settings:
-              type: geolocation.geocoder.[%parent.plugin_id]
 
 views.filter.group_item.geolocation_filter_proximity:
   type: views_filter_group_item
@@ -218,7 +163,18 @@ views.filter.group_item.geolocation_filter_proximity:
 views.sort.geolocation_sort_proximity:
   type: views_sort
   label: 'Geolocation Proximity Sort'
+
+views.argument.geolocation_argument_proximity:
+  type: views_argument
+  label: 'Geolocation Proximity Argument'
+
+views.argument.geolocation_entity_argument:
+  type: views_argument
+  label: 'Geolocation Entity Argument'
   mapping:
-    proximity_field:
+    geolocation_entity_argument_source:
       type: string
-      label: 'Proximity Field Source'
+
+views.argument.geolocation_argument_boundary:
+  type: views_argument
+  label: 'Geolocation Boundary Argument'

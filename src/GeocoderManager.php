@@ -6,6 +6,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Search plugin manager.
@@ -102,48 +103,13 @@ class GeocoderManager extends DefaultPluginManager {
    *   Settings form.
    */
   public static function addGeocoderSettingsFormAjax(array $form, FormStateInterface $form_state) {
-    $triggering_element = $form_state->getTriggeringElement()['#parents'];
-    array_pop($triggering_element);
+    $triggering_element_parents = $form_state->getTriggeringElement()['#array_parents'];
 
-    $target = $triggering_element;
-    $target[] = 'plugin_id';
-    $plugin_id = $form_state->getValue($target, '');
+    $settings_element_parents = $triggering_element_parents;
+    array_pop($settings_element_parents);
+    $settings_element_parents[] = 'settings';
 
-    $target = $triggering_element;
-    $target[] = 'settings';
-    $geocoder_settings = $form_state->getValue($target, []);
-
-    /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
-    $geocoder_plugin = \Drupal::service('plugin.manager.geolocation.geocoder')->getGeocoder($plugin_id, $geocoder_settings);
-
-    if (empty($geocoder_plugin)) {
-      $return = [
-        '#type' => 'html_tag',
-        '#tag' => 'span',
-        '#value' => t('Non-existing geocoder plugin requested.'),
-      ];
-    }
-    else {
-      $geocoder_settings_form = $geocoder_plugin->getOptionsForm();
-
-      if (!empty($geocoder_settings_form)) {
-        $return = $geocoder_settings_form;
-      }
-      else {
-        $return = [
-          '#type' => 'html_tag',
-          '#tag' => 'span',
-          '#value' => t("No settings available."),
-        ];
-      }
-    }
-
-    $return = array_merge_recursive($return, [
-      '#prefix' => '<div id="geocoder-plugin-settings">',
-      '#suffix' => '</div>',
-    ]);
-
-    return $return;
+    return NestedArray::getValue($form, $settings_element_parents);
   }
 
 }

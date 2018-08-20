@@ -31,7 +31,7 @@ class FixedCoordinates extends LocationBase implements LocationInterface {
   /**
    * {@inheritdoc}
    */
-  public function getSettingsForm($option_id = NULL, array $context = [], array $settings = []) {
+  public function getSettingsForm($option_id = NULL, array $settings = [], $context = NULL) {
     $settings = $this->getSettings($settings);
 
     $form = [
@@ -57,7 +57,7 @@ class FixedCoordinates extends LocationBase implements LocationInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCoordinates($center_option_id, array $center_option_settings, array $context = []) {
+  public function getCoordinates($center_option_id, array $center_option_settings, $context = NULL) {
     $settings = $this->getSettings($center_option_settings);
 
     return [

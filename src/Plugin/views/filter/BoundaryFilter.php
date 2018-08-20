@@ -5,10 +5,12 @@ namespace Drupal\geolocation\Plugin\views\filter;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Plugin\views\query\Sql;
-use Drupal\geolocation\GeolocationCore;
+use Drupal\geolocation\GeocoderManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\geolocation\BoundaryTrait;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Filter handler for search keywords.
@@ -18,6 +20,8 @@ use Drupal\Core\Render\BubbleableMetadata;
  * @ViewsFilter("geolocation_filter_boundary")
  */
 class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginInterface {
+
+  use BoundaryTrait;
 
   /**
    * {@inheritdoc}
@@ -30,11 +34,11 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
   protected $alwaysMultiple = TRUE;
 
   /**
-   * The GeolocationCore object.
+   * The GeocoderManager object.
    *
-   * @var \Drupal\geolocation\GeolocationCore
+   * @var \Drupal\geolocation\GeocoderManager
    */
-  protected $geolocationCore;
+  protected $geocoderManager;
 
   /**
    * Constructs a Handler object.
@@ -45,13 +49,13 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\geolocation\GeolocationCore $geolocation_core
-   *   The GeolocationCore object.
+   * @param \Drupal\geolocation\GeocoderManager $geocoder_manager
+   *   The Geocoder manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, GeolocationCore $geolocation_core) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, GeocoderManager $geocoder_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->geolocationCore = $geolocation_core;
+    $this->geocoderManager = $geocoder_manager;
   }
 
   /**
@@ -62,7 +66,7 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('geolocation.core')
+      $container->get('plugin.manager.geolocation.geocoder')
     );
   }
 
@@ -94,7 +98,19 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function buildExposeForm(&$form, FormStateInterface $form_state) {
-    $geocoder_definitions = $this->geolocationCore->getGeocoderManager()->getBoundaryCapableGeocoders();
+    $geocoder_settings = NestedArray::getValue(
+      $form_state->getUserInput(),
+      ['options', 'expose', 'geocoder_plugin_settings']
+    );
+
+    if (empty($geocoder_settings)) {
+      $geocoder_settings = $this->options['expose']['geocoder_plugin_settings'];
+    }
+    if (empty($geocoder_settings)) {
+      $geocoder_settings = [];
+    }
+
+    $geocoder_definitions = $this->geocoderManager->getBoundaryCapableGeocoders();
 
     if ($geocoder_definitions) {
       $form['expose']['input_by_geocoding_widget'] = [
@@ -123,23 +139,23 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
         '#type' => 'select',
         '#options' => $geocoder_options,
         '#title' => $this->t('Geocoder plugin'),
-        '#default_value' => $this->options['expose']['geocoder_plugin_settings']['plugin_id'],
+        '#default_value' => $geocoder_settings['plugin_id'],
         '#ajax' => [
-          'callback' => [get_class($this->geolocationCore->getGeocoderManager()), 'addGeocoderSettingsFormAjax'],
+          'callback' => [get_class($this->geocoderManager), 'addGeocoderSettingsFormAjax'],
           'wrapper' => 'geocoder-plugin-settings',
           'effect' => 'fade',
         ],
       ];
 
-      if (!empty($this->options['expose']['geocoder_plugin_settings']['plugin_id'])) {
-        $geocoder_plugin = $this->geolocationCore->getGeocoderManager()
+      if (!empty($geocoder_settings['plugin_id'])) {
+        $geocoder_plugin = $this->geocoderManager
           ->getGeocoder(
-            $this->options['expose']['geocoder_plugin_settings']['plugin_id'],
-            $this->options['expose']['geocoder_plugin_settings']['settings']
+            $geocoder_settings['plugin_id'],
+            $geocoder_settings['settings']
           );
       }
       elseif (current(array_keys($geocoder_options))) {
-        $geocoder_plugin = $this->geolocationCore->getGeocoderManager()->getGeocoder(current(array_keys($geocoder_options)));
+        $geocoder_plugin = $this->geocoderManager->getGeocoder(current(array_keys($geocoder_options)));
       }
 
       if (!empty($geocoder_plugin)) {
@@ -183,7 +199,7 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
       $geocoder_configuration = $this->options['expose']['geocoder_plugin_settings']['settings'];
 
       /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
-      $geocoder_plugin = $this->geolocationCore->getGeocoderManager()->getGeocoder(
+      $geocoder_plugin = $this->geocoderManager->getGeocoder(
         $this->options['expose']['geocoder_plugin_settings']['plugin_id'],
         $geocoder_configuration
       );
@@ -232,7 +248,7 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
     ) {
       $geocoder_configuration = $this->options['expose']['geocoder_plugin_settings']['settings'];
       /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
-      $geocoder_plugin = $this->geolocationCore->getGeocoderManager()
+      $geocoder_plugin = $this->geocoderManager
         ->getGeocoder(
           $this->options['expose']['geocoder_plugin_settings']['plugin_id'],
           $geocoder_configuration
@@ -248,6 +264,15 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function acceptExposedInput($input) {
+    if (
+      !empty($this->value['lat_north_east'])
+      && !empty($this->value['lng_north_east'])
+      && !empty($this->value['lat_south_west'])
+      && !empty($this->value['lng_south_west'])
+    ) {
+      return TRUE;
+    }
+
     $return_value = parent::acceptExposedInput($input);
     if (
       $this->options['expose']['input_by_geocoding_widget']
@@ -255,7 +280,7 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
     ) {
       $geocoder_configuration = $this->options['expose']['geocoder_plugin_settings']['settings'];
       /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
-      $geocoder_plugin = $this->geolocationCore->getGeocoderManager()->getGeocoder(
+      $geocoder_plugin = $this->geocoderManager->getGeocoder(
         $this->options['expose']['geocoder_plugin_settings']['plugin_id'],
         $geocoder_configuration
       );
@@ -352,7 +377,7 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
 
     $this->query->addWhereExpression(
       $this->options['group'],
-      $this->geolocationCore->getBoundaryQueryFragment($this->ensureMyTable(), $this->realField, $lat_north_east, $lng_north_east, $lat_south_west, $lng_south_west)
+      self::getBoundaryQueryFragment($this->ensureMyTable(), $this->realField, $lat_north_east, $lng_north_east, $lat_south_west, $lng_south_west)
     );
   }
 

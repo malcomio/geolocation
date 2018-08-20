@@ -6,12 +6,12 @@
   Drupal.geolocation.mapCenter = Drupal.geolocation.mapCenter || {};
 
   /**
-   * @param settings.reset_zoom {Boolean}
+   * @param centerOption.settings.reset_zoom {Boolean}
    */
-  Drupal.geolocation.mapCenter.fit_bounds = function(map, optionId, settings) {
+  Drupal.geolocation.mapCenter.fit_bounds = function(map, centerOption) {
     map.fitMapToMarkers();
 
-    if (settings.reset_zoom) {
+    if (centerOption.settings.reset_zoom) {
       map.setZoom();
     }
 

@@ -64,13 +64,13 @@ class MapCenterManager extends DefaultPluginManager {
    *
    * @param array $settings
    *   Settings.
-   * @param array $context
+   * @param mixed $context
    *   Optional context.
    *
    * @return array
    *   Form.
    */
-  public function getCenterOptionsForm(array $settings, array $context = []) {
+  public function getCenterOptionsForm(array $settings, $context = NULL) {
     $form = [
       '#type' => 'table',
       '#prefix' => t('<h3>Centre override</h3>These options allow to override the default map centre. Each option will, if it can be applied, supersede any following option.'),
@@ -139,8 +139,8 @@ class MapCenterManager extends DefaultPluginManager {
         }
         $option_form = $map_center->getSettingsForm(
           $option_id,
-          $context,
-          $map_center->getSettings($map_center_settings)
+          $map_center->getSettings($map_center_settings),
+          $context
         );
 
         if (!empty($option_form)) {
@@ -162,19 +162,19 @@ class MapCenterManager extends DefaultPluginManager {
   }
 
   /**
-   * Get center values for map element.
+   * Alter map element.
    *
    * @param array $map
    *   Map render array.
    * @param array $settings
    *   Center option settings.
-   * @param array $context
+   * @param mixed $context
    *   Context.
    *
    * @return array
-   *   Centre value.
+   *   Altered map render array.
    */
-  public function alterMap(array $map, array $settings, array $context = []) {
+  public function alterMap(array $map, array $settings, $context = NULL) {
     $map = array_replace_recursive($map, [
       '#attached' => [
         'drupalSettings' => [
@@ -207,12 +207,17 @@ class MapCenterManager extends DefaultPluginManager {
         continue;
       }
 
+      if (empty($option['weight'])) {
+        $option['weight'] = 1;
+      }
+
       /** @var \Drupal\geolocation\MapCenterInterface $map_center_plugin */
       $map_center_plugin = $this->createInstance($option['map_center_id']);
-      $map['#attached']['drupalSettings']['geolocation']['maps'][$map['#id']]['map_center'][$option['weight']] = [
+      $map['#attached']['drupalSettings']['geolocation']['maps'][$map['#id']]['map_center'][$option['map_center_id']] = [
         'map_center_id' => $option['map_center_id'],
         'option_id' => $option_id,
         'settings' => isset($option['settings']) ? $option['settings'] : [],
+        'weight' => $option['weight'],
       ];
       $map = $map_center_plugin->alterMap($map, $option_id, empty($option['settings']) ? [] : $option['settings'], $context);
     }

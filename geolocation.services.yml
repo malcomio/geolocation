@@ -1,7 +1,4 @@
 services:
-  geolocation.core:
-    class: Drupal\geolocation\GeolocationCore
-    arguments: ["@module_handler", "@plugin.manager.geolocation.geocoder", "@plugin.manager.geolocation.mapprovider"]
 
   geolocation.ajax_subscriber:
     class: Drupal\geolocation\EventSubscriber\AjaxResponseSubscriber
@@ -30,4 +27,8 @@ services:
 
   plugin.manager.geolocation.mapfeature:
     class: Drupal\geolocation\MapFeatureManager
+    parent: default_plugin_manager
+
+  plugin.manager.geolocation.locationinput:
+    class: Drupal\geolocation\LocationInputManager
     parent: default_plugin_manager

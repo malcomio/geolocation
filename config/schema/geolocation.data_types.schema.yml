@@ -1,3 +1,18 @@
+geolocation_plugin_base_settings:
+  type: mapping
+  label: 'Default processor configuration'
+  mapping:
+    enable:
+      type: boolean
+      label: 'Enabled yes/no/maybe'
+    weight:
+      type: integer
+      label: 'Weight'
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+
 geolocation_map_provider:
   type: mapping
   mapping:
@@ -13,40 +28,23 @@ geolocation.map_provider.*:
   label: 'Empty map provider'
 
 geolocation.map_feature_settings:
-  type: mapping
-  label: 'Default processor configuration'
+  type: geolocation_plugin_base_settings
+  label: 'Default map feature configuration'
   mapping:
     enabled:
       type: boolean
       label: 'Enabled yes/no/maybe'
-    weight:
-      type: integer
-      label: 'Weight'
-    settings:
-      type: mapping
-      label: 'Settings'
-      mapping:
 
 plugin.plugin_configuration.geolocation.map_feature.*:
   type: geolocation.map_feature_settings
 
 geolocation.map_center_option_settings:
-  type: mapping
-  label: 'Default processor configuration'
+  type: geolocation_plugin_base_settings
+  label: 'Default map center configuration'
   mapping:
-    enable:
-      type: boolean
-      label: 'Enabled yes/no/maybe'
-    weight:
-      type: integer
-      label: 'Weight'
     map_center_id:
       type: string
       label: 'Map Center ID for this option'
-    settings:
-      type: mapping
-      label: 'Settings'
-      mapping:
 
 plugin.plugin_configuration.geolocation.map_center_option.*:
   type: geolocation.map_center_option_settings
@@ -78,3 +76,25 @@ geolocation_data_provider:
 geolocation.data_provider.*:
   type: geolocation_data_provider
   label: 'Empty geocoder'
+
+geolocation.location_settings:
+  type: geolocation_plugin_base_settings
+  label: 'Default location configuration'
+  mapping:
+    location_plugin_id:
+      type: string
+      label: 'Location ID for this option'
+
+plugin.plugin_configuration.geolocation.location.*:
+  type: geolocation.location_settings
+
+geolocation.location_input_settings:
+  type: geolocation_plugin_base_settings
+  label: 'Default location input configuration'
+  mapping:
+    location_input_id:
+      type: string
+      label: 'Location Input ID for this option'
+
+plugin.plugin_configuration.geolocation.location_input.*:
+  type: geolocation.location_input_settings

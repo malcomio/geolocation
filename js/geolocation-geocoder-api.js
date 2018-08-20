@@ -3,6 +3,16 @@
  *   Javascript for the plugin-based geocoder function.
  */
 
+/**
+ * Callback when map is clicked.
+ *
+ * @callback geolocationGeocoderResultCallback
+ * @param {Object} address - Address.
+ */
+
+/**
+ * Geocoder API.
+ */
 (function ($, Drupal) {
   'use strict';
 

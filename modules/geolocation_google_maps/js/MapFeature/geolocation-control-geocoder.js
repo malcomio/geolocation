@@ -16,9 +16,17 @@
       Drupal.geolocation.executeFeatureOnAllMaps(
         'control_geocoder',
         function (map, featureSettings) {
-          Drupal.geolocation.geocoder.addResultCallback(function(address) {
-            map.setCenterByCoordinates({lat: address.geometry.location.lat(), lng: address.geometry.location.lng()}, undefined, 'google_control_geocoder');
-          }, map.id);
+          Drupal.geolocation.geocoder.addResultCallback(
+            /**
+             *
+             * @param {Object} address.geometry.bounds
+             */
+            function(address) {
+              map.setCenterByCoordinates({lat: address.geometry.location.lat(), lng: address.geometry.location.lng()}, undefined, 'google_control_geocoder');
+              map.fitBoundaries(address.geometry.bounds);
+            },
+            map.id
+          );
 
           return true;
         },

@@ -45,7 +45,7 @@ abstract class LocationBase extends PluginBase implements LocationInterface, Con
   /**
    * {@inheritdoc}
    */
-  public function getSettingsForm($option_id = NULL, array $context = [], array $settings = []) {
+  public function getSettingsForm($option_id = NULL, array $settings = [], $context = NULL) {
     $form = [];
 
     return $form;
@@ -59,7 +59,7 @@ abstract class LocationBase extends PluginBase implements LocationInterface, Con
   /**
    * {@inheritdoc}
    */
-  public function getAvailableLocationOptions(array $context) {
+  public function getAvailableLocationOptions($context) {
     return [
       $this->getPluginId() => $this->getPluginDefinition()['name'],
     ];
@@ -68,7 +68,7 @@ abstract class LocationBase extends PluginBase implements LocationInterface, Con
   /**
    * {@inheritdoc}
    */
-  public function getCoordinates($center_option_id, array $center_option_settings, array $context = []) {
+  public function getCoordinates($center_option_id, array $center_option_settings, $context = NULL) {
     return [];
   }
 

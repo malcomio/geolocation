@@ -19,7 +19,7 @@ class FreeGeoIp extends LocationBase implements LocationInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCoordinates($center_option_id, array $center_option_settings, array $context = []) {
+  public function getCoordinates($center_option_id, array $center_option_settings, $context = NULL) {
     $ip = \Drupal::request()->getClientIp();
     if (empty($ip)) {
       return [];

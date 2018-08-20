@@ -132,6 +132,11 @@
  *
  */
 
+/**
+ * Geolocation map API.
+ *
+ * @implements {GeolocationMapInterface}
+ */
 (function ($, Drupal) {
 
   'use strict';
@@ -212,19 +217,25 @@
 
       var that = this;
 
-      /**
-       * @param {integer} weight
-       * @param {Object} centerOption
-       * @param {Object} centerOption.map_center_id
-       * @param {Object} centerOption.option_id
-       * @param {Object} centerOption.settings
-       *
-       */
-      $.each(this.mapCenter, function (weight, centerOption) {
-        if (typeof Drupal.geolocation.mapCenter[centerOption.map_center_id] === 'function') {
-          return Drupal.geolocation.mapCenter[centerOption.map_center_id](that, centerOption.option_id, centerOption.settings);
-        }
-      });
+      Object
+        .values(this.mapCenter)
+        .sort(function(a, b) {
+          return a.weight - b.weight;
+        })
+        .forEach(
+          /**
+           * @param {Object} centerOption
+           * @param {Object} centerOption.map_center_id
+           * @param {Object} centerOption.option_id
+           * @param {Object} centerOption.settings
+           *
+           */
+          function (centerOption) {
+            if (typeof Drupal.geolocation.mapCenter[centerOption.map_center_id] === 'function') {
+              return Drupal.geolocation.mapCenter[centerOption.map_center_id](that, centerOption);
+            }
+          }
+        );
     },
     setCenterByCoordinates: function (coordinates, accuracy, identifier) {
       this.centerUpdatedCallback(coordinates, accuracy, identifier);

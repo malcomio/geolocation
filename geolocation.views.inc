@@ -69,7 +69,7 @@ function geolocation_field_views_data(FieldStorageConfigInterface $field_storage
     $data[$table_name][$args['@field_name'] . '_proximity'] = [
       'group' => $target_entity_type->getLabel(),
       'title' => t('Proximity (@field_name)', $args),
-      'title short' => isset($field_coordinates_table_data['title short']) ? $field_coordinates_table_data['title short'] . t(":proximity") : '',
+      'title short' => isset($field_coordinates_table_data['title short']) ? $field_coordinates_table_data['title short'] . ' - ' . t("Proximity") : '',
       'help' => isset($field_coordinates_table_data['help']) ? $field_coordinates_table_data['help'] : '',
       'argument' => [
         'id' => 'geolocation_argument_proximity',
@@ -130,11 +130,66 @@ function geolocation_field_views_data(FieldStorageConfigInterface $field_storage
       ],
     ];
 
+    $data[$table_name][$args['@field_name'] . '_proximity_form'] = [
+      'group' => $target_entity_type->getLabel(),
+      'title' => t('Proximity Form Field (@field_name)', $args),
+      'title short' => isset($field_coordinates_table_data['title short']) ? $field_coordinates_table_data['title short'] . ' - ' . t("Proximity Form") : '',
+      'help' => isset($field_coordinates_table_data['help']) ? $field_coordinates_table_data['help'] : '',
+      'field' => [
+        'table' => $table_name,
+        'id' => 'geolocation_field_proximity_form',
+        'field_name' => $args['@field_name'] . '_proximity',
+        'entity_type' => $entity_type_id,
+        'real field' => $args['@field_name'],
+        'float' => TRUE,
+        'additional fields' => [
+          $args['@field_name'] . '_lat',
+          $args['@field_name'] . '_lng',
+          $args['@field_name'] . '_lat_sin',
+          $args['@field_name'] . '_lat_cos',
+          $args['@field_name'] . '_lng_rad',
+        ],
+        'element type' => 'div',
+        'is revision' => (isset($table_data[$args['@field_name']]['field']['is revision']) && $table_data[$args['@field_name']]['field']['is revision']),
+        'click sortable' => TRUE,
+      ],
+      'sort' => [
+        'table' => $table_name,
+        'id' => 'geolocation_sort_proximity',
+        'field_name' => $args['@field_name'] . '_proximity',
+        'entity_type' => $entity_type_id,
+        'real field' => $args['@field_name'],
+      ],
+    ];
+
+    $data[$table_name][$args['@field_name'] . '_entity_argument'] = [
+      'group' => $target_entity_type->getLabel(),
+      'title' => t('Proximity Entity Argument (@field_name)', $args),
+      'title short' => isset($field_coordinates_table_data['title short']) ? $field_coordinates_table_data['title short'] . ' - ' . t("Entity Argument") : '',
+      'help' => isset($field_coordinates_table_data['help']) ? $field_coordinates_table_data['help'] : '',
+      'argument' => [
+        'id' => 'geolocation_entity_argument',
+        'table' => $table_name,
+        'entity_type' => $entity_type_id,
+        'field_name' => $args['@field_name'] . '_entity_argument',
+        'real field' => $args['@field_name'],
+        'label' => t('Distance to !field_name', $args),
+        'empty field name' => '- No value -',
+        'additional fields' => [
+          $args['@field_name'] . '_lat',
+          $args['@field_name'] . '_lng',
+          $args['@field_name'] . '_lat_sin',
+          $args['@field_name'] . '_lat_cos',
+          $args['@field_name'] . '_lng_rad',
+        ],
+      ],
+    ];
+
     // Add boundary handlers.
     $data[$table_name][$args['@field_name'] . '_boundary'] = [
       'group' => $target_entity_type->getLabel(),
       'title' => t('Boundary (@field_name)', $args),
-      'title short' => isset($field_coordinates_table_data['title short']) ? $field_coordinates_table_data['title short'] . t(":boundary") : '',
+      'title short' => isset($field_coordinates_table_data['title short']) ? $field_coordinates_table_data['title short'] . ' - ' . t("Boundary") : '',
       'help' => isset($field_coordinates_table_data['help']) ? $field_coordinates_table_data['help'] : '',
       'argument' => [
         'id' => 'geolocation_argument_boundary',

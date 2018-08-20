@@ -30,8 +30,8 @@ class FitLocations extends MapCenterBase implements MapCenterInterface {
   /**
    * {@inheritdoc}
    */
-  public function getSettingsForm($option_id = NULL, array $context = [], array $settings = []) {
-    $form = parent::getSettingsForm($option_id, $context, $settings);
+  public function getSettingsForm($option_id = NULL, array $settings = [], $context = NULL) {
+    $form = parent::getSettingsForm($option_id, $settings, $context);
     $form['reset_zoom'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Reset zoom after fit.'),
@@ -44,7 +44,7 @@ class FitLocations extends MapCenterBase implements MapCenterInterface {
   /**
    * {@inheritdoc}
    */
-  public function alterMap(array $map, $center_option_id, array $center_option_settings, array $context = []) {
+  public function alterMap(array $map, $center_option_id, array $center_option_settings, $context = NULL) {
     $map = parent::alterMap($map, $center_option_id, $center_option_settings, $context);
     $map['#attached'] = array_merge_recursive($map['#attached'], [
       'library' => [

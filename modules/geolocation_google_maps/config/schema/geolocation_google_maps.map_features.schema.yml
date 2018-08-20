@@ -236,7 +236,7 @@ plugin.plugin_configuration.geolocation.map_feature.control_geocoder:
           type: string
           label: 'Geocoder'
         settings:
-          type: geolocation.geocoder.google_geocoding_api
+          type: geolocation.geocoder.[%parent.geocoder]
 
 plugin.plugin_configuration.geolocation.map_feature.control_zoom:
   type: geolocation_google_maps.map_control_feature_settings
