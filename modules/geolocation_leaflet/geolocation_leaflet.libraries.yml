@@ -8,19 +8,22 @@ leaflet:
     gpl-compatible: true
   css:
     component:
-      'https://unpkg.com/leaflet@1.0.3/dist/leaflet.css': { type: external, minified: true }
+      'https://unpkg.com/leaflet@1.3.3/dist/leaflet.css': { type: external, minified: true }
   js:
-    'https://unpkg.com/leaflet@1.0.3/dist/leaflet.js': { type: external, minified: true }
+    'https://unpkg.com/leaflet@1.3.3/dist/leaflet.js': { type: external, minified: true }
 
 # Leaflet integration library.
 geolocation.leaflet:
   version: 8.x-2.x
   dependencies:
     - core/drupalSettings
-    - geolocation/geolocation.api
     - geolocation_leaflet/leaflet
+    - geolocation/geolocation.api
   js:
     js/geolocation-leaflet-api.js: {}
+  css:
+    component:
+      'css/geolocation-leaflet.css': {}
 
 # Leaflet CommonMap.
 commonmap.leaflet:
