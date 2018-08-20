@@ -97,6 +97,13 @@ class MarkerClusterer extends MapFeatureBase {
 
     $feature_settings = $this->getSettings($feature_settings);
 
+    if (
+      !empty($feature_settings['styles'])
+      && is_string($feature_settings['styles'])
+    ) {
+      $feature_settings['styles'] = json_decode($feature_settings['styles']);
+    }
+
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
