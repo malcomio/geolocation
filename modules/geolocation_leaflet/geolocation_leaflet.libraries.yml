@@ -78,7 +78,7 @@ mapfeature.markerclusterer:
 #
 
 # Control Zoom
-mapfeature.control_zoom:
+mapfeature.leaflet_control_zoom:
   js:
     js/MapFeature/geolocation-control-zoom.js: {}
   dependencies:
