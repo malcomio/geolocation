@@ -73,6 +73,15 @@ mapfeature.markerclusterer:
     - geolocation_leaflet/geolocation.leaflet
     - geolocation_leaflet/leaflet.markerclusterer
 
+# Google Maps geocoder function.
+geocoder.photon:
+  version: 8.x-2.x
+  js:
+    js/photon-geocoder.js: {}
+  dependencies:
+    - core/jquery.once
+    - geolocation/geolocation.geocoder.api
+
 #
 # Map Features - Controls
 #
@@ -81,6 +90,13 @@ mapfeature.markerclusterer:
 mapfeature.leaflet_control_zoom:
   js:
     js/MapFeature/geolocation-control-zoom.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
+
+# Control Zoom
+mapfeature.leaflet_control_geocoder:
+  js:
+    js/MapFeature/geolocation-control-geocoder.js: {}
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
 

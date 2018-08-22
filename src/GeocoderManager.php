@@ -60,38 +60,6 @@ class GeocoderManager extends DefaultPluginManager {
   }
 
   /**
-   * Get location capable geocoder definitions.
-   *
-   * @return array
-   *   List of location capable geocoder definitions.
-   */
-  public function getLocationCapableGeocoders() {
-    $location_capable_geocoders = [];
-    foreach ($this->getDefinitions() as $id => $definition) {
-      if (!empty($definition['locationCapable'])) {
-        $location_capable_geocoders[$id] = $definition;
-      }
-    }
-    return $location_capable_geocoders;
-  }
-
-  /**
-   * Get boundary capable geocoder definitions.
-   *
-   * @return array
-   *   List of boundary capable geocoder definitions.
-   */
-  public function getBoundaryCapableGeocoders() {
-    $boundary_capable_geocoders = [];
-    foreach ($this->getDefinitions() as $id => $definition) {
-      if (!empty($definition['boundaryCapable'])) {
-        $boundary_capable_geocoders[$id] = $definition;
-      }
-    }
-    return $boundary_capable_geocoders;
-  }
-
-  /**
    * Return settings array for geocoder after select change.
    *
    * @param array $form

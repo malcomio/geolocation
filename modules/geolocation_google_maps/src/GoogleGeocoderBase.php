@@ -4,42 +4,83 @@ namespace Drupal\geolocation_google_maps;
 
 use Drupal\geolocation\GeocoderBase;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\geolocation\MapProviderManager;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class.
  *
  * @package Drupal\geolocation_google_places_api
  */
-abstract class GoogleGeocoderBase extends GeocoderBase {
-
-  protected $geocoderId = NULL;
+abstract class GoogleGeocoderBase extends GeocoderBase implements ContainerFactoryPluginInterface {
 
   /**
-   * Google Maps Provider.
+   * Google maps provider.
    *
    * @var \Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps
    */
-  protected $googleMapsProvider = NULL;
+  protected $googleMapsProvider;
+
+  /**
+   * GoogleGeocoderBase constructor.
+   *
+   * @param array $configuration
+   *   Configuration.
+   * @param string $plugin_id
+   *   Plugin ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
+   * @param \Drupal\geolocation\MapProviderManager $map_provider_manager
+   *   Map provider management.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MapProviderManager $map_provider_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->googleMapsProvider = $map_provider_manager->getMapProvider('google_maps');
+  }
 
   /**
    * {@inheritdoc}
    */
-  public function attachments($input_id) {
-    $attachments = parent::attachments($input_id);
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('plugin.manager.geolocation.mapprovider')
+    );
+  }
 
-    $attachments = BubbleableMetadata::mergeAttachments(
-      $attachments,
+  /**
+   * {@inheritdoc}
+   */
+  protected function getDefaultSettings() {
+    $default_settings = parent::getDefaultSettings();
+
+    $default_settings['component_restrictions'] = [
+      'route' => '',
+      'locality' => '',
+      'administrative_area' => '',
+      'postal_code' => '',
+      'country' => '',
+    ];
+
+    return $default_settings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function formAttachGeocoder(array &$render_array, $element_name) {
+    parent::formAttachGeocoder($render_array, $element_name);
+
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'drupalSettings' => [
           'geolocation' => [
             'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
-            'geocoder' => [
-              $this->geocoderId => [
-                'inputIds' => [
-                  $input_id,
-                ],
-              ],
-            ],
           ],
         ],
       ]
@@ -61,13 +102,13 @@ abstract class GoogleGeocoderBase extends GeocoderBase {
             break;
         }
 
-        $attachments = BubbleableMetadata::mergeAttachments(
-          $attachments,
+        $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+          empty($render_array['#attached']) ? [] : $render_array['#attached'],
           [
             'drupalSettings' => [
               'geolocation' => [
                 'geocoder' => [
-                  $this->geocoderId => [
+                  $this->getPluginId() => [
                     'componentRestrictions' => [
                       $component => $restriction,
                     ],
@@ -79,34 +120,6 @@ abstract class GoogleGeocoderBase extends GeocoderBase {
         );
       }
     }
-
-    return $attachments;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->googleMapsProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider('google_maps');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getDefaultSettings() {
-    $default_settings = parent::getDefaultSettings();
-
-    $default_settings['component_restrictions'] = [
-      'route' => '',
-      'locality' => '',
-      'administrative_area' => '',
-      'postal_code' => '',
-      'country' => '',
-    ];
-
-    return $default_settings;
   }
 
   /**

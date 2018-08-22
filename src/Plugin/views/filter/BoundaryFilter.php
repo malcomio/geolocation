@@ -110,19 +110,20 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
       $geocoder_settings = [];
     }
 
-    $geocoder_definitions = $this->geocoderManager->getBoundaryCapableGeocoders();
+    $geocoder_options = [];
+    foreach ($this->geocoderManager->getDefinitions() as $id => $definition) {
+      if (empty($definition['frontendCapable'])) {
+        continue;
+      }
+      $geocoder_options[$id] = $definition['name'];
+    }
 
-    if ($geocoder_definitions) {
+    if ($geocoder_options) {
       $form['expose']['input_by_geocoding_widget'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Use geocoding widget to retrieve boundary values'),
         '#default_value' => $this->options['expose']['input_by_geocoding_widget'],
       ];
-
-      $geocoder_options = [];
-      foreach ($geocoder_definitions as $id => $definition) {
-        $geocoder_options[$id] = $definition['name'];
-      }
 
       $form['expose']['geocoder_plugin_settings'] = [
         '#type' => 'container',

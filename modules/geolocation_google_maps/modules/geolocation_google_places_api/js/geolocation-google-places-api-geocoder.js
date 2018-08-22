@@ -4,7 +4,7 @@
  */
 
 /**
- * @property {Object} drupalSettings.geolocation.geocoder.googlePlacesAPI.componentRestrictions
+ * @property {Object} drupalSettings.geolocation.geocoder.google_places_api.componentRestrictions
  */
 
 (function ($, Drupal) {
@@ -17,13 +17,13 @@
   }
 
   Drupal.geolocation.geocoder.googlePlacesAPI = {};
-  drupalSettings.geolocation.geocoder.googlePlacesAPI = drupalSettings.geolocation.geocoder.googlePlacesAPI || {};
+  drupalSettings.geolocation.geocoder.google_places_api = drupalSettings.geolocation.geocoder.google_places_api || {};
 
   /**
    * @param {HTMLElement} context Context
    */
   Drupal.geolocation.geocoder.googlePlacesAPI.attach = function (context) {
-    var autocomplete = $('input.geolocation-geocoder-google-places-api', context);
+    var autocomplete = $('input.geolocation-geocoder-address', context);
     if (!autocomplete.length) {
       return;
     }
@@ -33,8 +33,8 @@
       source: function (request, response) {
         var autocompleteResults = [];
         var componentRestrictions = {};
-        if (typeof drupalSettings.geolocation.geocoder.googlePlacesAPI.componentRestrictions !== 'undefined') {
-          componentRestrictions = drupalSettings.geolocation.geocoder.googlePlacesAPI.componentRestrictions;
+        if (typeof drupalSettings.geolocation.geocoder.google_places_api.componentRestrictions !== 'undefined') {
+          componentRestrictions = drupalSettings.geolocation.geocoder.google_places_api.componentRestrictions;
         }
 
         Drupal.geolocation.geocoder.googlePlacesAPI.autocompleteService.getPlacePredictions(
@@ -77,7 +77,7 @@
                 return;
               }
               Drupal.geolocation.geocoder.resultCallback(place, $(event.target).data('source-identifier').toString());
-              $('.geolocation-geocoder-google-places-api-state[data-source-identifier="' + $(event.target).data('source-identifier') + '"]').val(1);
+              $('.geolocation-geocoder-state[data-source-identifier="' + $(event.target).data('source-identifier') + '"]', context).val(1);
             }
           }
         );
@@ -92,7 +92,7 @@
     };
 
     autocomplete.on('input', function () {
-      $('.geolocation-geocoder-google-places-api-state[data-source-identifier="' + $(this).data('source-identifier') + '"]').val(0);
+      $('.geolocation-geocoder-state[data-source-identifier="' + $(this).data('source-identifier') + '"]', context).val(0);
       Drupal.geolocation.geocoder.clearCallback($(this).data('source-identifier').toString());
     });
   };

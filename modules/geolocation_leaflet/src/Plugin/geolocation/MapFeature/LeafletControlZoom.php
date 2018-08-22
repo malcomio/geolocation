@@ -12,6 +12,6 @@ namespace Drupal\geolocation_leaflet\Plugin\geolocation\MapFeature;
  *   type = "leaflet",
  * )
  */
-class ControlZoom extends ControlElementBase {
+class LeafletControlZoom extends ControlElementBase {
 
 }

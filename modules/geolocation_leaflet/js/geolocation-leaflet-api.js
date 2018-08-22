@@ -91,7 +91,46 @@
   };
   GeolocationLeafletMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
     Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);
-    this.leafletMap.panTo(coordinates);
+
+    if (typeof accuracy === 'undefined') {
+      this.leafletMap.panTo(coordinates);
+      return;
+    }
+
+    var circle = this.addAccuracyIndicatorCircle(coordinates, accuracy);
+
+    this.leafletMap.fitBounds(circle.getBounds());
+
+    setInterval(fadeCityCircles, 300);
+
+    function fadeCityCircles() {
+      var fillOpacity = circle.options.fillOpacity;
+      fillOpacity -= 0.03;
+
+      var opacity = circle.options.opacity;
+      opacity -= 0.06;
+
+      if (
+          opacity > 0
+          && fillOpacity > 0
+      ) {
+        circle.setStyle({
+          fillOpacity: fillOpacity,
+          stroke: opacity
+        });
+      }
+      else {
+        circle.remove()
+      }
+    }
+  };
+  GeolocationLeafletMap.prototype.addAccuracyIndicatorCircle = function (location, accuracy) {
+    return L.circle(location, accuracy, {
+      color: '#4285F4',
+      opacity: 0.3,
+      fillColor: '#4285F4',
+      fillOpacity: 0.15
+    }).addTo(this.leafletMap);
   };
   GeolocationLeafletMap.prototype.setMapMarker = function (markerSettings) {
     if (typeof markerSettings.setMarker !== 'undefined') {
@@ -136,6 +175,17 @@
     var group = new L.featureGroup(locations);
 
     this.leafletMap.fitBounds(group.getBounds());
+  };
+  GeolocationLeafletMap.prototype.addControl = function (element) {
+    (new (L.Control.extend({
+      options: {
+        position: typeof element.dataset.cotrolPosition === undefined ? 'topleft' : element.dataset.controlPosition
+      },
+      onAdd: function(map) {
+        element.style.display = 'block';
+        return element;
+      }
+    }))).addTo(this.leafletMap);
   };
 
   Drupal.geolocation.GeolocationLeafletMap = GeolocationLeafletMap;

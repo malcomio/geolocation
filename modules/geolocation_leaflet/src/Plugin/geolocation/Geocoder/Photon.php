@@ -7,20 +7,37 @@ use Drupal\geolocation\GeocoderInterface;
 use Drupal\Component\Serialization\Json;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\Url;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
- * Provides the Nominatim API.
+ * Provides the Photon.
  *
  * @Geocoder(
- *   id = "nominatim",
- *   name = @Translation("Nominatim"),
- *   description = @Translation("See https://wiki.openstreetmap.org/wiki/Nominatim for details."),
+ *   id = "photon",
+ *   name = @Translation("Photon"),
+ *   description = @Translation("See https://photon.komoot.de for details."),
  *   locationCapable = true,
  *   boundaryCapable = true,
- *   frontendCapable = false,
+ *   frontendCapable = true,
  * )
  */
-class Nominatim extends GeocoderBase implements GeocoderInterface {
+class Photon extends GeocoderBase implements GeocoderInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function formAttachGeocoder(array &$render_array, $element_name) {
+    parent::formAttachGeocoder($render_array, $element_name);
+
+    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+      empty($render_array['#attached']) ? [] : $render_array['#attached'],
+      [
+        'library' => [
+          'geolocation_leaflet/geocoder.photon',
+        ],
+      ]
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -30,12 +47,11 @@ class Nominatim extends GeocoderBase implements GeocoderInterface {
       return FALSE;
     }
 
-    $url = Url::fromUri('https://nominatim.openstreetmap.org/search/' . $address, [
+    $url = Url::fromUri('https://photon.komoot.de/api/' . $address, [
       'query' => [
-        'email' => \Drupal::config('system.site')->get('mail'),
+        'q' => $address,
         'limit' => 1,
-        'format' => 'json',
-        'connect_timeout' => 5,
+        'lang' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
       ],
     ]);
 

@@ -15,7 +15,7 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   type = "leaflet",
  * )
  */
-class MarkerClusterer extends MapFeatureBase {
+class LeafletMarkerClusterer extends MapFeatureBase {
 
   /**
    * {@inheritdoc}

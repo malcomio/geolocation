@@ -6,11 +6,13 @@ use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\geolocation\GeocoderManager;
 use Drupal\views\Plugin\views\field\EntityField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\geolocation\DataProviderInterface;
 use Drupal\geolocation\DataProviderBase;
 use PredictHQ\AddressFormatter\Address;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides default address field.
@@ -40,14 +42,27 @@ class AddressFieldProvider extends DataProviderBase implements DataProviderInter
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityFieldManagerInterface $entity_field_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityFieldManagerInterface $entity_field_manager, GeocoderManager $geocoder_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_field_manager);
 
-    $this->geocoderManager = \Drupal::service('plugin.manager.geolocation.geocoder');
+    $this->geocoderManager = $geocoder_manager;
 
     if (!empty($configuration['geocoder'])) {
       $this->geocoder = $this->geocoderManager->createInstance($configuration['geocoder']);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_field.manager'),
+      $container->get('plugin.manager.geolocation.geocoder')
+    );
   }
 
   /**
@@ -116,9 +131,11 @@ class AddressFieldProvider extends DataProviderBase implements DataProviderInter
   public function getSettingsForm(array $settings, array $parents = []) {
     $element = parent::getSettingsForm($settings, $parents);
 
-    $geocoders = $this->geocoderManager->getLocationCapableGeocoders();
     $geocoder_options = [];
-    foreach ($geocoders as $geocoder_id => $geocoder_definition) {
+    foreach ($this->geocoderManager->getDefinitions() as $geocoder_id => $geocoder_definition) {
+      if (empty($geocoder_definition['locationCapable'])) {
+        continue;
+      }
       $geocoder_options[$geocoder_id] = $geocoder_definition['name'];
     }
 

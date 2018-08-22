@@ -1,23 +1,22 @@
 <?php
 
-namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
+namespace Drupal\geolocation_leaflet\Plugin\geolocation\MapFeature;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\geolocation\GeocoderManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides Geocoding control element.
+ * Provides Zoom control element.
  *
  * @MapFeature(
- *   id = "control_geocoder",
+ *   id = "leaflet_control_geocoder",
  *   name = @Translation("Map Control - Geocoder"),
- *   description = @Translation("Add address search with geocoding functionality map."),
- *   type = "google_maps",
+ *   description = @Translation("Add geocoder control element."),
+ *   type = "leaflet",
  * )
  */
-class ControlCustomGeocoder extends ControlCustomElementBase {
+class LeafletControlGeocoder extends ControlCustomElementBase {
 
   /**
    * The GeocoderManager object.
@@ -63,7 +62,7 @@ class ControlCustomGeocoder extends ControlCustomElementBase {
     return array_replace_recursive(
       parent::getDefaultSettings(),
       [
-        'geocoder' => 'google_geocoding_api',
+        'geocoder' => 'nominatim',
         'settings' => [],
       ]
     );
@@ -99,6 +98,7 @@ class ControlCustomGeocoder extends ControlCustomElementBase {
     }
 
     if ($geocoder_options) {
+
       $form['geocoder'] = [
         '#type' => 'select',
         '#options' => $geocoder_options,
@@ -113,9 +113,9 @@ class ControlCustomGeocoder extends ControlCustomElementBase {
 
       if (!empty($settings['geocoder'])) {
         $geocoder_plugin = $this->geocoderManager->getGeocoder(
-            $settings['geocoder'],
-            $settings['settings']
-          );
+          $settings['geocoder'],
+          $settings['settings']
+        );
       }
       elseif (current(array_keys($geocoder_options))) {
         $geocoder_plugin = $this->geocoderManager->getGeocoder(current(array_keys($geocoder_options)));
@@ -171,26 +171,6 @@ class ControlCustomGeocoder extends ControlCustomElementBase {
    */
   public function alterMap(array $render_array, array $feature_settings, array $context = []) {
     $render_array = parent::alterMap($render_array, $feature_settings, $context);
-
-    $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
-      empty($render_array['#attached']) ? [] : $render_array['#attached'],
-      [
-        'library' => [
-          'geolocation_google_maps/geolocation.control_geocoder',
-        ],
-        'drupalSettings' => [
-          'geolocation' => [
-            'maps' => [
-              $render_array['#id'] => [
-                'control_geocoder' => [
-                  'enable' => TRUE,
-                ],
-              ],
-            ],
-          ],
-        ],
-      ]
-    );
 
     $feature_settings = $this->getSettings($feature_settings);
 

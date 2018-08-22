@@ -88,15 +88,15 @@ class Geocoder extends LocationInputBase implements LocationInputInterface, Cont
 
     $settings = $this->getSettings($settings);
 
-    /** @var \Drupal\geolocation\GeocoderManager $geocoder_manager */
-    $geocoder_manager = \Drupal::service('plugin.manager.geolocation.geocoder');
-    $geocoder_definitions = $geocoder_manager->getLocationCapableGeocoders();
-
-    if ($geocoder_definitions) {
-      $geocoder_options = [];
-      foreach ($geocoder_definitions as $id => $definition) {
-        $geocoder_options[$id] = $definition['name'];
+    $geocoder_options = [];
+    foreach ($this->geocoderManager->getDefinitions() as $geocoder_id => $geocoder_definition) {
+      if (empty($geocoder_definition['locationCapable'])) {
+        continue;
       }
+      $geocoder_options[$geocoder_id] = $geocoder_definition['name'];
+    }
+
+    if ($geocoder_options) {
 
       $form['plugin_id'] = [
         '#type' => 'select',
@@ -104,20 +104,20 @@ class Geocoder extends LocationInputBase implements LocationInputInterface, Cont
         '#title' => $this->t('Geocoder plugin'),
         '#default_value' => $settings['plugin_id'],
         '#ajax' => [
-          'callback' => [get_class($geocoder_manager), 'addGeocoderSettingsFormAjax'],
+          'callback' => [get_class($this->geocoderManager), 'addGeocoderSettingsFormAjax'],
           'wrapper' => 'geocoder-plugin-settings',
           'effect' => 'fade',
         ],
       ];
 
       if (!empty($settings['plugin_id'])) {
-        $geocoder_plugin = $geocoder_manager->getGeocoder(
+        $geocoder_plugin = $this->geocoderManager->getGeocoder(
           $settings['plugin_id'],
           $settings['settings']
         );
       }
       elseif (current(array_keys($geocoder_options))) {
-        $geocoder_plugin = $geocoder_manager->getGeocoder(current(array_keys($geocoder_options)));
+        $geocoder_plugin = $this->geocoderManager->getGeocoder(current(array_keys($geocoder_options)));
       }
 
       if (!empty($geocoder_plugin)) {
@@ -178,11 +178,6 @@ class Geocoder extends LocationInputBase implements LocationInputInterface, Cont
     $geocoder_plugin = $this->geocoderManager->getGeocoder(
       $option_settings['plugin_id'],
       $option_settings['settings']
-    );
-
-    $form['geocoder']['#attached'] = BubbleableMetadata::mergeAttachments(
-      empty($form['geocoder']['#attached']) ? [] : $form['geocoder']['#attached'],
-      $geocoder_plugin->attachments('location_input_geocoder')
     );
 
     $geocoder_plugin->formAttachGeocoder($form['geocoder'], 'location_input_geocoder');

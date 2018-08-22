@@ -153,11 +153,11 @@ function geolocation_address_field_widget_third_party_settings_form(WidgetInterf
     return [];
   }
 
-  /** @var \Drupal\geolocation\GeocoderManager $geocoder_manager */
-  $geocoder_manager = \Drupal::service('plugin.manager.geolocation.geocoder');
-  $geocoder_definitions = $geocoder_manager->getLocationCapableGeocoders();
   $geocoder_options = [];
-  foreach ($geocoder_definitions as $geocoder_id => $geocoder_definition) {
+  foreach (\Drupal::service('plugin.manager.geolocation.geocoder')->getDefinitions() as $geocoder_id => $geocoder_definition) {
+    if (empty($geocoder_definition['locationCapable'])) {
+      continue;
+    }
     $geocoder_options[$geocoder_id] = $geocoder_definition['name'];
   }
 

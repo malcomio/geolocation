@@ -4,8 +4,8 @@
  */
 
 /**
- * @property {Object} drupalSettings.geolocation.geocoder.googleGeocodingAPI.componentRestrictions
- * @property {String[]} drupalSettings.geolocation.geocoder.googleGeocodingAPI.inputIds
+ * @property {Object} drupalSettings.geolocation.geocoder.google_geocoding_api.componentRestrictions
+ * @property {String[]} drupalSettings.geolocation.geocoder.google_geocoding_api.inputIds
  */
 
 (function ($, Drupal) {
@@ -15,12 +15,11 @@
     return false;
   }
 
-  drupalSettings.geolocation.geocoder.googleGeocodingAPI = drupalSettings.geolocation.geocoder.googleGeocodingAPI || {};
+  drupalSettings.geolocation.geocoder.google_geocoding_api = drupalSettings.geolocation.geocoder.google_geocoding_api || {};
 
   Drupal.geolocation.geocoder.googleGeocodingAPI = {};
 
-  Drupal.geolocation.geocoder.googleGeocodingAPI.attach = function (geocoderInputElement) {
-    var geocoderInput = $(geocoderInputElement);
+  Drupal.geolocation.geocoder.googleGeocodingAPI.attach = function (geocoderInput) {
     geocoderInput.once().autocomplete({
       autoFocus: true,
       source: function (request, response) {
@@ -30,8 +29,8 @@
 
         var autocompleteResults = [];
         var componentRestrictions = {};
-        if (typeof drupalSettings.geolocation.geocoder.googleGeocodingAPI.componentRestrictions !== 'undefined') {
-          componentRestrictions = drupalSettings.geolocation.geocoder.googleGeocodingAPI.componentRestrictions;
+        if (typeof drupalSettings.geolocation.geocoder.google_geocoding_api.componentRestrictions !== 'undefined') {
+          componentRestrictions = drupalSettings.geolocation.geocoder.google_geocoding_api.componentRestrictions;
         }
 
         Drupal.geolocation.geocoder.googleGeocodingAPI.geocoder.geocode(
@@ -61,12 +60,15 @@
        * @param {Object} ui.item - See jquery doc
        */
       select: function (event, ui) {
+        if (typeof ui.item.address.geometry.viewport !== 'undefined') {
+          ui.item.address.geometry.bounds = ui.item.address.geometry.viewport;
+        }
         Drupal.geolocation.geocoder.resultCallback(ui.item.address, $(event.target).data('source-identifier').toString());
-        $('.geolocation-geocoder-google-geocoding-api-state[data-source-identifier="' + $(event.target).data('source-identifier') + '"]').val(1);
+        $('.geolocation-geocoder-state[data-source-identifier="' + $(event.target).data('source-identifier') + '"]').val(1);
       }
     })
     .on('input', function () {
-      $('.geolocation-geocoder-google-geocoding-api-state[data-source-identifier="' + $(this).data('source-identifier') + '"]').val(0);
+      $('.geolocation-geocoder-state[data-source-identifier="' + $(this).data('source-identifier') + '"]').val(0);
       Drupal.geolocation.geocoder.clearCallback($(this).data('source-identifier').toString());
     });
   };
@@ -82,8 +84,19 @@
   Drupal.behaviors.geolocationGeocoderGoogleGeocodingApi = {
     attach: function (context) {
       Drupal.geolocation.google.addLoadedCallback(function() {
-        $.each(drupalSettings.geolocation.geocoder.googleGeocodingAPI.inputIds, function(index, inputId) {
-          var geocoderInput = $('input.geolocation-geocoder-google-geocoding-api[data-source-identifier="' + inputId + '"]', context);
+        $.each(drupalSettings.geolocation.geocoder.google_geocoding_api.inputIds, function(index, inputId) {
+          var geocoderInput = $('input.geolocation-geocoder-address[data-source-identifier="' + inputId + '"]', context);
+          if (geocoderInput.length === 0) {
+            return;
+          }
+
+          if (geocoderInput.hasClass('geocoder-attached')) {
+            return;
+          }
+          else {
+            geocoderInput.addClass('geocoder-attached');
+          }
+
           if (geocoderInput) {
             Drupal.geolocation.geocoder.googleGeocodingAPI.attach(geocoderInput);
           }

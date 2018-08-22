@@ -15,7 +15,7 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   type = "leaflet",
  * )
  */
-class MarkerPopup extends MapFeatureBase {
+class LeafletMarkerPopup extends MapFeatureBase {
 
   /**
    * {@inheritdoc}

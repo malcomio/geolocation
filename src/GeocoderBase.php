@@ -68,13 +68,6 @@ abstract class GeocoderBase extends PluginBase implements GeocoderInterface {
   /**
    * {@inheritdoc}
    */
-  public function attachments($input_id) {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function formAttachGeocoder(array &$render_array, $element_name) {
     $settings = $this->getSettings();
 
@@ -88,7 +81,32 @@ abstract class GeocoderBase extends PluginBase implements GeocoderInterface {
       '#size' => 25,
       '#attributes' => [
         'class' => [
-          'geolocation-geocoder-base',
+          'geolocation-geocoder-address',
+          'form-autocomplete',
+        ],
+        'data-source-identifier' => $element_name,
+      ],
+      '#attached' => [
+        'drupalSettings' => [
+          'geolocation' => [
+            'geocoder' => [
+              $this->getPluginId() => [
+                'inputIds' => [
+                  $element_name,
+                ],
+              ],
+            ],
+          ],
+        ],
+      ],
+    ];
+
+    $render_array['geolocation_geocoder_state'] = [
+      '#type' => 'hidden',
+      '#default_value' => 1,
+      '#attributes' => [
+        'class' => [
+          'geolocation-geocoder-state',
         ],
         'data-source-identifier' => $element_name,
       ],
@@ -99,17 +117,49 @@ abstract class GeocoderBase extends PluginBase implements GeocoderInterface {
    * {@inheritdoc}
    */
   public function formValidateInput(FormStateInterface $form_state) {
-    return TRUE;
+    $validate = TRUE;
+
+    $input = $form_state->getUserInput();
+    if (
+      !empty($input['geolocation_geocoder_address'])
+      && empty($input['geolocation_geocoder_state'])
+    ) {
+      $location_data = $this->geocode($input['geolocation_geocoder_address']);
+
+      if (empty($location_data)) {
+        $form_state->setErrorByName('geolocation_geocoder_address', $this->t('Failed to geocode %input.', ['%input' => $input['geolocation_geocoder_address']]));
+        return FALSE;
+      }
+    }
+    return $validate;
   }
 
   /**
    * {@inheritdoc}
    */
   public function formProcessInput(array &$input, $element_name) {
+    $return = TRUE;
     if (empty($input['geolocation_geocoder_address'])) {
-      return FALSE;
+      $return = FALSE;
     }
-    return $this->geocode($input['geolocation_geocoder_address']);
+
+    if (
+      !empty($input['geolocation_geocoder_address'])
+      && empty($input['geolocation_geocoder_state'])
+    ) {
+      $location_data = $this->geocode($input['geolocation_geocoder_address']);
+
+      if (empty($location_data)) {
+        $input['geolocation_geocoder_state'] = 0;
+        return FALSE;
+      }
+
+      $input['geolocation_geocoder_address'] = $location_data['address'];
+      $input['geolocation_geocoder_state'] = 1;
+
+      return $location_data;
+    }
+    return $return;
   }
 
   /**
