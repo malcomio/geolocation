@@ -124,7 +124,7 @@ class CommonMapBase extends StylePluginBase {
   public function render() {
 
     if (empty($this->options['geolocation_field'])) {
-      \Drupal::messenger()->addMessage("The geolocation common map ' . $this->view->id() . ' views style was called without a geolocation field defined in the views style settings.", 'error');
+      \Drupal::messenger()->addMessage('The geolocation common map ' . $this->view->id() . ' views style was called without a geolocation field defined in the views style settings.', 'error');
       return [];
     }
 
@@ -228,9 +228,11 @@ class CommonMapBase extends StylePluginBase {
       ]);
     }
 
-    $build = $this->mapProviderManager
-      ->createInstance($this->options['map_provider_id'], $this->options['map_provider_settings'])
-      ->alterCommonMap($build, $this->options['map_provider_settings'], ['view' => $this]);
+    if ($this->mapProviderManager->hasDefinition($this->options['map_provider_id'])) {
+      $build = $this->mapProviderManager
+        ->createInstance($this->options['map_provider_id'], $this->options['map_provider_settings'])
+        ->alterCommonMap($build, $this->options['map_provider_settings'], ['view' => $this]);
+    }
 
     return $build;
   }
