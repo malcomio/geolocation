@@ -18,9 +18,26 @@
         /**
          * @param {GeolocationLeafletMap} map - Current map.
          * @param {GeolocationMapFeatureSettings} featureSettings - Settings for current feature.
+         * @param {String} featureSettings.zoomToBoundsOnClick - Settings for current feature.
+         * @param {String} featureSettings.showCoverageOnHover - Settings for current feature.
+         *
+         * @see https://github.com/Leaflet/Leaflet.markercluster
          */
         function (map, featureSettings) {
-          var cluster = L.markerClusterGroup();
+          var options = {
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: false
+          };
+
+          if (featureSettings.zoomToBoundsOnClick) {
+            options.zoomToBoundsOnClick = true
+          }
+          if (featureSettings.showCoverageOnHover) {
+            options.showCoverageOnHover = true
+          }
+
+          var cluster = L.markerClusterGroup(options);
+
           map.leafletMap.removeLayer(map.markerLayer);
           cluster.addLayer(map.markerLayer);
 
