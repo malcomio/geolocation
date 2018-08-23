@@ -40,6 +40,14 @@ widget.api.leaflet:
   dependencies:
     - geolocation/geolocation.widget.api
 
+widget.leaflet:
+  version: 1.x
+  js:
+    js/geolocation-leaflet-maps-widget.js: {}
+  dependencies:
+    - geolocation/geolocation.widget
+    - geolocation_leaflet/widget.api.leaflet
+
 #
 # Map Features
 #

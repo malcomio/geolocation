@@ -183,6 +183,7 @@
       },
       onAdd: function(map) {
         element.style.display = 'block';
+        L.DomEvent.disableClickPropagation(element);
         return element;
       }
     }))).addTo(this.leafletMap);
