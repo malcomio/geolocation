@@ -62,6 +62,12 @@
               q: request.term,
               limit: 3
             };
+
+            var lang = $('html').attr('lang');
+            if ($.inArray(lang, ['de', 'en', 'it', 'fr'])) {
+              options.lang = lang;
+            }
+
             if (typeof drupalSettings.geolocation.geocoder.photon.locationPriority !== 'undefined') {
               $.extend(options, drupalSettings.geolocation.geocoder.photon.locationPriority);
             }

@@ -101,12 +101,18 @@ class Photon extends GeocoderBase implements GeocoderInterface {
       return FALSE;
     }
 
+    $options = [
+      'q' => $address,
+      'limit' => 1,
+    ];
+
+    $lang = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    if (in_array($lang, ['de', 'en', 'it', 'fr'])) {
+      $options['lang'] = $lang;
+    }
+
     $url = Url::fromUri('https://photon.komoot.de/api/' . $address, [
-      'query' => [
-        'q' => $address,
-        'limit' => 1,
-        'lang' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
-      ],
+      'query' => $options,
     ]);
 
     try {
