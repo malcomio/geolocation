@@ -26,14 +26,68 @@ class Photon extends GeocoderBase implements GeocoderInterface {
   /**
    * {@inheritdoc}
    */
+  protected function getDefaultSettings() {
+    $default_settings = parent::getDefaultSettings();
+
+    $default_settings['location_priotiy'] = [
+      'lat' => '',
+      'lon' => '',
+    ];
+
+    return $default_settings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOptionsForm() {
+
+    $settings = $this->getSettings();
+
+    $form = parent::getOptionsForm();
+
+    $form['location_priority'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Location Priority'),
+      'lat' => [
+        '#type' => 'textfield',
+        '#default_value' => $settings['location_priority']['lat'],
+        '#title' => $this->t('Latitude'),
+        '#size' => 15,
+      ],
+      'lon' => [
+        '#type' => 'textfield',
+        '#default_value' => $settings['location_priority']['lon'],
+        '#title' => $this->t('Longitude'),
+        '#size' => 15,
+      ],
+    ];
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function formAttachGeocoder(array &$render_array, $element_name) {
     parent::formAttachGeocoder($render_array, $element_name);
+
+    $settings = $this->getSettings();
 
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
           'geolocation_leaflet/geocoder.photon',
+        ],
+        'drupalSettings' => [
+          'geolocation' => [
+            'geocoder' => [
+              $this->getPluginId() => [
+                'locationPriority' => $settings['location_priority'],
+              ],
+            ],
+          ],
         ],
       ]
     );

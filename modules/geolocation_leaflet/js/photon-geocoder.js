@@ -5,6 +5,9 @@
 
 /**
  * @property {String[]} drupalSettings.geolocation.geocoder.photon.inputIds
+ * @property {String} drupalSettings.geolocation.geocoder.photon.locationPriority
+ * @property {float} drupalSettings.geolocation.geocoder.photon.locationPriority.lat
+ * @property {float} drupalSettings.geolocation.geocoder.photon.locationPriority.lon
  */
 
 (function ($, Drupal) {
@@ -45,13 +48,17 @@
           source: function (request, response) {
             var autocompleteResults = [];
 
+            var options = {
+              q: request.term,
+              limit: 3
+            };
+            if (typeof drupalSettings.geolocation.geocoder.photon.locationPriority !== 'undefined') {
+              $.extend(options, drupalSettings.geolocation.geocoder.photon.locationPriority);
+            }
+
             $.getJSON(
                 'https://photon.komoot.de/api/',
-                {
-                  q: request.term,
-                  limit: 3,
-                  lang: $('html').attr('lang')
-                },
+                options,
                 function (data) {
                   if (typeof data.features === 'undefined') {
                     response();
