@@ -4,6 +4,16 @@
  */
 
 /**
+ * @typedef {Object} PhotonResult
+ * @property {Object} properties
+ * @property {String} properties.street
+ * @property {String} properties.city
+ * @property {String} properties.state
+ * @property {String} properties.postcode
+ * @property {String} properties.country
+ */
+
+/**
  * @property {String[]} drupalSettings.geolocation.geocoder.photon.inputIds
  * @property {String} drupalSettings.geolocation.geocoder.photon.locationPriority
  * @property {float} drupalSettings.geolocation.geocoder.photon.locationPriority.lat
@@ -64,9 +74,29 @@
                     response();
                     return;
                   }
+                  /**
+                   * @param {int} index
+                   * @param {PhotonResult} result
+                   */
                   $.each(data.features, function (index, result) {
+                    var formatted_address = [];
+                    if (typeof result.properties.street !== 'undefined') {
+                      formatted_address.push(result.properties.street);
+                    }
+                    if (typeof result.properties.city !== 'undefined') {
+                      formatted_address.push(result.properties.city);
+                    }
+                    if (typeof result.properties.state !== 'undefined') {
+                      formatted_address.push(result.properties.state);
+                    }
+                    if (typeof result.properties.postcode !== 'undefined') {
+                      formatted_address.push(result.properties.postcode);
+                    }
+                    if (typeof result.properties.country !== 'undefined') {
+                      formatted_address.push(result.properties.country);
+                    }
                     autocompleteResults.push({
-                      value: result.properties.name,
+                      value: result.properties.name + ' - ' + formatted_address.join(', '),
                       result: result
                     });
                   });
