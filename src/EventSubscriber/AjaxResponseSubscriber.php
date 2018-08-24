@@ -64,6 +64,7 @@ class AjaxResponseSubscriber implements EventSubscriberInterface {
         && substr($command['selector'], 0, 16) === '.js-view-dom-id-'
       ) {
         $command['command'] = 'geolocationCommonMapUpdate';
+        $response->addAttachments(['library' => ['geolocation/geolocation.commonmap']]);
       }
 
       // Stop the view from scrolling to the top of the page.
