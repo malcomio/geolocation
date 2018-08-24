@@ -20,6 +20,17 @@ class LeafletMarkerClusterer extends MapFeatureBase {
   /**
    * {@inheritdoc}
    */
+  public static function getDefaultSettings() {
+    $default_settings = parent::getDefaultSettings();
+
+    $default_settings['cluster_settings'] = [];
+
+    return $default_settings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSettingsForm(array $settings, array $parents) {
     $settings = $this->getSettings($settings);
 
