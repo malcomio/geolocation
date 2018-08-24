@@ -127,9 +127,19 @@ mapfeature.leaflet_control_zoom:
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
 
-# Control Zoom
+# Control Geocoder
 mapfeature.leaflet_control_geocoder:
   js:
     js/MapFeature/geolocation-control-geocoder.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
+
+# Control Recenter
+mapfeature.leaflet_control_recenter:
+  css:
+    component:
+      css/geolocation-control-recenter.css: {}
+  js:
+    js/MapFeature/geolocation-control-recenter.js: {}
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
