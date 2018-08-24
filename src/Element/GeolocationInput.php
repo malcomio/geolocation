@@ -39,7 +39,7 @@ class GeolocationInput extends FormElement {
       '#element_validate' => [
         [$class, 'validateGeolocation'],
       ],
-      '#theme_wrappers' => ['form_element'],
+      '#theme_wrappers' => ['fieldset'],
     ];
   }
 
