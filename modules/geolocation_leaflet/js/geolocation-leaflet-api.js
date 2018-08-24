@@ -52,12 +52,14 @@
 
     var markerLayer = L.layerGroup().addTo(leafletMap);
 
-    L.tileLayer('https://b.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Set the tile layer.
+    var tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(leafletMap);
 
     this.leafletMap = leafletMap;
     this.markerLayer = markerLayer;
+    this.tileLayer = tileLayer;
 
     this.addPopulatedCallback(function(map) {
       var singleClick;
