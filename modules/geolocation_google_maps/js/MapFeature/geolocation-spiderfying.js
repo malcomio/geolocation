@@ -44,7 +44,7 @@
 
           /* global OverlappingMarkerSpiderfier */
 
-          map.addPopulatedCallback(function(map) {
+          map.addInitializedCallback(function(map) {
 
             var oms = null;
 
