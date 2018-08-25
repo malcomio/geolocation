@@ -41,8 +41,7 @@ class LocationManager extends DefaultPluginManager {
    *   Location instance.
    */
   public function getLocationPlugin($id, array $configuration = []) {
-    $definitions = $this->getDefinitions();
-    if (empty($definitions[$id])) {
+    if (!$this->hasDefinition($id)) {
       return FALSE;
     }
     try {

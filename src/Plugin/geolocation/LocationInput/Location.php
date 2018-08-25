@@ -72,6 +72,10 @@ class Location extends LocationInputBase implements LocationInputInterface {
     $location_plugin_id = $values[0];
     $location_option_id = $values[1];
 
+    if (!$this->locationManager->hasDefinition($location_plugin_id)) {
+      return [];
+    }
+
     /** @var \Drupal\geolocation\LocationInterface $location_plugin */
     $location_plugin = $this->locationManager->createInstance($location_plugin_id);
     $form = parent::getSettingsForm($location_plugin->getPluginId(), $settings, $context);
@@ -112,6 +116,10 @@ class Location extends LocationInputBase implements LocationInputInterface {
     }
     $location_plugin_id = $values[0];
     $location_option_id = $values[1];
+
+    if (!$this->locationManager->hasDefinition($location_plugin_id)) {
+      return [];
+    }
 
     /** @var \Drupal\geolocation\LocationInterface $location */
     $location = $this->locationManager->createInstance($location_plugin_id);

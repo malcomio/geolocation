@@ -42,8 +42,7 @@ class LocationInputManager extends DefaultPluginManager {
    *   LocationInput instance.
    */
   public function getLocationInputPlugin($id, array $configuration = []) {
-    $definitions = $this->getDefinitions();
-    if (empty($definitions[$id])) {
+    if (!$this->hasDefinition($id)) {
       return FALSE;
     }
     try {

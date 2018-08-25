@@ -42,8 +42,7 @@ class GeocoderManager extends DefaultPluginManager {
    *   Geocoder instance.
    */
   public function getGeocoder($id, array $configuration = []) {
-    $definitions = $this->getDefinitions();
-    if (empty($definitions[$id])) {
+    if (!$this->hasDefinition($id)) {
       return FALSE;
     }
     try {

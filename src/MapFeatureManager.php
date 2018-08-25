@@ -41,8 +41,7 @@ class MapFeatureManager extends DefaultPluginManager {
    *   MapFeature instance.
    */
   public function getMapFeature($id, array $configuration = []) {
-    $definitions = $this->getDefinitions();
-    if (empty($definitions[$id])) {
+    if (!$this->hasDefinition($id)) {
       return FALSE;
     }
     try {

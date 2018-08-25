@@ -42,8 +42,7 @@ class MapCenterManager extends DefaultPluginManager {
    *   MapCenter instance.
    */
   public function getMapCenter($id, array $configuration = []) {
-    $definitions = $this->getDefinitions();
-    if (empty($definitions[$id])) {
+    if (!$this->hasDefinition($id)) {
       return FALSE;
     }
     try {

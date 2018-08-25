@@ -52,6 +52,10 @@ class Location extends MapCenterBase implements MapCenterInterface {
    * {@inheritdoc}
    */
   public function getSettingsForm($option_id = NULL, array $settings = [], $context = NULL) {
+    if (!$this->locationManager->hasDefinition($option_id)) {
+      return [];
+    }
+
     /** @var \Drupal\geolocation\LocationInterface $location_plugin */
     $location_plugin = $this->locationManager->createInstance($option_id);
     $form = $location_plugin->getSettingsForm($location_plugin->getPluginId(), $settings, $context);
@@ -81,6 +85,10 @@ class Location extends MapCenterBase implements MapCenterInterface {
    * {@inheritdoc}
    */
   public function alterMap(array $map, $center_option_id, array $center_option_settings, $context = NULL) {
+    if (!$this->locationManager->hasDefinition($center_option_id)) {
+      return $map;
+    }
+
     /** @var \Drupal\geolocation\LocationInterface $location */
     $location = $this->locationManager->createInstance($center_option_id);
 
