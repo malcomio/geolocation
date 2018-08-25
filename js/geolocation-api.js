@@ -215,6 +215,9 @@
         return;
       }
 
+      this.setZoom();
+      this.setCenterByCoordinates({lat: this.lat, lng: this.lng});
+
       var that = this;
 
       Object

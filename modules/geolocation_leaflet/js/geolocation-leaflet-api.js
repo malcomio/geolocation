@@ -141,13 +141,6 @@
       }
     }
 
-    if (typeof markerSettings.label === 'string') {
-      marker.bindTooltip(markerSettings.label, {
-        permanent: true,
-        direction: 'top'
-      });
-    }
-
     if (typeof markerSettings.icon === 'string') {
       markerSettings.icon = L.icon({
         iconUrl: markerSettings.icon
@@ -158,6 +151,13 @@
     var currentMarker = L.marker([parseFloat(markerSettings.position.lat), parseFloat(markerSettings.position.lng)], markerSettings).addTo(this.markerLayer);
 
     currentMarker.locationWrapper = markerSettings.locationWrapper;
+
+    if (typeof markerSettings.label === 'string') {
+      currentMarker.bindTooltip(markerSettings.label, {
+        permanent: true,
+        direction: 'top'
+      });
+    }
 
     Drupal.geolocation.GeolocationMapBase.prototype.setMapMarker.call(this, currentMarker);
 
@@ -181,7 +181,7 @@
   GeolocationLeafletMap.prototype.addControl = function (element) {
     (new (L.Control.extend({
       options: {
-        position: typeof element.dataset.cotrolPosition === undefined ? 'topleft' : element.dataset.controlPosition
+        position: typeof element.dataset.controlPosition === 'undefined' ? 'topleft' : element.dataset.controlPosition
       },
       onAdd: function(map) {
         element.style.display = 'block';
