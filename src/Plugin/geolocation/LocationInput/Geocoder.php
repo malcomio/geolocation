@@ -6,7 +6,6 @@ use Drupal\geolocation\LocationInputInterface;
 use Drupal\geolocation\LocationInputBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\geolocation\GeocoderManager;
 
 /**
@@ -61,23 +60,14 @@ class Geocoder extends LocationInputBase implements LocationInputInterface, Cont
    * {@inheritdoc}
    */
   public static function getDefaultSettings() {
-    return array_replace_recursive(
-      parent::getDefaultSettings(),
-      [
-        'plugin_id' => 'google_geocoding_api',
-        'settings' => [],
-      ]
-    );
-  }
+    $settings = parent::getDefaultSettings();
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getSettings(array $settings) {
-    $default_settings = $this->getDefaultSettings();
-    $settings = array_replace_recursive($default_settings, $settings);
+    $settings['auto_submit'] = FALSE;
+    $settings['hide_form'] = FALSE;
+    $settings['plugin_id'] = '';
+    $settings['settings'] = [];
 
-    return $settings;
+    return [];
   }
 
   /**
@@ -140,6 +130,19 @@ class Geocoder extends LocationInputBase implements LocationInputInterface, Cont
         '#prefix' => '<div id="geocoder-plugin-settings">',
         '#suffix' => '</div>',
       ]);
+
+      $form['auto_submit'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Auto-submit form'),
+        '#default_value' => $settings['auto_submit'],
+        '#description' => $this->t('Only triggers if location could be set'),
+      ];
+
+      $form['hide_form'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Hide coordinates form'),
+        '#default_value' => $settings['hide_form'],
+      ];
     }
 
     return $form;
@@ -149,29 +152,69 @@ class Geocoder extends LocationInputBase implements LocationInputInterface, Cont
    * {@inheritdoc}
    */
   public function getCoordinates($form_value, $option_id, array $option_settings, $context = NULL) {
+    $coordinates = parent::getCoordinates($form_value, $option_id, $option_settings, $context);
+    if ($coordinates) {
+      return $coordinates;
+    }
+
     if (empty($form_value['geocoder'])) {
       return [];
     }
 
     $settings = $this->getSettings($option_settings);
 
-    $location_data = $this->geocoderManager->getGeocoder($settings['plugin_id'], $settings['settings'])->formProcessInput($form_value['geocoder'], 'location_input_geocoder');
-    if (empty($location_data['location'])) {
-      return [];
-    }
-    else {
+    $location_data = $this->geocoderManager
+      ->getGeocoder($settings['plugin_id'], $settings['settings'])
+      ->geocode($form_value['geocoder']['geolocation_geocoder_address']);
+
+    if (!empty($location_data['location'])) {
       return $location_data['location'];
     }
+
+    return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getForm($option_id, array $option_settings, $context = NULL, array $default_value = NULL) {
+    $form = parent::getForm($option_id, $option_settings, $context, $default_value);
+
+    if (empty($form['coordinates'])) {
+      return $form;
+    }
+
     $option_settings = $this->getSettings($option_settings);
+
+    $identifier = uniqid($option_id);
+
+    $form['coordinates']['#attributes'] = [
+      'class' => [
+        $identifier,
+        'location-input-geocoder',
+      ],
+    ];
 
     $form['geocoder'] = [
       '#type' => 'container',
+      '#attached' => [
+        'library' => [
+          'geolocation/location_input.geocoder',
+        ],
+        'drupalSettings' => [
+          'geolocation' => [
+            'locationInput' => [
+              'geocoder' => [
+                [
+                  'identifier' => $identifier,
+                  'autoSubmit' => $option_settings['auto_submit'],
+                  'hideForm' => $option_settings['hide_form'],
+                ],
+              ],
+            ],
+          ],
+        ],
+      ],
     ];
 
     /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
@@ -180,7 +223,7 @@ class Geocoder extends LocationInputBase implements LocationInputInterface, Cont
       $option_settings['settings']
     );
 
-    $geocoder_plugin->formAttachGeocoder($form['geocoder'], 'location_input_geocoder');
+    $geocoder_plugin->formAttachGeocoder($form['geocoder'], $identifier);
 
     return $form;
   }

@@ -90,8 +90,8 @@
         widget.getAllInputs().each(function(index, inputElement) {
           var input = $(inputElement);
           var delta = widget.getAllInputs().index(input);
-          var longitude = input.find('input.geolocation-map-input-longitude');
-          var latitude = input.find('input.geolocation-map-input-latitude');
+          var longitude = input.find('input.geolocation-input-longitude');
+          var latitude = input.find('input.geolocation-input-latitude');
 
           longitude.change(function() {
             var currentValue = $(this).val();

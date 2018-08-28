@@ -175,7 +175,7 @@ display:
               location_input_id: client_location
             geocoder:
               settings:
-                geocoder: google_geocoding_api
+                plugin_id: google_geocoding_api
                 settings:
                   label: Address
                   description: 'Enter an address to be localized.'

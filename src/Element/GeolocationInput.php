@@ -89,7 +89,8 @@ class GeolocationInput extends FormElement {
       '#default_value' => $default_field_values['lat'],
       '#attributes' => [
         'class' => [
-          'geolocation-map-input-latitude',
+          'geolocation-input-latitude',
+          'geolocation-input-latitude',
         ],
       ],
     ];
@@ -99,7 +100,7 @@ class GeolocationInput extends FormElement {
       '#default_value' => $default_field_values['lng'],
       '#attributes' => [
         'class' => [
-          'geolocation-map-input-longitude',
+          'geolocation-input-longitude',
         ],
       ],
     ];
@@ -112,7 +113,7 @@ class GeolocationInput extends FormElement {
       $element['#wrapper_attributes'],
       [
         'class' => [
-          'geolocation-map-input',
+          'geolocation-input',
         ],
       ]
     );

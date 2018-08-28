@@ -132,11 +132,9 @@
                   bounds: ui.item.result.properties.extend
                 }
             }, $(event.target).data('source-identifier').toString());
-            $('.geolocation-geocoder-state[data-source-identifier="' + $(event.target).data('source-identifier') + '"]').val(1);
           }
         })
         .on('input', function () {
-          $('.geolocation-geocoder-state[data-source-identifier="' + $(this).data('source-identifier') + '"]').val(0);
           Drupal.geolocation.geocoder.clearCallback($(this).data('source-identifier').toString());
         });
 

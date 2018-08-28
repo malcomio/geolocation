@@ -31,7 +31,7 @@ class Photon extends GeocoderBase implements GeocoderInterface {
 
     $default_settings['location_priotiy'] = [
       'lat' => '',
-      'lon' => '',
+      'lng' => '',
     ];
 
     return $default_settings;
@@ -47,19 +47,11 @@ class Photon extends GeocoderBase implements GeocoderInterface {
     $form = parent::getOptionsForm();
 
     $form['location_priority'] = [
-      '#type' => 'fieldset',
+      '#type' => 'geolocation_input',
       '#title' => $this->t('Location Priority'),
-      'lat' => [
-        '#type' => 'textfield',
-        '#default_value' => $settings['location_priority']['lat'],
-        '#title' => $this->t('Latitude'),
-        '#size' => 15,
-      ],
-      'lon' => [
-        '#type' => 'textfield',
-        '#default_value' => $settings['location_priority']['lon'],
-        '#title' => $this->t('Longitude'),
-        '#size' => 15,
+      '#default_value' => [
+        'lat' => $settings['location_priority']['lat'],
+        'lng' => $settings['location_priority']['lng'],
       ],
     ];
 
@@ -84,7 +76,10 @@ class Photon extends GeocoderBase implements GeocoderInterface {
           'geolocation' => [
             'geocoder' => [
               $this->getPluginId() => [
-                'locationPriority' => $settings['location_priority'],
+                'locationPriority' => [
+                  'lat' => $settings['location_priority']['lat'],
+                  'lon' => $settings['location_priority']['lng'],
+                ],
               ],
             ],
           ],

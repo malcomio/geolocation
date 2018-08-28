@@ -89,20 +89,16 @@ location_input.client_location:
   js:
     js/LocationInput/client-location.js: {}
 
+location_input.geocoder:
+  js:
+    js/LocationInput/geocoder.js: {}
+
 
 #
 #
 # Views
 #
 #
-
-#Geolocation views field geocoder function.
-geolocation.views.field.geocoder:
-  version: 8.x-2.x
-  js:
-    js/geolocation-views-field-geocoder.js: {}
-  dependencies:
-    - geolocation/geolocation.geocoder.api
 
 # Geolocation views filter geocoder function.
 geolocation.views.filter.geocoder:

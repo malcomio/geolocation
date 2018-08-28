@@ -3,7 +3,6 @@
 namespace Drupal\geolocation_dummy_geocoder\Plugin\geolocation\Geocoder;
 
 use Drupal\geolocation\GeocoderBase;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 
 /**
@@ -67,48 +66,6 @@ class Dummy extends GeocoderBase {
         'data-source-identifier' => $element_name,
       ],
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function formValidateInput(FormStateInterface $form_state) {
-    $input = $form_state->getUserInput();
-    if (
-      !empty($input['geolocation_geocoder_dummy'])
-      && empty($input['geolocation_geocoder_dummy_state'])
-    ) {
-      $location_data = $this->geocode($input['geolocation_geocoder_dummy']);
-
-      if (empty($location_data)) {
-        $form_state->setErrorByName('geolocation_geocoder_dummy', $this->t('Failed to geocode %input.', ['%input' => $input['geolocation_geocoder_dummy']]));
-        return FALSE;
-      }
-    }
-    return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function formProcessInput(array &$input, $element_name) {
-    if (
-      !empty($input['geolocation_geocoder_dummy'])
-      && empty($input['geolocation_geocoder_dummy_state'])
-    ) {
-      $location_data = $this->geocode($input['geolocation_geocoder_dummy']);
-
-      if (empty($location_data)) {
-        $input['geolocation_geocoder_dummy_state'] = 0;
-        return FALSE;
-      }
-
-      $input['geolocation_geocoder_dummy'] = $location_data['address'];
-      $input['geolocation_geocoder_dummy_state'] = 1;
-
-      return $location_data;
-    }
-    return TRUE;
   }
 
   /**

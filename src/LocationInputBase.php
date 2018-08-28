@@ -36,7 +36,7 @@ abstract class LocationInputBase extends PluginBase implements LocationInputInte
    * {@inheritdoc}
    */
   public function getSettings(array $settings) {
-    $default_settings = $this->getDefaultSettings();
+    $default_settings = (array) $this->getDefaultSettings();
     $settings = array_replace_recursive($default_settings, $settings);
 
     return $settings;
@@ -78,7 +78,10 @@ abstract class LocationInputBase extends PluginBase implements LocationInputInte
       return FALSE;
     }
 
-    return $form_value['coordinates'];
+    return [
+      'lat' => (float) $form_value['coordinates']['lat'],
+      'lng' => (float) $form_value['coordinates']['lng'],
+    ];
   }
 
   /**

@@ -2,7 +2,6 @@
 
 namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\geolocation\GeocoderManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -144,26 +143,6 @@ class ControlCustomGeocoder extends ControlCustomElementBase {
     }
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateSettingsForm(array $values, FormStateInterface $form_state, array $parents) {
-    if ($values['geocoder']) {
-      /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
-      $geocoder_plugin = $this->geocoderManager->getGeocoder(
-        $values['geocoder'],
-        $values['settings']
-      );
-
-      if (!empty($geocoder_plugin)) {
-        $geocoder_plugin->formvalidateInput($form_state);
-      }
-      else {
-        $form_state->setErrorByName(implode('][', $parents), $this->t('invalid geocoder.'));
-      }
-    }
   }
 
   /**

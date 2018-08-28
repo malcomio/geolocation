@@ -11,3 +11,11 @@ geolocation.map_provider.leaflet:
     width:
       type: string
       label: 'Width value'
+
+geolocation.geocoder.photon:
+  type: geolocation_geocoder
+  label: 'Photon geocoder'
+  mapping:
+    location_priority:
+      type: geolocation.element.input
+      label: 'Location Priority'

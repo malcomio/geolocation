@@ -27,9 +27,6 @@ block.settings.geolocation_block:
           marker_content:
             type: text_format
             label: 'Marker Content'
-          lat:
-            type: text
-            label: 'Latitude'
-          lng:
-            type: text
-            label: 'Longitude'
+          marker_coordinates:
+            type: geolocation.element.input
+            label: 'Coordinates'

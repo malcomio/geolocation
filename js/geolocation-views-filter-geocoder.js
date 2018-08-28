@@ -55,35 +55,17 @@
             };
           }
 
-          switch (settings.type) {
-            case 'boundary':
-              $(context).find("input[name='" + elementId + "[lat_north_east]']").val(address.geometry.viewport.getNorthEast().lat());
-              $(context).find("input[name='" + elementId + "[lng_north_east]']").val(address.geometry.viewport.getNorthEast().lng());
-              $(context).find("input[name='" + elementId + "[lat_south_west]']").val(address.geometry.viewport.getSouthWest().lat());
-              $(context).find("input[name='" + elementId + "[lng_south_west]']").val(address.geometry.viewport.getSouthWest().lng());
-              break;
-
-            case 'proximity':
-              $(context).find("input[name='" + elementId + "-lat']").val(address.geometry.location.lat());
-              $(context).find("input[name='" + elementId + "-lng']").val(address.geometry.location.lng());
-              break;
-          }
+          $(context).find("input[name='" + elementId + "[lat_north_east]']").val(address.geometry.viewport.getNorthEast().lat());
+          $(context).find("input[name='" + elementId + "[lng_north_east]']").val(address.geometry.viewport.getNorthEast().lng());
+          $(context).find("input[name='" + elementId + "[lat_south_west]']").val(address.geometry.viewport.getSouthWest().lat());
+          $(context).find("input[name='" + elementId + "[lng_south_west]']").val(address.geometry.viewport.getSouthWest().lng());
         }, elementId.toString());
 
         Drupal.geolocation.geocoder.addClearCallback(function () {
-          switch (settings.type) {
-            case 'boundary':
-              $(context).find("input[name='" + elementId + "[lat_north_east]']").val('');
-              $(context).find("input[name='" + elementId + "[lng_north_east]']").val('');
-              $(context).find("input[name='" + elementId + "[lat_south_west]']").val('');
-              $(context).find("input[name='" + elementId + "[lng_south_west]']").val('');
-              break;
-
-            case 'proximity':
-              $(context).find("input[name='" + elementId + "-lat']").val('');
-              $(context).find("input[name='" + elementId + "-lng']").val('');
-              break;
-          }
+          $(context).find("input[name='" + elementId + "[lat_north_east]']").val('');
+          $(context).find("input[name='" + elementId + "[lng_north_east]']").val('');
+          $(context).find("input[name='" + elementId + "[lat_south_west]']").val('');
+          $(context).find("input[name='" + elementId + "[lng_south_west]']").val('');
         }, elementId.toString());
 
         delete drupalSettings.geolocation.geocoder.viewsFilterGeocoder[elementId];

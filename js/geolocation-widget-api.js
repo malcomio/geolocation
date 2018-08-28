@@ -139,8 +139,8 @@
       var that = this;
       $('.geolocation-widget-input', this.wrapper).each(function(delta, inputElement) {
         var input = $(inputElement);
-        var lng = input.find('input.geolocation-map-input-longitude').val();
-        var lat = input.find('input.geolocation-map-input-latitude').val();
+        var lng = input.find('input.geolocation-input-longitude').val();
+        var lat = input.find('input.geolocation-input-latitude').val();
 
         if (lng && lat) {
           that.addMarker({lat: Number(lat), lng: Number(lng)}, delta);
@@ -189,8 +189,8 @@
       }
       // Current input already full.
       else if (
-          input.find('input.geolocation-map-input-longitude').val()
-          || input.find('input.geolocation-map-input-latitude').val()
+          input.find('input.geolocation-input-longitude').val()
+          || input.find('input.geolocation-input-latitude').val()
       ) {
         // Check if next input can used and add if required.
         if (
@@ -247,8 +247,8 @@
       }
       var input = this.getInputByDelta(delta);
       if (input) {
-        input.find('input.geolocation-map-input-longitude').val(location.lng);
-        input.find('input.geolocation-map-input-latitude').val(location.lat);
+        input.find('input.geolocation-input-longitude').val(location.lng);
+        input.find('input.geolocation-input-latitude').val(location.lat);
       }
 
       return delta;
@@ -269,8 +269,8 @@
     },
     updateInput: function (location, delta) {
       var input = this.getInputByDelta(delta);
-      input.find('input.geolocation-map-input-longitude').val(location.lng);
-      input.find('input.geolocation-map-input-latitude').val(location.lat);
+      input.find('input.geolocation-input-longitude').val(location.lng);
+      input.find('input.geolocation-input-latitude').val(location.lat);
     },
     updateMarker: function (location, delta) {},
     removeMarker: function (delta) {
@@ -282,8 +282,8 @@
     },
     removeInput: function (delta) {
       var input = this.getInputByDelta(delta);
-      input.find('input.geolocation-map-input-longitude').val('');
-      input.find('input.geolocation-map-input-latitude').val('');
+      input.find('input.geolocation-input-longitude').val('');
+      input.find('input.geolocation-input-latitude').val('');
     }
   };
 

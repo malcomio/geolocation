@@ -77,7 +77,6 @@
                 return;
               }
               Drupal.geolocation.geocoder.resultCallback(place, $(event.target).data('source-identifier').toString());
-              $('.geolocation-geocoder-state[data-source-identifier="' + $(event.target).data('source-identifier') + '"]', context).val(1);
             }
           }
         );
@@ -92,7 +91,6 @@
     };
 
     autocomplete.on('input', function () {
-      $('.geolocation-geocoder-state[data-source-identifier="' + $(this).data('source-identifier') + '"]', context).val(0);
       Drupal.geolocation.geocoder.clearCallback($(this).data('source-identifier').toString());
     });
   };

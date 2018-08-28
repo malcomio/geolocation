@@ -136,7 +136,16 @@ views.filter_value.geolocation_filter_proximity:
   label: 'Group by Distance'
   mapping:
     center:
-      type: string
+      type: mapping
+      mapping:
+        coordinates:
+          type: geolocation.element.input
+        geocoder:
+          type: mapping
+          label: 'This should be defined by the plugin, but I dont know how'
+          mapping:
+            geolocation_geocoder_address:
+              type: string
 
 views.filter.geolocation_filter_proximity:
   type: views.filter.numeric

@@ -228,11 +228,8 @@
     if (typeof zoom === 'undefined') {
       zoom = this.settings.google_map_settings.zoom;
     }
-    zoom = parseInt(zoom);
-    var that = this;
-    google.maps.event.addListenerOnce(this.googleMap, "idle", function() {
-      that.googleMap.setZoom(zoom);
-    });
+
+    this.googleMap.setZoom(parseInt(zoom));
   };
   GeolocationGoogleMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
     Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);

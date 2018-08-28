@@ -32,30 +32,27 @@
      */
     attach: function (context, drupalSettings) {
       $.each(drupalSettings.geolocation.locationInput.clientLocation, function(index, settings) {
-        var inputs = $('.location-input-client-location.' + settings.identifier, context).once('location-input-processed');
+        var input = $('.location-input-client-location.' + settings.identifier, context).once('location-input-processed').first();
         if (
           navigator.geolocation
-          && inputs.length
+          && input.length
         ) {
           if (settings.hideForm) {
-            inputs.hide();
+            input.hide();
           }
           var successCallback = function (position) {
-            inputs.each(function (inputIndex, input) {
-              input = $(input);
-              var latitudeInput = input.find('input.geolocation-map-input-latitude').first();
-              var longitudeInput = input.find('input.geolocation-map-input-longitude').first();
-              if (
-                latitudeInput.val() === ''
-                && longitudeInput.val() === ''
-              ) {
-                latitudeInput.val(position.coords.latitude);
-                longitudeInput.val(position.coords.longitude);
-                if (settings.autoSubmit) {
-                  input.closest('form').submit();
-                }
+            var latitudeInput = input.find('input.geolocation-input-latitude').first();
+            var longitudeInput = input.find('input.geolocation-input-longitude').first();
+            if (
+              latitudeInput.val() === ''
+              && longitudeInput.val() === ''
+            ) {
+              latitudeInput.val(position.coords.latitude);
+              longitudeInput.val(position.coords.longitude);
+              if (settings.autoSubmit) {
+                input.closest('form').submit();
               }
-            });
+            }
             return false;
           };
           navigator.geolocation.getCurrentPosition(successCallback);

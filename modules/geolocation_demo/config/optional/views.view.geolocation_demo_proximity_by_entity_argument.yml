@@ -226,7 +226,10 @@ display:
             min: ''
             max: ''
             value: '0.1'
-            center: ''
+            center:
+              coordinates:
+                lat:
+                lng:
           group: 1
           exposed: false
           expose:

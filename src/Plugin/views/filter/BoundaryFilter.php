@@ -240,30 +240,6 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function validateExposed(&$form, FormStateInterface $form_state) {
-    parent::validateExposed($form, $form_state);
-
-    if (
-      $this->options['expose']['input_by_geocoding_widget']
-      && !empty($this->options['expose']['geocoder_plugin_settings']['plugin_id'])
-    ) {
-      $geocoder_configuration = $this->options['expose']['geocoder_plugin_settings']['settings'];
-      /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
-      $geocoder_plugin = $this->geocoderManager
-        ->getGeocoder(
-          $this->options['expose']['geocoder_plugin_settings']['plugin_id'],
-          $geocoder_configuration
-        );
-
-      if (!empty($geocoder_plugin)) {
-        $geocoder_plugin->formvalidateInput($form_state);
-      }
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function acceptExposedInput($input) {
     if (
       !empty($this->value['lat_north_east'])
@@ -275,10 +251,13 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
     }
 
     $return_value = parent::acceptExposedInput($input);
+
     if (
       $this->options['expose']['input_by_geocoding_widget']
       && !empty($this->options['expose']['geocoder_plugin_settings']['plugin_id'])
     ) {
+      $this->value = $input[$this->options['expose']['identifier']];
+
       $geocoder_configuration = $this->options['expose']['geocoder_plugin_settings']['settings'];
       /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
       $geocoder_plugin = $this->geocoderManager->getGeocoder(
@@ -287,25 +266,17 @@ class BoundaryFilter extends FilterPluginBase implements ContainerFactoryPluginI
       );
 
       if (!empty($geocoder_plugin)) {
-        $location_data = $geocoder_plugin->formProcessInput($input[$this->options['expose']['identifier']], $this->options['expose']['identifier']);
+        $location_data = $geocoder_plugin->geocode($input[$this->options['expose']['identifier']]['geolocation_geocoder_address']);
 
-        // No location found at all.
-        if (!$location_data) {
-          $this->value = [];
-          // Accept it anyway, to ensure empty result.
-          return TRUE;
-        }
-        else {
-          // Location geocoded server-side. Add to input for later processing.
-          if (!empty($location_data['boundary'])) {
-            $this->value = array_replace($input[$this->options['expose']['identifier']], $location_data['boundary']);
-          }
-          // Location geocoded client-side. Assign to handler value.
-          else {
-            $this->value = $input[$this->options['expose']['identifier']];
-          }
+        // Location geocoded server-side. Add to input for later processing.
+        if (!empty($location_data['boundary'])) {
+          $this->value = array_replace($input[$this->options['expose']['identifier']], $location_data['boundary']);
         }
       }
+    }
+
+    if (empty($this->value)) {
+      $this->value = [];
     }
     return $return_value;
   }
