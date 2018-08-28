@@ -143,3 +143,14 @@ mapfeature.leaflet_control_recenter:
     js/MapFeature/geolocation-control-recenter.js: {}
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
+
+# Control Locate
+mapfeature.leaflet_control_locate:
+  css:
+    component:
+      css/geolocation-control-locate.css: {}
+  js:
+    js/MapFeature/geolocation-control-locate.js: {}
+  dependencies:
+  - geolocation_leaflet/geolocation.leaflet
+
