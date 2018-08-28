@@ -11,14 +11,14 @@
   'use strict';
 
   /**
-   * Marker InfoWindow.
+   * Marker Popup.
    *
    * @type {Drupal~behavior}
    *
    * @prop {Drupal~behaviorAttach} attach
-   *   Attaches common map style functionality to relevant elements.
+   *   Attaches common map marker popup functionality to relevant elements.
    */
-  Drupal.behaviors.geolocationLeafletMarkerPopup = {
+  Drupal.behaviors.leafletMarkerPopup = {
     attach: function (context, drupalSettings) {
       Drupal.geolocation.executeFeatureOnAllMaps(
         'leaflet_marker_popup',

@@ -16,7 +16,7 @@
    * @prop {Drupal~behaviorAttach} attach
    *   Attaches common map recenter functionality to relevant elements.
    */
-  Drupal.behaviors.geolocationControlRecenter = {
+  Drupal.behaviors.leafletControlRecenter = {
     attach: function (context, drupalSettings) {
       Drupal.geolocation.executeFeatureOnAllMaps(
         'leaflet_control_recenter',

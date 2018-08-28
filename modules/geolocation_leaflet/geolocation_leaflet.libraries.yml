@@ -48,6 +48,15 @@ widget.leaflet:
     - geolocation/geolocation.widget
     - geolocation_leaflet/widget.api.leaflet
 
+# Photon geocoder function.
+geocoder.photon:
+  version: 8.x-2.x
+  js:
+    js/photon-geocoder.js: {}
+  dependencies:
+  - core/jquery.once
+  - geolocation/geolocation.geocoder.api
+
 #
 # Map Features
 #
@@ -106,15 +115,6 @@ mapfeature.customtilelayer:
     js/MapFeature/geolocation-custom-tile-layer.js: {}
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
-
-# Photon geocoder function.
-geocoder.photon:
-  version: 8.x-2.x
-  js:
-    js/photon-geocoder.js: {}
-  dependencies:
-    - core/jquery.once
-    - geolocation/geolocation.geocoder.api
 
 #
 # Map Features - Controls

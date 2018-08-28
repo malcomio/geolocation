@@ -20,7 +20,7 @@
    * @prop {Drupal~behaviorAttach} attach
    *   Attaches CustomTileLayerSettings functionality to relevant elements.
    */
-  Drupal.behaviors.geolocationLeafletMapTileLayer = {
+  Drupal.behaviors.leafletCustomTileLayer = {
     attach: function (context, drupalSettings) {
       Drupal.geolocation.executeFeatureOnAllMaps(
         'leaflet_custom_tile_layer',

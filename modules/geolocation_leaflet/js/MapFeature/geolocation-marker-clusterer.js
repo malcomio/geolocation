@@ -3,14 +3,14 @@
   'use strict';
 
   /**
-   * Marker InfoWindow.
+   * Marker Clusterer.
    *
    * @type {Drupal~behavior}
    *
    * @prop {Drupal~behaviorAttach} attach
-   *   Attaches common map style functionality to relevant elements.
+   *   Attaches common map marker cluster functionality to relevant elements.
    */
-  Drupal.behaviors.geolocationLeafletMarkerClusterer = {
+  Drupal.behaviors.leafletMarkerClusterer = {
     attach: function (context, drupalSettings) {
       Drupal.geolocation.executeFeatureOnAllMaps(
         'leaflet_marker_clusterer',

@@ -8,7 +8,7 @@
    * @type {Drupal~behavior}
    *
    * @prop {Drupal~behaviorAttach} attach
-   *   Attaches common map style functionality to relevant elements.
+   *   Attaches common map geocoder functionality to relevant elements.
    */
   Drupal.behaviors.leafletControlGeocoder = {
     attach: function (context, drupalSettings) {

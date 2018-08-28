@@ -6,7 +6,7 @@ use Drupal\geolocation\GeocoderManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides Zoom control element.
+ * Provides Geocoder control element.
  *
  * @MapFeature(
  *   id = "leaflet_control_geocoder",

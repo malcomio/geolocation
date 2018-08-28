@@ -18,7 +18,7 @@
    * @prop {Drupal~behaviorAttach} attach
    *   Attaches common map zoom functionality to relevant elements.
    */
-  Drupal.behaviors.geolocationLeafletZoomControl = {
+  Drupal.behaviors.leafletControlZoom = {
     attach: function (context, drupalSettings) {
       Drupal.geolocation.executeFeatureOnAllMaps(
         'leaflet_control_zoom',
