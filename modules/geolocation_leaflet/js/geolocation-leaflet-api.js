@@ -128,6 +128,7 @@
   };
   GeolocationLeafletMap.prototype.addAccuracyIndicatorCircle = function (location, accuracy) {
     return L.circle(location, accuracy, {
+      interactive: false,
       color: '#4285F4',
       opacity: 0.3,
       fillColor: '#4285F4',

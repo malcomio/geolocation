@@ -90,6 +90,13 @@ mapfeature.markerclusterer:
     - geolocation_leaflet/geolocation.leaflet
     - geolocation_leaflet/leaflet.markerclusterer
 
+# ClientLocationIndicator support.
+mapfeature.client_location_indicator:
+  js:
+    js/MapFeature/geolocation-client-location-indicator.js: {}
+  dependencies:
+  - geolocation_leaflet/geolocation.leaflet
+
 # TileLayer support.
 leaflet-providers:
   header: true
