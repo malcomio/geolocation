@@ -29,7 +29,7 @@ class Photon extends GeocoderBase implements GeocoderInterface {
   protected function getDefaultSettings() {
     $default_settings = parent::getDefaultSettings();
 
-    $default_settings['location_priotiy'] = [
+    $default_settings['location_priority'] = [
       'lat' => '',
       'lng' => '',
     ];
