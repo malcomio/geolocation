@@ -140,12 +140,51 @@ class GeolocationItem extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  public function setValue($values, $notify = TRUE) {
+    parent::setValue($values, $notify);
+
+    // If the values being set do not contain lat_sin, lat_cos or lng_rad,
+    // recalculate them.
+    if (
+      (
+        empty($values['lat_sin'])
+        || empty($values['lat_cos'])
+        || empty($values['lat_rad'])
+      )
+      && !$this->isEmpty()
+    ) {
+      $this->get('lat_sin')->setValue(sin(deg2rad(trim($this->get('lat')->getValue()))), FALSE);
+      $this->get('lat_cos')->setValue(cos(deg2rad(trim($this->get('lat')->getValue()))), FALSE);
+      $this->get('lng_rad')->setValue(deg2rad(trim($this->get('lng')->getValue())), FALSE);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onChange($property_name, $notify = TRUE) {
+    parent::onChange($property_name, $notify);
+
+    // Update the calculated properties if lat or lng changed.
+    if (
+      (
+        $property_name == 'lat'
+        || $property_name == 'lng'
+      )
+      && !$this->isEmpty()
+    ) {
+      $this->get('lat_sin')->setValue(sin(deg2rad(trim($this->get('lat')->getValue()))), FALSE);
+      $this->get('lat_cos')->setValue(cos(deg2rad(trim($this->get('lat')->getValue()))), FALSE);
+      $this->get('lng_rad')->setValue(deg2rad(trim($this->get('lng')->getValue())), FALSE);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function preSave() {
     $this->get('lat')->setValue(trim($this->get('lat')->getValue()));
     $this->get('lng')->setValue(trim($this->get('lng')->getValue()));
-    $this->get('lat_sin')->setValue(sin(deg2rad($this->get('lat')->getValue())));
-    $this->get('lat_cos')->setValue(cos(deg2rad($this->get('lat')->getValue())));
-    $this->get('lng_rad')->setValue(deg2rad($this->get('lng')->getValue()));
   }
 
   /**
