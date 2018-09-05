@@ -104,6 +104,28 @@ mapfeature.markericonadjustment:
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
 
+# GestureHandling support
+leaflet.gesture-handling:
+  header: true
+  remote: https://github.com/elmarquis/Leaflet.GestureHandling/
+  version: '1.1.7'
+  license:
+    name: MIT
+    url: https://github.com/elmarquis/Leaflet.GestureHandling/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      '//unpkg.com/leaflet-gesture-handling@1.1.7/dist/leaflet-gesture-handling.min.css': { type: external, minified: true }
+  js:
+    '//unpkg.com/leaflet-gesture-handling@1.1.7/dist/leaflet-gesture-handling.min.js': { type: external, minified: true }
+
+mapfeature.gesture-handling:
+  js:
+    js/MapFeature/geolocation-gesture-handling.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
+    - geolocation_leaflet/leaflet.gesture-handling
+
 # TileLayer support.
 leaflet-providers:
   header: true
