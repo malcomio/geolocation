@@ -91,9 +91,15 @@ class GeolocationMap extends RenderElement {
       if (\Drupal::moduleHandler()->moduleExists('geolocation_google_maps')) {
         $render_array['#maptype'] = 'google_maps';
       }
+      elseif (\Drupal::moduleHandler()->moduleExists('geolocation_leaflet')) {
+        $render_array['#maptype'] = 'leaflet';
+      }
     }
 
     $map_provider = $this->mapProviderManager->getMapProvider($render_array['#maptype']);
+    if (empty($map_provider)) {
+      return $render_array;
+    }
 
     $map_settings = [];
     if (
