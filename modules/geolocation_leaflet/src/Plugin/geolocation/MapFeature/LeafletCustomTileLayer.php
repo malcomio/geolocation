@@ -41,7 +41,7 @@ class LeafletCustomTileLayer extends MapFeatureBase {
       '#default_value' => $settings['tile_layer_url'],
     ];
     $form['tile_layer_attribution'] = [
-      '#type' => 'textfield',
+      '#type' => 'textarea',
       '#title' => $this->t('Attribution'),
       '#description' => $this->t(
         'Enter the tile server attribution like %attr.',
