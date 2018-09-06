@@ -189,3 +189,25 @@ mapfeature.leaflet_control_locate:
     js/MapFeature/geolocation-control-locate.js: {}
   dependencies:
   - geolocation_leaflet/geolocation.leaflet
+
+# Control Fullscreen
+leaflet.fullscreen:
+  header: true
+  remote: https://github.com/Leaflet/Leaflet.fullscreen
+  version: '1.0.1'
+  license:
+    name: ISC License
+    url: https://github.com/Leaflet/Leaflet.fullscreen/blob/gh-pages/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      'https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css': { type: external}
+  js:
+    'https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js': { type: external, minified: true }
+
+mapfeature.leaflet_control_fullscreen:
+  js:
+    js/MapFeature/geolocation-control-fullscreen.js: {}
+  dependencies:
+  - geolocation_leaflet/geolocation.leaflet
+  - geolocation_leaflet/leaflet.fullscreen
