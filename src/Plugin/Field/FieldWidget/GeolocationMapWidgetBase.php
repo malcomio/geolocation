@@ -82,7 +82,6 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
     if (!empty(static::$mapProviderId)) {
       $this->mapProvider = \Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider(static::$mapProviderId);
     }
-
   }
 
   /**
@@ -307,7 +306,7 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       $element['#attached'],
       [
         'library' => [
-          'geolocation/geolocation.widget',
+          'geolocation/geolocation.widget.map',
         ],
         'drupalSettings' => [
           'geolocation' => [
@@ -330,7 +329,6 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       '#id' => $id . '-map',
       '#maptype' => static::$mapProviderId,
       '#context' => ['widget' => $this],
-      'locations' => [],
     ];
 
     $element['map'] = $this->mapCenterManager->alterMap($element['map'], $settings['centre']);
@@ -340,6 +338,16 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
       && !empty($items->get(0)->getValue()['data']['map_provider_settings'])
     ) {
       $element['map']['#settings'] = $items->get(0)->getValue()['data']['map_provider_settings'];
+    }
+
+    $context = [
+      'widget' => $this,
+      'form_state' => $form_state,
+      'field_definition' => $this->fieldDefinition,
+    ];
+
+    if (!$this->isDefaultValueWidget($form_state)) {
+      \Drupal::moduleHandler()->alter('geolocation_field_map_widget', $element, $context);
     }
 
     return $element;

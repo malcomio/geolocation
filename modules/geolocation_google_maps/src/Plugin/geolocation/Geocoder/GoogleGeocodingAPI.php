@@ -18,6 +18,7 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   locationCapable = true,
  *   boundaryCapable = true,
  *   frontendCapable = true,
+ *   reverseCapable = true,
  * )
  */
 class GoogleGeocodingAPI extends GoogleGeocoderBase {
@@ -110,6 +111,80 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
         'lng_south_west' => empty($result['results'][0]['geometry']['viewport']) ? $result['results'][0]['geometry']['location']['lng'] - 0.005 : $result['results'][0]['geometry']['viewport']['southwest']['lng'],
       ],
       'address' => empty($result['results'][0]['formatted_address']) ? '' : $result['results'][0]['formatted_address'],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function reverseGeocode($latitude, $longitude) {
+    $config = \Drupal::config('geolocation_google_maps.settings');
+
+    $request_url = GoogleMaps::$GOOGLEMAPSAPIURLBASE;
+    if ($config->get('china_mode')) {
+      $request_url = GoogleMaps::$GOOGLEMAPSAPIURLBASECHINA;
+    }
+    $request_url .= '/maps/api/geocode/json?latlng=' . (float) $latitude . ',' . (float) $longitude;
+
+    if (!empty($config->get('google_map_api_server_key'))) {
+      $request_url .= '&key=' . $config->get('google_map_api_server_key');
+    }
+    elseif (!empty($config->get('google_map_api_key'))) {
+      $request_url .= '&key=' . $config->get('google_map_api_key');
+    }
+
+    if (!empty($config->get('google_map_custom_url_parameters')['language'])) {
+      $request_url .= '&language=' . $config->get('google_map_custom_url_parameters')['language'];
+    }
+
+    try {
+      $result = Json::decode(\Drupal::httpClient()->request('GET', $request_url)->getBody());
+    }
+    catch (RequestException $e) {
+      watchdog_exception('geolocation', $e);
+      return FALSE;
+    }
+
+    if (
+      $result['status'] != 'OK'
+      || empty($result['results'][0]['geometry'])
+    ) {
+      if (isset($result['error_message'])) {
+        \Drupal::logger('geolocation')->error(t('Unable to reverse geocode "@latitude, $longitude" with error: "@error". Request URL: @url', [
+          '@latitude' => $latitude,
+          '@$longitude' => $longitude,
+          '@error' => $result['error_message'],
+          '@url' => $request_url,
+        ]));
+      }
+      return FALSE;
+    }
+
+    if (empty($result['results'][0]['address_components'])) {
+      return NULL;
+    }
+
+    $address_atomics = [];
+    foreach ($result['results'][0]['address_components'] as $component) {
+      foreach ($this->addressAtomicsMapping as $atomic => $google_format) {
+        if (empty($google_format['type'])) {
+          continue;
+        }
+
+        if (in_array($google_format['type'], $component['types'])) {
+          if (!empty($google_format['short'])) {
+            $address_atomics[$atomic] = $component['short_name'];
+          }
+          else {
+            $address_atomics[$atomic] = $component['long_name'];
+          }
+        }
+      }
+    }
+
+    return [
+      'address_atomics' => $address_atomics,
+      'formatted_address' => empty($result['results'][0]['formatted_address']) ? '' : $result['results'][0]['formatted_address'],
     ];
   }
 

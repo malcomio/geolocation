@@ -28,10 +28,10 @@ geolocation.widget.api:
   dependencies:
     - geolocation/geolocation.api
 
-geolocation.widget:
+geolocation.widget.map:
   version: 8.x-2.x
   js:
-    js/geolocation-widget.js: {}
+    js/geolocation-widget-map.js: {}
   dependencies:
       - geolocation/geolocation.map
       - geolocation/geolocation.widget.api

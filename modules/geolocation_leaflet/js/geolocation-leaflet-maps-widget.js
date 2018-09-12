@@ -30,10 +30,7 @@
           }
 
           if (identifier === 'leaflet_control_geocoder') {
-            var delta = widget.addInput(location);
-            widget.addMarker(location, delta);
-            widget.locationAddedCallback(location);
-            widget.map.fitMapToMarkers();
+            widget.locationAlteredCallback('leaflet-map-feature', location, null);
           }
         });
       });
