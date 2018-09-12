@@ -163,6 +163,13 @@ mapfeature.leaflet_control_zoom:
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
 
+# Control Scale
+mapfeature.leaflet_control_scale:
+  js:
+    js/MapFeature/geolocation-control-scale.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
+
 # Control Geocoder
 mapfeature.leaflet_control_geocoder:
   js:
