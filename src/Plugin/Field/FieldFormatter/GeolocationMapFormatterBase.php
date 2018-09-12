@@ -403,7 +403,9 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $dependencies = parent::calculateDependencies();
     $settings = $this->getSettings();
     $filter_format = FilterFormat::load($settings['info_text']['format']);
-    $dependencies['config'][] = $filter_format->getConfigDependencyName();
+    if ($filter_format) {
+      $dependencies['config'][] = $filter_format->getConfigDependencyName();
+    }
     return $dependencies;
   }
 
