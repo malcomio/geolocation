@@ -57,11 +57,12 @@
     var that = this;
     marker.on('dragend', function(e) {
       var latLng = e.target.getLatLng();
-      that.locationAlteredCallback('marker-moved', {lat: latLng.lat, lng: latLng.lng}, marker.delta);
+      that.locationAlteredCallback('marker', {lat: latLng.lat, lng: latLng.lng}, marker.delta);
     });
 
     marker.on('click', function() {
-      that.locationAlteredCallback('marker-clicked', null, marker.delta);
+      that.removeMarker(marker.delta);
+      that.locationAlteredCallback('marker', null, marker.delta);
     });
 
     return marker;

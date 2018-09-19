@@ -18,7 +18,7 @@ use Drupal\Core\Url;
  *   locationCapable = true,
  *   boundaryCapable = true,
  *   frontendCapable = false,
- *   reverseCapable = false,
+ *   reverseCapable = true,
  * )
  */
 class Nominatim extends GeocoderBase implements GeocoderInterface {
@@ -86,7 +86,7 @@ class Nominatim extends GeocoderBase implements GeocoderInterface {
         'lon' => $longitude,
         'email' => \Drupal::config('system.site')->get('mail'),
         'limit' => 1,
-        'format' => 'jsonv2',
+        'format' => 'json',
         'connect_timeout' => 5,
         'addressdetails' => 1,
         'zoom' => 18,

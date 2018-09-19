@@ -69,17 +69,6 @@
   Drupal.behaviors.geolocationWidget = {
     attach: function (context, drupalSettings) {
 
-      // Attach change watchers to new input fields.
-      $('.geolocation-map-widget', context).findOnce('geolocation-widget-processed').each(function (index, item) {
-        $.each(Drupal.geolocation.widgets, function (index, widget) {
-          if (widget.id === $(item).attr('id').toString()) {
-            widget.getAllInputs().each(function(delta, input) {
-              widget.attachInputChangedTriggers(input, delta);
-            });
-          }
-        });
-      });
-
       // Initialize new widgets.
       $('.geolocation-map-widget', context).once('geolocation-widget-processed').each(function (index, item) {
         var widgetSettings = {};
@@ -111,25 +100,7 @@
         }
 
         widget.addLocationAlteredCallback(function(location, delta, identifier) {
-          if (
-            identifier !== 'input-altered'
-            || identifier !== 'widget-refreshed'
-          ) {
-            if (location === null) {
-              widget.removeInput(delta);
-            }
-            else {
-              var input = widget.getInputByDelta(delta);
-              if (input === null) {
-                widget.addInput(location, delta);
-              }
-              else {
-                widget.updateInput(location, delta);
-              }
-            }
-          }
-
-          if (identifier !== 'marker-moved') {
+          if (identifier !== 'marker') {
             if (location === null) {
               widget.removeMarker(delta);
             }
@@ -158,12 +129,19 @@
           }
         }
 
-        widget.getAllInputs().each(function(delta, input){
-          widget.attachInputChangedTriggers(input, delta);
-        });
-
         widget.map.addPopulatedCallback(function (map) {
-          widget.refreshWidgetByInputs();
+          widget.getAllInputs().each(function(delta, inputElement) {
+            var input = $(inputElement);
+            var lng = input.find('input.geolocation-input-longitude').val();
+            var lat = input.find('input.geolocation-input-latitude').val();
+
+            if (lng && lat) {
+              widget.addMarker({
+                lat: Number(lat),
+                lng: Number(lng)
+              }, delta);
+            }
+          });
 
           if (
             widgetSettings.autoClientLocationMarker

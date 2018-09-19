@@ -57,6 +57,7 @@
     });
 
     marker.addListener('click', function() {
+      that.removeMarker(marker.delta);
       that.locationAlteredCallback('marker', null, marker.delta);
     });
 

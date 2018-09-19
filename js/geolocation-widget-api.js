@@ -44,8 +44,7 @@
  * @property {function():{int}} getNextDelta - Get next delta.
  * @property {function({int}):{jQuery}} getInputByDelta - Get widget input by delta.
  *
- * @property {function({GeolocationCoordinates}, {int}=):{int}} addInput - Add input.
- * @property {function({GeolocationCoordinates}, {int})} updateInput - Update input.
+ * @property {function({GeolocationCoordinates}, {int}=):{int}} setInput - Add or update input.
  * @property {function({int})} removeInput - Remove input.
  */
 
@@ -59,6 +58,30 @@
   Drupal.geolocation.widget = Drupal.geolocation.widget || {};
 
   Drupal.geolocation.widgets = Drupal.geolocation.widgets || [];
+
+  Drupal.behaviors.geolocationWidgetApi = {
+    attach: function (context, drupalSettings) {
+      $.each(Drupal.geolocation.widgets, function(index, widget) {
+        $.each(widget.pendingAddedInputs, function(inputIndex, inputData) {
+          if (typeof inputData === 'undefined') {
+            return;
+          }
+          if (typeof inputData.delta === 'undefined') {
+            return;
+          }
+          var input = widget.getInputByDelta(inputData.delta);
+          if (input) {
+            widget.setInput(inputData.location, inputData.delta);
+            widget.pendingAddedInputs.splice(inputIndex, 1);
+          }
+          else {
+            widget.addNewEmptyInput();
+          }
+        });
+        widget.refreshWidgetByInputs();
+      });
+    }
+  };
 
   /**
    * Geolocation widget.
@@ -80,6 +103,8 @@
     this.inputChangedEventPaused = false;
 
     this.id = widgetSettings.id;
+
+    this.pendingAddedInputs = [];
 
     return this;
   }
@@ -112,10 +137,21 @@
         var input = $(inputElement);
         var lng = input.find('input.geolocation-input-longitude').val();
         var lat = input.find('input.geolocation-input-latitude').val();
-
-        if (lng && lat) {
-          that.locationAlteredCallback('widget-refreshed', {lat: Number(lat), lng: Number(lng)}, delta);
+        var location;
+        if (
+          lng === ''
+          || lat === ''
+        ) {
+          location = null;
         }
+        else {
+          location = {
+            lat: Number(lat),
+            lng: Number(lng)
+          }
+        }
+
+        that.locationAlteredCallback('widget-refreshed', location, delta);
         that.attachInputChangedTriggers(input, delta);
       });
     },
@@ -127,63 +163,71 @@
       }
       return null;
     },
-    getNextDelta: function(delta) {
+    getCoordinatesByInput(input) {
+      input = $(input);
+      if (
+        input.find('input.geolocation-input-longitude').val() !== ''
+        && input.find('input.geolocation-input-latitude').val() !== ''
+      ) {
+        return {
+          lat: input.find('input.geolocation-input-latitude').val(),
+          lng: input.find('input.geolocation-input-longitude').val()
+        }
+      }
+      return false
+    },
+    getNextDelta: function() {
       if (this.cardinality === 1) {
         return 0;
       }
-      var that = this;
-      var lastDelta = this.getAllInputs().length - 1;
+
+      var delta = Math.max(this.getNextEmptyInputDelta(), this.getNextPendingDelta());
+      if (
+          delta > this.cardinality
+          && this.cardinality > 0
+      ) {
+        console.error("Cannot add further geolocation input.");
+        return false;
+      }
+      return delta;
+    },
+    getNextPendingDelta: function() {
+      var maxDelta = this.pendingAddedInputs.length - 1;
+      $.each(this.pendingAddedInputs, function(index, item) {
+        if (typeof item.delta === 'undefined') {
+          return;
+        }
+        maxDelta = Math.max(maxDelta, item.delta);
+      });
+
+      return maxDelta + 1;
+    },
+    getNextEmptyInputDelta: function(delta) {
+      if (this.cardinality === 1) {
+        return 0;
+      }
 
       if (typeof delta === 'undefined') {
-        delta = lastDelta;
+        delta = this.getAllInputs().length - 1;
       }
 
       var input = this.getInputByDelta(delta);
 
-      // Failsafe.
-      if (input === false) {
-        return false;
-      }
-      // Current input already full.
-      else if (
-          input.find('input.geolocation-input-longitude').val()
-          || input.find('input.geolocation-input-latitude').val()
+      // Current input not empty, return next delta.
+      if (
+        input.find('input.geolocation-input-longitude').val()
+        || input.find('input.geolocation-input-latitude').val()
       ) {
-        // Check if next input can used and add if required.
-        if (
-            (delta + 1) < this.cardinality
-            || this.cardinality === -1
-        ) {
-          // Check if new input required.
-          if ((delta + 1) > lastDelta) {
-            that.addNewEmptyInput();
-            alert("Please try again.");
-            return false;
-          }
-          else if ((delta + 1) === lastDelta) {
-            setTimeout(function() {
-              that.addNewEmptyInput();
-            }, 100);
-            return delta + 1;
-          }
-          else {
-            return delta + 1;
-          }
-        }
-        // No further inputs available.
-        alert(Drupal.t('Maximum number of entries reached.'));
-        return false;
+        return delta + 1;
       }
-      // First input is empty, use it.
-      else if (delta === 0) {
-        setTimeout(function() {
-          that.addNewEmptyInput();
-        }, 100);
+
+      // We reached the first input and it is empty, use it.
+      if (delta === 0) {
         return 0;
       }
-      else {
-        return this.getNextDelta(delta - 1);
-      }
+
+      // Recursively check for empty input.
+      return this.getNextEmptyInputDelta(delta - 1);
     },
     addNewEmptyInput: function () {
       var button = this.wrapper.find('[name="' + this.fieldName + '_add_more"]');
@@ -229,7 +273,7 @@
         }
       });
     },
-    addInput: function (location, delta) {
+    setInput: function (location, delta) {
       if (typeof delta === 'undefined') {
         delta = this.getNextDelta();
       }
@@ -249,15 +293,15 @@
         input.find('input.geolocation-input-latitude').val(location.lat);
         this.inputChangedEventPaused = false;
       }
+      else {
+        this.pendingAddedInputs.push({
+          delta: delta,
+          location: location
+        });
+        this.addNewEmptyInput();
+      }
 
       return delta;
-    },
-    updateInput: function (location, delta) {
-      var input = this.getInputByDelta(delta);
-      this.inputChangedEventPaused = true;
-      input.find('input.geolocation-input-longitude').val(location.lng);
-      input.find('input.geolocation-input-latitude').val(location.lat);
-      this.inputChangedEventPaused = false;
     },
     removeInput: function (delta) {
       var input = this.getInputByDelta(delta);
@@ -302,6 +346,21 @@
         widget = new widgetProvider(widgetSettings);
         if (widget) {
           Drupal.geolocation.widgets.push(widget);
+
+          widget.refreshWidgetByInputs();
+          widget.addLocationAlteredCallback(function(location, delta, identifier) {
+            if (
+                identifier !== 'input-altered'
+                || identifier !== 'widget-refreshed'
+            ) {
+              if (location === null) {
+                widget.removeInput(delta);
+              }
+              else {
+                widget.setInput(location, delta);
+              }
+            }
+          });
         }
       }
     }

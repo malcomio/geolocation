@@ -30,7 +30,6 @@
          * @param {ControlScaleSettings} featureSettings - Settings for current feature.
          */
         function (map, featureSettings) {
-          console.log(featureSettings);
           L.control.scale({
             position: featureSettings.position,
             metric: featureSettings.metric,
