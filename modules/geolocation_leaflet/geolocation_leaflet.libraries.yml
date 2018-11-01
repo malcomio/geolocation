@@ -218,3 +218,11 @@ mapfeature.leaflet_control_fullscreen:
   dependencies:
   - geolocation_leaflet/geolocation.leaflet
   - geolocation_leaflet/leaflet.fullscreen
+
+# Control Tile layer
+mapfeature.leaflet_control_layer:
+  js:
+    js/MapFeature/geolocation-control-layer.js: {}
+  dependencies:
+  - geolocation_leaflet/geolocation.leaflet
+  - geolocation_leaflet/leaflet-providers

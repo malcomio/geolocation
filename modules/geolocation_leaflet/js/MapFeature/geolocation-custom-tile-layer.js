@@ -31,7 +31,7 @@
          */
         function (map, featureSettings) {
           map.tileLayer.remove();
-          L.tileLayer(featureSettings.tileLayerUrl, {
+          map.tileLayer = L.tileLayer(featureSettings.tileLayerUrl, {
             attribution: featureSettings.tileLayerAttribution,
             subdomains: featureSettings.tileLayerSubdomains
           }).addTo(map.leafletMap);
