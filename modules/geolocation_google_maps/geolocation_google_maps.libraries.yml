@@ -152,6 +152,13 @@ geolocation.mapdisablepoi:
   dependencies:
     - geolocation_google_maps/googlemapsapi
 
+# MapTilt support.
+geolocation.mapdisabletilt:
+  js:
+    js/MapFeature/geolocation-mapdisabletilt.js: {}
+  dependencies:
+  - geolocation_google_maps/googlemapsapi
+
 
 
 #
