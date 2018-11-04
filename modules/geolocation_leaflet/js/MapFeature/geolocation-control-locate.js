@@ -1,8 +1,3 @@
-/**
- * @typedef {Object} ControlLocateSettings
- *
- * @extends {GeolocationMapFeatureSettings}
- */
 (function ($, Drupal) {
 
   'use strict';
@@ -19,6 +14,11 @@
     attach: function (context, drupalSettings) {
       Drupal.geolocation.executeFeatureOnAllMaps(
         'leaflet_control_locate',
+
+        /**
+         * @param {GeolocationLeafletMap} map - Current map.
+         * @param {GeolocationMapFeatureSettings} featureSettings - Settings for current feature.
+         */
         function (map, featureSettings) {
           map.addInitializedCallback(function (map) {
             var locateButton = $('.geolocation-map-control .locate', map.wrapper);

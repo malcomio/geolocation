@@ -16,6 +16,9 @@
  * @property {Number} maxWidth
  * @property {Number} minHeight
  * @property {Number} maxHeight
+ * @property {Number} arrowSize
+ * @property {Number} arrowPosition
+ * @property {Number} arrowStyle
  */
 
 /**
@@ -37,6 +40,9 @@
  * @property {Number} maxWidth
  * @property {Number} minHeight
  * @property {Number} maxHeight
+ * @property {Number} arrowSize
+ * @property {Number} arrowPosition
+ * @property {Number} arrowStyle
  */
 
 /**
@@ -87,9 +93,9 @@
                   borderWidth: featureSettings.borderWidth,
                   borderColor: featureSettings.borderColor,
 
-                  arrowSize: 10,
-                  arrowPosition: 30,
-                  arrowStyle: 2,
+                  arrowSize: featureSettings.arrowSize,
+                  arrowPosition: featureSettings.arrowPosition,
+                  arrowStyle: featureSettings.arrowStyle,
 
                   hideCloseButton: !featureSettings.closeButton,
                   closeButtonSrc: featureSettings.closeButtonSrc,

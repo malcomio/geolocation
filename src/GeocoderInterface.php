@@ -52,4 +52,38 @@ interface GeocoderInterface extends PluginInspectionInterface {
    */
   public function geocode($address);
 
+  /**
+   * Reverse geocode an address.
+   *
+   * Intended return:
+   *
+   * @code
+   * [
+   *   houseNumber
+   *   house
+   *   road
+   *   village
+   *   suburb
+   *   city
+   *   county
+   *   postcode
+   *   stateDistrict
+   *   state
+   *   region
+   *   island
+   *   country
+   *   countryCode
+   * ]
+   * @endcode
+   *
+   * @param float $latitude
+   *   Latitude to reverse geocode.
+   * @param float $longitude
+   *   Longitude to reverse geocode.
+   *
+   * @return array||null
+   *   Address or NULL.
+   */
+  public function reverseGeocode($latitude, $longitude);
+
 }

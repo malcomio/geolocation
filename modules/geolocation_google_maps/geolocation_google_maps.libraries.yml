@@ -96,7 +96,7 @@ markerclusterer:
     url: http://www.apache.org/licenses/LICENSE-2.0
     gpl-compatible: true
   js:
-    https://cdn.rawgit.com/googlemaps/js-marker-clusterer/gh-pages/src/markerclusterer.js: { type: external }
+    https://cdn.jsdelivr.net/gh/googlemaps/js-marker-clusterer@gh-pages/src/markerclusterer.js: { type: external }
 
 # InfoWindow support.
 geolocation.markerinfowindow:
@@ -121,7 +121,7 @@ infobubble:
     url: http://www.apache.org/licenses/LICENSE-2.0
     gpl-compatible: true
   js:
-    https://cdn.rawgit.com/googlemaps/v3-utility-library/master/infobubble/src/infobubble-compiled.js: { type: external }
+    https://cdn.jsdelivr.net/gh/googlemaps/js-info-bubble@gh-pages/src/infobubble-compiled.js: { type: external }
 
 # InfoBubble support.
 geolocation.markerinfobubble:
@@ -151,6 +151,13 @@ geolocation.mapdisablepoi:
     js/MapFeature/geolocation-mapdisablepoi.js: {}
   dependencies:
     - geolocation_google_maps/googlemapsapi
+
+# MapTilt support.
+geolocation.mapdisabletilt:
+  js:
+    js/MapFeature/geolocation-mapdisabletilt.js: {}
+  dependencies:
+  - geolocation_google_maps/googlemapsapi
 
 
 

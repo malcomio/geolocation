@@ -11,7 +11,7 @@
    *
    * @constructor
    * @augments {GeolocationMapWidgetBase}
-   * @implements {GeolocationMapWidgetInterface}
+   * @implements {GeolocationWidgetInterface}
    * @inheritDoc
    */
   function GeolocationLeafletMapWidget(widgetSettings) {
@@ -26,6 +26,10 @@
 
     if (typeof delta === 'undefined') {
       delta = this.getNextDelta();
+    }
+
+    if (delta === false) {
+      return;
     }
 
     var marker = this.map.setMapMarker({
@@ -53,13 +57,12 @@
     var that = this;
     marker.on('dragend', function(e) {
       var latLng = e.target.getLatLng();
-      that.updateInput({lat: latLng.lat, lng: latLng.lng}, marker.delta);
+      that.locationAlteredCallback('marker', {lat: latLng.lat, lng: latLng.lng}, marker.delta);
     });
 
     marker.on('click', function() {
-      that.removeInput(marker.delta);
       that.removeMarker(marker.delta);
-      that.locationRemovedCallback(marker.delta);
+      that.locationAlteredCallback('marker', null, marker.delta);
     });
 
     return marker;

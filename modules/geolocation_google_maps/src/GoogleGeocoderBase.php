@@ -15,6 +15,52 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class GoogleGeocoderBase extends GeocoderBase implements ContainerFactoryPluginInterface {
 
+  protected $addressAtomicsMapping = [
+    'houseNumber' => [
+      'type' => 'street_number',
+    ],
+    'house' => [
+      'type' => FALSE,
+    ],
+    'road' => [
+      'type' => 'route',
+    ],
+    'village' => [
+      'type' => FALSE,
+    ],
+    'suburb' => [
+      'type' => FALSE,
+    ],
+    'city' => [
+      'type' => 'locality ',
+    ],
+    'county' => [
+      'type' => 'administrative_area_level_2 ',
+    ],
+    'postcode' => [
+      'type' => 'postal_code',
+    ],
+    'stateDistrict' => [
+      'type' => FALSE,
+    ],
+    'state' => [
+      'type' => 'administrative_area_level_1 ',
+    ],
+    'region' => [
+      'type' => FALSE,
+    ],
+    'island' => [
+      'type' => FALSE,
+    ],
+    'country' => [
+      'type' => 'country',
+    ],
+    'countryCode' => [
+      'type' => 'country',
+      'short' => TRUE,
+    ],
+  ];
+
   /**
    * Google maps provider.
    *

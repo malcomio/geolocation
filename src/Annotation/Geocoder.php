@@ -60,6 +60,11 @@ class Geocoder extends Plugin {
    */
   public $frontendCapable;
 
-
+  /**
+   * Can the geocoder perform reverse geocoding.
+   *
+   * @var bool
+   */
+  public $reverseCapable;
 
 }

@@ -5,7 +5,6 @@ namespace Drupal\geolocation_google_places_api\Plugin\geolocation\Geocoder;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Component\Serialization\Json;
 use Drupal\geolocation_google_maps\GoogleGeocoderBase;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
 
@@ -19,6 +18,7 @@ use Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps;
  *   locationCapable = true,
  *   boundaryCapable = true,
  *   frontendCapable = true,
+ *   reverseCapable = false,
  * )
  */
 class GooglePlacesAPI extends GoogleGeocoderBase {

@@ -41,7 +41,7 @@
             imagePath = featureSettings.imagePath;
           }
           else {
-            imagePath = 'https://cdn.rawgit.com/googlemaps/js-marker-clusterer/gh-pages/images/m';
+            imagePath = 'https://cdn.jsdelivr.net/gh/googlemaps/js-marker-clusterer@gh-pages/images/m';
           }
 
           var markerClustererStyles = '';

@@ -35,6 +35,9 @@ class MarkerInfoBubble extends MapFeatureBase {
       'max_width' => '550',
       'min_height' => '',
       'max_height' => '',
+      'arrow_style' => 2,
+      'arrow_position' => 30,
+      'arrow_size' => 10,
     ];
   }
 
@@ -122,6 +125,31 @@ class MarkerInfoBubble extends MapFeatureBase {
       '#description' => $this->t('Change maximum height.'),
       '#default_value' => $settings['max_height'],
     ];
+    $form['arrow_style'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Arrow style'),
+      '#options' => [
+        '0' => $this->t('0 - middle'),
+        '1' => $this->t('1 - left'),
+        '2' => $this->t('2 - right'),
+      ],
+      '#default_value' => $settings['arrow_style'],
+      '#description' => $this->t('Select the arrow style of the infobubble.'),
+    ];
+    $form['arrow_position'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Arrow position'),
+      '#description' => $this->t('Horizontal position in %.'),
+      '#default_value' => $settings['arrow_position'],
+      '#field_suffix' => '%',
+    ];
+    $form['arrow_size'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Arrow height'),
+      '#description' => $this->t('Change arrow height in px.'),
+      '#default_value' => $settings['arrow_size'],
+      '#field_suffix' => 'px',
+    ];
 
     return $form;
   }
@@ -159,6 +187,9 @@ class MarkerInfoBubble extends MapFeatureBase {
                   'maxWidth' => $feature_settings['max_width'],
                   'minHeight' => $feature_settings['min_height'],
                   'maxHeight' => $feature_settings['max_height'],
+                  'arrowStyle' => $feature_settings['arrow_style'],
+                  'arrowPosition' => $feature_settings['arrow_position'],
+                  'arrowSize' => $feature_settings['arrow_size'],
                 ],
               ],
             ],

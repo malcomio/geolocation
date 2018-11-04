@@ -30,10 +30,7 @@
           }
 
           if (identifier === 'google_control_locate' || identifier === 'google_control_geocoder') {
-            var delta = widget.addInput(location);
-            widget.addMarker(location, delta);
-            widget.locationAddedCallback(location);
-            widget.map.fitMapToMarkers();
+            widget.locationAlteredCallback('google-map-feature', location, null);
           }
         });
       });

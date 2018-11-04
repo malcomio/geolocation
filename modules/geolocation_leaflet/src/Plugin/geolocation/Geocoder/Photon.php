@@ -19,6 +19,7 @@ use Drupal\Core\Render\BubbleableMetadata;
  *   locationCapable = true,
  *   boundaryCapable = true,
  *   frontendCapable = true,
+ *   reverseCapable = false,
  * )
  */
 class Photon extends GeocoderBase implements GeocoderInterface {

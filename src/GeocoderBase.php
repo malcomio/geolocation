@@ -108,4 +108,11 @@ abstract class GeocoderBase extends PluginBase implements GeocoderInterface {
     return NULL;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function reverseGeocode($latitude, $longitude) {
+    return NULL;
+  }
+
 }

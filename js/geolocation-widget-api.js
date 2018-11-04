@@ -1,21 +1,20 @@
 /**
  * @file
- *   Javascript for the map geocoder widget.
+ *   Javascript for widget API.
  */
 
 /**
- * @param {GeolocationMapWidgetInterface[]} Drupal.geolocation.widgets - List of widget instances
+ * @param {GeolocationWidgetInterface[]} Drupal.geolocation.widgets - List of widget instances
  * @param {Object} Drupal.geolocation.widget - Prototype container
- * @param {GeolocationMapWidgetSettings[]} drupalSettings.geolocation.widgetSettings - Additional widget settings
+ * @param {GeolocationWidgetSettings[]} drupalSettings.geolocation.widgetSettings - Additional widget settings
  */
 
 /**
- * @name GeolocationMapWidgetSettings
+ * @name GeolocationWidgetSettings
  * @property {String} autoClientLocationMarker
  * @property {jQuery} wrapper
  * @property {String} id
  * @property {String} type
- * @property {GeolocationMapInterface} map
  * @property {String} fieldName
  * @property {String} cardinality
  */
@@ -24,51 +23,29 @@
  * Callback for location found or set by widget.
  *
  * @callback geolocationWidgetLocationCallback
- * @param {GeolocationCoordinates} location - Location.
+ * @param {String} Identifier
+ * @param {GeolocationCoordinates} [location] - Location.
  * @param {int} [delta] - Delta.
- */
-
-/**
- * Callback for location unset by widget.
- *
- * @callback geolocationGeocoderClearCallback
  */
 
 /**
  * Interface for classes that represent a color.
  *
- * @interface GeolocationMapWidgetInterface
- * @property {GeolocationMapWidgetSettings} settings
+ * @interface GeolocationWidgetInterface
+ * @property {GeolocationWidgetSettings} settings
  * @property {String} id
  * @property {jQuery} wrapper
  * @property {jQuery} container
- * @property {Object[]} mapMarkers
- * @property {geolocationWidgetLocationCallback[]} locationAddedCallbacks
- * @property {geolocationWidgetLocationCallback[]} locationModifiedCallbacks
- * @property {geolocationWidgetLocationCallback[]} locationRemovedCallbacks
- * @property {geolocationGeocoderClearCallback[]} clearCallbacks
+ * @property {geolocationWidgetLocationCallback[]} locationAlteredCallbacks
  *
- * @property {function({GeolocationCoordinates})} locationAddedCallback - Executes all {geolocationWidgetLocationCallback} callbacks.
- * @property {function({geolocationWidgetLocationCallback})} addLocationAddedCallback - Adds a callback that will be called when a location is set.
+ * @property {function({String}, {GeolocationCoordinates}|null, {int}|null)} locationAlteredCallback - Executes all {geolocationWidgetLocationCallback} modified callbacks.
+ * @property {function({geolocationWidgetLocationCallback})} addLocationAlteredCallback - Adds a callback that will be called when a location is set.
  *
- * @property {function({GeolocationCoordinates}, {int})} locationModifiedCallback - Executes all {geolocationWidgetLocationCallback} modified callbacks.
- * @property {function({geolocationWidgetLocationCallback})} addLocationModifiedCallback - Adds a callback that will be called when a location is set.
- *
- * @property {function({int})} locationRemovedCallback - Executes all {geolocationWidgetLocationCallback} modified callbacks.
- * @property {function({geolocationWidgetLocationCallback})} addLocationRemovedCallback - Adds a callback that will be called when a location is removed.
- *
- * @property {function():{GeolocationMapMarker[]}} loadMarkersFromInput - Load markers from input and add to map.
- * @property {function({int}):{GeolocationMapMarker}} getMarkerByDelta - Get map marker by delta.
  * @property {function():{int}} getNextDelta - Get next delta.
- * @property {function({int}):{jQuery}} getInputByDelta - Get map input by delta.
+ * @property {function({int}):{jQuery}} getInputByDelta - Get widget input by delta.
  *
- * @property {function({GeolocationMapMarker}, {int}=):{int}} initializeMarker - Initialize markers.
- * @property {function({GeolocationCoordinates}, {int}=):{int}} addInput - Add input.
- * @property {function({GeolocationCoordinates}, {int})} updateInput - Update input.
+ * @property {function({GeolocationCoordinates}, {int}=):{int}} setInput - Add or update input.
  * @property {function({int})} removeInput - Remove input.
- * @property {function({GeolocationCoordinates}, {int}=):{int}} addMarker - Add marker.
- * @property {function({GeolocationCoordinates}, {int})} updateMarker - Update marker.
- * @property {function({int})} removeMarker - Remove marker.
  */
 
 (function ($, Drupal) {
@@ -82,86 +59,101 @@
 
   Drupal.geolocation.widgets = Drupal.geolocation.widgets || [];
 
+  Drupal.behaviors.geolocationWidgetApi = {
+    attach: function (context, drupalSettings) {
+      $.each(Drupal.geolocation.widgets, function(index, widget) {
+        $.each(widget.pendingAddedInputs, function(inputIndex, inputData) {
+          if (typeof inputData === 'undefined') {
+            return;
+          }
+          if (typeof inputData.delta === 'undefined') {
+            return;
+          }
+          var input = widget.getInputByDelta(inputData.delta);
+          if (input) {
+            widget.setInput(inputData.location, inputData.delta);
+            widget.pendingAddedInputs.splice(inputIndex, 1);
+          }
+          else {
+            widget.addNewEmptyInput();
+          }
+        });
+        widget.refreshWidgetByInputs();
+      });
+    }
+  };
+
   /**
-   * Geolocation map widget.
+   * Geolocation widget.
    *
    * @constructor
    * @abstract
-   * @implements {GeolocationMapWidgetInterface}
-   * @param {GeolocationMapWidgetSettings} widgetSettings - Setting to create map.
+   * @implements {GeolocationWidgetInterface}
+   * @param {GeolocationWidgetSettings} widgetSettings - Setting to create widget.
    */
   function GeolocationMapWidgetBase(widgetSettings) {
 
-    this.locationAddedCallbacks = [];
-    this.locationModifiedCallbacks = [];
-    this.locationRemovedCallbacks = [];
-
-    this.clearCallbacks = [];
+    this.locationAlteredCallbacks = [];
 
     this.settings = widgetSettings || {};
     this.wrapper = widgetSettings.wrapper;
     this.fieldName = widgetSettings.fieldName;
     this.cardinality = widgetSettings.cardinality || 1;
 
-    this.map = widgetSettings.map;
+    this.inputChangedEventPaused = false;
+
     this.id = widgetSettings.id;
+
+    this.pendingAddedInputs = [];
 
     return this;
   }
 
   GeolocationMapWidgetBase.prototype = {
 
-    locationAddedCallback: function (location) {
-      $.each(this.locationAddedCallbacks, function (index, callback) {
-        callback(location);
+    locationAlteredCallback: function (identifier, location, delta) {
+      if (
+          typeof delta === 'undefined'
+          || delta === null
+      ) {
+        delta = this.getNextDelta();
+      }
+      if (delta === false) {
+        return;
+      }
+      $.each(this.locationAlteredCallbacks, function (index, callback) {
+        callback(location, delta, identifier);
       });
     },
-    addLocationAddedCallback: function (callback) {
-      this.locationAddedCallbacks.push(callback);
-    },
-    locationModifiedCallback: function (location, delta) {
-      $.each(this.locationModifiedCallbacks, function (index, callback) {
-        callback(location, delta);
-      });
-    },
-    addLocationModifiedCallback: function (callback) {
-      this.locationModifiedCallbacks.push(callback);
-    },
-    locationRemovedCallback: function (delta) {
-      $.each(this.locationRemovedCallbacks, function (index, callback) {
-        callback(delta);
-      });
-    },
-    addLocationRemovedCallback: function (callback) {
-      this.locationRemovedCallbacks.push(callback);
-    },
-    loadMarkersFromInput: function() {
-      var that = this;
-      $('.geolocation-widget-input', this.wrapper).each(function(delta, inputElement) {
-        var input = $(inputElement);
-        var lng = input.find('input.geolocation-input-longitude').val();
-        var lat = input.find('input.geolocation-input-latitude').val();
-
-        if (lng && lat) {
-          that.addMarker({lat: Number(lat), lng: Number(lng)}, delta);
-        }
-      });
+    addLocationAlteredCallback: function (callback) {
+      this.locationAlteredCallbacks.push(callback);
     },
     getAllInputs: function() {
       return $('.geolocation-widget-input', this.wrapper);
     },
-    getMarkerByDelta: function (delta) {
-      delta = parseInt(delta) || 0;
-      var marker = null;
-
-      $.each(this.map.mapMarkers, function(index, currentMarker) {
-        /** @param {GeolocationMapMarker} currentMarker */
-        if (currentMarker.delta === delta) {
-          marker = currentMarker;
-          return false;
+    refreshWidgetByInputs: function() {
+      var that = this;
+      this.getAllInputs().each(function(delta, inputElement) {
+        var input = $(inputElement);
+        var lng = input.find('input.geolocation-input-longitude').val();
+        var lat = input.find('input.geolocation-input-latitude').val();
+        var location;
+        if (
+          lng === ''
+          || lat === ''
+        ) {
+          location = null;
         }
+        else {
+          location = {
+            lat: Number(lat),
+            lng: Number(lng)
+          }
+        }
+
+        that.locationAlteredCallback('widget-refreshed', location, delta);
+        that.attachInputChangedTriggers(input, delta);
       });
-      return marker;
     },
     getInputByDelta: function (delta) {
       delta = parseInt(delta) || 0;
@@ -169,64 +161,73 @@
       if (input.length) {
         return input;
       }
+      return null;
     },
-    getNextDelta: function(delta) {
+    getCoordinatesByInput(input) {
+      input = $(input);
+      if (
+        input.find('input.geolocation-input-longitude').val() !== ''
+        && input.find('input.geolocation-input-latitude').val() !== ''
+      ) {
+        return {
+          lat: input.find('input.geolocation-input-latitude').val(),
+          lng: input.find('input.geolocation-input-longitude').val()
+        }
+      }
+      return false
+    },
+    getNextDelta: function() {
       if (this.cardinality === 1) {
         return 0;
       }
-      var that = this;
-      var lastDelta = this.getAllInputs().length - 1;
+
+      var delta = Math.max(this.getNextEmptyInputDelta(), this.getNextPendingDelta());
+      if (
+          delta > this.cardinality
+          && this.cardinality > 0
+      ) {
+        console.error("Cannot add further geolocation input.");
+        return false;
+      }
+      return delta;
+    },
+    getNextPendingDelta: function() {
+      var maxDelta = this.pendingAddedInputs.length - 1;
+      $.each(this.pendingAddedInputs, function(index, item) {
+        if (typeof item.delta === 'undefined') {
+          return;
+        }
+        maxDelta = Math.max(maxDelta, item.delta);
+      });
+
+      return maxDelta + 1;
+    },
+    getNextEmptyInputDelta: function(delta) {
+      if (this.cardinality === 1) {
+        return 0;
+      }
 
       if (typeof delta === 'undefined') {
-        delta = lastDelta;
+        delta = this.getAllInputs().length - 1;
       }
 
       var input = this.getInputByDelta(delta);
 
-      // Failsafe.
-      if (input === false) {
-        return false;
-      }
-      // Current input already full.
-      else if (
-          input.find('input.geolocation-input-longitude').val()
-          || input.find('input.geolocation-input-latitude').val()
+      // Current input not empty, return next delta.
+      if (
+        input.find('input.geolocation-input-longitude').val()
+        || input.find('input.geolocation-input-latitude').val()
       ) {
-        // Check if next input can used and add if required.
-        if (
-            (delta + 1) < this.cardinality
-            || this.cardinality === -1
-        ) {
-          // Check if new input required.
-          if ((delta + 1) > lastDelta) {
-            that.addNewEmptyInput();
-            alert("Please try again.");
-            return false;
-          }
-          else if ((delta + 1) === lastDelta) {
-            setTimeout(function() {
-              that.addNewEmptyInput();
-            }, 100);
-            return delta + 1;
-          }
-          else {
-            return delta + 1;
-          }
-        }
-        // No further inputs available.
-        alert(Drupal.t('Maximum number of entries reached.'));
-        return false;
+        return delta + 1;
       }
-      // First input is empty, use it.
-      else if (delta === 0) {
-        setTimeout(function() {
-          that.addNewEmptyInput();
-        }, 100);
+
+      // We reached the first input and it is empty, use it.
+      if (delta === 0) {
         return 0;
       }
-      else {
-        return this.getNextDelta(delta - 1);
-      }
+
+      // Recursively check for empty input.
+      return this.getNextEmptyInputDelta(delta - 1);
     },
     addNewEmptyInput: function () {
       var button = this.wrapper.find('[name="' + this.fieldName + '_add_more"]');
@@ -234,7 +235,45 @@
         button.trigger("mousedown");
       }
     },
-    addInput: function (location, delta) {
+    attachInputChangedTriggers: function(input, delta) {
+      input = $(input);
+      var that = this;
+      var longitude = input.find('input.geolocation-input-longitude');
+      var latitude = input.find('input.geolocation-input-latitude');
+
+      longitude.off("change");
+      longitude.change(function() {
+        if (that.inputChangedEventPaused) {
+          return;
+        }
+
+        var currentValue = $(this).val();
+        if (currentValue === '') {
+          that.locationAlteredCallback('input-altered', null, delta)
+        }
+        else if (latitude.val() !== '') {
+          var location = {lat: Number(latitude.val()), lng: Number(currentValue)};
+          that.locationAlteredCallback('input-altered', location, delta);
+        }
+      });
+
+      latitude.off("change");
+      latitude.change(function() {
+        if (that.inputChangedEventPaused) {
+          return;
+        }
+
+        var currentValue = $(this).val();
+        if (currentValue === '') {
+          that.locationAlteredCallback('input-altered', null, delta)
+        }
+        else if (longitude.val() !== '') {
+          var location = {lat: Number(currentValue), lng: Number(longitude.val())};
+          that.locationAlteredCallback('input-altered', location, delta);
+        }
+      });
+    },
+    setInput: function (location, delta) {
       if (typeof delta === 'undefined') {
         delta = this.getNextDelta();
       }
@@ -243,59 +282,45 @@
         typeof delta === 'undefined'
         || delta === false
       ) {
-        return delta;
+        console.error(location, Drupal.t('Could not determine delta for new widget input.'));
+        return null;
       }
+
       var input = this.getInputByDelta(delta);
       if (input) {
+        this.inputChangedEventPaused = true;
         input.find('input.geolocation-input-longitude').val(location.lng);
         input.find('input.geolocation-input-latitude').val(location.lat);
+        this.inputChangedEventPaused = false;
+      }
+      else {
+        this.pendingAddedInputs.push({
+          delta: delta,
+          location: location
+        });
+        this.addNewEmptyInput();
       }
 
       return delta;
     },
-    initializeMarker: function (marker, delta) {
-      marker.delta = delta;
-    },
-    addMarker: function (location, delta) {
-      var marker = this.getMarkerByDelta(delta);
-      if (
-        typeof marker !== 'undefined'
-        && typeof marker !== false
-      ) {
-        if (marker) {
-          this.map.removeMapMarker(marker);
-        }
-      }
-    },
-    updateInput: function (location, delta) {
-      var input = this.getInputByDelta(delta);
-      input.find('input.geolocation-input-longitude').val(location.lng);
-      input.find('input.geolocation-input-latitude').val(location.lat);
-    },
-    updateMarker: function (location, delta) {},
-    removeMarker: function (delta) {
-      var marker = this.getMarkerByDelta(delta);
-
-      if (marker) {
-        this.map.removeMapMarker(marker);
-      }
-    },
     removeInput: function (delta) {
       var input = this.getInputByDelta(delta);
+      this.inputChangedEventPaused = true;
       input.find('input.geolocation-input-longitude').val('');
       input.find('input.geolocation-input-latitude').val('');
+      this.inputChangedEventPaused = false;
     }
   };
 
   Drupal.geolocation.widget.GeolocationMapWidgetBase = GeolocationMapWidgetBase;
 
   /**
-   * Factory creating map instances.
+   * Factory creating widget instances.
    *
    * @constructor
-   * @param {GeolocationMapWidgetSettings} widgetSettings - The widget settings.
+   * @param {GeolocationWidgetSettings} widgetSettings - The widget settings.
    * @param {Boolean} [reset] Force creation of new widget.
-   * @return {GeolocationMapWidgetInterface|boolean} - New or updated widget.
+   * @return {GeolocationWidgetInterface|boolean} - New or updated widget.
    */
   function Factory(widgetSettings, reset) {
     reset = reset || false;
@@ -304,8 +329,8 @@
     var widget = null;
 
     /**
-     * Previously stored map.
-     * @type {boolean|GeolocationMapInterface}
+     * Previously stored widget.
+     * @type {boolean|GeolocationWidgetInterface}
      */
     var existingWidget = false;
 
@@ -321,6 +346,21 @@
         widget = new widgetProvider(widgetSettings);
         if (widget) {
           Drupal.geolocation.widgets.push(widget);
+
+          widget.refreshWidgetByInputs();
+          widget.addLocationAlteredCallback(function(location, delta, identifier) {
+            if (
+                identifier !== 'input-altered'
+                || identifier !== 'widget-refreshed'
+            ) {
+              if (location === null) {
+                widget.removeInput(delta);
+              }
+              else {
+                widget.setInput(location, delta);
+              }
+            }
+          });
         }
       }
     }
@@ -338,9 +378,6 @@
 
   Drupal.geolocation.widget.Factory = Factory;
 
-  /**
-   * @type {Object[]}
-   */
   Drupal.geolocation.widget.widgetProviders = {};
 
   Drupal.geolocation.widget.addWidgetProvider = function (type, name) {
@@ -351,7 +388,7 @@
    * Get widget by ID.
    *
    * @param {String} id - Widget ID to retrieve.
-   * @return {GeolocationMapWidgetInterface|boolean} - Retrieved widget or false.
+   * @return {GeolocationWidgetInterface|boolean} - Retrieved widget or false.
    */
   Drupal.geolocation.widget.getWidgetById = function (id) {
     var widget = false;

@@ -30,7 +30,7 @@
          */
         function (map, featureSettings) {
           map.tileLayer.remove();
-          L.tileLayer.provider(featureSettings.tileLayerProvider,
+          map.tileLayer = L.tileLayer.provider(featureSettings.tileLayerProvider,
             featureSettings.tileLayerOptions
           ).addTo(map.leafletMap);
 

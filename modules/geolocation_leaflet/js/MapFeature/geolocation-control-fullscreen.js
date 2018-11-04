@@ -3,30 +3,26 @@
   'use strict';
 
   /**
-   * Recenter control.
+   * Fullscreen control.
    *
    * @type {Drupal~behavior}
    *
    * @prop {Drupal~behaviorAttach} attach
-   *   Attaches common map recenter functionality to relevant elements.
+   *   Attaches common map fullscreen functionality to relevant elements.
    */
-  Drupal.behaviors.leafletControlRecenter = {
+  Drupal.behaviors.leafletControlFullscreen = {
     attach: function (context, drupalSettings) {
       Drupal.geolocation.executeFeatureOnAllMaps(
-        'leaflet_control_recenter',
+        'leaflet_control_fullscreen',
 
         /**
          * @param {GeolocationLeafletMap} map - Current map.
          * @param {GeolocationMapFeatureSettings} featureSettings - Settings for current feature.
          */
         function (map, featureSettings) {
-          map.addInitializedCallback(function (map) {
-            var recenterButton = $('.geolocation-map-control .recenter', map.wrapper);
-            recenterButton.click(function (e) {
-              map.setCenter();
-              e.preventDefault();
-            });
-          });
+          L.control.fullscreen({
+            position: featureSettings.position
+          }).addTo(map.leafletMap);
 
           return true;
         },
