@@ -92,7 +92,8 @@ location_input.client_location:
 location_input.geocoder:
   js:
     js/LocationInput/geocoder.js: {}
-
+  dependencies:
+    - geolocation/geolocation.geocoder.api
 
 #
 #
