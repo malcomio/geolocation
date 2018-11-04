@@ -575,11 +575,16 @@
             return;
           }
 
-          var result = callback(map, mapSettings[featureId]);
+          map.addPopulatedCallback(function (map) {
+            if (mapSettings[featureId].executed) {
+              return;
+            }
+            var result = callback(map, mapSettings[featureId]);
 
-          if (result === true) {
-            mapSettings[featureId].executed = true;
-          }
+            if (result === true) {
+              mapSettings[featureId].executed = true;
+            }
+          });
         }
       }
     );
