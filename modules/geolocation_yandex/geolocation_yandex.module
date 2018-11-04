@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Implements hook_library_info_build()
+ */
+function geolocation_yandex_library_info_build() {
+  $config = \Drupal::config('yandex_maps.settings');
+
+  $api_key = $config->get('key');
+
+  $lang = \Drupal::languageManager()->getCurrentLanguage();
+
+  $a = $lang->getId();
+
+  $libraries = [];
+  $libraries['yandex_maps'] = [
+    'version' => '1.x',
+    'js' => [
+      'https://api-maps.yandex.ru/2.1/?apikey=' . $api_key . '&lang=' . $a => [
+        'type' => 'external',
+      ],
+    ],
+  ];
+
+  return $libraries;
+}
