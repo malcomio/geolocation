@@ -80,21 +80,12 @@ geolocation.map_provider.google_maps:
     rotateControl:
       type: boolean
       label: 'The state of the rotate control'
-    scrollwheel:
-      type: boolean
-      label: 'Scrool wheel'
-    disableDoubleClickZoom:
-      type: boolean
-      label: 'Disable double click zoom'
     height:
       type: string
       label: 'Height value'
     width:
       type: string
       label: 'Width value'
-    preferScrollingToZooming:
-      type: boolean
-      label: 'Require user to click map before zooming'
     gestureHandling:
       type: string
       label: 'Smart scrolling'

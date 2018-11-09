@@ -26,8 +26,6 @@
  * @property {Number} maxZoom
  * @property {Number} minZoom
  * @property {String} type
- * @property {Boolean} scrollwheel
- * @property {Boolean} preferScrollingToZooming
  * @property {String} gestureHandling
  * @property {Boolean} panControl
  * @property {Boolean} mapTypeControl
@@ -64,7 +62,6 @@
     Drupal.geolocation.GeolocationMapBase.call(this, mapSettings);
 
     var defaultGoogleSettings = {
-      scrollwheel: false,
       panControl: false,
       scaleControl: false,
       rotateControl: false,
@@ -105,8 +102,6 @@
         fullscreenControl: false, // Handled by feature.
         scaleControl: map.settings.google_map_settings.scaleControl,
         panControl: map.settings.google_map_settings.panControl,
-        scrollwheel: map.settings.google_map_settings.scrollwheel,
-        disableDoubleClickZoom: map.settings.google_map_settings.disableDoubleClickZoom,
         gestureHandling: map.settings.google_map_settings.gestureHandling
       });
 
@@ -130,13 +125,6 @@
       google.maps.event.addListener(map.googleMap, 'rightclick', function (e) {
         map.contextClickCallback({lat: e.latLng.lat(), lng: e.latLng.lng()});
       });
-
-      if (map.settings.google_map_settings.scrollwheel && map.settings.google_map_settings.preferScrollingToZooming) {
-        map.googleMap.setOptions({scrollwheel: false});
-        map.googleMap.addListener('click', function () {
-          googleMap.setOptions({scrollwheel: true});
-        });
-      }
 
       google.maps.event.addListenerOnce(map.googleMap, 'tilesloaded', function () {
         map.populatedCallback();

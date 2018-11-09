@@ -59,9 +59,6 @@ class GoogleMaps extends GoogleMapsProviderBase {
         'minZoom' => static::$MINZOOMLEVEL,
         'maxZoom' => static::$MAXZOOMLEVEL,
         'rotateControl' => FALSE,
-        'scrollwheel' => TRUE,
-        'disableDoubleClickZoom' => FALSE,
-        'preferScrollingToZooming' => FALSE,
         'gestureHandling' => 'auto',
         'map_features' => [
           'marker_infowindow' => [
@@ -108,9 +105,6 @@ class GoogleMaps extends GoogleMapsProviderBase {
     $settings = parent::getSettings($settings);
 
     $settings['rotateControl'] = (bool) $settings['rotateControl'];
-    $settings['scrollwheel'] = (bool) $settings['scrollwheel'];
-    $settings['disableDoubleClickZoom'] = (bool) $settings['disableDoubleClickZoom'];
-    $settings['preferScrollingToZooming'] = (bool) $settings['preferScrollingToZooming'];
 
     $settings['minZoom'] = (int) $settings['minZoom'];
     $settings['maxZoom'] = (int) $settings['maxZoom'];
@@ -181,13 +175,6 @@ class GoogleMaps extends GoogleMapsProviderBase {
       '#type' => 'fieldset',
       '#title' => $this->t('Behavior'),
     ];
-    $form['scrollwheel'] = [
-      '#group' => $parents_string . 'behavior_settings',
-      '#type' => 'checkbox',
-      '#title' => $this->t('Scrollwheel'),
-      '#description' => $this->t('Allow the user to zoom the map using the scrollwheel.'),
-      '#default_value' => $settings['scrollwheel'],
-    ];
     $form['gestureHandling'] = [
       '#group' => $parents_string . 'behavior_settings',
       '#type' => 'select',
@@ -210,20 +197,6 @@ class GoogleMaps extends GoogleMapsProviderBase {
       '#pre_render' => [
         ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
       ],
-    ];
-    $form['preferScrollingToZooming'] = [
-      '#group' => $parents_string . 'behavior_settings',
-      '#type' => 'checkbox',
-      '#title' => $this->t('Require the user to click the map once to zoom, to ease scrolling behavior.'),
-      '#description' => $this->t('Note: this is only relevant, when the Scrollwheel option is enabled.'),
-      '#default_value' => $settings['preferScrollingToZooming'],
-    ];
-    $form['disableDoubleClickZoom'] = [
-      '#group' => $parents_string . 'behavior_settings',
-      '#type' => 'checkbox',
-      '#title' => $this->t('Disable double click zoom'),
-      '#description' => $this->t('Disables the double click zoom functionality.'),
-      '#default_value' => $settings['disableDoubleClickZoom'],
     ];
 
     return $form;
