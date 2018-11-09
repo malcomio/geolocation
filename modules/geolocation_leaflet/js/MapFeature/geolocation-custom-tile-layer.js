@@ -6,6 +6,7 @@
  * @property {String} tileLayerUrl
  * @property {String} tileLayerAttribution
  * @property {String} tileLayerSubdomains
+ * @property {Number} tileLayerZoom
  */
 
 (function ($, Drupal) {
@@ -13,12 +14,12 @@
   'use strict';
 
   /**
-   * CustomTileLayerSettings.
+   * Custom Tile Layer.
    *
    * @type {Drupal~behavior}
    *
    * @prop {Drupal~behaviorAttach} attach
-   *   Attaches CustomTileLayerSettings functionality to relevant elements.
+   *   Attaches Custom Tile Layer functionality to relevant elements.
    */
   Drupal.behaviors.leafletCustomTileLayer = {
     attach: function (context, drupalSettings) {
@@ -33,7 +34,8 @@
           map.tileLayer.remove();
           map.tileLayer = L.tileLayer(featureSettings.tileLayerUrl, {
             attribution: featureSettings.tileLayerAttribution,
-            subdomains: featureSettings.tileLayerSubdomains
+            subdomains: featureSettings.tileLayerSubdomains,
+            maxZoom: featureSettings.tileLayerZoom
           }).addTo(map.leafletMap);
 
           return true;

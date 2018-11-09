@@ -25,6 +25,7 @@ class LeafletCustomTileLayer extends MapFeatureBase {
       'tile_layer_url' => 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       'tile_layer_attribution' => '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
       'tile_layer_subdomains' => 'abc',
+      'tile_layer_zoom' => 18,
     ];
   }
 
@@ -55,6 +56,12 @@ class LeafletCustomTileLayer extends MapFeatureBase {
       '#description' => $this->t('Enter the tile server subdomains like "abc".'),
       '#default_value' => $settings['tile_layer_subdomains'],
     ];
+    $form['tile_layer_zoom'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Max Zoom'),
+      '#description' => $this->t('Enter the tile server max zoom.'),
+      '#default_value' => $settings['tile_layer_zoom'],
+    ];
 
     return $form;
   }
@@ -82,6 +89,7 @@ class LeafletCustomTileLayer extends MapFeatureBase {
                   'tileLayerUrl' => $feature_settings['tile_layer_url'],
                   'tileLayerAttribution' => $feature_settings['tile_layer_attribution'],
                   'tileLayerSubdomains' => $feature_settings['tile_layer_subdomains'],
+                  'tileLayerZoom' => $feature_settings['tile_layer_zoom'],
                 ],
               ],
             ],
