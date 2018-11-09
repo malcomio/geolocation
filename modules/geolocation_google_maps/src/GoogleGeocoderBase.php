@@ -124,10 +124,8 @@ abstract class GoogleGeocoderBase extends GeocoderBase implements ContainerFacto
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
-        'drupalSettings' => [
-          'geolocation' => [
-            'google_map_url' => $this->googleMapsProvider->getGoogleMapsApiUrl(),
-          ],
+        'library' => [
+          'geolocation_google_maps/google',
         ],
       ]
     );

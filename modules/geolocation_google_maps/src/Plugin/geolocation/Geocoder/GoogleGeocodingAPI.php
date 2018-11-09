@@ -54,9 +54,14 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
       return FALSE;
     }
 
-    $request_url = GoogleMaps::$GOOGLEMAPSAPIURLBASE;
-    if ($config->get('china_mode')) {
+    if (!empty($config->get('google_maps_base_url'))) {
+      $request_url = $config->get('google_maps_base_url');
+    }
+    elseif ($config->get('china_mode')) {
       $request_url = GoogleMaps::$GOOGLEMAPSAPIURLBASECHINA;
+    }
+    else {
+      $request_url = GoogleMaps::$GOOGLEMAPSAPIURLBASE;
     }
     $request_url .= '/maps/api/geocode/json?address=' . $address;
 

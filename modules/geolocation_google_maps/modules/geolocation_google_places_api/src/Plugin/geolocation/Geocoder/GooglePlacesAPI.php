@@ -91,10 +91,16 @@ class GooglePlacesAPI extends GoogleGeocoderBase {
     }
 
     try {
-      $details_url = GoogleMaps::$GOOGLEMAPSAPIURLBASE;
-      if ($config->get('china_mode')) {
+      if (!empty($config->get('google_maps_base_url'))) {
+        $details_url = $config->get('google_maps_base_url');
+      }
+      elseif ($config->get('china_mode')) {
         $details_url = GoogleMaps::$GOOGLEMAPSAPIURLBASECHINA;
       }
+      else {
+        $details_url = GoogleMaps::$GOOGLEMAPSAPIURLBASE;
+      }
+
       $details_url .= '/maps/api/place/details/json?placeid=' . $result['predictions'][0]['place_id'];
 
       if (!empty($google_key)) {

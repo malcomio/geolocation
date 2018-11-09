@@ -128,6 +128,13 @@ class GeolocationGoogleMapsSettings extends ConfigFormBase {
       '#description' => $this->t('Use the specific URLs required in the PR China. See explanation at <a href=":google_faq">Google FAQ</a>.', [':google_faq' => 'https://developers.google.com/maps/faq?hl=de#china_ws_access']),
     ];
 
+    $form['google_maps_base_url'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Google Maps Base URL Override'),
+      '#default_value' => $config->get('google_maps_base_url'),
+      '#description' => $this->t('Override Google Maps URL base entirely.'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -186,6 +193,7 @@ class GeolocationGoogleMapsSettings extends ConfigFormBase {
 
     $config->set('use_current_language', $form_state->getValue('use_current_language'));
     $config->set('china_mode', $form_state->getValue('china_mode'));
+    $config->set('google_maps_base_url', $form_state->getValue('google_maps_base_url'));
 
     $parameters = $form_state->getValue('parameters');
     unset($parameters['libraries']['add']);

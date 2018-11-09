@@ -13,10 +13,6 @@
  */
 
 /**
- * @param {String} drupalSettings.geolocation.google_map_url
- */
-
-/**
  * @name GoogleMapSettings
  * @property {String} info_auto_display
  * @property {String} marker_icon_path
@@ -89,7 +85,7 @@
       /**
        * Create the map object and assign it to the map.
        */
-      var googleMap = new google.maps.Map(map.container[0], {
+      map.googleMap = new google.maps.Map(map.container[0], {
         zoom: map.settings.google_map_settings.zoom,
         maxZoom: map.settings.google_map_settings.maxZoom,
         minZoom: map.settings.google_map_settings.minZoom,
@@ -104,8 +100,6 @@
         panControl: map.settings.google_map_settings.panControl,
         gestureHandling: map.settings.google_map_settings.gestureHandling
       });
-
-      map.googleMap = googleMap;
 
       var singleClick;
       var timer;
@@ -339,23 +333,7 @@
   Drupal.geolocation.google.load = function () {
     // Check for Google Maps.
     if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-      if (Drupal.geolocation.google.maps_api_loading === true) {
-        return;
-      }
-
-      Drupal.geolocation.google.maps_api_loading = true;
-      // Google Maps isn't loaded so lazy load Google Maps.
-      // This will trigger googleCallback() again!
-      if (typeof drupalSettings.geolocation.google_map_url !== 'undefined') {
-        $.getScript(drupalSettings.geolocation.google_map_url)
-          .done(function () {
-            Drupal.geolocation.google.maps_api_loading = false;
-          });
-      }
-      else {
-        console.error('Geolocation - GoogleMapsAPI url not set.'); // eslint-disable-line no-console
-      }
-
+      console.error('Geolocation - GoogleMapsAPI url not set.'); // eslint-disable-line no-console
       return;
     }
 

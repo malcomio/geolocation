@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Google Maps hooks.
+ */
+
+/**
+ * Implements hook_library_info_build().
+ */
+function geolocation_google_maps_library_info_build() {
+  $libraries = [];
+  $libraries['google'] = [
+    'version' => '1.x',
+    'js' => [
+      Drupal::service('plugin.manager.geolocation.mapprovider')->getMapProvider('google_maps')->getGoogleMapsApiUrl() => [
+        'type' => 'external',
+      ],
+    ],
+  ];
+
+  return $libraries;
+}

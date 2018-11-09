@@ -213,11 +213,11 @@ class GoogleMaps extends GoogleMapsProviderBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
+          'geolocation_google_maps/google',
           'geolocation_google_maps/googlemapsapi',
         ],
         'drupalSettings' => [
           'geolocation' => [
-            'google_map_url' => $this->getGoogleMapsApiUrl(),
             'maps' => [
               $render_array['#id'] => [
                 'settings' => [

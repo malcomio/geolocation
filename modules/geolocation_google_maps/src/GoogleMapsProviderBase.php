@@ -101,9 +101,14 @@ abstract class GoogleMapsProviderBase extends MapProviderBase {
   public function getGoogleMapsApiUrl(array $additional_parameters = []) {
     $config = \Drupal::config('geolocation_google_maps.settings');
 
-    $google_url = static::$GOOGLEMAPSAPIURLBASE;
-    if ($config->get('china_mode')) {
+    if (!empty($config->get('google_maps_base_url'))) {
+      $google_url = $config->get('google_maps_base_url');
+    }
+    elseif ($config->get('china_mode')) {
       $google_url = static::$GOOGLEMAPSAPIURLBASECHINA;
+    }
+    else {
+      $google_url = static::$GOOGLEMAPSAPIURLBASE;
     }
 
     $parameters = [];
