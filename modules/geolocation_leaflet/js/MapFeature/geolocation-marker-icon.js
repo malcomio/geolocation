@@ -70,52 +70,22 @@
             };
 
             if (featureSettings.iconSize.width && featureSettings.iconSize.height) {
-              if (typeof featureSettings.iconSize.width === 'string') {
-                featureSettings.iconSize.width = parseInt(featureSettings.iconSize.width);
-              }
-              if (typeof featureSettings.iconSize.height === 'string') {
-                featureSettings.iconSize.height = parseInt(featureSettings.iconSize.height);
-              }
               $.extend(iconOptions, {iconSize: [featureSettings.iconSize.width, featureSettings.iconSize.height]});
             }
 
             if (featureSettings.shadowSize.width && featureSettings.shadowSize.height) {
-              if (typeof featureSettings.shadowSize.width === 'string') {
-                featureSettings.shadowSize.width = parseInt(featureSettings.shadowSize.width);
-              }
-              if (typeof featureSettings.shadowSize.height === 'string') {
-                featureSettings.shadowSize.height = parseInt(featureSettings.shadowSize.height);
-              }
               $.extend(iconOptions, {shadowSize: [featureSettings.shadowSize.width, featureSettings.shadowSize.height]});
             }
 
-            if (featureSettings.iconAnchor.x && featureSettings.iconAnchor.y) {
-              if (typeof featureSettings.iconAnchor.x === 'string') {
-                featureSettings.iconAnchor.x = parseInt(featureSettings.iconAnchor.x);
-              }
-              if (typeof featureSettings.iconAnchor.y === 'string') {
-                featureSettings.iconAnchor.y = parseInt(featureSettings.iconAnchor.y);
-              }
+            if (featureSettings.iconAnchor.x || featureSettings.iconAnchor.y) {
               $.extend(iconOptions, {iconAnchor: [featureSettings.iconAnchor.x, featureSettings.iconAnchor.y]});
             }
 
-            if (featureSettings.shadowAnchor.x && featureSettings.shadowAnchor.y) {
-              if (typeof featureSettings.shadowAnchor.x === 'string') {
-                featureSettings.shadowAnchor.x = parseInt(featureSettings.shadowAnchor.x);
-              }
-              if (typeof featureSettings.shadowAnchor.y === 'string') {
-                featureSettings.shadowAnchor.y = parseInt(featureSettings.shadowAnchor.y);
-              }
+            if (featureSettings.shadowAnchor.x || featureSettings.shadowAnchor.y) {
               $.extend(iconOptions, {shadowAnchor: [featureSettings.shadowAnchor.x, featureSettings.shadowAnchor.y]});
             }
 
-            if (featureSettings.popupAnchor.x && featureSettings.popupAnchor.y) {
-              if (typeof featureSettings.popupAnchor.x === 'string') {
-                featureSettings.popupAnchor.x = parseInt(featureSettings.popupAnchor.x);
-              }
-              if (typeof featureSettings.popupAnchor.y === 'string') {
-                featureSettings.popupAnchor.y = parseInt(featureSettings.popupAnchor.y);
-              }
+            if (featureSettings.popupAnchor.x || featureSettings.popupAnchor.y) {
               $.extend(iconOptions, {popupAnchor: [featureSettings.popupAnchor.x, featureSettings.popupAnchor.y]});
             }
 

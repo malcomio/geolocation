@@ -181,11 +181,26 @@ class LeafletMarkerIcon extends MapFeatureBase {
               $render_array['#id'] => [
                 $plugin_id => [
                   'enable' => TRUE,
-                  'iconSize' => $feature_settings['icon_size'],
-                  'iconAnchor' => $feature_settings['icon_anchor'],
-                  'popupAnchor' => $feature_settings['popup_anchor'],
-                  'shadowSize' => $feature_settings['shadow_size'],
-                  'shadowAnchor' => $feature_settings['shadow_anchor'],
+                  'iconSize'     => [
+                    'width' => (int) $feature_settings['icon_size']['width'],
+                    'height' => (int) $feature_settings['icon_size']['height'],
+                  ],
+                  'iconAnchor'   => [
+                    'x' => (int) $feature_settings['icon_anchor']['x'],
+                    'y' => (int) $feature_settings['icon_anchor']['y'],
+                  ],
+                  'popupAnchor'  => [
+                    'x' => (int) $feature_settings['popup_anchor']['x'],
+                    'y' => (int) $feature_settings['popup_anchor']['y'],
+                  ],
+                  'shadowSize' => [
+                    'width' => (int) $feature_settings['shadow_size']['width'],
+                    'height' => (int) $feature_settings['shadow_size']['height'],
+                  ],
+                  'shadowAnchor' => [
+                    'x' => (int) $feature_settings['shadow_anchor']['x'],
+                    'y' => (int) $feature_settings['shadow_anchor']['y'],
+                  ],
                 ],
               ],
             ],
