@@ -142,6 +142,7 @@
               }, delta);
             }
           });
+          map.setCenter();
 
           if (
             widgetSettings.autoClientLocationMarker

@@ -116,7 +116,11 @@ abstract class GeolocationMapWidgetBase extends WidgetBase implements ContainerF
    */
   public static function defaultSettings() {
     $settings = [
-      'centre' => [],
+      'centre' => [
+        'fit_bounds' => [
+          'enable' => TRUE,
+        ],
+      ],
       'auto_client_location' => FALSE,
       'auto_client_location_marker' => FALSE,
       'allow_override_map_settings' => FALSE,
