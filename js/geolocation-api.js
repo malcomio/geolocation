@@ -561,28 +561,29 @@
           typeof mapSettings[featureId] !== 'undefined'
           && mapSettings[featureId].enable
         ) {
-          if (typeof mapSettings[featureId].executed === 'undefined') {
-            mapSettings[featureId].executed = false;
-          }
-
-          if (mapSettings[featureId].executed) {
-            return;
-          }
-
           var map = Drupal.geolocation.getMapById(mapId);
-
           if (!map) {
             return;
           }
 
+          map.features = map.features || {};
+          map.features[featureId] = map.features[featureId] || {};
+          if (typeof map.features[featureId].executed === 'undefined') {
+            map.features[featureId].executed = false;
+          }
+
+          if (map.features[featureId].executed) {
+            return;
+          }
+
           map.addPopulatedCallback(function (map) {
-            if (mapSettings[featureId].executed) {
+            if (map.features[featureId].executed) {
               return;
             }
             var result = callback(map, mapSettings[featureId]);
 
             if (result === true) {
-              mapSettings[featureId].executed = true;
+              map.features[featureId].executed = true;
             }
           });
         }

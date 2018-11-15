@@ -180,7 +180,8 @@
     this.leafletMap.fitBounds(group.getBounds());
   };
   GeolocationLeafletMap.prototype.addControl = function (element) {
-    (new (L.Control.extend({
+    this.leafletMap.controls = this.leafletMap.controls || [];
+    var controlElement = new (L.Control.extend({
       options: {
         position: typeof element.dataset.controlPosition === 'undefined' ? 'topleft' : element.dataset.controlPosition
       },
@@ -189,7 +190,16 @@
         L.DomEvent.disableClickPropagation(element);
         return element;
       }
-    }))).addTo(this.leafletMap);
+    }));
+    controlElement.addTo(this.leafletMap);
+    this.leafletMap.controls.push(controlElement);
+  };
+  GeolocationLeafletMap.prototype.removeControls = function (element) {
+    this.leafletMap.controls = this.leafletMap.controls || [];
+    var that = this;
+    $.each(this.leafletMap.controls, function(index, control) {
+      that.leafletMap.removeControl(control);
+    });
   };
 
   Drupal.geolocation.GeolocationLeafletMap = GeolocationLeafletMap;

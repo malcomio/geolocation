@@ -67,6 +67,7 @@
         }
 
         map.addInitializedCallback(function (map) {
+          map.removeControls();
           $('.geolocation-map-controls > *', map.wrapper).each(function (index, control) {
             map.addControl(control);
           });
