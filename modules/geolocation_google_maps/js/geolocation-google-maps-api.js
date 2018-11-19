@@ -152,7 +152,6 @@
     }
 
     markerSettings.position = new google.maps.LatLng(Number(markerSettings.position.lat), Number(markerSettings.position.lng));
-
     markerSettings.map = this.googleMap;
 
     if (typeof this.settings.google_map_settings.marker_icon_path === 'string') {
@@ -178,11 +177,11 @@
     Drupal.geolocation.GeolocationMapBase.prototype.removeMapMarker.call(this, marker);
     marker.setMap(null);
   };
-  GeolocationGoogleMap.prototype.fitMapToMarkers = function (locations) {
+  GeolocationGoogleMap.prototype.getMarkerBoundaries = function (locations) {
 
     locations = locations || this.mapMarkers;
     if (locations.length === 0) {
-      return;
+      return false;
     }
 
     // A Google Maps API tool to re-center the map on its content.
@@ -199,11 +198,16 @@
         bounds.extend(item.getPosition());
       }
     );
-    this.googleMap.fitBounds(bounds);
+    return bounds;
   };
-  GeolocationGoogleMap.prototype.fitBoundaries = function (boundaries) {
-    if (!this.googleMap.getBounds().equals(boundaries)) {
+  GeolocationGoogleMap.prototype.fitBoundaries = function (boundaries, identifier) {
+    var currentBounds = this.googleMap.getBounds();
+    if (
+      !currentBounds
+      || !currentBounds.equals(boundaries)
+    ) {
       this.googleMap.fitBounds(boundaries);
+      Drupal.geolocation.GeolocationMapBase.prototype.fitBoundaries.call(this, boundaries, identifier);
     }
   };
   GeolocationGoogleMap.prototype.setZoom = function (zoom) {
@@ -212,6 +216,10 @@
     }
 
     this.googleMap.setZoom(parseInt(zoom));
+  };
+  GeolocationGoogleMap.prototype.getCenter = function() {
+    var center = this.googleMap.getCenter();
+    return {lat: center.lat(), lng: center.lng()};
   };
   GeolocationGoogleMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
     Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);

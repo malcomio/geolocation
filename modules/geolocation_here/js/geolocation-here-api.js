@@ -9,6 +9,12 @@
   /* global H */
 
   /**
+   * @typedef {Object} HereMapSettings
+   * @property hereMapsAppId
+   * @property hereMapsAppCode
+   */
+
+  /**
    * GeolocationHereMap element.
    *
    * @constructor
@@ -48,20 +54,26 @@
       useHTTPS: true
     });
 
-    // Obtain the default map types from the platform object
-    var maptypes = platform.createDefaultLayers();
+    var pixelRatio = window.devicePixelRatio || 1;
+    var defaultLayers = platform.createDefaultLayers({
+      tileSize: pixelRatio === 1 ? 256 : 512,
+      ppi: pixelRatio === 1 ? undefined : 320
+    });
 
     // Instantiate (and display) a map object:
     this.hereMap = new H.Map(
       this.container.get(0),
-      maptypes.normal.map,
+      defaultLayers.normal.map,
       {
         zoom: this.settings.here_settings.zoom,
-        center: { lng: this.lng, lat: this.lat }
+        center: { lng: this.lng, lat: this.lat },
+        pixelRatio: pixelRatio
       }
     );
 
-    var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(this.hereMap));
+    new H.mapevents.Behavior(new H.mapevents.MapEvents(this.hereMap));
+
+    H.ui.UI.createDefault(this.hereMap, defaultLayers);
 
     this.addPopulatedCallback(function(map) {
       map.hereMap.addEventListener('tap', function(e) {
@@ -94,7 +106,7 @@
   GeolocationHereMap.prototype.setMapMarker = function (markerSettings) {
     var hereMarkerSettings = {
       title: markerSettings.title
-    }
+    };
 
     if (typeof markerSettings.icon === 'string') {
       hereMarkerSettings.icon = new H.map.Icon(markerSettings.icon);
@@ -114,17 +126,36 @@
     Drupal.geolocation.GeolocationMapBase.prototype.removeMapMarker.call(this, marker);
     this.hereMap.removeObject(marker);
   };
-  GeolocationHereMap.prototype.fitMapToMarkers = function (locations) {
+  GeolocationHereMap.prototype.fitBoundaries = function (boundaries, identifier) {
+    if (!this.hereMap.getViewBounds().equals(boundaries)) {
+      this.hereMap.setViewBounds(boundaries);
+      Drupal.geolocation.GeolocationMapBase.prototype.fitBoundaries.call(this, boundaries, identifier);
+    }
+  };
+  GeolocationHereMap.prototype.getMarkerBoundaries = function (locations) {
 
     locations = locations || this.mapMarkers;
     if (locations.length === 0) {
       return;
     }
 
-    var group = new H.map.Group();
-    group.addObjects(locations);
-
-    this.hereMap.setViewBounds(group.getBounds());
+    var points = new H.geo.MultiPoint([]);
+    $.each(
+      locations,
+        /**
+         *
+         * @param index
+         * @param {H.map.Marker} marker
+         */
+      function(index, marker) {
+        points.push(marker.getPosition());
+      }
+    );
+    return points.getBounds();
+  };
+  GeolocationHereMap.prototype.getCenter = function () {
+    var center = this.hereMap.getCenter();
+    return {lat: center.lat, lng: center.lng};
   };
 
   Drupal.geolocation.GeolocationHereMap = GeolocationHereMap;

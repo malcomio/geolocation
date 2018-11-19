@@ -110,10 +110,12 @@
  * @property {function()} removeMapMarkers - Remove all markers from map.
  *s
  * @property {function({string})} setZoom - Set zoom.
+ * @property {function():{GeolocationCoordinates}} getCenter - Get map center coordinates.
  * @property {function({string})} setCenter - Center map by plugin.
  * @property {function({GeolocationCoordinates}, {Number}?, {string}?)} setCenterByCoordinates - Center map on coordinates.
- * @property {function({GeolocationMapMarker[]}?)} fitMapToMarkers - Fit map to markers.
- * @property {function({Object})} fitBoundaries - Fit map to bounds.
+ * @property {function({GeolocationMapMarker[]}?, {String}?)} fitMapToMarkers - Fit map to markers.
+ * @property {function({GeolocationMapMarker[]}?):{Object}} getMarkerBoundaries - Get marker boundaries.
+ * @property {function({Object}, {String}?)} fitBoundaries - Fit map to bounds.
  *
  * @property {function({Event})} clickCallback - Executes {GeolocationMapClickCallbacks} for this map.
  * @property {function({GeolocationMapClickCallback})} addClickCallback - Adds a callback that will be called when map is clicked.
@@ -210,6 +212,9 @@
     setZoom: function (zoom) {
       // Stub.
     },
+    getCenter: function () {
+      // Stub.
+    },
     setCenter: function () {
       if (typeof this.wrapper.data('preserve-map-center') !== 'undefined') {
         return;
@@ -282,11 +287,19 @@
         }
       );
     },
-    fitMapToMarkers: function () {
+    fitMapToMarkers: function (markers, identifier) {
+      var boundaries = this.getMarkerBoundaries();
+      if (boundaries === false) {
+        return false;
+      }
+
+      this.fitBoundaries(boundaries, identifier);
+    },
+    getMarkerBoundaries: function(markers) {
       // Stub.
     },
-    fitBoundaries: function (boundaries) {
-      // Stub.
+    fitBoundaries: function (boundaries, identifier) {
+      this.centerUpdatedCallback(this.getCenter(), null, identifier);
     },
     clickCallback: function (location) {
       this.clickCallbacks = this.clickCallbacks || [];

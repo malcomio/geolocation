@@ -168,7 +168,7 @@
     Drupal.geolocation.GeolocationMapBase.prototype.removeMapMarker.call(this, marker);
     this.markerLayer.removeLayer(marker);
   };
-  GeolocationLeafletMap.prototype.fitMapToMarkers = function (locations) {
+  GeolocationLeafletMap.prototype.getMarkerBoundaries = function (locations) {
 
     locations = locations || this.mapMarkers;
     if (locations.length === 0) {
@@ -177,7 +177,17 @@
 
     var group = new L.featureGroup(locations);
 
-    this.leafletMap.fitBounds(group.getBounds());
+    return group.getBounds();
+  };
+  GeolocationLeafletMap.prototype.getCenter = function () {
+    var center = this.leafletMap.getCenter();
+    return {lat: center.lat, lng: center.lng};
+  };
+  GeolocationLeafletMap.prototype.fitBoundaries = function (boundaries, identifier) {
+    if (!this.leafletMap.getBounds().equals(boundaries)) {
+      this.leafletMap.fitBounds(boundaries);
+      Drupal.geolocation.GeolocationMapBase.prototype.fitBoundaries.call(this, boundaries, identifier);
+    }
   };
   GeolocationLeafletMap.prototype.addControl = function (element) {
     this.leafletMap.controls = this.leafletMap.controls || [];
@@ -194,7 +204,7 @@
     controlElement.addTo(this.leafletMap);
     this.leafletMap.controls.push(controlElement);
   };
-  GeolocationLeafletMap.prototype.removeControls = function (element) {
+  GeolocationLeafletMap.prototype.removeControls = function () {
     this.leafletMap.controls = this.leafletMap.controls || [];
     var that = this;
     $.each(this.leafletMap.controls, function(index, control) {

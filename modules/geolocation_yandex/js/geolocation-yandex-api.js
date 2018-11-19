@@ -102,14 +102,21 @@
     Drupal.geolocation.GeolocationMapBase.prototype.removeMapMarker.call(this, marker);
     this.yandexMap.geoObjects.remove(marker);
   };
-  GeolocationYandexMap.prototype.fitMapToMarkers = function (locations) {
+  GeolocationYandexMap.prototype.getCenter = function () {
+    return this.yandexMap.getCenter();
+  };
+  GeolocationYandexMap.prototype.fitBoundaries = function (boundaries, identifier) {
+    this.yandexMap.setBounds(boundaries);
+    Drupal.geolocation.GeolocationMapBase.prototype.fitBoundaries.call(this, boundaries, identifier);
+  };
+  GeolocationYandexMap.prototype.getMarkerBoundaries = function (locations) {
 
     locations = locations || this.mapMarkers;
     if (locations.length === 0) {
       return;
     }
 
-    this.yandexMap.setBounds(this.yandexMap.geoObjects.getBounds());
+    return this.yandexMap.geoObjects.getBounds();
   };
 
   Drupal.geolocation.GeolocationYandexMap = GeolocationYandexMap;

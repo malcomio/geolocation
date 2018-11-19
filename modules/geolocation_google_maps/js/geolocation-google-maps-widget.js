@@ -30,7 +30,7 @@
           }
 
           if (identifier === 'google_control_locate' || identifier === 'google_control_geocoder') {
-            widget.locationAlteredCallback('google-map-feature', location, null);
+            widget.locationAlteredCallback('widget-map-moved', location, null);
           }
         });
       });

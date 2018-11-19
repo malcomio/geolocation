@@ -21,7 +21,7 @@
       west: centerOption.lngSouthWest
     };
 
-    map.fitBoundaries(centerBounds);
+    map.fitBoundaries(centerBounds, 'views_boundary_argument');
 
     return false;
   }
