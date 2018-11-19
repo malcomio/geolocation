@@ -169,14 +169,50 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
       return NULL;
     }
 
+    $addressAtomicsMapping = [
+      'streetNumber' => [
+        'type' => 'street_number',
+      ],
+      'route' => [
+        'type' => 'route',
+      ],
+      'locality' => [
+        'type' => 'locality',
+      ],
+      'county' => [
+        'type' => 'administrative_area_level_2 ',
+      ],
+      'postalCode' => [
+        'type' => 'postal_code',
+      ],
+      'adninistrativeArea' => [
+        'type' => 'administrative_area_level_1 ',
+      ],
+      'country' => [
+        'type' => 'country',
+      ],
+      'countryCode' => [
+        'type' => 'country',
+        'short' => TRUE,
+      ],
+      'postalTown' => [
+        'type' => 'postal_town',
+      ],
+      'neighborhood' => [
+        'type' => 'neighborhood',
+      ],
+      'premise' => [
+        'type' => 'premise',
+      ],
+      'political' => [
+        'type' => 'political',
+      ],
+    ];
+
     $address_atomics = [];
     foreach ($result['results'][0]['address_components'] as $component) {
-      foreach ($this->addressAtomicsMapping as $atomic => $google_format) {
-        if (empty($google_format['type'])) {
-          continue;
-        }
-
-        if (in_array($google_format['type'], $component['types'])) {
+      foreach ($addressAtomicsMapping as $atomic => $google_format) {
+        if ($google_format['type'] == $component['types'][0]) {
           if (!empty($google_format['short'])) {
             $address_atomics[$atomic] = $component['short_name'];
           }
@@ -187,9 +223,13 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
       }
     }
 
+    $formatter = $this->countryFormatterManager->getCountry($address_atomics['countryCode']);
+    $address_elements = $formatter->format($address_atomics);
+
     return [
-      'address_atomics' => $address_atomics,
-      'formatted_address' => empty($result['results'][0]['formatted_address']) ? '' : $result['results'][0]['formatted_address'],
+      'atomics' => $address_atomics,
+      'elements' => $address_elements,
+      'string' => empty($result['results'][0]['formatted_address']) ? '' : $result['results'][0]['formatted_address'],
     ];
   }
 

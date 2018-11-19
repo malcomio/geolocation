@@ -78,7 +78,6 @@
             widget.addNewEmptyInput();
           }
         });
-        widget.refreshWidgetByInputs();
       });
     }
   };

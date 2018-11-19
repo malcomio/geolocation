@@ -55,24 +55,21 @@ interface GeocoderInterface extends PluginInspectionInterface {
   /**
    * Reverse geocode an address.
    *
-   * Intended return:
+   * Intended return subject to available data:
    *
    * @code
    * [
-   *   houseNumber
-   *   house
-   *   road
-   *   village
-   *   suburb
-   *   city
-   *   county
-   *   postcode
-   *   stateDistrict
-   *   state
-   *   region
-   *   island
-   *   country
-   *   countryCode
+   *   'organization' => '',
+   *   'address_line1' => '',
+   *   'address_line2' => '',
+   *   'postal_code' => '',
+   *   'sorting_code' => '',
+   *   'dependent_locality' => [],
+   *   'locality' => [],
+   *   'administrative_area' => [],
+   *   'country' => [],
+   *
+   *   'formatted_address' => '',
    * ]
    * @endcode
    *

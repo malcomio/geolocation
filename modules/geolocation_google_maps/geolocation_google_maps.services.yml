@@ -1,0 +1,4 @@
+services:
+  plugin.manager.geolocation_google_maps.google_geocoder_country_formatting:
+    class: Drupal\geolocation_google_maps\GoogleGeocoderCountryFormattingManager
+    parent: default_plugin_manager
