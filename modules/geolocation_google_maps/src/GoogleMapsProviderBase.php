@@ -86,6 +86,15 @@ abstract class GoogleMapsProviderBase extends MapProviderBase {
 
     $parameters = array_replace_recursive($additional_parameters, $custom_parameters, $module_parameters, $geolocation_parameters);
 
+    foreach ($parameters as $key => $value) {
+      if (
+        is_string($value)
+        && $value === ''
+      ) {
+        unset($parameters[$key]);
+      }
+    }
+
     return $parameters;
   }
 
