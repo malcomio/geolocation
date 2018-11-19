@@ -10,6 +10,7 @@ here_maps:
     'https://js.api.here.com/v3/3.0/mapsjs-core.js': { type: external, minified: true }
     'https://js.api.here.com/v3/3.0/mapsjs-service.js': { type: external, minified: true }
     'https://js.api.here.com/v3/3.0/mapsjs-mapevents.js': { type: external, minified: true }
+    'https://js.api.here.com/v3/3.0/mapsjs-ui.js': { type: external, minified: true }
 
 geolocation.here:
   version: 8.x-2.x

@@ -1,7 +1,7 @@
 {
-  "name": "Geolocation",
+  "name": "geolocation-leaflet",
   "license": "GPL-2.0",
-  "description": "Geolocation module",
+  "description": "Geolocation leaflet module",
   "private": true,
   "devDependencies": {
     "@types/leaflet": "^1.2.5"
