@@ -32,3 +32,8 @@ services:
   plugin.manager.geolocation.locationinput:
     class: Drupal\geolocation\LocationInputManager
     parent: default_plugin_manager
+
+  plugin.manager.geolocation.geocoder_country_formatting:
+    class: Drupal\geolocation\GeocoderCountryFormattingManager
+    parent: default_plugin_manager
+

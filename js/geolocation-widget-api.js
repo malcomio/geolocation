@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for widget API.
+ * Javascript for widget API.
  */
 
 /**
@@ -23,6 +23,7 @@
  * Callback for location found or set by widget.
  *
  * @callback geolocationWidgetLocationCallback
+ *
  * @param {String} Identifier
  * @param {GeolocationCoordinates} [location] - Location.
  * @param {int} [delta] - Delta.
@@ -61,8 +62,8 @@
 
   Drupal.behaviors.geolocationWidgetApi = {
     attach: function (context, drupalSettings) {
-      $.each(Drupal.geolocation.widgets, function(index, widget) {
-        $.each(widget.pendingAddedInputs, function(inputIndex, inputData) {
+      $.each(Drupal.geolocation.widgets, function (index, widget) {
+        $.each(widget.pendingAddedInputs, function (inputIndex, inputData) {
           if (typeof inputData === 'undefined') {
             return;
           }
@@ -88,6 +89,7 @@
    * @constructor
    * @abstract
    * @implements {GeolocationWidgetInterface}
+   *
    * @param {GeolocationWidgetSettings} widgetSettings - Setting to create widget.
    */
   function GeolocationMapWidgetBase(widgetSettings) {
@@ -127,12 +129,12 @@
     addLocationAlteredCallback: function (callback) {
       this.locationAlteredCallbacks.push(callback);
     },
-    getAllInputs: function() {
+    getAllInputs: function () {
       return $('.geolocation-widget-input', this.wrapper);
     },
-    refreshWidgetByInputs: function() {
+    refreshWidgetByInputs: function () {
       var that = this;
-      this.getAllInputs().each(function(delta, inputElement) {
+      this.getAllInputs().each(function (delta, inputElement) {
         var input = $(inputElement);
         var lng = input.find('input.geolocation-input-longitude').val();
         var lat = input.find('input.geolocation-input-latitude').val();
@@ -162,7 +164,7 @@
       }
       return null;
     },
-    getCoordinatesByInput(input) {
+    getCoordinatesByInput: function (input) {
       input = $(input);
       if (
         input.find('input.geolocation-input-longitude').val() !== ''
@@ -175,7 +177,7 @@
       }
       return false
     },
-    getNextDelta: function() {
+    getNextDelta: function () {
       if (this.cardinality === 1) {
         return 0;
       }
@@ -190,9 +192,9 @@
       }
       return delta;
     },
-    getNextPendingDelta: function() {
+    getNextPendingDelta: function () {
       var maxDelta = this.pendingAddedInputs.length - 1;
-      $.each(this.pendingAddedInputs, function(index, item) {
+      $.each(this.pendingAddedInputs, function (index, item) {
         if (typeof item.delta === 'undefined') {
           return;
         }
@@ -201,7 +203,7 @@
 
       return maxDelta + 1;
     },
-    getNextEmptyInputDelta: function(delta) {
+    getNextEmptyInputDelta: function (delta) {
       if (this.cardinality === 1) {
         return 0;
       }
@@ -234,14 +236,14 @@
         button.trigger("mousedown");
       }
     },
-    attachInputChangedTriggers: function(input, delta) {
+    attachInputChangedTriggers: function (input, delta) {
       input = $(input);
       var that = this;
       var longitude = input.find('input.geolocation-input-longitude');
       var latitude = input.find('input.geolocation-input-latitude');
 
       longitude.off("change");
-      longitude.change(function() {
+      longitude.change(function () {
         if (that.inputChangedEventPaused) {
           return;
         }
@@ -257,7 +259,7 @@
       });
 
       latitude.off("change");
-      latitude.change(function() {
+      latitude.change(function () {
         if (that.inputChangedEventPaused) {
           return;
         }
@@ -317,8 +319,10 @@
    * Factory creating widget instances.
    *
    * @constructor
+   *
    * @param {GeolocationWidgetSettings} widgetSettings - The widget settings.
    * @param {Boolean} [reset] Force creation of new widget.
+   *
    * @return {GeolocationWidgetInterface|boolean} - New or updated widget.
    */
   function Factory(widgetSettings, reset) {
@@ -347,7 +351,7 @@
           Drupal.geolocation.widgets.push(widget);
 
           widget.refreshWidgetByInputs();
-          widget.addLocationAlteredCallback(function(location, delta, identifier) {
+          widget.addLocationAlteredCallback(function (location, delta, identifier) {
             if (
                 identifier !== 'input-altered'
                 || identifier !== 'widget-refreshed'
@@ -368,7 +372,7 @@
     }
 
     if (!widget) {
-      console.error(widgetSettings, "Widget could not be initialzed"); // eslint-disable-line no-console
+      console.error(widgetSettings, "Widget could not be initialzed"); // eslint-disable-line no-console .
       return false;
     }
 
@@ -387,6 +391,7 @@
    * Get widget by ID.
    *
    * @param {String} id - Widget ID to retrieve.
+   *
    * @return {GeolocationWidgetInterface|boolean} - Retrieved widget or false.
    */
   Drupal.geolocation.widget.getWidgetById = function (id) {

@@ -24,7 +24,7 @@
       delta = parseInt(delta) || 0;
       var marker = null;
 
-      $.each(this.map.mapMarkers, function(index, currentMarker) {
+      $.each(this.map.mapMarkers, function (index, currentMarker) {
         /** @param {GeolocationMapMarker} currentMarker */
         if (currentMarker.delta === delta) {
           marker = currentMarker;
@@ -95,11 +95,11 @@
         widget.map = Drupal.geolocation.getMapById(widgetSettings.id + '-map');
 
         if (!widget.map) {
-          console.error(widgetSettings, 'Could not find widget map.'); // eslint-disable-line no-console
+          console.error(widgetSettings, 'Could not find widget map.'); // eslint-disable-line no-console.
           return;
         }
 
-        widget.addLocationAlteredCallback(function(location, delta, identifier) {
+        widget.addLocationAlteredCallback(function (location, delta, identifier) {
           if (identifier !== 'marker') {
             if (location === null) {
               widget.removeMarker(delta);
@@ -130,7 +130,7 @@
         }
 
         widget.map.addPopulatedCallback(function (map) {
-          widget.getAllInputs().each(function(delta, inputElement) {
+          widget.getAllInputs().each(function (delta, inputElement) {
             var input = $(inputElement);
             var lng = input.find('input.geolocation-input-longitude').val();
             var lat = input.find('input.geolocation-input-latitude').val();

@@ -2,26 +2,19 @@
 
 namespace Drupal\geolocation_google_maps;
 
-use Drupal\Core\Plugin\PluginBase;
+use Drupal\geolocation\GeocoderCountryFormattingInterface;
+use Drupal\geolocation\GeocoderCountryFormattingBase;
 
 /**
  * Defines an interface for geolocation google geocoder country  plugins.
  */
-abstract class GoogleGeocoderCountryFormattingBase extends PluginBase implements GoogleGeocoderCountryFormattingInterface {
+abstract class GoogleCountryFormattingBase extends GeocoderCountryFormattingBase implements GeocoderCountryFormattingInterface {
 
   /**
    * {@inheritdoc}
    */
   public function format(array $atomics) {
-    $address_elements = [
-      'organization' => '',
-      'addressLine1' => '',
-      'addressLine2' => '',
-      'locality' => '',
-      'postalCode' => '',
-      'administrativeArea' => '',
-      'countryCode' => '',
-    ];
+    $address_elements = parent::format($atomics);
 
     if (
       $atomics['streetNumber']

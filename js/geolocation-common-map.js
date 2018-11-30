@@ -116,7 +116,7 @@
 
   Drupal.geolocation.commonMap = Drupal.geolocation.commonMap || {};
 
-  Drupal.geolocation.commonMap.dynamicMapViewsAjaxSettings = function(commonMapSettings) {
+  Drupal.geolocation.commonMap.dynamicMapViewsAjaxSettings = function (commonMapSettings) {
     // Make sure to load current form DOM element, which will change after every AJAX operation.
     var view = $('.view-id-' + commonMapSettings.dynamic_map.update_view_id + '.view-display-id-' + commonMapSettings.dynamic_map.update_view_display_id);
 
@@ -135,7 +135,7 @@
     var exposedForm = $('form#views-exposed-form-' + commonMapSettings.dynamic_map.update_view_id.replace(/_/g, '-') + '-' + commonMapSettings.dynamic_map.update_view_display_id.replace(/_/g, '-'));
     if (exposedForm.length) {
       // Add form values.
-      jQuery.each( exposedForm.serializeArray(), function( index, field ) {
+      jQuery.each( exposedForm.serializeArray(), function (index, field) {
         var add = {};
         add[field.name] = field.value;
         ajaxSettings.submit = $.extend(ajaxSettings.submit, add);

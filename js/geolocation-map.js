@@ -49,7 +49,7 @@
         }
 
         if (typeof drupalSettings.geolocation === 'undefined') {
-          console.error("Bailing out for lack of settings.");  // eslint-disable-line no-console
+          console.error("Bailing out for lack of settings.");  // eslint-disable-line no-console .
           return;
         }
 
@@ -62,7 +62,7 @@
         var map = Drupal.geolocation.Factory(mapSettings);
 
         if (!map) {
-          console.error(mapSettings, 'Geolocation - Couldn\'t initialize map.'); // eslint-disable-line no-console
+          console.error(mapSettings, 'Geolocation - Couldn\'t initialize map.'); // eslint-disable-line no-console .
           return;
         }
 

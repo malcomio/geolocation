@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Map type style.
+ */
+
+/**
  * @typedef {Object} MapTypeStyleSettings
  *
  * @extends {GeolocationMapFeatureSettings}

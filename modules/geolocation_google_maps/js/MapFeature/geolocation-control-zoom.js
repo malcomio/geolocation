@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Zoom Control.
+ */
+
+/**
  * @typedef {Object} ControlZoomSettings
  *
  * @extends {GeolocationMapFeatureSettings}
@@ -44,7 +49,6 @@
             else {
               options.zoomControl = undefined;
             }
-
             map.googleMap.setOptions(options);
           });
 

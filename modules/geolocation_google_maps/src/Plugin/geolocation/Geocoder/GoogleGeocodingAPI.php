@@ -63,7 +63,7 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
     else {
       $request_url = GoogleMaps::$GOOGLEMAPSAPIURLBASE;
     }
-    $request_url .= '/maps/api/geocode/json?address=' . $address;
+    $request_url .= '/maps/api/geocode/json?address=' . urlencode($address);
 
     if (!empty($config->get('google_map_api_server_key'))) {
       $request_url .= '&key=' . $config->get('google_map_api_server_key');
@@ -223,12 +223,9 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
       }
     }
 
-    $formatter = $this->countryFormatterManager->getCountry($address_atomics['countryCode']);
-    $address_elements = $formatter->format($address_atomics);
-
     return [
       'atomics' => $address_atomics,
-      'elements' => $address_elements,
+      'elements' => $this->addressElements($address_atomics),
       'string' => empty($result['results'][0]['formatted_address']) ? '' : $result['results'][0]['formatted_address'],
     ];
   }

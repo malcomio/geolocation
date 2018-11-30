@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Common map handling.
+ */
+
 (function ($, Drupal) {
   'use strict';
 

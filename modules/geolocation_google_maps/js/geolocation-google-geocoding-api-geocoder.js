@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for the Google Geocoding API geocoder.
+ * Javascript for the Google Geocoding API geocoder.
  */
 
 /**
@@ -72,7 +72,7 @@
   };
 
   /**
-   * Attach geocoder input for Google Geocoding API
+   * Attach geocoder input for Google Geocoding API.
    *
    * @type {Drupal~behavior}
    *
@@ -81,8 +81,8 @@
    */
   Drupal.behaviors.geolocationGeocoderGoogleGeocodingApi = {
     attach: function (context) {
-      Drupal.geolocation.google.addLoadedCallback(function() {
-        $.each(drupalSettings.geolocation.geocoder.google_geocoding_api.inputIds, function(index, inputId) {
+      Drupal.geolocation.google.addLoadedCallback(function () {
+        $.each(drupalSettings.geolocation.geocoder.google_geocoding_api.inputIds, function (index, inputId) {
           var geocoderInput = $('input.geolocation-geocoder-address[data-source-identifier="' + inputId + '"]', context);
           if (geocoderInput.length === 0) {
             return;
@@ -104,7 +104,7 @@
       // Load Google Maps API and execute all callbacks.
       Drupal.geolocation.google.load();
     },
-    detach: function() {}
+    detach: function () {}
   };
 
 })(jQuery, Drupal);

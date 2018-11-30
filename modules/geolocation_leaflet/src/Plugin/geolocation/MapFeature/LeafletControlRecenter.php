@@ -32,7 +32,6 @@ class LeafletControlRecenter extends ControlCustomElementBase {
     ];
     $render_array['#controls'][$this->pluginId]['#attributes']['class'][] = 'leaflet-bar';
 
-
     return $render_array;
   }
 

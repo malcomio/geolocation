@@ -47,13 +47,18 @@ class GeocoderController extends ControllerBase {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   Current Request.
    *
-   * @return array
-   *   Formatted address.
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   Geocoded coordinates.
    */
   public function geocode(Request $request) {
     $geocoder = $this->geocoderManager->getGeocoder($request->get('geocoder'), (array) $request->get('geocoder_settings'));
     $address = $request->get('address');
-    return $geocoder->geocode($address);
+    $geocoded_result = $geocoder->geocode($address);
+
+    if (!isset($geocoded_result['location'])) {
+      return new JsonResponse([]);
+    }
+    return new JsonResponse($geocoded_result['location']);
   }
 
   /**

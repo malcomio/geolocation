@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for the map geocoder widget.
+ * Javascript for the map geocoder widget.
  */
 
 (function ($, Drupal) {
@@ -52,11 +52,11 @@
     marker.setLabel((delta + 1).toString());
 
     var that = this;
-    marker.addListener('dragend', function(e) {
+    marker.addListener('dragend', function (e) {
       that.locationAlteredCallback('marker', {lat: Number(e.latLng.lat()), lng: Number(e.latLng.lng())}, marker.delta);
     });
 
-    marker.addListener('click', function() {
+    marker.addListener('click', function () {
       that.removeMarker(marker.delta);
       that.locationAlteredCallback('marker', null, marker.delta);
     });

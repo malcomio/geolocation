@@ -147,7 +147,8 @@ class Nominatim extends GeocoderBase implements GeocoderInterface {
     }
 
     return [
-      'address_atomics' => $address_atomics,
+      'atomics' => $address_atomics,
+      'elements' => $this->addressElements($address_atomics),
       'formatted_address' => empty($result['display_name']) ? '' : $result['display_name'],
     ];
   }

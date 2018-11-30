@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\geolocation_google_maps;
+namespace Drupal\geolocation;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
- * Defines an interface for geolocation google geocoder country  plugins.
+ * Defines an interface for geolocation geocoder country  plugins.
  */
-interface GoogleGeocoderCountryFormattingInterface extends PluginInspectionInterface {
+interface GeocoderCountryFormattingInterface extends PluginInspectionInterface {
 
   /**
    * Reverse geocode an address.

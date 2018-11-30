@@ -230,7 +230,13 @@ class GeolocationItem extends FieldItemBase {
    *   The sexagesimal notation or FALSE on error.
    */
   public static function decimalToSexagesimal($decimal = '') {
+    $negative = FALSE;
     $decimal = (float) $decimal;
+
+    if ($decimal < 0) {
+      $negative = TRUE;
+      $decimal = abs($decimal);
+    }
 
     $degrees = floor($decimal);
     $rest = $decimal - $degrees;
@@ -244,6 +250,10 @@ class GeolocationItem extends FieldItemBase {
     }
     if (!empty($seconds)) {
       $value .= ' ' . $seconds . '"';
+    }
+
+    if ($negative) {
+      $value = '-' . $value;
     }
 
     return $value;

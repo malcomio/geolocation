@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for the geolocation module.
+ * Javascript for the geolocation module.
  */
 
 /**
@@ -31,6 +31,7 @@
  * Callback when map is clicked.
  *
  * @callback GeolocationMapClickCallback
+ *
  * @param {GeolocationCoordinates} location - Click location.
  */
 
@@ -38,6 +39,7 @@
  * Callback when a marker is added or removed.
  *
  * @callback GeolocationMarkerCallback
+ *
  * @param {GeolocationMapMarker} marker - Map marker.
  */
 
@@ -45,6 +47,7 @@
  * Callback when map is right-clicked.
  *
  * @callback GeolocationMapContextClickCallback
+ *
  * @param {GeolocationCoordinates} location - Click location.
  */
 
@@ -52,6 +55,7 @@
  * Callback when map provider becomes available.
  *
  * @callback GeolocationMapInitializedCallback
+ *
  * @param {GeolocationMapInterface} map - Geolocation map.
  */
 
@@ -59,6 +63,7 @@
  * Callback when map fully loaded.
  *
  * @callback GeolocationMapPopulatedCallback
+ *
  * @param {GeolocationMapInterface} map - Geolocation map.
  */
 
@@ -131,7 +136,6 @@
  *
  * @property {function({GeolocationMapMarker})} markerRemoveCallback - Executes {GeolocationMarkerCallback} for this map.
  * @property {function({GeolocationMarkerCallback})} addMarkerRemoveCallback - Adds a callback that will be called before marker is removed.
- *
  */
 
 /**
@@ -163,6 +167,7 @@
    * @constructor
    * @abstract
    * @implements {GeolocationMapInterface}
+   *
    * @param {GeolocationMapSettings} mapSettings Setting to create map.
    */
   function GeolocationMapBase(mapSettings) {
@@ -227,7 +232,7 @@
 
       Object
         .values(this.mapCenter)
-        .sort(function(a, b) {
+        .sort(function (a, b) {
           return a.weight - b.weight;
         })
         .forEach(
@@ -236,7 +241,6 @@
            * @param {Object} centerOption.map_center_id
            * @param {Object} centerOption.option_id
            * @param {Object} centerOption.settings
-           *
            */
           function (centerOption) {
             if (typeof Drupal.geolocation.mapCenter[centerOption.map_center_id] === 'function') {
@@ -295,7 +299,7 @@
 
       this.fitBoundaries(boundaries, identifier);
     },
-    getMarkerBoundaries: function(markers) {
+    getMarkerBoundaries: function (markers) {
       // Stub.
     },
     fitBoundaries: function (boundaries, identifier) {
@@ -333,11 +337,9 @@
     },
     initializedCallback: function () {
       this.initializedCallbacks = this.initializedCallbacks || [];
-      var that = this;
-      $.each(this.initializedCallbacks, function (index, callback) {
-        callback(that);
-      });
-      this.initializedCallbacks = [];
+      while (this.initializedCallbacks.length > 0) {
+        this.initializedCallbacks.shift()(this);
+      }
       this.initialized = true;
     },
     addInitializedCallback: function (callback) {
@@ -381,11 +383,9 @@
     },
     populatedCallback: function () {
       this.populatedCallbacks = this.populatedCallbacks || [];
-      var that = this;
-      $.each(this.populatedCallbacks, function (index, callback) {
-        callback(that);
-      });
-      this.populatedCallbacks = [];
+      while (this.populatedCallbacks.length > 0) {
+        this.populatedCallbacks.shift()(this);
+      }
       this.populated = true;
     },
     addPopulatedCallback: function (callback) {
@@ -403,7 +403,6 @@
 
         var locationWrapper = $(locationWrapperElement);
 
-        /** {GeolocationCoordinates */
         var position = {
           lat: Number(locationWrapper.data('lat')),
           lng: Number(locationWrapper.data('lng'))
@@ -442,8 +441,10 @@
    * Factory creating map instances.
    *
    * @constructor
+   *
    * @param {GeolocationMapSettings} mapSettings The map settings.
    * @param {Boolean} [reset] Force creation of new map.
+   *
    * @return {GeolocationMapInterface|boolean} Un-initialized map.
    */
   function Factory(mapSettings, reset) {
@@ -471,17 +472,17 @@
     }
 
     if (!map) {
-      console.error("Map could not be initialzed."); // eslint-disable-line no-console
+      console.error("Map could not be initialzed."); // eslint-disable-line no-console .
       return false;
     }
 
     if (typeof map.container === 'undefined') {
-      console.error("Map container not set."); // eslint-disable-line no-console
+      console.error("Map container not set."); // eslint-disable-line no-console .
       return false;
     }
 
     if (map.container.length !== 1) {
-      console.error("Map container not unique."); // eslint-disable-line no-console
+      console.error("Map container not unique."); // eslint-disable-line no-console .
       return false;
     }
 
@@ -519,12 +520,12 @@
     }
 
     if (typeof map.container === 'undefined') {
-      console.error("Existing map container not set."); // eslint-disable-line no-console
+      console.error("Existing map container not set."); // eslint-disable-line no-console .
       return false;
     }
 
     if (map.container.length !== 1) {
-      console.error("Existing map container not unique."); // eslint-disable-line no-console
+      console.error("Existing map container not unique."); // eslint-disable-line no-console .
       return false;
     }
 
@@ -543,6 +544,7 @@
    * Callback when map is clicked.
    *
    * @callback GeolocationMapFeatureCallback
+   *
    * @param {GeolocationMapInterface} map - Map.
    * @param {GeolocationMapFeatureSettings} featureSettings - Settings.
    *

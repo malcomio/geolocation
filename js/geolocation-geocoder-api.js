@@ -1,12 +1,14 @@
 /**
  * @file
- *   Javascript for the plugin-based geocoder function.
+ * Javascript for the plugin-based geocoder function.
  */
 
 /**
  * Callback when map is clicked.
  *
- * @callback geolocationGeocoderResultCallback
+ * @callback GeolocationGeocoderResultCallback
+ * @callback GeolocationGeocoderClearCallback
+ *
  * @param {Object} address - Address.
  */
 
@@ -27,7 +29,6 @@
    * @param {string} elementId - Source ID.
    */
   Drupal.geolocation.geocoder.resultCallback = function (result, elementId) {
-    // Ensure callbacks array;
     Drupal.geolocation.geocoder.resultCallbacks = Drupal.geolocation.geocoder.resultCallbacks || [];
     $.each(Drupal.geolocation.geocoder.resultCallbacks, function (index, callbackContainer) {
       if (callbackContainer.elementId === elementId) {
@@ -39,7 +40,7 @@
   /**
    * Adds a callback that will be called when results are found.
    *
-   * @param {geolocationGeocoderResultCallback} callback - The callback
+   * @param {GeolocationGeocoderResultCallback} callback - The callback
    * @param {string} elementId - Identify source of result by its element ID.
    */
   Drupal.geolocation.geocoder.addResultCallback = function (callback, elementId) {
@@ -56,7 +57,6 @@
    * @param {string} elementId - Source ID.
    */
   Drupal.geolocation.geocoder.clearCallback = function (elementId) {
-    // Ensure callbacks array;
     Drupal.geolocation.geocoder.clearCallbacks = Drupal.geolocation.geocoder.clearCallbacks || [];
     $.each(Drupal.geolocation.geocoder.clearCallbacks, function (index, callbackContainer) {
       if (callbackContainer.elementId === elementId) {
@@ -68,7 +68,7 @@
   /**
    * Adds a callback that will be called when results should be cleared.
    *
-   * @param {geolocationGeocoderClearCallback} callback - The callback
+   * @param {GeolocationGeocoderClearCallback} callback - The callback
    * @param {string} elementId - Identify source of result by its element ID.
    */
   Drupal.geolocation.geocoder.addClearCallback = function (callback, elementId) {

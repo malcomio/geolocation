@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for the Google geocoder function, specifically the views filter.
+ * Javascript for the Google geocoder function, specifically the views filter.
  */
 
 /**

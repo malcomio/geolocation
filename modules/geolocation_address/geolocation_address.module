@@ -247,7 +247,7 @@ function geolocation_address_field_widget_third_party_settings_form(WidgetInterf
     $element['geocoder_settings'] = [
       '#type' => 'html_tag',
       '#tag' => 'span',
-      '#value' => $this->t("No settings available."),
+      '#value' => t("No settings available."),
     ];
   }
 

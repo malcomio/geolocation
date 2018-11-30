@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for the Google Maps API integration.
+ * Javascript for the Google Maps API integration.
  */
 
 /**
@@ -217,7 +217,7 @@
 
     this.googleMap.setZoom(parseInt(zoom));
   };
-  GeolocationGoogleMap.prototype.getCenter = function() {
+  GeolocationGoogleMap.prototype.getCenter = function () {
     var center = this.googleMap.getCenter();
     return {lat: center.lat(), lng: center.lng()};
   };
@@ -260,7 +260,7 @@
 
     var position = google.maps.ControlPosition.TOP_LEFT;
 
-    if (typeof element.data('googleMapControlPosition') !== 'undefined' ) {
+    if (typeof element.data('googleMapControlPosition') !== 'undefined') {
       var customPosition = element.data('googleMapControlPosition');
       if (typeof google.maps.ControlPosition[customPosition] !== 'undefined') {
         position = google.maps.ControlPosition[customPosition];
@@ -283,7 +283,6 @@
       return element;
     }
     else {
-      // May cause issues.
       // this.googleMap.controls[position].setAt(controlIndex, element.get(0));
       element.remove();
 
@@ -341,7 +340,7 @@
   Drupal.geolocation.google.load = function () {
     // Check for Google Maps.
     if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-      console.error('Geolocation - GoogleMapsAPI url not set.'); // eslint-disable-line no-console
+      console.error('Geolocation - GoogleMaps could not be initialized.'); // eslint-disable-line no-console .
       return;
     }
 

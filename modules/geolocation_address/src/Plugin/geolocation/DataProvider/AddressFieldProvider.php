@@ -3,6 +3,7 @@
 namespace Drupal\geolocation_address\Plugin\geolocation\DataProvider;
 
 use Drupal\address\Plugin\Field\FieldType\AddressItem;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -11,8 +12,9 @@ use Drupal\views\Plugin\views\field\EntityField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\geolocation\DataProviderInterface;
 use Drupal\geolocation\DataProviderBase;
-use PredictHQ\AddressFormatter\Address;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use CommerceGuys\Addressing\Country\CountryRepositoryInterface;
+use CommerceGuys\Addressing\AddressFormat\AddressFormatRepositoryInterface;
 
 /**
  * Provides default address field.
@@ -40,9 +42,40 @@ class AddressFieldProvider extends DataProviderBase implements DataProviderInter
   protected $geocoder = NULL;
 
   /**
-   * {@inheritdoc}
+   * The address format repository.
+   *
+   * @var \CommerceGuys\Addressing\AddressFormat\AddressFormatRepositoryInterface
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityFieldManagerInterface $entity_field_manager, GeocoderManager $geocoder_manager) {
+  protected $addressFormatRepository;
+
+  /**
+   * The country repository.
+   *
+   * @var \CommerceGuys\Addressing\Country\CountryRepositoryInterface
+   */
+  protected $countryRepository;
+
+  /**
+   * AddressFieldProvider constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   Entity type manager.
+   * @param \Drupal\geolocation\GeocoderManager $geocoder_manager
+   *   Geocoder Manager.
+   * @param \CommerceGuys\Addressing\AddressFormat\AddressFormatRepositoryInterface $address_format_repository
+   *   The address format repository.
+   * @param \CommerceGuys\Addressing\Country\CountryRepositoryInterface $country_repository
+   *   The country repository.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityFieldManagerInterface $entity_field_manager, GeocoderManager $geocoder_manager, AddressFormatRepositoryInterface $address_format_repository, CountryRepositoryInterface $country_repository) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_field_manager);
 
     $this->geocoderManager = $geocoder_manager;
@@ -50,6 +83,9 @@ class AddressFieldProvider extends DataProviderBase implements DataProviderInter
     if (!empty($configuration['geocoder'])) {
       $this->geocoder = $this->geocoderManager->createInstance($configuration['geocoder']);
     }
+
+    $this->addressFormatRepository = $address_format_repository;
+    $this->countryRepository = $country_repository;
   }
 
   /**
@@ -61,7 +97,9 @@ class AddressFieldProvider extends DataProviderBase implements DataProviderInter
       $plugin_id,
       $plugin_definition,
       $container->get('entity_field.manager'),
-      $container->get('plugin.manager.geolocation.geocoder')
+      $container->get('plugin.manager.geolocation.geocoder'),
+      $container->get('address.address_format_repository'),
+      $container->get('address.country_repository')
     );
   }
 
@@ -70,9 +108,12 @@ class AddressFieldProvider extends DataProviderBase implements DataProviderInter
    */
   public function isViewsGeoOption(FieldPluginBase $views_field) {
     if ($views_field instanceof EntityField) {
+
       /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager */
       $entityFieldManager = \Drupal::service('entity_field.manager');
+
       $field_map = $entityFieldManager->getFieldMap();
+
       if (
         !empty($field_map)
         &&!empty($views_field->configuration['entity_type'])
@@ -108,20 +149,26 @@ class AddressFieldProvider extends DataProviderBase implements DataProviderInter
       return [];
     }
 
-    /** @var \CommerceGuys\Addressing\Country\CountryRepositoryInterface $countryRepository */
-    $countryRepository = \Drupal::service('address.country_repository');
+    $address_format = str_replace(["\r", "\n"], ' ', $this->addressFormatRepository->get($item->getCountryCode())->getFormat());
 
-    $country = $countryRepository->get($item->getCountryCode());
+    $formatted_address = new FormattableMarkup(str_replace('%', ':', $address_format), [
+      ':givenName' => $item->getGivenName(),
+      ':familyName' => $item->getFamilyName(),
+      ':organization' => $item->getOrganization(),
+      ':addressLine1' => $item->getAddressLine1(),
+      ':addressLine2' => $item->getAddressLine2(),
+      ':dependentLocality' => $item->getDependentLocality(),
+      ':locality' => $item->getLocality(),
+      ':administrativeArea' => $item->getAdministrativeArea(),
+      ':postalCode' => $item->getPostalCode(),
+      ':sortingCode' => $item->getSortingCode(),
+    ]);
 
-    $a = new Address();
-    $a->setCity($item->getLocality())
-      ->setCountryCode($item->getCountryCode())
-      ->setCountry($country->getName())
-      ->setPostcode($item->getPostalCode())
-      ->setRoad($item->getAddressLine1())
-      ->setState($item->getAdministrativeArea());
+    $address = (string) $formatted_address;
+    $address = trim($address);
+    $address = $address . ' ' . $this->countryRepository->get($item->getCountryCode())->getName();
 
-    $coordinates = $this->geocoder->geocode($a->format());
+    $coordinates = $this->geocoder->geocode($address);
     return $coordinates['location'];
   }
 

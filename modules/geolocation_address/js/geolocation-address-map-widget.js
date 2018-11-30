@@ -47,7 +47,7 @@
      * @param {String} drupalSettings.path.baseUrl
      */
     attach: function (context, drupalSettings) {
-      $(document).once('geolocation-address-handler').ajaxComplete(function( event, xhr, settings ) {
+      $(document).once('geolocation-address-handler').ajaxComplete(function (event, xhr, settings) {
         if (
           typeof settings.extraData === 'undefined'
           || typeof settings.extraData._drupal_ajax === 'undefined'
@@ -56,8 +56,7 @@
           return;
         }
 
-
-        $.each(Drupal.geolocation.widgets, function(index, widget) {
+        $.each(Drupal.geolocation.widgets, function (index, widget) {
           if (settings.extraData._triggering_element_name.substr(-14) !== '[country_code]') {
             widget.addressTriggerCalled = false;
           }
@@ -120,7 +119,7 @@
           addressAddMoreCalled: false,
           addressTriggerCalled: false,
           pendingAddedAddressInputs: [],
-          addressInputToString: function(addressInput) {
+          addressInputToString: function (addressInput) {
             addressInput = $(addressInput);
             var addressString = '';
             $.each([
@@ -130,7 +129,7 @@
               'locality',
               'administrative-area',
               'postal-code'
-            ], function(index, property) {
+            ], function (index, property) {
               if (addressInput.find('.' + property).length) {
                 addressString = addressString + ', ' + addressInput.find('.' + property).val()
               }
@@ -141,7 +140,7 @@
             }
             return addressString;
           },
-          addressToCoordinates: function(address) {
+          addressToCoordinates: function (address) {
             return $.getJSON(
               drupalSettings.path.baseUrl + 'geolocation/address/geocoder/geocode',
               {
@@ -152,7 +151,7 @@
               }
             );
           },
-          coordinatesToAddress: function(latitude, longitude) {
+          coordinatesToAddress: function (latitude, longitude) {
             return $.getJSON(
               drupalSettings.path.baseUrl + 'geolocation/address/geocoder/reverse',
               {
@@ -164,7 +163,7 @@
               }
             );
           },
-          getAllAddressInputs: function() {
+          getAllAddressInputs: function () {
             return addressWidgetWrapper.find("[data-drupal-selector^='edit-" + this.settings.address_field.replace(/_/g, '-') + "'][data-drupal-selector$='address']");
           },
           addNewAddressInput: function () {
@@ -182,7 +181,7 @@
               this.addressAddMoreCalled = true;
             }
           },
-          getAddressByDelta: function(delta) {
+          getAddressByDelta: function (delta) {
             delta = parseInt(delta) || 0;
             var input = this.getAllAddressInputs().eq(delta);
             if (input.length) {
@@ -190,7 +189,7 @@
             }
             return null;
           },
-          setAddress: function(address, delta) {
+          setAddress: function (address, delta) {
             var that = this;
             if (typeof delta === 'undefined') {
               delta = this.getNextDelta();
@@ -225,7 +224,7 @@
                 this.addressTriggerCalled = false;
               }
               else {
-                $.each(this.pendingAddedAddressInputs, function(index, item) {
+                $.each(this.pendingAddedAddressInputs, function (index, item) {
                   if (item.delta === delta) {
                     that.pendingAddedAddressInputs.splice(index, 1);
                   }
@@ -246,7 +245,7 @@
               }
             }
             else {
-              $.each(this.pendingAddedAddressInputs, function(index, item) {
+              $.each(this.pendingAddedAddressInputs, function (index, item) {
                 if (item.delta === delta) {
                   that.pendingAddedAddressInputs.splice(index, 1);
                 }
@@ -260,7 +259,7 @@
 
             return delta;
           },
-          removeAddress: function(delta) {
+          removeAddress: function (delta) {
             var addressInput = this.getAddressByDelta(delta);
             if (addressInput) {
               addressInput.find('select, input').val('');
@@ -268,33 +267,47 @@
           }
         });
 
-        var pullButton = geolocationWidgetWrapper.find('button.address-button.address-button-pull');
-        if (pullButton.length === 1) {
-          pullButton.click(function(e) {
-            e.preventDefault();
-            widget.getAllAddressInputs().each(function(delta, addressInput) {
-              widget.removeAddress(delta);
-              var address = widget.addressInputToString(addressInput);
-              widget.addressToCoordinates(address).then(function(location) {
-                widget.locationAlteredCallback('address-changed', location, delta);
-              });
+        if (addressIntegrationSettings.sync_mode === 'auto') {
+          widget.addLocationAlteredCallback(function (location, delta, identifier) {
+            if (identifier === 'address-changed') {
+              return;
+            }
+            widget.removeAddress(delta);
+            widget.coordinatesToAddress(location.lat, location.lng).then(function (address) {
+              widget.setAddress(address, delta);
             });
           });
         }
-        var pushButton = geolocationWidgetWrapper.find('button.address-button.address-button-push');
-        if (pushButton.length === 1) {
-          pushButton.click(function(e) {
-            e.preventDefault();
-            widget.getAllInputs().each(function(delta, input) {
-              var coordinates = widget.getCoordinatesByInput(input);
-              if (!coordinates) {
-                return;
-              }
-              widget.coordinatesToAddress(coordinates.lat, coordinates.lng).then(function(address) {
-                widget.setAddress(address, delta);
+        else {
+          var pullButton = geolocationWidgetWrapper.find('button.address-button.address-button-pull');
+          if (pullButton.length === 1) {
+            pullButton.click(function (e) {
+              e.preventDefault();
+              widget.getAllAddressInputs().each(function (delta, addressInput) {
+                widget.removeInput(delta);
+                var address = widget.addressInputToString(addressInput);
+                widget.addressToCoordinates(address).then(function (location) {
+                  widget.locationAlteredCallback('address-changed', location, delta);
+                });
               });
             });
-          })
+          }
+
+          var pushButton = geolocationWidgetWrapper.find('button.address-button.address-button-push');
+          if (pushButton.length === 1) {
+            pushButton.click(function (e) {
+              e.preventDefault();
+              widget.getAllInputs().each(function (delta, input) {
+                var coordinates = widget.getCoordinatesByInput(input);
+                if (!coordinates) {
+                  return;
+                }
+                widget.coordinatesToAddress(coordinates.lat, coordinates.lng).then(function (address) {
+                  widget.setAddress(address, delta);
+                });
+              });
+            })
+          }
         }
       });
     }

@@ -2,10 +2,11 @@
 
 namespace Drupal\geolocation_google_maps;
 
+use Drupal\geolocation\GeocoderInterface;
 use Drupal\geolocation\GeocoderBase;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\geolocation\MapProviderManager;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\geolocation\GeocoderCountryFormattingManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -13,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\geolocation_google_places_api
  */
-abstract class GoogleGeocoderBase extends GeocoderBase implements ContainerFactoryPluginInterface {
+abstract class GoogleGeocoderBase extends GeocoderBase implements GeocoderInterface {
 
   /**
    * Google maps provider.
@@ -21,13 +22,6 @@ abstract class GoogleGeocoderBase extends GeocoderBase implements ContainerFacto
    * @var \Drupal\geolocation_google_maps\Plugin\geolocation\MapProvider\GoogleMaps
    */
   protected $googleMapsProvider;
-
-  /**
-   * Country formatter manager.
-   *
-   * @var \Drupal\geolocation_google_maps\GoogleGeocoderCountryFormattingManager
-   */
-  protected $countryFormatterManager;
 
   /**
    * GoogleGeocoderBase constructor.
@@ -38,16 +32,15 @@ abstract class GoogleGeocoderBase extends GeocoderBase implements ContainerFacto
    *   Plugin ID.
    * @param mixed $plugin_definition
    *   Plugin definition.
+   * @param \Drupal\geolocation\GeocoderCountryFormattingManager $geocoder_country_formatter_manager
+   *   Country formatter manager.
    * @param \Drupal\geolocation\MapProviderManager $map_provider_manager
    *   Map provider management.
-   * @param \Drupal\geolocation_google_maps\GoogleGeocoderCountryFormattingManager $google_geocoder_country_formatter_manager
-   *   Country formatter manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MapProviderManager $map_provider_manager, GoogleGeocoderCountryFormattingManager $google_geocoder_country_formatter_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, GeocoderCountryFormattingManager $geocoder_country_formatter_manager, MapProviderManager $map_provider_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $geocoder_country_formatter_manager);
 
     $this->googleMapsProvider = $map_provider_manager->getMapProvider('google_maps');
-    $this->countryFormatterManager = $google_geocoder_country_formatter_manager;
   }
 
   /**
@@ -58,8 +51,8 @@ abstract class GoogleGeocoderBase extends GeocoderBase implements ContainerFacto
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.geolocation.mapprovider'),
-      $container->get('plugin.manager.geolocation_google_maps.google_geocoder_country_formatting')
+      $container->get('plugin.manager.geolocation.geocoder_country_formatting'),
+      $container->get('plugin.manager.geolocation.mapprovider')
     );
   }
 
@@ -91,6 +84,7 @@ abstract class GoogleGeocoderBase extends GeocoderBase implements ContainerFacto
       [
         'library' => [
           'geolocation_google_maps/google',
+          'geolocation_google_maps/googlemapsapi',
         ],
       ]
     );
