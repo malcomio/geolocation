@@ -62,3 +62,10 @@ mapfeature.yandex_control_traffic:
     js/MapFeature/control-traffic.js: {}
   dependencies:
   - geolocation_yandex/geolocation.yandex
+
+# Balloon
+mapfeature.yandex_balloon:
+  js:
+    js/MapFeature/balloon.js: {}
+  dependencies:
+  - geolocation_yandex/geolocation.yandex
