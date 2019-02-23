@@ -12,7 +12,7 @@
    * @prop {Drupal~behaviorAttach} attach
    *   Attaches common map marker cluster functionality to relevant elements.
    */
-  Drupal.behaviors.leafletMarkerClusterer = {
+  Drupal.behaviors.yandexClusterer = {
     attach: function (context, drupalSettings) {
       Drupal.geolocation.executeFeatureOnAllMaps(
         'yandex_clusterer',
