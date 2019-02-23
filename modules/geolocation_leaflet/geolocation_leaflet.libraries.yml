@@ -152,6 +152,27 @@ mapfeature.customtilelayer:
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
 
+# WMS support.
+leaflet.wms:
+  header: true
+  remote: https://github.com/heigeo/leaflet.wms
+  version: '0.2.0'
+  license:
+    name: MIT
+    url: https://github.com/heigeo/leaflet.wms/blob/gh-pages/LICENSE
+    gpl-compatible: true
+  cdn:
+    /libraries/leaflet.wms/: //raw.githubusercontent.com/heigeo/leaflet.wms/gh-pages/
+  js:
+    /libraries/leaflet.wms/dist/leaflet.wms.js: { type: external, minified: true }
+
+mapfeature.wms:
+  js:
+    js/MapFeature/geolocation-wms.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
+    - geolocation_leaflet/leaflet.wms
+
 #
 # Map Features - Controls
 #
