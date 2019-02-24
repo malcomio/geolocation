@@ -31,6 +31,7 @@ commonmap.leaflet:
     js/geolocation-common-map-leaflet.js: {}
   dependencies:
     - geolocation/geolocation.commonmap
+    - geolocation_leaflet/geolocation.leaflet
 
 # Leaflet widget API.
 widget.api.leaflet:
@@ -39,6 +40,7 @@ widget.api.leaflet:
     js/geolocation-widget-leaflet-api.js: {}
   dependencies:
     - geolocation/geolocation.widget.api
+    - geolocation_leaflet/geolocation.leaflet
 
 widget.leaflet:
   version: 1.x

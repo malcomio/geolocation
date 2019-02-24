@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for the Google Geocoding API geocoder.
+ * Javascript for the Google Geocoding API geocoder.
  */
 
 /**
@@ -30,7 +30,7 @@
   drupalSettings.geolocation.geocoder.photon = drupalSettings.geolocation.geocoder.photon || {};
 
   /**
-   * Attach geocoder input for Photon
+   * Attach geocoder input for Photon.
    *
    * @type {Drupal~behavior}
    *
@@ -39,7 +39,7 @@
    */
   Drupal.behaviors.geolocationGeocoderPhoton = {
     attach: function (context) {
-      $.each(drupalSettings.geolocation.geocoder.photon.inputIds, function(index, inputId) {
+      $.each(drupalSettings.geolocation.geocoder.photon.inputIds, function (index, inputId) {
         var geocoderInput = $('input.geolocation-geocoder-address[data-source-identifier="' + inputId + '"]', context);
 
         if (geocoderInput.length === 0) {
@@ -122,10 +122,10 @@
             Drupal.geolocation.geocoder.resultCallback({
                 geometry: {
                   location: {
-                    lat: function() {
+                    lat: function () {
                       return ui.item.result.geometry.coordinates[1];
                     },
-                    lng: function() {
+                    lng: function () {
                       return ui.item.result.geometry.coordinates[0];
                     }
                   },
@@ -140,7 +140,7 @@
 
       });
     },
-    detach: function() {}
+    detach: function () {}
   };
 
 })(jQuery, Drupal);
