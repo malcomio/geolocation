@@ -215,7 +215,13 @@
       zoom = this.settings.google_map_settings.zoom;
     }
 
-    this.googleMap.setZoom(parseInt(zoom));
+    zoom = parseInt(zoom);
+
+    this.googleMap.setZoom(zoom);
+    var that = this;
+    google.maps.event.addListenerOnce(this.googleMap, "idle", function() {
+      that.googleMap.setZoom(zoom);
+    });
   };
   GeolocationGoogleMap.prototype.getCenter = function () {
     var center = this.googleMap.getCenter();
