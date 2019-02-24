@@ -184,6 +184,21 @@
     return {lat: center.lat, lng: center.lng};
   };
   GeolocationLeafletMap.prototype.fitBoundaries = function (boundaries, identifier) {
+    if (typeof boundaries === 'undefined') {
+      return;
+    }
+
+    if (
+      typeof boundaries.east !== 'undefined'
+      && typeof boundaries.west !== 'undefined'
+      && typeof boundaries.east !== 'undefined'
+      && typeof boundaries.east !== 'undefined'
+    ) {
+      boundaries = L.latLngBounds([
+        [boundaries.south, boundaries.west],
+        [boundaries.north, boundaries.east]
+      ]);
+    }
     if (!this.leafletMap.getBounds().equals(boundaries)) {
       this.leafletMap.fitBounds(boundaries);
       Drupal.geolocation.GeolocationMapBase.prototype.fitBoundaries.call(this, boundaries, identifier);

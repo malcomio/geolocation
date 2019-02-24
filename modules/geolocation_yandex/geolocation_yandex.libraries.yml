@@ -33,32 +33,39 @@ mapfeature.yandex_control_zoom:
   js:
     js/MapFeature/control-zoom.js: {}
   dependencies:
-  - geolocation_leaflet/geolocation.yandex
+  - geolocation_yandex/geolocation.yandex
 
 # Control Search
 mapfeature.yandex_control_search:
   js:
     js/MapFeature/control-search.js: {}
   dependencies:
-  - geolocation_leaflet/geolocation.yandex
+  - geolocation_yandex/geolocation.yandex
 
 # Control Type
 mapfeature.yandex_control_type:
   js:
     js/MapFeature/control-type.js: {}
   dependencies:
-  - geolocation_leaflet/geolocation.yandex
+  - geolocation_yandex/geolocation.yandex
 
 # Control Geolocation
 mapfeature.yandex_control_geolocation:
   js:
     js/MapFeature/control-geolocation.js: {}
   dependencies:
-  - geolocation_leaflet/geolocation.yandex
+  - geolocation_yandex/geolocation.yandex
 
 # Control Traffic
 mapfeature.yandex_control_traffic:
   js:
     js/MapFeature/control-traffic.js: {}
   dependencies:
-  - geolocation_leaflet/geolocation.yandex
+  - geolocation_yandex/geolocation.yandex
+
+# Balloon
+mapfeature.yandex_balloon:
+  js:
+    js/MapFeature/balloon.js: {}
+  dependencies:
+  - geolocation_yandex/geolocation.yandex

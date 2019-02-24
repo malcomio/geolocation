@@ -32,9 +32,6 @@ class Yandex extends GeocoderBase implements GeocoderInterface {
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
-        'library' => [
-          'geolocation_leaflet/geocoder.yandex',
-        ],
         'drupalSettings' => [
           'geolocation' => [
             'geocoder' => [
