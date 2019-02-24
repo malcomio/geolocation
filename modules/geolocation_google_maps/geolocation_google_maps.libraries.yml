@@ -4,6 +4,7 @@ googlemapsapi:
   dependencies:
     - core/drupalSettings
     - geolocation/geolocation.api
+    - geolocation_google_maps/google
   js:
     js/geolocation-google-maps-api.js: {}
 
@@ -13,6 +14,7 @@ commonmap.google:
     js/geolocation-common-map-google.js: {}
   dependencies:
     - geolocation/geolocation.commonmap
+    - geolocation_google_maps/googlemapsapi
 
 # Google Maps geocoder function.
 geocoder.googlegeocodingapi:
@@ -31,6 +33,7 @@ widget.api.google:
     js/geolocation-widget-google-api.js: {}
   dependencies:
     - geolocation/geolocation.widget.api
+    - geolocation_google_maps/googlemapsapi
 
 widget.google:
   version: 1.x

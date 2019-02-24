@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for the Google Places API geocoder.
+ * Javascript for the Google Places API geocoder.
  */
 
 /**
@@ -96,7 +96,7 @@
   };
 
   /**
-   * Attach geocoder input for Google places API
+   * Attach geocoder input for Google places API.
    *
    * @type {Drupal~behavior}
    *
@@ -107,11 +107,11 @@
     attach: function (context) {
       var attribution_block = $('#geolocation-google-places-api-attribution');
       if (attribution_block.length === 0) {
-        console.error("Geolocation Google Places API attribution block missing."); // eslint-disable-line no-console
+        console.error("Geolocation Google Places API attribution block missing."); // eslint-disable-line no-console .
         return;
       }
 
-      Drupal.geolocation.google.addLoadedCallback(function() {
+      Drupal.geolocation.google.addLoadedCallback(function () {
         if (typeof Drupal.geolocation.geocoder.googlePlacesAPI.service === 'undefined') {
           Drupal.geolocation.geocoder.googlePlacesAPI.service = new google.maps.places.PlacesService(attribution_block[0]);
           Drupal.geolocation.geocoder.googlePlacesAPI.autocompleteService = new google.maps.places.AutocompleteService();
