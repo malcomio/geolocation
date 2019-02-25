@@ -7,7 +7,7 @@ use Drupal\geolocation_google_maps\GoogleCountryFormattingBase;
 /**
  * Provides germany address formatting.
  *
- * @eocoderCountryFormatting(
+ * @GeocoderCountryFormatting(
  *   id = "google_gocoding_api_standard",
  * )
  */

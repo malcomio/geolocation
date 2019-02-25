@@ -214,7 +214,6 @@
               if (addressInput) {
                 if (addressInput.find('.country').val() === address.countryCode) {
                   widget.addressChangedEventPaused = true;
-                  console.log("Setting address");
                   addressInput.find('.organization').val(address.organization);
                   addressInput.find('.address-line1').val(address.addressLine1);
                   addressInput.find('.address-line2').val(address.addressLine2);
@@ -230,7 +229,6 @@
                     }
                   }
                   addressInput.find('.postal-code').val(address.postalCode);
-                  console.log("Setting address done");
                   widget.addressChangedEventPaused = false;
                   this.addressTriggerCalled = false;
                 }
@@ -255,7 +253,11 @@
                   this.addressTriggerCalled = true;
                 }
               }
-              else {
+              else if (
+                address.countryCode
+                && address.countryCode.length > 0
+                && addressInput.find('.country option[value="' + address.countryCode + '"]').length > 0
+              ) {
                 $.each(this.pendingAddedAddressInputs, function (index, item) {
                   if (item.delta === delta) {
                     that.pendingAddedAddressInputs.splice(index, 1);
@@ -273,11 +275,12 @@
             removeAddress: function (delta) {
               var addressInput = this.getAddressByDelta(delta);
               if (addressInput) {
-                console.log("Removing address");
                 widget.addressChangedEventPaused = true;
                 addressInput.find('select, input').val('');
                 widget.addressChangedEventPaused = false;
-                console.log("Removing address done");
+              }
+              else {
+                addressInput.find('.country').val('').trigger('change');
               }
             }
           });
@@ -364,7 +367,6 @@
                 if (widget.addressChangedEventPaused) {
                   return;
                 }
-                console.log("Address changed, triggering 2");
 
                 var address = widget.getAddressByDelta(delta);
                 widget.addressToCoordinates(widget.addressInputToString(address)).then(function (location) {

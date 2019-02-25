@@ -23,6 +23,8 @@ use Drupal\Core\Url;
  */
 class Nominatim extends GeocoderBase implements GeocoderInterface {
 
+  protected static $NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org';
+
   /**
    * {@inheritdoc}
    */
@@ -31,9 +33,10 @@ class Nominatim extends GeocoderBase implements GeocoderInterface {
       return FALSE;
     }
 
-    $url = Url::fromUri('https://nominatim.openstreetmap.org/search/' . $address, [
+    $request_url_base = $this->getRequestUrlBase();
+    $url = Url::fromUri($request_url_base . '/search/' . $address, [
       'query' => [
-        'email' => \Drupal::config('system.site')->get('mail'),
+        'email' => $this->getRequestEmail(),
         'limit' => 1,
         'format' => 'json',
         'connect_timeout' => 5,
@@ -80,11 +83,12 @@ class Nominatim extends GeocoderBase implements GeocoderInterface {
    * {@inheritdoc}
    */
   public function reverseGeocode($latitude, $longitude) {
-    $url = Url::fromUri('https://nominatim.openstreetmap.org/reverse/', [
+    $request_url_base = $this->getRequestUrlBase();
+    $url = Url::fromUri($request_url_base . '/reverse/', [
       'query' => [
         'lat' => $latitude,
         'lon' => $longitude,
-        'email' => \Drupal::config('system.site')->get('mail'),
+        'email' => $this->getRequestEmail(),
         'limit' => 1,
         'format' => 'json',
         'connect_timeout' => 5,
@@ -141,7 +145,7 @@ class Nominatim extends GeocoderBase implements GeocoderInterface {
           break;
 
         case 'country_code':
-          $address_atomics['countryCode'] = $value;
+          $address_atomics['countryCode'] = strtoupper($value);
           break;
       }
     }
@@ -151,6 +155,36 @@ class Nominatim extends GeocoderBase implements GeocoderInterface {
       'elements' => $this->addressElements($address_atomics),
       'formatted_address' => empty($result['display_name']) ? '' : $result['display_name'],
     ];
+  }
+
+  /**
+   * @return string
+   */
+  protected function getRequestUrlBase() {
+    $config = \Drupal::config('geolocation_leaflet.nominatim_settings');
+
+    if (!empty($config->get('nominatim_base_url'))) {
+      $request_url = $config->get('nominatim_base_url');
+    }
+    else {
+      $request_url = self::$NOMINATIM_BASE_URL;
+    }
+    return $request_url;
+  }
+
+  /**
+   * @return string
+   */
+  protected function getRequestEmail() {
+    $config = \Drupal::config('geolocation_leaflet.nominatim_settings');
+
+    if (!empty($config->get('nominatim_email'))) {
+      $request_email = $config->get('nominatim_email');
+    }
+    else {
+      $request_email = \Drupal::config('system.site')->get('mail');
+    }
+    return $request_email;
   }
 
 }
