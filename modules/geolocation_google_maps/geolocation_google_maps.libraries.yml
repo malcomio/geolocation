@@ -4,7 +4,6 @@ googlemapsapi:
   dependencies:
     - core/drupalSettings
     - geolocation/geolocation.api
-    - geolocation_google_maps/google
   js:
     js/geolocation-google-maps-api.js: {}
 
