@@ -44,34 +44,9 @@
          */
         function (map, featureSettings) {
           map.addMarkerAddedCallback(function (currentMarker) {
+            var newIcon = {};
+
             var currentIcon = currentMarker.getIcon();
-
-            var anchorX = currentMarker.locationWrapper.data('marker-icon-anchor-x') || featureSettings.anchor.x;
-            var anchorY = currentMarker.locationWrapper.data('marker-icon-anchor-y') || featureSettings.anchor.y;
-            var labelOriginX = currentMarker.locationWrapper.data('marker-icon-label-origin-x') || featureSettings.labelOrigin.y;
-            var labelOriginY = currentMarker.locationWrapper.data('marker-icon-label-origin-y') || featureSettings.labelOrigin.y;
-            var originX = currentMarker.locationWrapper.data('marker-icon-origin-x') || featureSettings.origin.y;
-            var originY = currentMarker.locationWrapper.data('marker-icon-origin-y') || featureSettings.origin.y;
-            var sizeWidth = currentMarker.locationWrapper.data('marker-icon-size-width') || featureSettings.size.width;
-            var sizeHeight = currentMarker.locationWrapper.data('marker-icon-size-height') || featureSettings.size.height;
-            var scaledSizeWidth = currentMarker.locationWrapper.data('marker-icon-scaled-size-width') || featureSettings.scaledSize.width;
-            var scaledSizeHeight = currentMarker.locationWrapper.data('marker-icon-scaled-size-height') || featureSettings.scaledSize.height;
-
-            var newIcon = {
-              anchor: new google.maps.Point(anchorX, anchorY),
-              labelOrigin: new google.maps.Point(labelOriginX, labelOriginY),
-              origin: new google.maps.Point(originX, originY)
-            };
-
-            if (sizeWidth && sizeHeight) {
-              newIcon.size = new google.maps.Size(sizeWidth, sizeHeight);
-            }
-
-            if (scaledSizeWidth && scaledSizeHeight) {
-              newIcon.scaledSize = new google.maps.Size(scaledSizeWidth, scaledSizeHeight);
-            }
-
-
             if (typeof currentIcon === 'undefined') {
               if (typeof featureSettings.markerIconPath === 'string') {
                 newIcon.url = featureSettings.markerIconPath;
@@ -85,6 +60,37 @@
             }
             else if (typeof currentIcon.url === 'string') {
               newIcon.url = currentIcon.url;
+            }
+
+            var anchorX = currentMarker.locationWrapper.data('marker-icon-anchor-x') || featureSettings.anchor.x;
+            var anchorY = currentMarker.locationWrapper.data('marker-icon-anchor-y') || featureSettings.anchor.y;
+            var labelOriginX = currentMarker.locationWrapper.data('marker-icon-label-origin-x') || featureSettings.labelOrigin.x;
+            var labelOriginY = currentMarker.locationWrapper.data('marker-icon-label-origin-y') || featureSettings.labelOrigin.y;
+            var originX = currentMarker.locationWrapper.data('marker-icon-origin-x') || featureSettings.origin.x;
+            var originY = currentMarker.locationWrapper.data('marker-icon-origin-y') || featureSettings.origin.y;
+            var sizeWidth = currentMarker.locationWrapper.data('marker-icon-size-width') || featureSettings.size.width;
+            var sizeHeight = currentMarker.locationWrapper.data('marker-icon-size-height') || featureSettings.size.height;
+            var scaledSizeWidth = currentMarker.locationWrapper.data('marker-icon-scaled-size-width') || featureSettings.scaledSize.width;
+            var scaledSizeHeight = currentMarker.locationWrapper.data('marker-icon-scaled-size-height') || featureSettings.scaledSize.height;
+
+            if (anchorX && anchorY) {
+              newIcon.anchor = new google.maps.Point(anchorX, anchorY);
+            }
+
+            if (labelOriginX && labelOriginY) {
+              newIcon.labelOrigin = new google.maps.Point(labelOriginX, labelOriginY);
+            }
+
+            if (originX && originY) {
+              newIcon.origin = new google.maps.Point(originX, originY)
+            }
+
+            if (sizeWidth && sizeHeight) {
+              newIcon.size = new google.maps.Size(sizeWidth, sizeHeight);
+            }
+
+            if (scaledSizeWidth && scaledSizeHeight) {
+              newIcon.scaledSize = new google.maps.Size(scaledSizeWidth, scaledSizeHeight);
             }
 
             currentMarker.setIcon(newIcon);
