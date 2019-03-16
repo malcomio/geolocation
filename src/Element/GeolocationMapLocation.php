@@ -84,6 +84,9 @@ class GeolocationMapLocation extends RenderElement {
     if (!empty($render_array['#id'])) {
       $render_array['#attributes']->setAttribute('id', $render_array['#id']);
     }
+    if (!empty($render_array['#location_id'])) {
+      $render_array['#attributes']->setAttribute('data-location-id', $render_array['#location_id']);
+    }
 
     $render_array['#attributes']->setAttribute('data-lat', $render_array['#position']['lat']);
     $render_array['#attributes']->setAttribute('data-lng', $render_array['#position']['lng']);
