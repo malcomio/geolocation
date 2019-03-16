@@ -50,7 +50,7 @@ function geolocation_update_8202(&$sandbox) {
           switch ($content_settings[$field_name]['type']) {
             case 'geolocation_map':
               if (empty($content_settings[$field_name]['settings']['google_map_settings'])) {
-                continue;
+                continue 2;
               }
               $content_settings[$field_name]['settings']['map_provider_id'] = 'google_maps';
               $content_settings[$field_name]['settings']['map_provider_settings'] = (array) $content_settings[$field_name]['settings']['google_map_settings'];
@@ -97,7 +97,7 @@ function geolocation_update_8202(&$sandbox) {
       switch ($display['display_options']['style']['type']) {
         case 'maps_common':
           if (empty($display['display_options']['style']['options']['google_map_settings'])) {
-            continue;
+            continue 2;
           }
           $displays[$display_id]['display_options']['style']['options']['map_provider_id'] = 'google_maps';
           $displays[$display_id]['display_options']['style']['options']['map_provider_settings'] = $display['display_options']['style']['options']['google_map_settings'];
@@ -107,7 +107,7 @@ function geolocation_update_8202(&$sandbox) {
 
         case 'google_static_common_map':
           if (empty($display['display_options']['style']['options']['google_static_maps_settings'])) {
-            continue;
+            continue 2;
           }
           $displays[$display_id]['display_options']['style']['options']['map_provider_id'] = 'google_static_maps';
           $displays[$display_id]['display_options']['style']['options']['map_provider_settings'] = $display['display_options']['style']['options']['google_static_maps_settings'];
@@ -118,7 +118,7 @@ function geolocation_update_8202(&$sandbox) {
 
         case 'geolocation_leaflet':
           if (empty($display['display_options']['style']['options']['leaflet_settings'])) {
-            continue;
+            continue 2;
           }
           $displays[$display_id]['display_options']['style']['options']['map_provider_id'] = 'leaflet';
           $displays[$display_id]['display_options']['style']['options']['map_provider_settings'] = $display['display_options']['style']['options']['leaflet_settings'];
