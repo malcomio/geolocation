@@ -54,7 +54,9 @@ class YandexMapsSettings extends ConfigFormBase {
     $config->save();
 
     // Confirmation on form submission.
-    \Drupal::messenger()->addMessage($this->t('The configuration options have been saved. A cache-clear might be necessary for changes to take effect.'));
-  }
+    \Drupal::messenger()->addMessage($this->t('The configuration options have been saved.'));
 
+    drupal_flush_all_caches();
+  }
 }
+

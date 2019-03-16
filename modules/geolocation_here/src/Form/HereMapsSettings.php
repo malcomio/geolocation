@@ -62,6 +62,8 @@ class HereMapsSettings extends ConfigFormBase {
 
     // Confirmation on form submission.
     \Drupal::messenger()->addMessage($this->t('The configuration options have been saved.'));
+
+    drupal_flush_all_caches();
   }
 
 }

@@ -106,14 +106,10 @@
     return this.yandexMap.getCenter();
   };
   GeolocationYandexMap.prototype.fitBoundaries = function (boundaries, identifier) {
-    this.yandexMap.setBounds([
-        [boundaries.south, boundaries.west],
-        [boundaries.north, boundaries.east]
-    ]);
+    this.yandexMap.setBounds(boundaries);
     Drupal.geolocation.GeolocationMapBase.prototype.fitBoundaries.call(this, boundaries, identifier);
   };
   GeolocationYandexMap.prototype.getMarkerBoundaries = function (locations) {
-
     locations = locations || this.mapMarkers;
     if (locations.length === 0) {
       return;

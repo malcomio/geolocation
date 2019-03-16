@@ -5,5 +5,8 @@
   "private": true,
   "devDependencies": {
     "@types/yandex-maps": "^2.1.2"
+  },
+  "dependencies": {
+    "@types/yandex-maps": "^2.1.5"
   }
 }
