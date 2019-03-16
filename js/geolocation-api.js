@@ -367,7 +367,13 @@
         callback(marker);
       });
     },
-    addMarkerAddedCallback: function (callback) {
+    addMarkerAddedCallback: function (callback, existing) {
+      existing = existing || true;
+      if (existing) {
+        $.each(this.mapMarkers, function (index, marker) {
+          callback(marker);
+        });
+      }
       this.markerAddedCallbacks = this.markerAddedCallbacks || [];
       this.markerAddedCallbacks.push(callback);
     },
