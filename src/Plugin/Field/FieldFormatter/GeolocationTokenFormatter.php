@@ -140,7 +140,9 @@ class GeolocationTokenFormatter extends FormatterBase {
     $dependencies = parent::calculateDependencies();
     $settings = $this->getSettings();
     $filter_format = FilterFormat::load($settings['tokenized_text']['format']);
-    $dependencies['config'][] = $filter_format->getConfigDependencyName();
+    if ($filter_format) {
+      $dependencies['config'][] = $filter_format->getConfigDependencyName();
+    }
     return $dependencies;
   }
 
