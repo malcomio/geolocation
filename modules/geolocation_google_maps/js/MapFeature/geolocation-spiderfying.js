@@ -121,6 +121,11 @@
                 oms.addMarker(marker);
               };
 
+              //Remove if https://github.com/jawj/OverlappingMarkerSpiderfier/issues/103 is ever corrected
+              google.maps.event.addListener(map.googleMap, 'idle', () => {
+                Object.getPrototypeOf(oms).h.call(oms);
+              });
+
               $.each(map.mapMarkers, function(index, marker) {
                 geolocationOmsMarkerFunction(marker);
               });
