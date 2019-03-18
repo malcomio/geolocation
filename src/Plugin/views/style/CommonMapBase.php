@@ -305,6 +305,7 @@ class CommonMapBase extends StylePluginBase {
         'content' => $this->view->rowPlugin->render($row),
         '#title' => empty($title_build) ? '' : $title_build,
         '#position' => $position,
+        '#weight' => $row->index,
       ];
 
       if (!empty($icon_url)) {

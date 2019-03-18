@@ -327,6 +327,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
           'lat' => $item_position['lat'],
           'lng' => $item_position['lng'],
         ],
+        '#weight' => $delta,
       ];
 
       if (
