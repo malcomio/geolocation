@@ -14,6 +14,17 @@
  * @extends {GeolocationMapFeatureSettings}
  *
  * @property {String} spiderfiable_marker_path
+ * @property {String} markersWontMove
+ * @property {String} markersWontHide
+ * @property {String} keepSpiderfied
+ * @property {String} ignoreMapClick
+ * @property {String} nearbyDistance
+ * @property {String} circleSpiralSwitchover
+ * @property {String} circleFootSeparation
+ * @property {String} spiralFootSeparation
+ * @property {String} spiralLengthStart
+ * @property {String} spiralLengthFactor
+ * @property {String} legWeight
  */
 
 (function ($, Drupal) {
@@ -52,9 +63,39 @@
              * @type {OverlappingMarkerSpiderfierInterface} OverlappingMarkerSpiderfier
              */
             oms = new OverlappingMarkerSpiderfier(map.googleMap, {
-              markersWontMove: true,
-              keepSpiderfied: true
+              markersWontMove: featureSettings.markersWontMove,
+              markersWontHide: featureSettings.markersWontHide,
+              keepSpiderfied: featureSettings.keepSpiderfied,
+              ignoreMapClick: featureSettings.ignoreMapClick
             });
+            
+            if (featureSettings.nearbyDistance) {
+              oms.nearbyDistance = featureSettings.nearbyDistance;
+            }
+            
+            if (featureSettings.circleSpiralSwitchover) {
+              oms.circleSpiralSwitchover = featureSettings.circleSpiralSwitchover;
+            }
+            
+            if (featureSettings.circleFootSeparation) {
+              oms.circleFootSeparation = featureSettings.circleFootSeparation;
+            }
+            
+            if (featureSettings.spiralFootSeparation) {
+              oms.spiralFootSeparation = featureSettings.spiralFootSeparation;
+            }
+            
+            if (featureSettings.spiralLengthStart) {
+              oms.spiralLengthStart = featureSettings.spiralLengthStart;
+            }
+            
+            if (featureSettings.spiralLengthFactor) {
+              oms.spiralLengthFactor = featureSettings.spiralLengthFactor;
+            }
+            
+            if (featureSettings.legWeight) {
+              oms.legWeight = featureSettings.legWeight;
+            }
 
             if (oms) {
 
@@ -120,6 +161,14 @@
                 );
                 oms.addMarker(marker);
               };
+
+              //Remove if https://github.com/jawj/OverlappingMarkerSpiderfier/issues/103 is ever corrected
+              google.maps.event.addListener(
+                map.googleMap,
+                'idle', function() {
+                  Object.getPrototypeOf(oms).h.call(oms);
+                }
+              );
 
               $.each(map.mapMarkers, function(index, marker) {
                 geolocationOmsMarkerFunction(marker);
