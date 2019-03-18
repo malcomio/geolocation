@@ -123,10 +123,9 @@ class GoogleStaticMaps extends GoogleMapsProviderBase {
       'format' => $map_settings['format'],
     ];
 
-    if ($render_array['#centre']['behavior'] !== 'fitlocations') {
-      if (isset($render_array['#centre']['lat']) && isset($render_array['#centre']['lng'])) {
-        $additional_parameters['center'] = $render_array['#centre']['lat'] . ',' . $render_array['#centre']['lng'];
-      }
+    // 0,0 is the default behavior anyway, so just ignore it for fitlocations.
+    if (!empty($render_array['#centre']['lat']) || !empty($render_array['#centre']['lng'])) {
+      $additional_parameters['center'] = $render_array['#centre']['lat'] . ',' . $render_array['#centre']['lng'];
     }
 
     $static_map_url = $this->getGoogleMapsApiUrl($additional_parameters);
