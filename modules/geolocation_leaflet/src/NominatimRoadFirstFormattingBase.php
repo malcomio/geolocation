@@ -3,10 +3,12 @@
 namespace Drupal\geolocation_leaflet;
 
 /**
- * Base class for nominatim geocoder country formatting plugins which use the "<road> <house number>" address format.
+ * Alternative street formatting base class.
+ *
+ * Base class for nominatim geocoder country formatting plugins which use the
+ * "<road> <house number>" address format.
  */
-class NominatimRoadFirstFormattingBase extends NominatimCountryFormattingBase
-{
+class NominatimRoadFirstFormattingBase extends NominatimCountryFormattingBase {
 
   /**
    * {@inheritdoc}

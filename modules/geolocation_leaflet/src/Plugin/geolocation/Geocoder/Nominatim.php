@@ -23,7 +23,7 @@ use Drupal\Core\Url;
  */
 class Nominatim extends GeocoderBase implements GeocoderInterface {
 
-  protected static $NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org';
+  protected static $nominatimBaseUrl = 'https://nominatim.openstreetmap.org';
 
   /**
    * {@inheritdoc}
@@ -147,6 +147,10 @@ class Nominatim extends GeocoderBase implements GeocoderInterface {
         case 'country_code':
           $address_atomics['countryCode'] = strtoupper($value);
           break;
+
+        case 'suburb':
+          $address_atomics['suburb'] = $value;
+          break;
       }
     }
 
@@ -158,7 +162,10 @@ class Nominatim extends GeocoderBase implements GeocoderInterface {
   }
 
   /**
+   * Retrieve base URL from setting or default.
+   *
    * @return string
+   *   Base URL.
    */
   protected function getRequestUrlBase() {
     $config = \Drupal::config('geolocation_leaflet.nominatim_settings');
@@ -167,13 +174,16 @@ class Nominatim extends GeocoderBase implements GeocoderInterface {
       $request_url = $config->get('nominatim_base_url');
     }
     else {
-      $request_url = self::$NOMINATIM_BASE_URL;
+      $request_url = self::$nominatimBaseUrl;
     }
     return $request_url;
   }
 
   /**
+   * Nominatim should be called with a request E-Mail.
+   *
    * @return string
+   *   Get Request Email.
    */
   protected function getRequestEmail() {
     $config = \Drupal::config('geolocation_leaflet.nominatim_settings');

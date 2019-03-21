@@ -30,6 +30,7 @@
  * @property {String} addressLine1
  * @property {String} addressLine2
  * @property {String} locality
+ * @property {String} dependentLocality
  * @property {String} administrativeArea
  */
 
@@ -218,6 +219,7 @@
                   addressInput.find('.address-line1').val(address.addressLine1);
                   addressInput.find('.address-line2').val(address.addressLine2);
                   addressInput.find('.locality').val(address.locality);
+                  addressInput.find('.dependent-locality').val(address.dependentLocality);
 
                   var administrativeAreaInput = addressInput.find('.administrative-area');
                   if (administrativeAreaInput) {
