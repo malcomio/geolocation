@@ -3,10 +3,6 @@
  * Javascript for the Google geocoder function, specifically the views filter.
  */
 
-/**
- * @param {String} drupalSettings.geolocation.geocoder.viewsFilterGeocoder
- */
-
 (function ($, Drupal) {
   'use strict';
 
@@ -19,7 +15,13 @@
    *   Attaches views geolocation filter geocoder to relevant elements.
    */
   Drupal.behaviors.geolocationViewsFilterGeocoder = {
-    attach: function (context) {
+
+    /**
+     * @param {Object} context
+     * @param {Object} drupalSettings
+     * @param {String} drupalSettings.geolocation.geocoder.viewsFilterGeocoder
+     */
+    attach: function (context, drupalSettings) {
       $.each(drupalSettings.geolocation.geocoder.viewsFilterGeocoder, function (elementId, settings) {
 
         /**

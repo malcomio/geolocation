@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for leaflet integration.
+ * Javascript for leaflet integration.
  */
 
 (function ($, Drupal) {
@@ -18,7 +18,7 @@
    */
   function GeolocationLeafletMap(mapSettings) {
     if (typeof L === 'undefined') {
-      console.error('Leaflet library not loaded. Bailing out.'); // eslint-disable-line no-console
+      console.error('Leaflet library not loaded. Bailing out.'); // eslint-disable-line no-console.
       return;
     }
 
@@ -61,9 +61,9 @@
     this.markerLayer = markerLayer;
     this.tileLayer = tileLayer;
 
-    this.addPopulatedCallback(function(map) {
+    this.addPopulatedCallback(function (map) {
       var singleClick;
-      map.leafletMap.on('click', /** @param {LeafletMouseEvent} e */ function(e) {
+      map.leafletMap.on('click', /** @param {LeafletMouseEvent} e */ function (e) {
         singleClick = setTimeout(function () {
           map.clickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
         }, 500);
@@ -74,7 +74,7 @@
         map.doubleClickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
       });
 
-      map.leafletMap.on('contextmenu', /** @param {LeafletMouseEvent} e */ function(e) {
+      map.leafletMap.on('contextmenu', /** @param {LeafletMouseEvent} e */ function (e) {
         map.contextClickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
       });
     });
@@ -206,11 +206,11 @@
   };
   GeolocationLeafletMap.prototype.addControl = function (element) {
     this.leafletMap.controls = this.leafletMap.controls || [];
-    var controlElement = new (L.Control.extend({
+    var controlElement = new(L.Control.extend({
       options: {
         position: typeof element.dataset.controlPosition === 'undefined' ? 'topleft' : element.dataset.controlPosition
       },
-      onAdd: function(map) {
+      onAdd: function (map) {
         element.style.display = 'block';
         L.DomEvent.disableClickPropagation(element);
         return element;
@@ -222,7 +222,7 @@
   GeolocationLeafletMap.prototype.removeControls = function () {
     this.leafletMap.controls = this.leafletMap.controls || [];
     var that = this;
-    $.each(this.leafletMap.controls, function(index, control) {
+    $.each(this.leafletMap.controls, function (index, control) {
       that.leafletMap.removeControl(control);
     });
   };
