@@ -161,6 +161,12 @@ geolocation.mapdisabletilt:
   dependencies:
   - geolocation_google_maps/googlemapsapi
 
+# MarkerZoomByAnchor support.
+geolocation.marker_zoom_by_anchor:
+  js:
+    js/MapFeature/geolocation-markerzoombyanchor.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
 
 
 #

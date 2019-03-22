@@ -31,7 +31,6 @@ class CommonMapBase extends StylePluginBase {
 
   protected $mapId = FALSE;
 
-  protected $idField = FALSE;
   protected $titleField = FALSE;
   protected $iconField = FALSE;
 
@@ -142,14 +141,6 @@ class CommonMapBase extends StylePluginBase {
       $this->iconField = $this->options['icon_field'];
     }
 
-    if (
-      !empty($this->options['marker_scroll_to_result'])
-      && !empty($this->options['id_field'])
-      && $this->options['id_field'] != 'none'
-    ) {
-      $this->idField = $this->options['id_field'];
-    }
-
     // TODO: Not unique enough, but uniqueid() changes on every AJAX request.
     // For the geolocationCommonMapBehavior to work, this has to stay identical.
     $this->mapId = $this->view->id() . '-' . $this->view->current_display;
@@ -258,15 +249,6 @@ class CommonMapBase extends StylePluginBase {
       }
     }
 
-    if (!empty($this->idField)) {
-      $build['#attached']['drupalSettings']['geolocation']['commonMap'][$this->mapId]['markerScrollToResult'] = TRUE;
-      /** @var \Drupal\views\Plugin\views\field\Field $id_field_handler */
-      $id_field_handler = $this->view->field[$this->idField];
-      if (!empty($id_field_handler)) {
-        $location_id = $id_field_handler->getValue($row);
-      }
-    }
-
     $icon_url = NULL;
     if (!empty($this->iconField)) {
       /** @var \Drupal\views\Plugin\views\field\Field $icon_field_handler */
@@ -306,6 +288,7 @@ class CommonMapBase extends StylePluginBase {
         '#title' => empty($title_build) ? '' : $title_build,
         '#position' => $position,
         '#weight' => $row->index,
+        '#attributes' => ['data-views-row-index' => $row->index],
       ];
 
       if (!empty($icon_url)) {
@@ -313,7 +296,7 @@ class CommonMapBase extends StylePluginBase {
       }
 
       if (!empty($location_id)) {
-        $location['#location_id'] = $location_id;
+        $location['#id'] = $location_id;
       }
 
       if ($this->options['marker_row_number']) {
@@ -341,9 +324,7 @@ class CommonMapBase extends StylePluginBase {
 
     $options['title_field'] = ['default' => ''];
     $options['icon_field'] = ['default' => ''];
-    $options['id_field'] = ['default' => ''];
 
-    $options['marker_scroll_to_result'] = ['default' => 0];
     $options['marker_row_number'] = ['default' => FALSE];
     $options['dynamic_map'] = [
       'contains' => [
@@ -386,7 +367,6 @@ class CommonMapBase extends StylePluginBase {
     $data_providers = [];
     $title_options = [];
     $icon_options = [];
-    $id_options = [];
 
     $fields = $this->displayHandler->getHandlers('field');
     /** @var \Drupal\views\Plugin\views\field\FieldPluginBase[] $fields */
@@ -409,10 +389,6 @@ class CommonMapBase extends StylePluginBase {
 
       if (!empty($field->options['type']) && $field->options['type'] == 'string') {
         $title_options[$field_name] = $labels[$field_name];
-      }
-
-      if (!empty($field->options['type']) && $field->options['type'] == 'number_integer') {
-        $id_options[$field_name] = $labels[$field_name];
       }
     }
 
@@ -609,36 +585,6 @@ class CommonMapBase extends StylePluginBase {
       '#description' => $this->t('Set relative or absolute path to custom marker icon. Tokens & Views replacement patterns supported. Empty for default.'),
       '#default_value' => $this->options['marker_icon_path'],
     ];
-
-    if ($id_options) {
-      $form['marker_scroll_to_result'] = [
-        '#group' => 'style_options][advanced_settings',
-        '#title' => $this->t('On clicking marker scroll to result instead of opening marker bubble'),
-        '#type' => 'checkbox',
-        '#default_value' => $this->options['marker_scroll_to_result'],
-      ];
-      $form['id_field'] = [
-        '#group' => 'style_options][advanced_settings',
-        '#title' => $this->t('ID source field'),
-        '#type' => 'select',
-        '#default_value' => $this->options['id_field'],
-        '#description' => $this->t("Unique location ID used as scrolling target. If not targeting the raw location output, either add a class structured as 'geolocation-location-id-[ID]' or an attribute 'data-location-id=\"[ID]\"' to the target element."),
-        '#options' => $id_options,
-        '#empty_value' => 'none',
-        '#states' => [
-          'visible' => [
-            ':input[name="style_options[marker_scroll_to_result]"]' => ['checked' => TRUE],
-          ],
-        ],
-        '#process' => [
-          ['\Drupal\Core\Render\Element\RenderElement', 'processGroup'],
-          ['\Drupal\Core\Render\Element\Select', 'processSelect'],
-        ],
-        '#pre_render' => [
-          ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
-        ],
-      ];
-    }
 
     $form['marker_row_number'] = [
       '#group' => 'style_options][advanced_settings',

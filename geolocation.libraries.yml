@@ -123,3 +123,12 @@ geolocation.widgets.html5:
       css/geolocation-widget-html5.css: {}
   js:
     js/geolocation-widget-html5.js: {}
+
+#
+# Map Features
+#
+
+# Marker Scroll to ID support.
+geolocation.marker_scroll_to_id:
+  js:
+    js/MapFeature/geolocation-marker-scroll-to-id.js: {}

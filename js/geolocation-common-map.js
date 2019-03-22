@@ -82,32 +82,6 @@
               }
             }
           }
-
-          if (
-            typeof commonMapSettings.markerScrollToResult !== 'undefined'
-            && commonMapSettings.markerScrollToResult === true
-          ) {
-
-            map.addPopulatedCallback(function (map) {
-              $.each(map.mapMarkers, function (index, marker) {
-                marker.addListener('click', function () {
-                  var target = $('[data-location-id="' + location.data('location-id') + '"]:visible').first();
-
-                  // Alternatively select by class.
-                  if (target.length === 0) {
-                    target = $('.geolocation-location-id-' + location.data('location-id') + ':visible').first();
-                  }
-
-                  if (target.length === 1) {
-                    $('html, body').animate({
-                      scrollTop: target.offset().top
-                    }, 'slow');
-                  }
-
-                });
-              });
-            });
-          }
         }
       );
     },

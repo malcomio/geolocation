@@ -121,7 +121,8 @@ class GeolocationMap extends RenderElement {
     );
 
     foreach (Element::children($render_array) as $child) {
-      $render_array['#children'][] = $render_array[$child];
+      $render_array['#children'][$child] = $render_array[$child];
+      unset($render_array[$child]);
     }
 
     $render_array['#attributes'] = new Attribute($render_array['#attributes']);

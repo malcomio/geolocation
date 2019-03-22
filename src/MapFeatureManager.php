@@ -71,7 +71,7 @@ class MapFeatureManager extends DefaultPluginManager {
     $list = [];
     try {
       foreach ($definitions as $id => $definition) {
-        if ($definition['type'] == $type) {
+        if ($definition['type'] == $type || $definition['type'] == 'all') {
           $list[$id] = $definition;
         }
       }
