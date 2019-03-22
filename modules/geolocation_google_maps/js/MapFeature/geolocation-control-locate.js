@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control locate.
+ */
+
 (function ($, Drupal) {
 
   'use strict';
@@ -14,6 +19,11 @@
     attach: function (context, drupalSettings) {
       Drupal.geolocation.executeFeatureOnAllMaps(
         'control_locate',
+
+        /**
+         * @param {GeolocationMapInterface} map
+         * @param {GeolocationMapFeatureSettings} featureSettings
+         */
         function (map, featureSettings) {
           map.addInitializedCallback(function (map) {
             var locateButton = $('.geolocation-map-control .locate', map.wrapper);

@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Gesture handling.
+ */
+
 (function ($, Drupal) {
 
   'use strict';
@@ -26,7 +31,6 @@
             }
           });
           map.leafletMap['gestureHandling'].enable();
-
 
           return true;
         },

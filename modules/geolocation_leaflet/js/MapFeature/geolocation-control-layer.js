@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Control layer.
+ */
+
+/**
  * @typedef {Object} ControlLayerSettings
  *
  * @extends {GeolocationMapFeatureSettings}
@@ -42,7 +47,7 @@
 
           var overlayMaps = {};
           L.control.layers(baseMaps, overlayMaps, {
-            position: featureSettings.position,
+            position: featureSettings.position
           }).addTo(map.leafletMap);
 
           return true;

@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control Recenter.
+ */
+
 (function ($, Drupal) {
 
   'use strict';
@@ -14,6 +19,11 @@
     attach: function (context, drupalSettings) {
       Drupal.geolocation.executeFeatureOnAllMaps(
         'control_recenter',
+
+        /**
+         * @param {GeolocationMapInterface} map
+         * @param {GeolocationMapFeatureSettings} featureSettings
+         */
         function (map, featureSettings) {
           map.addInitializedCallback(function (map) {
             var recenterButton = $('.geolocation-map-control .recenter', map.wrapper);

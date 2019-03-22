@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for HERE Maps integration.
+ * Javascript for HERE Maps integration.
  */
 
 (function ($, Drupal) {
@@ -26,14 +26,14 @@
    */
   function GeolocationHereMap(mapSettings) {
     if (typeof H === 'undefined') {
-      console.error('HERE Maps library not loaded. Bailing out.'); // eslint-disable-line no-console
+      console.error('HERE Maps library not loaded. Bailing out.'); // eslint-disable-line no-console.
       return;
     }
 
     this.type = 'here';
 
     Drupal.geolocation.GeolocationMapBase.call(this, mapSettings);
-    
+
     var defaultHereSettings = {
       zoom: 10
     };
@@ -75,13 +75,13 @@
 
     H.ui.UI.createDefault(this.hereMap, defaultLayers);
 
-    this.addPopulatedCallback(function(map) {
-      map.hereMap.addEventListener('tap', function(e) {
+    this.addPopulatedCallback(function (map) {
+      map.hereMap.addEventListener('tap', function (e) {
         var coord = map.hereMap.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY);
         map.clickCallback({lat: coord.lat, lng: coord.lng});
       });
 
-      map.hereMap.addEventListener('contextmenu', function(e) {
+      map.hereMap.addEventListener('contextmenu', function (e) {
         var coord = map.hereMap.screenToGeo(e.viewportX, e.viewportY);
         map.contextClickCallback({lat: coord.lat, lng: coord.lng});
       });
@@ -147,7 +147,7 @@
          * @param index
          * @param {H.map.Marker} marker
          */
-      function(index, marker) {
+      function (index, marker) {
         points.push(marker.getPosition());
       }
     );

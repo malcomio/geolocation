@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Control Zoom.
+ */
+
+/**
  * @typedef {Object} ControlZoomSettings
  *
  * @extends {GeolocationMapFeatureSettings}

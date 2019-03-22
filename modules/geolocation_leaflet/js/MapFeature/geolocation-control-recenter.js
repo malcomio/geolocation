@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control recenter.
+ */
+
 (function ($, Drupal) {
 
   'use strict';

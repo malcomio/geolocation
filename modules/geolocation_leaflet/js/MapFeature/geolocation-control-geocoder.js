@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control Geocoder.
+ */
+
 (function ($, Drupal) {
 
   'use strict';
@@ -15,13 +20,17 @@
 
       Drupal.geolocation.executeFeatureOnAllMaps(
         'leaflet_control_geocoder',
+
+          /**
+           * @param {GeolocationMapInterface} map
+           * @param {GeolocationMapFeatureSettings} featureSettings
+           */
         function (map, featureSettings) {
           Drupal.geolocation.geocoder.addResultCallback(
             /**
-             *
              * @param {Object} address.geometry.bounds
              */
-            function(address) {
+            function (address) {
               if (typeof address.geometry.bounds !== 'undefined') {
                 map.fitBoundaries(address.geometry.bounds, 'leaflet_control_geocoder');
               }

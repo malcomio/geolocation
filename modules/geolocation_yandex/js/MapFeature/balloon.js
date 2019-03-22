@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Balloon.
+ */
+
+/**
  * @typedef {Object} YandexBalloonSettings
  *
  * @extends {GeolocationMapFeatureSettings}
@@ -63,14 +68,14 @@
               }
             };
 
-            map.addPopulatedCallback(function() {
+            map.addPopulatedCallback(function () {
               $.each(map.mapMarkers, function (index, currentMarker) {
                 yandexBalloonHandler(currentMarker);
               });
 
             });
 
-            map.addMarkerAddedCallback(function(currentMarker) {
+            map.addMarkerAddedCallback(function (currentMarker) {
               yandexBalloonHandler(currentMarker);
             });
 

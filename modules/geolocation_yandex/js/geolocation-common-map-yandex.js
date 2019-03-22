@@ -1,4 +1,10 @@
+/**
+ * @file
+ * Common Map Yandex.
+ */
+
 (function ($, Drupal) {
+
   'use strict';
 
   /**

@@ -1,4 +1,10 @@
+/**
+ * @file
+ * Common Map Leaflet.
+ */
+
 (function ($, Drupal) {
+
   'use strict';
 
   /**

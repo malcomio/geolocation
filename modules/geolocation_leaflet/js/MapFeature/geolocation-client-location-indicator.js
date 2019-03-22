@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Client location indicator.
+ */
+
 (function ($, Drupal) {
 
   'use strict';
@@ -36,7 +41,7 @@
 
             var indicatorCircle = null;
 
-            setInterval(function(){
+            setInterval(function () {
               navigator.geolocation.getCurrentPosition(function (currentPosition) {
                 var currentLocation = L.latLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
                 clientLocationMarker.setLatLng(currentLocation);

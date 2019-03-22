@@ -36,7 +36,7 @@
  * @property {String} info_text
  */
 
-(function ($, Drupal, drupalSettings) {
+(function ($, Drupal) {
   'use strict';
 
   Drupal.geolocation.google = Drupal.geolocation.google || {};
@@ -219,7 +219,7 @@
 
     this.googleMap.setZoom(zoom);
     var that = this;
-    google.maps.event.addListenerOnce(this.googleMap, "idle", function() {
+    google.maps.event.addListenerOnce(this.googleMap, "idle", function () {
       that.googleMap.setZoom(zoom);
     });
   };
@@ -289,7 +289,6 @@
       return element;
     }
     else {
-      // this.googleMap.controls[position].setAt(controlIndex, element.get(0));
       element.remove();
 
       return this.googleMap.controls[position].getAt(controlIndex);
@@ -356,4 +355,4 @@
     Drupal.geolocation.google.loadedCallbacks = [];
   };
 
-})(jQuery, Drupal, drupalSettings);
+})(jQuery, Drupal);

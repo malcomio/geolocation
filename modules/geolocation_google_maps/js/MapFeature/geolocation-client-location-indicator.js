@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Client location indicator.
+ */
+
 (function ($, Drupal) {
 
   'use strict';
@@ -15,6 +20,11 @@
 
       Drupal.geolocation.executeFeatureOnAllMaps(
         'client_location_indicator',
+
+        /**
+         * @param {GeolocationMapInterface} map
+         * @param {GeolocationMapFeatureSettings} featureSettings
+         */
         function (map, featureSettings) {
           if (!navigator.geolocation) {
             return true;
@@ -38,7 +48,7 @@
 
             var indicatorCircle = null;
 
-            setInterval(function(){
+            setInterval(function () {
               navigator.geolocation.getCurrentPosition(function (currentPosition) {
                 var currentLocation = new google.maps.LatLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
                 clientLocationMarker.setPosition(currentLocation);

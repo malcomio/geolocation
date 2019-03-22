@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Marker InfoWindow.
+ */
+
+/**
  * @typedef {Object} MarkerInfoWindowSettings
  *
  * @extends {GeolocationMapFeatureSettings}

@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control type.
+ */
+
 (function ($, Drupal) {
 
   'use strict';

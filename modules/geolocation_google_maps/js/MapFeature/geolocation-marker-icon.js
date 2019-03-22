@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Marker Icon.
+ */
+
+/**
  * @typedef {Object} MarkerIconSettings
  *
  * @extends {GeolocationMapFeatureSettings}

@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control Zoom.
+ */
+
 (function ($, Drupal) {
 
   'use strict';

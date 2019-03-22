@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Context Popup.
+ */
+
+/**
  * @typedef {Object} ContextPopupSettings
  *
  * @extends {GeolocationMapFeatureSettings}
@@ -38,6 +43,7 @@
              * Context popup handling.
              *
              * @param {GeolocationCoordinates} location - Coordinates.
+             *
              * @return {google.maps.Point} - Pixel offset against top left corner of map container.
              */
             map.googleMap.fromLocationToPixel = function (location) {

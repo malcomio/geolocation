@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Control Street View.
+ */
+
+/**
  * @typedef {Object} ControlStreetViewSettings
  *
  * @extends {GeolocationMapFeatureSettings}

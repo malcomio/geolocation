@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Search.
+ */
+
 (function ($, Drupal) {
 
   'use strict';

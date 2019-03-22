@@ -24,7 +24,7 @@
           return;
         }
 
-        widget.map.addCenterUpdatedCallback(function(location, accuracy, identifier) {
+        widget.map.addCenterUpdatedCallback(function (location, accuracy, identifier) {
           if (typeof identifier === 'undefined') {
             return;
           }

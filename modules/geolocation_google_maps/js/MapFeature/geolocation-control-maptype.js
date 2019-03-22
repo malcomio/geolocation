@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Control MapType.
+ */
+
+/**
  * @typedef {Object} ControlMapTypeSettings
  *
  * @extends {GeolocationMapFeatureSettings}

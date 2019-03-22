@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Marker Icon.
+ */
+
+/**
  * @typedef {Object} LeafletMarkerIconSettings
  *
  * @extends {GeolocationMapFeatureSettings}
@@ -45,7 +50,7 @@
          */
         function (map, featureSettings) {
 
-          var geolocationLeafletIconHandler = function(currentMarker) {
+          var geolocationLeafletIconHandler = function (currentMarker) {
 
             var iconUrl;
             if (typeof currentMarker.locationWrapper !== 'undefined') {

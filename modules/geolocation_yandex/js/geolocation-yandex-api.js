@@ -1,6 +1,6 @@
 /**
  * @file
- *   Javascript for Yandex Maps integration.
+ * Javascript for Yandex Maps integration.
  */
 
 (function ($, Drupal) {
@@ -20,14 +20,14 @@
    */
   function GeolocationYandexMap(mapSettings) {
     if (typeof ymaps === 'undefined') {
-      console.error('Yandex Maps library not loaded. Bailing out.'); // eslint-disable-line no-console
+      console.error('Yandex Maps library not loaded. Bailing out.'); // eslint-disable-line no-console.
       return;
     }
 
     this.type = 'yandex';
 
     Drupal.geolocation.GeolocationMapBase.call(this, mapSettings);
-    
+
     var defaultYandexSettings = {
       zoom: 10
     };
@@ -43,7 +43,7 @@
 
     var that = this;
 
-    ymaps.ready(function() {
+    ymaps.ready(function () {
       // Instantiate (and display) a map object:
       that.yandexMap = new ymaps.Map(
         that.container.get(0), {
@@ -53,13 +53,13 @@
         }
       );
 
-      that.addPopulatedCallback(function(map) {
+      that.addPopulatedCallback(function (map) {
         map.yandexMap.events.add('click', function (e) {
           var coords = e.get('coords');
           map.clickCallback({lat: coords.lat, lng: coords.lng});
         });
 
-        map.yandexMap.events.add('contextmenu', function(e) {
+        map.yandexMap.events.add('contextmenu', function (e) {
           var coords = e.get('coords');
           map.contextClickCallback({lat: coords.lat, lng: coords.lng});
         });

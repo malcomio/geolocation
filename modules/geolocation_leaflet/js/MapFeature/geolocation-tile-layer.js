@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Tile layer.
+ */
+
+/**
  * @typedef {Object} TileLayerSettings
  *
  * @extends {GeolocationMapFeatureSettings}

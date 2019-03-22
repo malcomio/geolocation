@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Control scale.
+ */
+
+/**
  * @typedef {Object} ControlScaleSettings
  *
  * @extends {GeolocationMapFeatureSettings}

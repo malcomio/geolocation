@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control fullscreen.
+ */
+
 (function ($, Drupal) {
 
   'use strict';

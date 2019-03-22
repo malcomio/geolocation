@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control traffic.
+ */
+
 (function ($, Drupal) {
 
   'use strict';

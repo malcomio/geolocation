@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Marker Clusterer.
+ */
+
 (function ($, Drupal) {
 
   'use strict';

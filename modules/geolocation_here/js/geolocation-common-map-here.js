@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Common Map - Here.
+ */
+
 (function ($, Drupal) {
   'use strict';
 
@@ -59,7 +64,7 @@
             ) {
               map.addPopulatedCallback(function (map) {
                 var geolocationMapIdleTimer;
-                map.hereMap.addEventListener('mapviewchangeend', function() {
+                map.hereMap.addEventListener('mapviewchangeend', function () {
                   clearTimeout(geolocationMapIdleTimer);
 
                   geolocationMapIdleTimer = setTimeout(

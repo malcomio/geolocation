@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Drawing.
+ */
+
+/**
  * @typedef {Object} DrawingSettings
  *
  * @property {String} enable
@@ -43,7 +48,6 @@
 
             var drawingSettings = featureSettings.settings;
 
-
             if (drawingSettings.polygon && drawingSettings.polygon !== '0') {
               var polygon = new google.maps.Polygon({
                 paths: locations,
@@ -78,5 +82,3 @@
   };
 
 })(jQuery, Drupal);
-
-

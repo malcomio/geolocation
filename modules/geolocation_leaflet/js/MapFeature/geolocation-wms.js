@@ -1,4 +1,9 @@
 /**
+ * @file
+ * WMS.
+ */
+
+/**
  * @typedef {Object} WMSSettings
  *
  * @extends {GeolocationMapFeatureSettings}
@@ -40,8 +45,8 @@
             'styles': featureSettings.styles,
             'srs': featureSettings.srs,
             'format': featureSettings.format,
-            'transparent': !!+featureSettings.transparent,
-            'identify': !!+featureSettings.identify,
+            'transparent': !!featureSettings.transparent,
+            'identify': !!featureSettings.identify
           });
           source.getLayer(featureSettings.layers).addTo(map.leafletMap);
 

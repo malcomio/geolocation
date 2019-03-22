@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Disable POI.
+ */
+
 (function ($, Drupal) {
 
   'use strict';
@@ -15,6 +20,11 @@
 
       Drupal.geolocation.executeFeatureOnAllMaps(
         'map_disable_poi',
+
+        /**
+         * @param {GeolocationGoogleMap} map - Current map.
+         * @param {GeolocationMapFeatureSettings} featureSettings - Settings for current feature.
+         */
         function (map, featureSettings) {
           map.addInitializedCallback(function (map) {
 

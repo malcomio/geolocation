@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Marker InfoBubble.
+ */
+
+/**
  * @typedef {Object} MarkerInfoBubbleSettings
  *
  * @extends {GeolocationMapFeatureSettings}

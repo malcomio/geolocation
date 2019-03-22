@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Marker Popup.
+ */
+
+/**
  * @typedef {Object} LeafletMarkerPopupSettings
  *
  * @extends {GeolocationMapFeatureSettings}
@@ -28,7 +33,7 @@
          * @param {LeafletMarkerPopupSettings} featureSettings - Settings for current feature.
          */
         function (map, featureSettings) {
-          var geolocationLeafletPopupHandler = function(currentMarker) {
+          var geolocationLeafletPopupHandler = function (currentMarker) {
             if (typeof (currentMarker.locationWrapper) === 'undefined') {
               return;
             }

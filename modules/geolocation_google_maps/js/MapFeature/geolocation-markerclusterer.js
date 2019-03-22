@@ -1,4 +1,9 @@
 /**
+ * @file
+ * Marker Clusterer.
+ */
+
+/**
  * @typedef {Object} MarkerClustererSettings
  *
  * @extends {GeolocationMapFeatureSettings}
@@ -44,7 +49,7 @@
             imagePath = 'https://cdn.jsdelivr.net/gh/googlemaps/js-marker-clusterer@gh-pages/images/m';
           }
 
-          var markerClustererStyles = '';
+          var markerClustererStyles = {};
           if (
             typeof featureSettings.styles !== 'undefined') {
             markerClustererStyles = featureSettings.styles;

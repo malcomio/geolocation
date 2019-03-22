@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control locate.
+ */
+
 (function ($, Drupal) {
 
   'use strict';

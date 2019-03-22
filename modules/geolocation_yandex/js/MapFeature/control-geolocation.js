@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control geolocation.
+ */
+
 (function ($, Drupal) {
 
   'use strict';

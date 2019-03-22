@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Control Geocoder.
+ */
+
 (function ($, Drupal) {
 
   'use strict';
@@ -15,17 +20,25 @@
 
       Drupal.geolocation.executeFeatureOnAllMaps(
         'control_geocoder',
+
+        /**
+         * @param {GeolocationMapInterface} map
+         * @param {GeolocationMapFeatureSettings} featureSettings
+         */
         function (map, featureSettings) {
           Drupal.geolocation.geocoder.addResultCallback(
+
             /**
-             *
              * @param {Object} address.geometry.bounds
              */
-            function(address) {
+            function (address) {
               if (typeof address.geometry.bounds !== 'undefined') {
                 map.fitBoundaries(address.geometry.bounds, 'google_control_geocoder');
               }
               else {
+                /**
+                 * @type {undefined|int}
+                 */
                 var accuracy = undefined;
                 if (typeof address.geometry.accuracy === 'undefined') {
                   accuracy = 10000;
