@@ -140,10 +140,6 @@
   }
   GeolocationGoogleMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationGoogleMap.prototype.constructor = GeolocationGoogleMap;
-  GeolocationGoogleMap.prototype.update = function (mapSettings) {
-    Drupal.geolocation.GeolocationMapBase.prototype.update.call(this, mapSettings);
-    this.googleMap.setOptions(mapSettings.google_map_settings);
-  };
   GeolocationGoogleMap.prototype.setMapMarker = function (markerSettings) {
     if (typeof markerSettings.setMarker !== 'undefined') {
       if (markerSettings.setMarker === false) {

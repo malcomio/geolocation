@@ -54,19 +54,6 @@ class AjaxResponseSubscriber implements EventSubscriberInterface {
 
     $commands = &$response->getCommands();
     foreach ($commands as $delta => &$command) {
-
-      // Substitute the 'replace' method without our custom jQuery method which
-      // will allow views content to be injected one after the other.
-      if (
-        isset($command['method'])
-        && $command['method'] === 'replaceWith'
-        && isset($command['selector'])
-        && substr($command['selector'], 0, 16) === '.js-view-dom-id-'
-      ) {
-        $command['command'] = 'geolocationCommonMapUpdate';
-        $response->addAttachments(['library' => ['geolocation/geolocation.commonmap']]);
-      }
-
       // Stop the view from scrolling to the top of the page.
       if (
         $command['command'] === 'viewsScrollTop'

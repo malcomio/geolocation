@@ -207,7 +207,7 @@
     update: function (mapSettings) {
       this.settings = $.extend(this.settings, mapSettings.settings);
       this.wrapper = mapSettings.wrapper;
-      this.container = mapSettings.wrapper.find('.geolocation-map-container').first();
+      mapSettings.wrapper.find('.geolocation-map-container').replaceWith(this.container);
       this.lat = mapSettings.lat;
       this.lng = mapSettings.lng;
       if (typeof mapSettings.map_center !== 'undefined') {
