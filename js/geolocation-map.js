@@ -26,6 +26,7 @@
       $('.geolocation-map-wrapper', context).once('geolocation-map-processed').each(function (index, item) {
         var mapWrapper = $(item);
         var mapSettings = {};
+        var reset = false;
         mapSettings.id = mapWrapper.attr('id');
         mapSettings.wrapper = mapWrapper;
 
@@ -59,7 +60,13 @@
           }
         });
 
-        var map = Drupal.geolocation.Factory(mapSettings);
+        if (mapWrapper.parent().hasClass('preview-section')) {
+          if (mapWrapper.parentsUntil('#views-live-preview').length) {
+            reset = true;
+          }
+        }
+
+        var map = Drupal.geolocation.Factory(mapSettings, reset);
 
         if (!map) {
           console.error(mapSettings, 'Geolocation - Couldn\'t initialize map.'); // eslint-disable-line no-console .
