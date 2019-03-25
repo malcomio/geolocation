@@ -11,6 +11,10 @@
  * @property {String} imagePath
  * @property {Object} styles
  * @property {Number} maxZoom
+ * @property {Number} gridSize
+ * @property {Boolean} zoomOnClick
+ * @property {Number} averageCenter
+ * @property {Number} minimumClusterSize
  */
 
 (function ($, Drupal) {
@@ -63,7 +67,11 @@
                 {
                   imagePath: imagePath,
                   styles: markerClustererStyles,
-                  maxZoom: featureSettings.maxZoom
+                  maxZoom: featureSettings.maxZoom,
+                  gridSize: featureSettings.gridSize,
+                  zoomOnClick: featureSettings.zoomOnClick,
+                  averageCenter: featureSettings.averageCenter,
+                  minimumClusterSize: featureSettings.minimumClusterSize
                 }
               );
             }

@@ -27,6 +27,10 @@ class MarkerClusterer extends MapFeatureBase {
       'image_path' => '',
       'styles' => [],
       'max_zoom' => 15,
+      'zoom_on_click' => TRUE,
+      'average_center' => FALSE,
+      'grid_size' => 60,
+      'minimum_cluster_size' => 2,
     ];
   }
 
@@ -52,10 +56,34 @@ class MarkerClusterer extends MapFeatureBase {
       '#default_value' => $settings['styles'],
       '#description' => $this->t(
         'Set custom Cluster styles in JSON Format. Custom Styles have to be set for all 5 Cluster Images. See the <a href=":reference">reference</a> for details.',
-        [
-          ':reference' => 'https://googlemaps.github.io/js-marker-clusterer/docs/reference.html',
-        ]
+        [':reference' => 'https://googlemaps.github.io/js-marker-clusterer/docs/reference.html']
       ),
+    ];
+    $form['zoom_on_click'] = [
+      '#title' => $this->t('Zoom on click'),
+      '#type' => 'checkbox',
+      '#description' => $this->t('Whether clicking zooms in on a cluster.'),
+      '#default_value' => $settings['zoom_on_click'],
+    ];
+    $form['average_center'] = [
+      '#title' => $this->t('Average center'),
+      '#type' => 'checkbox',
+      '#description' => $this->t('Whether the center of each cluster should be the average of all markers in the cluster.'),
+      '#default_value' => $settings['average_center'],
+    ];
+    $form['grid_size'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Grid size'),
+      '#description' => $this->t('Set the grid size for clustering.'),
+      '#size' => 4,
+      '#default_value' => $settings['grid_size'],
+    ];
+    $form['minimum_cluster_size'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Minimum cluster size'),
+      '#description' => $this->t('Set the minimum size for a cluster of markers.'),
+      '#size' => 4,
+      '#default_value' => $settings['minimum_cluster_size'],
     ];
     $form['max_zoom'] = [
       '#title' => $this->t('Max Zoom'),
@@ -86,6 +114,14 @@ class MarkerClusterer extends MapFeatureBase {
       elseif (!is_array($json_result)) {
         $form_state->setErrorByName(implode('][', $style_parents), $this->t('Decoded style JSON is not an array.'));
       }
+    }
+
+    if (!is_numeric($values['grid_size'])) {
+      $form_state->setErrorByName(implode('][', $parents) . '][grid_size', $this->t('Grid size must be a number.'));
+    }
+
+    if (!is_numeric($values['minimum_cluster_size'])) {
+      $form_state->setErrorByName(implode('][', $parents) . '][minimum_cluster_size', $this->t('Minimum cluster size must be a number.'));
     }
   }
 
@@ -119,6 +155,10 @@ class MarkerClusterer extends MapFeatureBase {
                   'imagePath' => $feature_settings['image_path'],
                   'styles' => $feature_settings['styles'],
                   'maxZoom' => (int) $feature_settings['max_zoom'],
+                  'gridSize' => (int) $feature_settings['grid_size'],
+                  'zoomOnClick' => (boolean) $feature_settings['zoom_on_click'],
+                  'averageCenter' => (int) $feature_settings['average_center'],
+                  'minimumClusterSize' => (int) $feature_settings['minimum_cluster_size'],
                 ],
               ],
             ],
