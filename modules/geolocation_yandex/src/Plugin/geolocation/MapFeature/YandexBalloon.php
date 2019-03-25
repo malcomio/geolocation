@@ -58,7 +58,6 @@ class YandexBalloon extends MapFeatureBase {
       '#default_value' => $settings['panel_max_map_area'],
     ];
 
-
     return $form;
   }
 

@@ -6,10 +6,9 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class NominatimGeocodingSettings
+ * Class NominatimGeocodingSettings.
  */
-class NominatimGeocodingSettings extends ConfigFormBase
-{
+class NominatimGeocodingSettings extends ConfigFormBase {
 
   /**
    * {@inheritdoc}

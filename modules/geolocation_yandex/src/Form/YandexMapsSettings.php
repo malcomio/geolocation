@@ -58,5 +58,5 @@ class YandexMapsSettings extends ConfigFormBase {
 
     drupal_flush_all_caches();
   }
-}
 
+}

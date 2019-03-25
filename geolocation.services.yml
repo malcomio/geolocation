@@ -36,4 +36,3 @@ services:
   plugin.manager.geolocation.geocoder_country_formatting:
     class: Drupal\geolocation\GeocoderCountryFormattingManager
     parent: default_plugin_manager
-
