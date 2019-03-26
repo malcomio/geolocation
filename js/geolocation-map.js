@@ -23,7 +23,7 @@
      * @param {Object} drupalSettings.geolocation
      */
     attach: function (context, drupalSettings) {
-      $('.geolocation-map-wrapper', context).once('geolocation-map-processed').each(function (index, item) {
+      $('.geolocation-map-wrapper').once('geolocation-map-processed').each(function (index, item) {
         var mapWrapper = $(item);
         var mapSettings = {};
         var reset = false;
@@ -69,7 +69,7 @@
         var map = Drupal.geolocation.Factory(mapSettings, reset);
 
         if (!map) {
-          console.error(mapSettings, 'Geolocation - Couldn\'t initialize map.'); // eslint-disable-line no-console .
+          mapWrapper.removeOnce('geolocation-map-processed');
           return;
         }
 

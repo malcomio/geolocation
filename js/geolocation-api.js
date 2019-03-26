@@ -478,7 +478,7 @@
     }
 
     if (!map) {
-      console.error("Map could not be initialzed."); // eslint-disable-line no-console .
+      console.error("Map could not be initialized."); // eslint-disable-line no-console .
       return false;
     }
 
