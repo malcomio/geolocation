@@ -191,6 +191,13 @@ class GeolocationMap extends RenderElement {
     ) {
       $locations[] = $render_array;
     }
+    elseif (!empty($render_array['#children'])) {
+      foreach ($render_array['#children'] as $child) {
+        if (is_array($child)) {
+          $locations = array_merge($locations, static::getLocations($child));
+        }
+      }
+    }
     else {
       foreach (Element::children($render_array) as $key) {
         if (is_array($render_array[$key])) {
