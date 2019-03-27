@@ -70,16 +70,6 @@ class LeafletControlGeocoder extends ControlCustomElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getSettingsSummary(array $settings) {
-    $summary = [];
-    $summary[] = $this->t('Geocoder enabled');
-
-    return $summary;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getSettingsForm(array $settings, array $parents) {
     $form = parent::getSettingsForm($settings, $parents);
 

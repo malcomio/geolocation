@@ -38,7 +38,6 @@
            */
           function (map, featureSettings) {
             map.addInitializedCallback(function (map) {
-              console.log(featureSettings, "Hallo Welt!!");
               map.googleMap.setOptions({
                 restriction: {
                   latLngBounds: {
