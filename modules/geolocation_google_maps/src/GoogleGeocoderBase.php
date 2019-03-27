@@ -70,6 +70,13 @@ abstract class GoogleGeocoderBase extends GeocoderBase implements GeocoderInterf
       'country' => '',
     ];
 
+    $default_settings['boundary_restriction'] = [
+      'south' => '',
+      'west' => '',
+      'north' => '',
+      'east' => '',
+    ];
+
     return $default_settings;
   }
 
@@ -123,6 +130,33 @@ abstract class GoogleGeocoderBase extends GeocoderBase implements GeocoderInterf
         );
       }
     }
+
+    if (!empty($this->configuration['boundary_restriction'])) {
+      $bounds = [];
+      foreach ($this->configuration['boundary_restriction'] as $key => $value) {
+        if (empty($value)) {
+          return;
+        }
+        $bounds[$key] = (float) $value;
+      }
+
+      if (!empty($bounds)) {
+        $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
+          empty($render_array['#attached']) ? [] : $render_array['#attached'],
+          [
+            'drupalSettings' => [
+              'geolocation' => [
+                'geocoder' => [
+                  $this->getPluginId() => [
+                    'bounds' => $bounds,
+                  ],
+                ],
+              ],
+            ],
+          ]
+        );
+      }
+    }
   }
 
   /**
@@ -138,7 +172,7 @@ abstract class GoogleGeocoderBase extends GeocoderBase implements GeocoderInterf
       'component_restrictions' => [
         '#type' => 'fieldset',
         '#title' => $this->t('Component Restrictions'),
-        '#description' => $this->t('See https://developers.google.com/maps/documentation/geocoding/intro#ComponentFiltering'),
+        '#description' => $this->t('See <a href="https://developers.google.com/maps/documentation/geocoding/intro#ComponentFiltering">Component Filtering</a>'),
         'route' => [
           '#type' => 'textfield',
           '#default_value' => $settings['component_restrictions']['route'],
@@ -168,6 +202,35 @@ abstract class GoogleGeocoderBase extends GeocoderBase implements GeocoderInterf
           '#default_value' => $settings['component_restrictions']['country'],
           '#title' => $this->t('Country'),
           '#size' => 5,
+        ],
+      ],
+      'boundary_restriction' => [
+        '#type' => 'fieldset',
+        '#title' => $this->t('Boundary Restriction'),
+        '#description' => $this->t('See <a href="https://developers.google.com/maps/documentation/geocoding/intro#Viewports">Viewports</a>'),
+        'south' => [
+          '#type' => 'textfield',
+          '#default_value' => $settings['boundary_restriction']['south'],
+          '#title' => $this->t('South'),
+          '#size' => 15,
+        ],
+        'west' => [
+          '#type' => 'textfield',
+          '#default_value' => $settings['boundary_restriction']['west'],
+          '#title' => $this->t('West'),
+          '#size' => 15,
+        ],
+        'north' => [
+          '#type' => 'textfield',
+          '#default_value' => $settings['boundary_restriction']['north'],
+          '#title' => $this->t('North'),
+          '#size' => 15,
+        ],
+        'east' => [
+          '#type' => 'textfield',
+          '#default_value' => $settings['boundary_restriction']['east'],
+          '#title' => $this->t('East'),
+          '#size' => 15,
         ],
       ],
     ];

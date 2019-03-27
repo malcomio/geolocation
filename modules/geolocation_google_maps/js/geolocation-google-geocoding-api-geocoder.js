@@ -5,6 +5,7 @@
 
 /**
  * @property {Object} drupalSettings.geolocation.geocoder.google_geocoding_api.componentRestrictions
+ * @property {Object} drupalSettings.geolocation.geocoder.google_geocoding_api.bounds
  * @property {String[]} drupalSettings.geolocation.geocoder.google_geocoding_api.inputIds
  */
 
@@ -28,28 +29,32 @@
         }
 
         var autocompleteResults = [];
-        var componentRestrictions = {};
+
+        var parameters = {
+          address: request.term
+        };
         if (typeof drupalSettings.geolocation.geocoder.google_geocoding_api.componentRestrictions !== 'undefined') {
-          componentRestrictions = drupalSettings.geolocation.geocoder.google_geocoding_api.componentRestrictions;
+          if (drupalSettings.geolocation.geocoder.google_geocoding_api.componentRestrictions) {
+            parameters.componentRestrictions = drupalSettings.geolocation.geocoder.google_geocoding_api.componentRestrictions;
+          }
+        }
+        if (typeof drupalSettings.geolocation.geocoder.google_geocoding_api.bounds !== 'undefined') {
+          if (drupalSettings.geolocation.geocoder.google_geocoding_api.bounds) {
+            parameters.bounds = drupalSettings.geolocation.geocoder.google_geocoding_api.bounds;
+          }
         }
 
-        Drupal.geolocation.geocoder.googleGeocodingAPI.geocoder.geocode(
-          {
-            address: request.term,
-            componentRestrictions: componentRestrictions
-          },
-          function (results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
-              $.each(results, function (index, result) {
-                autocompleteResults.push({
-                  value: result.formatted_address,
-                  address: result
-                });
+        Drupal.geolocation.geocoder.googleGeocodingAPI.geocoder.geocode(parameters, function (results, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+            $.each(results, function (index, result) {
+              autocompleteResults.push({
+                value: result.formatted_address,
+                address: result
               });
-            }
-            response(autocompleteResults);
+            });
           }
-        );
+          response(autocompleteResults);
+        });
       },
 
       /**

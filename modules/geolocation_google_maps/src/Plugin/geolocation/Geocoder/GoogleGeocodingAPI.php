@@ -80,6 +80,19 @@ class GoogleGeocodingAPI extends GoogleGeocoderBase {
     if (!empty($config->get('google_map_custom_url_parameters')['language'])) {
       $request_url .= '&language=' . $config->get('google_map_custom_url_parameters')['language'];
     }
+    if (
+      !empty($this->configuration['boundary_restriction'])
+      && !empty($this->configuration['boundary_restriction']['south'])
+      && !empty($this->configuration['boundary_restriction']['west'])
+      && !empty($this->configuration['boundary_restriction']['north'])
+      && !empty($this->configuration['boundary_restriction']['east'])
+    ) {
+      $bounds = $this->configuration['boundary_restriction']['south'] . ',';
+      $bounds .= $this->configuration['boundary_restriction']['west'] . '|';
+      $bounds .= $this->configuration['boundary_restriction']['north'] . ',';
+      $bounds .= $this->configuration['boundary_restriction']['east'];
+      $request_url .= '&bounds=' . $bounds;
+    }
 
     try {
       $result = Json::decode(\Drupal::httpClient()->request('GET', $request_url)->getBody());
