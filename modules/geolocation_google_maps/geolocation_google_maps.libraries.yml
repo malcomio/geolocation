@@ -168,6 +168,12 @@ geolocation.marker_zoom_by_anchor:
   dependencies:
     - geolocation_google_maps/googlemapsapi
 
+# MapRestriction support.
+geolocation.map_restriction:
+  js:
+    js/MapFeature/geolocation-map-restriction.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
 
 #
 # Map Features - Controls
