@@ -1,7 +1,7 @@
 core: 8.x
 name: Geolocation - Google Maps API
 type: module
-description: Google Maps integration
+description: 'Google Maps integration.'
 package: Geolocation
 configure: geolocation_google_maps.settings
 dependencies:

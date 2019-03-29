@@ -1,6 +1,6 @@
 name: Geolocation - Leaflet
 type: module
-description: Leaflet map provider
+description: 'Leaflet map provider.'
 core: 8.x
 package: Geolocation
 dependencies:

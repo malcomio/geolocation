@@ -1,6 +1,6 @@
 name: Geolocation - Here Maps
 type: module
-description: HERE Maps provider
+description: 'HERE Maps provider.'
 core: 8.x
 package: Geolocation
 configure: geolocation_here.settings

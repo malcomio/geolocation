@@ -1,6 +1,6 @@
 name: Geolocation - Yandex Maps
 type: module
-description: Yandex Maps provider
+description: 'Yandex Maps provider.'
 core: 8.x
 package: Geolocation
 configure: geolocation_yandex.settings
