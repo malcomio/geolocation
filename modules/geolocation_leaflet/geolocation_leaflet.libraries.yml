@@ -175,6 +175,12 @@ mapfeature.wms:
     - geolocation_leaflet/geolocation.leaflet
     - geolocation_leaflet/leaflet.wms
 
+mapfeature.max_bounds:
+  js:
+    js/MapFeature/geolocation-maxbounds.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
+
 #
 # Map Features - Controls
 #
