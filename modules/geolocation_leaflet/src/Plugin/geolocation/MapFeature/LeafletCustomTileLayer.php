@@ -22,7 +22,7 @@ class LeafletCustomTileLayer extends MapFeatureBase {
    */
   public static function getDefaultSettings() {
     return [
-      'tile_layer_url' => 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+      'tile_layer_url' => '//{s}.tile.osm.org/{z}/{x}/{y}.png',
       'tile_layer_attribution' => '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
       'tile_layer_subdomains' => 'abc',
       'tile_layer_zoom' => 18,
