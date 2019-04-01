@@ -130,18 +130,25 @@
             addressInputToString: function (addressInput) {
               addressInput = $(addressInput);
               var addressString = '';
-              $.each([
-                'organization',
-                'address-line1',
-                'address-line2',
-                'locality',
-                'administrative-area',
-                'postal-code'
-              ], function (index, property) {
-                if (addressInput.find('.' + property).length) {
-                  addressString = addressString + ', ' + addressInput.find('.' + property).val()
-                }
-              });
+              $.each(
+                  [
+                    'organization',
+                    'address-line1',
+                    'address-line2',
+                    'locality',
+                    'administrative-area',
+                    'postal-code'
+                  ],
+                  function (index, property) {
+                    if (addressInput.find('.' + property).length) {
+                      addressString = addressString + ', ' + addressInput.find('.' + property).val()
+                    }
+                  }
+              );
+
+              if (!addressString) {
+                return false;
+              }
 
               if (addressInput.find('.country.form-select').length) {
                 addressString = addressString + ', ' + addressInput.find('.country.form-select').val();
@@ -251,14 +258,15 @@
                   ) {
                     return false;
                   }
+                  widget.addressChangedEventPaused = true;
                   addressInput.find('.country').val(address.countryCode).trigger('change');
+                  widget.addressChangedEventPaused = false;
                   this.addressTriggerCalled = true;
                 }
               }
               else if (
-                address.countryCode
-                && address.countryCode.length > 0
-                && addressInput.find('.country option[value="' + address.countryCode + '"]').length > 0
+                  address.countryCode
+                  && address.countryCode.length > 0
               ) {
                 $.each(this.pendingAddedAddressInputs, function (index, item) {
                   if (item.delta === delta) {
@@ -271,6 +279,9 @@
                 });
                 this.addNewAddressInput();
               }
+              else {
+
+              }
 
               return delta;
             },
@@ -280,9 +291,6 @@
                 widget.addressChangedEventPaused = true;
                 addressInput.find('select, input').val('');
                 widget.addressChangedEventPaused = false;
-              }
-              else {
-                addressInput.find('.country').val('').trigger('change');
               }
             }
           });
@@ -310,6 +318,19 @@
               }
               widget.removeAddress(delta);
               widget.coordinatesToAddress(location.lat, location.lng).then(function (address) {
+                if (!address) {
+                  widget.removeInput(delta);
+                  widget.removeMarker(delta);
+                  var addressWarning = Drupal.t('Address could not be geocoded, location won\'t be set.');
+                  if (typeof Drupal.messages !== 'undefined') {
+                    var messages = new Drupal.messages();
+                    messages.add(addressWarning);
+                  }
+                  else {
+                    alert(addressWarning);
+                  }
+                  return;
+                }
                 widget.setAddress(address, delta);
               });
             });
@@ -364,14 +385,17 @@
             var element = null;
             $.each(elements, function (index, className) {
               element = addressElement.find('.' + className);
-              element.off("change");
-              element.change(function () {
+              element.once('geolocation-address-listener').change(function () {
                 if (widget.addressChangedEventPaused) {
                   return;
                 }
 
                 var address = widget.getAddressByDelta(delta);
-                widget.addressToCoordinates(widget.addressInputToString(address)).then(function (location) {
+                var addressString = widget.addressInputToString(address);
+                if (!addressString) {
+                  return;
+                }
+                widget.addressToCoordinates(addressString).then(function (location) {
                   widget.locationAlteredCallback('address-changed', location, delta);
                 });
               });

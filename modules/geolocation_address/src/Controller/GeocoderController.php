@@ -77,7 +77,7 @@ class GeocoderController extends ControllerBase {
 
     $address = $geocoder->reverseGeocode($latitude, $longitude);
     if (empty($address['elements']['countryCode'])) {
-      return new JsonResponse([]);
+      return new JsonResponse(FALSE);
     }
 
     return new JsonResponse($address['elements']);
