@@ -84,13 +84,16 @@ class GeolocationItem extends FieldItemBase {
       ->setLabel(t('Longitude'));
 
     $properties['lat_sin'] = DataDefinition::create('float')
-      ->setLabel(t('Latitude sine'));
+      ->setLabel(t('Latitude sine'))
+      ->setComputed(TRUE);
 
     $properties['lat_cos'] = DataDefinition::create('float')
-      ->setLabel(t('Latitude cosine'));
+      ->setLabel(t('Latitude cosine'))
+      ->setComputed(TRUE);
 
     $properties['lng_rad'] = DataDefinition::create('float')
-      ->setLabel(t('Longitude radian'));
+      ->setLabel(t('Longitude radian'))
+      ->setComputed(TRUE);
 
     $properties['data'] = MapDataDefinition::create()
       ->setLabel(t('Meta data'));
@@ -134,6 +137,12 @@ class GeolocationItem extends FieldItemBase {
         $this->values[$name] = $value;
       }
     }
+
+    // See #3024504 for an explanation.
+    if (array_key_exists('data', $this->values) && empty($this->values['data'])) {
+      unset($this->values['data']);
+    }
+
     return $this->values;
   }
 
