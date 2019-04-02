@@ -185,6 +185,29 @@ function geolocation_field_views_data(FieldStorageConfigInterface $field_storage
       ],
     ];
 
+    $data[$table_name][$args['@field_name'] . '_geocoder_argument'] = [
+      'group' => $target_entity_type->getLabel(),
+      'title' => t('Proximity Geocoder Address Argument (@field_name)', $args),
+      'title short' => isset($field_coordinates_table_data['title short']) ? $field_coordinates_table_data['title short'] . ' - ' . t("Geocoder Address Argument") : '',
+      'help' => isset($field_coordinates_table_data['help']) ? $field_coordinates_table_data['help'] : '',
+      'argument' => [
+        'id' => 'geolocation_geocoder_argument',
+        'table' => $table_name,
+        'entity_type' => $entity_type_id,
+        'field_name' => $args['@field_name'] . '_geocoder_argument',
+        'real field' => $args['@field_name'],
+        'label' => t('Distance to !field_name', $args),
+        'empty field name' => '- No value -',
+        'additional fields' => [
+          $args['@field_name'] . '_lat',
+          $args['@field_name'] . '_lng',
+          $args['@field_name'] . '_lat_sin',
+          $args['@field_name'] . '_lat_cos',
+          $args['@field_name'] . '_lng_rad',
+        ],
+      ],
+    ];
+
     // Add boundary handlers.
     $data[$table_name][$args['@field_name'] . '_boundary'] = [
       'group' => $target_entity_type->getLabel(),

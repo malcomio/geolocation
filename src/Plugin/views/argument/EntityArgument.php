@@ -201,9 +201,7 @@ class EntityArgument extends ProximityArgument implements ContainerFactoryPlugin
         return [];
       }
 
-      $values = array_replace($values, $this->getCoordinatesFromEntityId($values['id']));
-
-      $values['distance'] = self::convertDistance((float) $values['distance'], $values['unit']);
+      $values = array_replace($values, $coordinates);
     }
     return $values;
   }
