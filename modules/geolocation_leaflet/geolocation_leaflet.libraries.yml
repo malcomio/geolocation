@@ -175,11 +175,31 @@ mapfeature.wms:
     - geolocation_leaflet/geolocation.leaflet
     - geolocation_leaflet/leaflet.wms
 
+# MaxBounds
 mapfeature.max_bounds:
   js:
     js/MapFeature/geolocation-maxbounds.js: {}
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
+
+# ZoomByMarker
+leaflet.bouncemarker:
+  header: true
+  remote: https://github.com/maximeh/leaflet.bouncemarker
+  version: '1.2'
+  license:
+    name: MIT
+    url: https://github.com/maximeh/leaflet.bouncemarker/blob/master/LICENSE.txt
+    gpl-compatible: true
+  js:
+    'https://cdn.jsdelivr.net/gh/maximeh/leaflet.bouncemarker@1.2/bouncemarker.js': { type: external, minified: true }
+
+mapfeature.marker_zoom_by_anchor:
+  js:
+    js/MapFeature/geolocation-markerzoombyanchor.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
+    - geolocation_leaflet/leaflet.bouncemarker
 
 #
 # Map Features - Controls
