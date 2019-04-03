@@ -15,7 +15,7 @@
    * @prop {Drupal~behaviorAttach} attach
    *   Attaches common map style functionality to relevant elements.
    */
-  Drupal.behaviors.geolocationContextPopup = {
+  Drupal.behaviors.geolocationMapDisablePOI = {
     attach: function (context, drupalSettings) {
 
       Drupal.geolocation.executeFeatureOnAllMaps(

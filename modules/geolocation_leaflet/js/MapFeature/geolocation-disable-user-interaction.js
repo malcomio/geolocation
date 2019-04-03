@@ -1,6 +1,6 @@
 /**
  * @file
- * Disable tilt.
+ * Gesture handling.
  */
 
 (function ($, Drupal) {
@@ -8,27 +8,28 @@
   'use strict';
 
   /**
-   * Enable Tilt.
+   * Map interaction disable handling.
    *
    * @type {Drupal~behavior}
    *
    * @prop {Drupal~behaviorAttach} attach
-   *   Attaches common map tilt functionality to relevant elements.
+   *   Attaches common map gesture handling functionality to relevant elements.
    */
-  Drupal.behaviors.geolocationDisableTilt = {
+  Drupal.behaviors.leafletGestureHandling = {
     attach: function (context, drupalSettings) {
-
       Drupal.geolocation.executeFeatureOnAllMaps(
-        'map_disable_tilt',
+        'leaflet_disable_user_interaction',
 
         /**
-         * @param {GeolocationMapInterface} map - Current map.
+         * @param {GeolocationLeafletMap} map - Current map.
          * @param {GeolocationMapFeatureSettings} featureSettings - Settings for current feature.
          */
         function (map, featureSettings) {
-          map.addInitializedCallback(function (map) {
-            map.googleMap.setTilt(0);
-          });
+
+          map.leafletMap.dragging.disable();
+          map.leafletMap.touchZoom.disable();
+          map.leafletMap.doubleClickZoom.disable();
+          map.leafletMap.scrollWheelZoom.disable();
 
           return true;
         },
@@ -37,4 +38,5 @@
     },
     detach: function (context, drupalSettings) {}
   };
+
 })(jQuery, Drupal);

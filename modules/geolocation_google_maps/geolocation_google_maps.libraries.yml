@@ -175,6 +175,13 @@ geolocation.map_restriction:
   dependencies:
     - geolocation_google_maps/googlemapsapi
 
+# Map disable user interaction.
+geolocation.map_disable_user_interaction:
+  js:
+    js/MapFeature/geolocation-mapdisableuserinteraction.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
 #
 # Map Features - Controls
 #

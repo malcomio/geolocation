@@ -1,6 +1,6 @@
 /**
  * @file
- * Disable tilt.
+ * Disable POI.
  */
 
 (function ($, Drupal) {
@@ -8,26 +8,29 @@
   'use strict';
 
   /**
-   * Enable Tilt.
+   * Disable User interaction.
    *
    * @type {Drupal~behavior}
    *
    * @prop {Drupal~behaviorAttach} attach
-   *   Attaches common map tilt functionality to relevant elements.
+   *   Attaches common map style functionality to relevant elements.
    */
-  Drupal.behaviors.geolocationDisableTilt = {
+  Drupal.behaviors.geolocationDisableUserInteraction = {
     attach: function (context, drupalSettings) {
 
       Drupal.geolocation.executeFeatureOnAllMaps(
-        'map_disable_tilt',
+        'map_disable_user_interaction',
 
         /**
-         * @param {GeolocationMapInterface} map - Current map.
+         * @param {GeolocationGoogleMap} map - Current map.
          * @param {GeolocationMapFeatureSettings} featureSettings - Settings for current feature.
          */
         function (map, featureSettings) {
           map.addInitializedCallback(function (map) {
-            map.googleMap.setTilt(0);
+            map.googleMap.setOptions({
+              gestureHandling: 'none',
+              zoomControl: false
+            });
           });
 
           return true;

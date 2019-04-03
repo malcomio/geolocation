@@ -175,6 +175,14 @@ mapfeature.wms:
     - geolocation_leaflet/geolocation.leaflet
     - geolocation_leaflet/leaflet.wms
 
+# DisableUserInteraction
+mapfeature.disableuserinteraction:
+  js:
+    js/MapFeature/geolocation-disable-user-interaction.js: {}
+  dependencies:
+    - geolocation_leaflet/geolocation.leaflet
+
+
 # MaxBounds
 mapfeature.max_bounds:
   js:
