@@ -47,6 +47,9 @@ class ViewsProximityArgument extends LocationBase implements LocationInterface {
 
     /** @var \Drupal\geolocation\Plugin\views\argument\ProximityArgument $handler */
     $handler = $displayHandler->getHandler('argument', $location_option_id);
+    if (empty($handler)) {
+      return FALSE;
+    }
     if ($values = $handler->getParsedReferenceLocation()) {
       if (isset($values['lat']) && isset($values['lng'])) {
         return [

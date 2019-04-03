@@ -96,41 +96,45 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
+  public function groupForm(&$form, FormStateInterface $form_state) {
+    parent::groupForm($form, $form_state);
+
+    $center_form = $this->locationInputManager->getForm($this->options['location_input'], $this, empty($this->value['center']) ? NULL : $this->value['center']);
+    if (!empty($center_form)) {
+      $form['center'] = $center_form;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function valueForm(&$form, FormStateInterface $form_state) {
     parent::valueForm($form, $form_state);
 
     if (!isset($form['value']['value'])) {
-      $form['value'] = [
-        'value' => $form['value'],
-        '#tree' => TRUE,
-      ];
-      $user_input = $form_state->getUserInput();
-      $identifier = $this->options['expose']['identifier'];
-      $exposed = $form_state->get('exposed');
-
-      if ($exposed && !isset($user_input[$identifier]['value'])) {
-        $user_input[$identifier] = [
-          'value' => $this->value['value'],
-        ];
-        if ($this->value['center']) {
-          $user_input[$identifier]['center'] = $this->value['center'];
-        }
-        $form_state->setUserInput($user_input);
-      }
+      $form['value'] = array_replace($form['value'], [
+        '#type' => 'number',
+        '#min' => 0,
+        '#step' => 0.1,
+        '#title' => $this->t('Distance'),
+        '#description' => $this->t('Distance in %unit', ['%unit' => $this->options['unit'] === 'km' ? $this->t('Kilometers') : $this->t('Miles')]),
+        '#default_value' => self::convertDistance($form['value']['#default_value'], $this->options['unit'], TRUE),
+      ]);
     }
-
-    $form['value']['value'] = array_replace($form['value']['value'], [
-      '#type' => 'number',
-      '#min' => 0,
-      '#step' => 0.1,
-      '#title' => $this->t('Distance'),
-      '#description' => $this->t('Distance in %unit', ['%unit' => $this->options['unit'] === 'km' ? $this->t('Kilometers') : $this->t('Miles')]),
-      '#default_value' => self::convertDistance($form['value']['value']['#default_value'], $this->options['unit'], TRUE),
-    ]);
+    else {
+      $form['value']['value'] = array_replace($form['value']['value'], [
+        '#type' => 'number',
+        '#min' => 0,
+        '#step' => 0.1,
+        '#title' => $this->t('Distance'),
+        '#description' => $this->t('Distance in %unit', ['%unit' => $this->options['unit'] === 'km' ? $this->t('Kilometers') : $this->t('Miles')]),
+        '#default_value' => self::convertDistance($form['value']['value']['#default_value'], $this->options['unit'], TRUE),
+      ]);
+    }
 
     $center_form = $this->locationInputManager->getForm($this->options['location_input'], $this, empty($this->value['center']) ? NULL : $this->value['center']);
     if (!empty($center_form)) {
-      $form['value']['center'] = $center_form;
+      $form['center'] = $center_form;
     }
   }
 
@@ -149,12 +153,21 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function acceptExposedInput($input) {
-    $accept = parent::acceptExposedInput($input);
-    if ($accept) {
-      $this->value['value'] = self::convertDistance($this->value['value'], $this->options['unit']);
+    $return = parent::acceptExposedInput($input);
+
+    if (
+      array_key_exists('lat', $input)
+      && array_key_exists('lng', $input)
+    ) {
+      $this->value['lat'] = (float) $input['lat'];
+      $this->value['lng'] = (float) $input['lng'];
     }
 
-    return $accept;
+    if (!empty($input['center'])) {
+      $this->value['center'] = $input['center'];
+    }
+
+    return $return;
   }
 
   /**
@@ -162,12 +175,20 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
    */
   public function query() {
     $table = $this->ensureMyTable();
+    $this->value['value'] = self::convertDistance($this->value['value'], $this->options['unit']);
 
-    $center_form_value = [];
-    if (!empty($this->value['center'])) {
-      $center_form_value = $this->value['center'];
+    if (
+      array_key_exists('lat', $this->value)
+      && array_key_exists('lng', $this->value)
+    ) {
+      $center = [
+        'lat' => (float) $this->value['lat'],
+        'lng' => (float) $this->value['lng'],
+      ];
     }
-    $center = $this->locationInputManager->getCoordinates($center_form_value, $this->options['location_input'], $this);
+    else {
+      $center = $this->locationInputManager->getCoordinates($this->value['center'], $this->options['location_input'], $this);
+    }
 
     if (
       empty($center)
