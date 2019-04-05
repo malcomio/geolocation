@@ -157,19 +157,17 @@ class LeafletMarkerIcon extends MapFeatureBase {
 
     $feature_settings = $this->getSettings($feature_settings);
 
-    $plugin_id = $this->getPluginId();
-
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_leaflet/mapfeature.markericonadjustment',
+          'geolocation_leaflet/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                $plugin_id => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'iconSize'     => [
                     'width' => (int) $feature_settings['icon_size']['width'],
@@ -207,7 +205,7 @@ class LeafletMarkerIcon extends MapFeatureBase {
 
       $iconPath = \Drupal::token()->replace($feature_settings['marker_icon_path'], $data);
       $iconUrl = file_url_transform_relative(file_create_url($iconPath));
-      $render_array['#attached']['drupalSettings']['geolocation']['maps'][$render_array['#id']][$plugin_id]['markerIconPath'] = $iconUrl;
+      $render_array['#attached']['drupalSettings']['geolocation']['maps'][$render_array['#id']][$this->getPluginId()]['markerIconPath'] = $iconUrl;
     }
 
     if (!empty($feature_settings['marker_shadow_path'])) {
@@ -218,7 +216,7 @@ class LeafletMarkerIcon extends MapFeatureBase {
 
       $shadowPath = \Drupal::token()->replace($feature_settings['marker_shadow_path'], $data);
       $shadowUrl = file_url_transform_relative(file_create_url($shadowPath));
-      $render_array['#attached']['drupalSettings']['geolocation']['maps'][$render_array['#id']][$plugin_id]['markerShadowPath'] = $shadowUrl;
+      $render_array['#attached']['drupalSettings']['geolocation']['maps'][$render_array['#id']][$this->getPluginId()]['markerShadowPath'] = $shadowUrl;
     }
 
     return $render_array;

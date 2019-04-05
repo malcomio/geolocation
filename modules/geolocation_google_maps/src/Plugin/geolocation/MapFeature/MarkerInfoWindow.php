@@ -74,13 +74,13 @@ class MarkerInfoWindow extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.markerinfowindow',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'marker_infowindow' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'infoAutoDisplay' => $feature_settings['info_auto_display'],
                   'disableAutoPan' => $feature_settings['disable_auto_pan'],

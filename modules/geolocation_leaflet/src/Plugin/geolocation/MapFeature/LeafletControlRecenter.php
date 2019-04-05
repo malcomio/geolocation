@@ -20,7 +20,7 @@ class LeafletControlRecenter extends ControlCustomElementBase {
   public function alterMap(array $render_array, array $settings, array $context = []) {
     $render_array = parent::alterMap($render_array, $settings, $context);
 
-    $render_array['#controls'][$this->pluginId]['control_recenter'] = [
+    $render_array['#controls'][$this->getPluginId()]['control_recenter'] = [
       '#type' => 'html_tag',
       '#tag' => 'a',
       '#attributes' => [
@@ -30,7 +30,7 @@ class LeafletControlRecenter extends ControlCustomElementBase {
         'role' => 'button',
       ],
     ];
-    $render_array['#controls'][$this->pluginId]['#attributes']['class'][] = 'leaflet-bar';
+    $render_array['#controls'][$this->getPluginId()]['#attributes']['class'][] = 'leaflet-bar';
 
     return $render_array;
   }

@@ -166,13 +166,13 @@ class MarkerInfoBubble extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.markerinfobubble',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'marker_infobubble' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'closeButton' => $feature_settings['close_button'],
                   'closeOther' => $feature_settings['close_other'],

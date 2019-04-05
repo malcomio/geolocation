@@ -11,13 +11,13 @@ use Drupal\Core\Template\Attribute;
  * Provides Feature.
  *
  * @MapFeature(
- *   id = "leaflet_marker_zoom_to_animate",
+ *   id = "leaflet_marker_zoom_and_animate",
  *   name = @Translation("Marker Zoom & Animate"),
  *   description = @Translation("Set a URL anchor."),
  *   type = "leaflet",
  * )
  */
-class LeafletMarkerZoomByAnchor extends MapFeatureBase {
+class LeafletMarkerZoomAndAnimate extends MapFeatureBase {
 
   /**
    * {@inheritdoc}
@@ -84,13 +84,13 @@ class LeafletMarkerZoomByAnchor extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_leaflet/mapfeature.marker_zoom_by_anchor',
+          'geolocation_leaflet/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'leaflet_marker_zoom_by_anchor' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                 ],
               ],

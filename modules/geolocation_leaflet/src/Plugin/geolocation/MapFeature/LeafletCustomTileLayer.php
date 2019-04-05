@@ -78,13 +78,13 @@ class LeafletCustomTileLayer extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_leaflet/mapfeature.customtilelayer',
+          'geolocation_leaflet/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'leaflet_custom_tile_layer' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'tileLayerUrl' => $feature_settings['tile_layer_url'],
                   'tileLayerAttribution' => $feature_settings['tile_layer_attribution'],

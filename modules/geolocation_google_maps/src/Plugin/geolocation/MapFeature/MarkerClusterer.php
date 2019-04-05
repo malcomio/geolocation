@@ -144,13 +144,13 @@ class MarkerClusterer extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.markerclusterer',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'marker_clusterer' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'imagePath' => $feature_settings['image_path'],
                   'styles' => $feature_settings['styles'],

@@ -18,7 +18,7 @@ commonmap.yandex:
 #
 
 # Clusterer
-mapfeature.clusterer:
+mapfeature.yandex_clusterer:
   js:
     js/MapFeature/clusterer.js: {}
   dependencies:

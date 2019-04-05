@@ -64,7 +64,7 @@ geocoder.photon:
 #
 
 # MarkerPopup support.
-mapfeature.markerpopup:
+mapfeature.leaflet_marker_popup:
   js:
     js/MapFeature/geolocation-marker-popup.js: {}
   dependencies:
@@ -85,7 +85,7 @@ leaflet.markerclusterer:
   js:
     'https://unpkg.com/leaflet.markercluster@1.2.0/dist/leaflet.markercluster.js': { type: external, minified: true }
 
-mapfeature.markerclusterer:
+mapfeature.leaflet_marker_clusterer:
   js:
     js/MapFeature/geolocation-marker-clusterer.js: {}
   dependencies:
@@ -100,7 +100,7 @@ mapfeature.client_location_indicator:
   - geolocation_leaflet/geolocation.leaflet
 
 # MarkerIconAdjustment support.
-mapfeature.markericonadjustment:
+mapfeature.leaflet_marker_icon:
   js:
     js/MapFeature/geolocation-marker-icon.js: {}
   dependencies:
@@ -121,7 +121,7 @@ leaflet.gesture-handling:
   js:
     '//unpkg.com/leaflet-gesture-handling@1.1.7/dist/leaflet-gesture-handling.min.js': { type: external, minified: true }
 
-mapfeature.gesture-handling:
+mapfeature.leaflet_gesture_handling:
   js:
     js/MapFeature/geolocation-gesture-handling.js: {}
   dependencies:
@@ -140,7 +140,7 @@ leaflet-providers:
   js:
     'https://cdnjs.cloudflare.com/ajax/libs/leaflet-providers/1.3.1/leaflet-providers.min.js': { type: external, minified: true }
 
-mapfeature.tilelayer:
+mapfeature.leaflet_tile_layer:
   js:
     js/MapFeature/geolocation-tile-layer.js: {}
   dependencies:
@@ -148,7 +148,7 @@ mapfeature.tilelayer:
     - geolocation_leaflet/leaflet-providers
 
 # CustomTileLayer.
-mapfeature.customtilelayer:
+mapfeature.leaflet_custom_tile_layer:
   js:
     js/MapFeature/geolocation-custom-tile-layer.js: {}
   dependencies:
@@ -168,7 +168,7 @@ leaflet.wms:
   js:
     /libraries/leaflet.wms/dist/leaflet.wms.js: { type: external, minified: true }
 
-mapfeature.wms:
+mapfeature.leaflet_wms:
   js:
     js/MapFeature/geolocation-wms.js: {}
   dependencies:
@@ -176,7 +176,7 @@ mapfeature.wms:
     - geolocation_leaflet/leaflet.wms
 
 # DisableUserInteraction
-mapfeature.disableuserinteraction:
+mapfeature.leaflet_disable_user_interaction:
   js:
     js/MapFeature/geolocation-disable-user-interaction.js: {}
   dependencies:
@@ -184,7 +184,7 @@ mapfeature.disableuserinteraction:
 
 
 # MaxBounds
-mapfeature.max_bounds:
+mapfeature.leaflet_max_bounds:
   js:
     js/MapFeature/geolocation-maxbounds.js: {}
   dependencies:
@@ -202,7 +202,7 @@ leaflet.bouncemarker:
   js:
     'https://cdn.jsdelivr.net/gh/maximeh/leaflet.bouncemarker@1.2/bouncemarker.js': { type: external, minified: true }
 
-mapfeature.marker_zoom_by_anchor:
+mapfeature.leaflet_marker_zoom_and_animate:
   js:
     js/MapFeature/geolocation-markerzoombyanchor.js: {}
   dependencies:

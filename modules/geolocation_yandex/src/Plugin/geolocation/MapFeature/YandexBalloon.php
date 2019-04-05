@@ -73,13 +73,13 @@ class YandexBalloon extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_yandex/mapfeature.yandex_balloon',
+          'geolocation_yandex/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'yandex_balloon' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'infoAutoDisplay' => $feature_settings['info_auto_display'],
                   'disableAutoPan' => $feature_settings['disable_auto_pan'],

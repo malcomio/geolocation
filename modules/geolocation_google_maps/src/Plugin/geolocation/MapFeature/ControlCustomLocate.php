@@ -26,13 +26,13 @@ class ControlCustomLocate extends ControlCustomElementBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.control_locate',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'control_locate' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                 ],
               ],

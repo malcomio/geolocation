@@ -139,13 +139,13 @@ class Spiderfying extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.spiderfying',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'spiderfying' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'spiderfiable_marker_path' => $feature_settings['spiderfiable_marker_path'],
                   'markersWontMove' => $feature_settings['markersWontMove'],

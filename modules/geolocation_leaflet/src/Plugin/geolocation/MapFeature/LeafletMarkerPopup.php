@@ -53,13 +53,13 @@ class LeafletMarkerPopup extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_leaflet/mapfeature.markerpopup',
+          'geolocation_leaflet/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'leaflet_marker_popup' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'infoAutoDisplay' => $feature_settings['info_auto_display'],
                 ],

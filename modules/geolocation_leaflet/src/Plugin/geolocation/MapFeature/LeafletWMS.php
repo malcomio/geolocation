@@ -104,7 +104,7 @@ class LeafletWMS extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_leaflet/mapfeature.wms',
+          'geolocation_leaflet/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [

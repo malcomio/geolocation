@@ -79,13 +79,13 @@ class ContextPopup extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.contextpopup',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'context_popup' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'content' => $content,
                 ],

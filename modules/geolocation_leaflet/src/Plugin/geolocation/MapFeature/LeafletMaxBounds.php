@@ -75,13 +75,13 @@ class LeafletMaxBounds extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_leaflet/mapfeature.max_bounds',
+          'geolocation_leaflet/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'leaflet_max_bounds' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'north' => $feature_settings['north'],
                   'south' => $feature_settings['south'],

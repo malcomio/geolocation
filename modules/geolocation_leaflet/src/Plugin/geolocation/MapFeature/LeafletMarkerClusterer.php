@@ -62,13 +62,13 @@ class LeafletMarkerClusterer extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_leaflet/mapfeature.markerclusterer',
+          'geolocation_leaflet/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'leaflet_marker_clusterer' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'showCoverageOnHover' => is_string($cluster_settings['show_coverage_on_hover']) ? TRUE : FALSE,
                   'zoomToBoundsOnClick' => is_string($cluster_settings['zoom_to_bounds_on_click']) ? TRUE : FALSE,

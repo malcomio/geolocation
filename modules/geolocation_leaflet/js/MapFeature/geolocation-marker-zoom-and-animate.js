@@ -22,7 +22,7 @@
         e.preventDefault();
         var markerAnchor = $(this).attr('href').split('#').pop();
         Drupal.geolocation.executeFeatureOnAllMaps(
-          'leaflet_marker_zoom_by_anchor',
+          'leaflet_marker_zoom_and_animate',
 
           /**
            * @param {GeolocationLeafletMap} map - Current map.

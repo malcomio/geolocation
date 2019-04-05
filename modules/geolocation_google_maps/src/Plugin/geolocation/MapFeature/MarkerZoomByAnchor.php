@@ -10,7 +10,7 @@ use Drupal\Core\Template\Attribute;
  * Provides Google Maps.
  *
  * @MapFeature(
- *   id = "google_maps_marker_zoom_to_animate",
+ *   id = "marker_zoom_to_animate",
  *   name = @Translation("Marker Zoom & Animate"),
  *   description = @Translation("Set a URL anchor."),
  *   type = "google_maps",
@@ -83,13 +83,13 @@ class MarkerZoomByAnchor extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.marker_zoom_by_anchor',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'marker_zoom_by_anchor' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                 ],
               ],

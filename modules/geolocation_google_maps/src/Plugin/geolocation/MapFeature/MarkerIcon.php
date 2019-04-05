@@ -149,13 +149,13 @@ class MarkerIcon extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.markericonadjustment',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'marker_icon' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'anchor' => $feature_settings['anchor'],
                   'size' => $feature_settings['size'],
@@ -177,7 +177,7 @@ class MarkerIcon extends MapFeatureBase {
       }
 
       $path = \Drupal::token()->replace($feature_settings['marker_icon_path'], $data);
-      $render_array['#attached']['drupalSettings']['geolocation']['maps'][$render_array['#id']]['marker_icon']['markerIconPath'] = $path;
+      $render_array['#attached']['drupalSettings']['geolocation']['maps'][$render_array['#id']][$this->getPluginId()]['markerIconPath'] = $path;
     }
 
     return $render_array;

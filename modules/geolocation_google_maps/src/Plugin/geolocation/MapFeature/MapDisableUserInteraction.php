@@ -27,13 +27,13 @@ class MapDisableUserInteraction extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.map_disable_user_interaction',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'map_disable_user_interaction' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                 ],
               ],

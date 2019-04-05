@@ -157,13 +157,13 @@ class ControlCustomGeocoder extends ControlCustomElementBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.control_geocoder',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'control_geocoder' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                 ],
               ],

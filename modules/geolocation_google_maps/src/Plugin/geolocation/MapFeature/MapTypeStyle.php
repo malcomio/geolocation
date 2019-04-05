@@ -86,13 +86,13 @@ class MapTypeStyle extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.maptypestyle',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'map_type_style' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'style' => $feature_settings['style'],
                 ],

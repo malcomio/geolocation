@@ -156,13 +156,13 @@ class Drawing extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_google_maps/geolocation.drawing',
+          'geolocation_google_maps/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'drawing' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                   'settings' => $feature_settings,
                 ],

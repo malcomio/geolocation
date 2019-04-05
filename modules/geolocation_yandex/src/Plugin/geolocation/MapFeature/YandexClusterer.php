@@ -26,13 +26,13 @@ class YandexClusterer extends MapFeatureBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_yandex/mapfeature.clusterer',
+          'geolocation_yandex/mapfeature.' . $this->getPluginId(),
         ],
         'drupalSettings' => [
           'geolocation' => [
             'maps' => [
               $render_array['#id'] => [
-                'yandex_clusterer' => [
+                $this->getPluginId() => [
                   'enable' => TRUE,
                 ],
               ],

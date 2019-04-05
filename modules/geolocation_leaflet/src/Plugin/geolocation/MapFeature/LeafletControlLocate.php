@@ -20,7 +20,7 @@ class LeafletControlLocate extends ControlCustomElementBase {
   public function alterMap(array $render_array, array $feature_settings, array $context = []) {
     $render_array = parent::alterMap($render_array, $feature_settings, $context);
 
-    $render_array['#controls'][$this->pluginId]['control_locate'] = [
+    $render_array['#controls'][$this->getPluginId()]['control_locate'] = [
       '#type' => 'html_tag',
       '#tag' => 'a',
       '#attributes' => [
@@ -30,7 +30,7 @@ class LeafletControlLocate extends ControlCustomElementBase {
         'role' => 'button',
       ],
     ];
-    $render_array['#controls'][$this->pluginId]['#attributes']['class'][] = 'leaflet-bar';
+    $render_array['#controls'][$this->getPluginId()]['#attributes']['class'][] = 'leaflet-bar';
 
     return $render_array;
   }
