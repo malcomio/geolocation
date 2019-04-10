@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Fit locations.
+ */
+
 (function ($, Drupal) {
 
   'use strict';
@@ -8,7 +13,7 @@
   /**
    * @param centerOption.settings.reset_zoom {Boolean}
    */
-  Drupal.geolocation.mapCenter.fit_bounds = function(map, centerOption) {
+  Drupal.geolocation.mapCenter.fit_bounds = function (map, centerOption) {
     map.fitMapToMarkers();
 
     if (centerOption.settings.reset_zoom) {

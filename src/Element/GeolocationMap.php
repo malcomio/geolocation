@@ -87,6 +87,27 @@ class GeolocationMap extends RenderElement {
       $render_array['#id'] = uniqid();
     }
 
+    if (!empty($render_array['#controls'])) {
+      uasort($render_array['#controls'], [
+        SortArray::class,
+        'sortByWeightProperty',
+      ]);
+    }
+
+    if (!empty($render_array['#layers'])) {
+      uasort($render_array['#layers'], [
+        SortArray::class,
+        'sortByWeightProperty',
+      ]);
+    }
+
+    if (!empty($render_array['#children'])) {
+      uasort($render_array['#children'], [
+        SortArray::class,
+        'sortByWeightProperty',
+      ]);
+    }
+
     if (empty($render_array['#maptype'])) {
       if (\Drupal::moduleHandler()->moduleExists('geolocation_google_maps')) {
         $render_array['#maptype'] = 'google_maps';
@@ -120,6 +141,12 @@ class GeolocationMap extends RenderElement {
       $render_array
     );
 
+    if (!empty($render_array['#layers'])) {
+      foreach (Element::children($render_array['#layers']) as $layer) {
+        $render_array['#children']['layers']['layer-' . $layer] = $render_array['#layers'][$layer];
+      }
+    }
+
     foreach (Element::children($render_array) as $child) {
       $render_array['#children'][$child] = $render_array[$child];
       unset($render_array[$child]);
@@ -148,20 +175,6 @@ class GeolocationMap extends RenderElement {
       $render_array['#attributes']->setAttribute('data-centre-lng-north-east', $render_array['#centre']['lng_north_east']);
       $render_array['#attributes']->setAttribute('data-centre-lat-south-west', $render_array['#centre']['lat_south_west']);
       $render_array['#attributes']->setAttribute('data-centre-lng-south-west', $render_array['#centre']['lng_south_west']);
-    }
-
-    if (!empty($render_array['#controls'])) {
-      uasort($render_array['#controls'], [
-        SortArray::class,
-        'sortByWeightProperty',
-      ]);
-    }
-
-    if (!empty($render_array['#children'])) {
-      uasort($render_array['#children'], [
-        SortArray::class,
-        'sortByWeightProperty',
-      ]);
     }
 
     $context = [];

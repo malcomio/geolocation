@@ -2,10 +2,7 @@
 
 namespace Drupal\geolocation\Plugin\views\style;
 
-use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\image\Entity\ImageStyle;
-use Drupal\views\ResultRow;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\NestedArray;
 
@@ -22,17 +19,9 @@ use Drupal\Component\Utility\NestedArray;
  *   display_types = {"normal"},
  * )
  */
-class CommonMapBase extends StylePluginBase {
-
-  protected $usesFields = TRUE;
-  protected $usesRowPlugin = TRUE;
-  protected $usesRowClass = FALSE;
-  protected $usesGrouping = FALSE;
+class CommonMap extends GeolocationStyleBase {
 
   protected $mapId = FALSE;
-
-  protected $titleField = FALSE;
-  protected $iconField = FALSE;
 
   /**
    * Map provider manager.
@@ -49,17 +38,10 @@ class CommonMapBase extends StylePluginBase {
   protected $mapCenterManager = NULL;
 
   /**
-   * Data provider base.
-   *
-   * @var \Drupal\geolocation\DataProviderManager
-   */
-  protected $dataProviderManager = NULL;
-
-  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, $map_provider_manager, $map_center_manager, $data_provider_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $data_provider_manager);
 
     $this->mapProviderManager = $map_provider_manager;
     $this->mapCenterManager = $map_center_manager;
@@ -156,6 +138,7 @@ class CommonMapBase extends StylePluginBase {
       '#maptype' => $this->options['map_provider_id'],
       '#id' => $this->mapId,
       '#settings' => $map_settings,
+      '#layers' => [],
       '#attached' => [
         'library' => [
           'geolocation/geolocation.commonmap',
@@ -225,89 +208,14 @@ class CommonMapBase extends StylePluginBase {
         ->alterCommonMap($build, $this->options['map_provider_settings'], ['view' => $this]);
     }
 
+    if (!empty($this->view->geolocationLayers[$this->view->current_display])) {
+      if (empty($build['#layers'])) {
+        $build['#layers'] = [];
+      }
+      $build['#layers'][] = $this->view->geolocationLayers[$this->view->current_display];
+    }
+
     return $build;
-  }
-
-  /**
-   * Render array from views result row.
-   *
-   * @param \Drupal\views\ResultRow $row
-   *   Result row.
-   *
-   * @return array
-   *   List of location render elements.
-   */
-  protected function getLocationsFromRow(ResultRow $row) {
-    $locations = [];
-
-    if (!empty($this->titleField)) {
-      if (!empty($this->rendered_fields[$row->index][$this->titleField])) {
-        $title_build = $this->rendered_fields[$row->index][$this->titleField];
-      }
-      elseif (!empty($this->view->field[$this->titleField])) {
-        $title_build = $this->view->field[$this->titleField]->render($row);
-      }
-    }
-
-    $icon_url = NULL;
-    if (!empty($this->iconField)) {
-      /** @var \Drupal\views\Plugin\views\field\Field $icon_field_handler */
-      $icon_field_handler = $this->view->field[$this->iconField];
-      if (!empty($icon_field_handler)) {
-        $image_items = $icon_field_handler->getItems($row);
-        if (!empty($image_items[0]['rendered']['#item']->entity)) {
-          $file_uri = $image_items[0]['rendered']['#item']->entity->getFileUri();
-
-          $style = NULL;
-          if (!empty($image_items[0]['rendered']['#image_style'])) {
-            /** @var \Drupal\image\Entity\ImageStyle $style */
-            $style = ImageStyle::load($image_items[0]['rendered']['#image_style']);
-          }
-
-          if (!empty($style)) {
-            $icon_url = file_url_transform_relative($style->buildUrl($file_uri));
-          }
-          else {
-            $icon_url = file_url_transform_relative(file_create_url($file_uri));
-          }
-        }
-      }
-    }
-    elseif (!empty($this->options['marker_icon_path'])) {
-      $icon_token_uri = $this->viewsTokenReplace($this->options['marker_icon_path'], $this->rowTokens[$row->index]);
-      $icon_token_uri = preg_replace('/\s+/', '', $icon_token_uri);
-      $icon_url = file_url_transform_relative(file_create_url($icon_token_uri));
-    }
-
-    $data_provider = $this->dataProviderManager->createInstance($this->options['data_provider_id'], $this->options['data_provider_settings']);
-
-    foreach ($data_provider->getPositionsFromViewsRow($row, $this->view->field[$this->options['geolocation_field']]) as $position) {
-      $location = [
-        '#type' => 'geolocation_map_location',
-        'content' => $this->view->rowPlugin->render($row),
-        '#title' => empty($title_build) ? '' : $title_build,
-        '#position' => $position,
-        '#weight' => $row->index,
-        '#attributes' => ['data-views-row-index' => $row->index],
-      ];
-
-      if (!empty($icon_url)) {
-        $location['#icon'] = $icon_url;
-      }
-
-      if (!empty($location_id)) {
-        $location['#id'] = $location_id;
-      }
-
-      if ($this->options['marker_row_number']) {
-        $markerOffset = $this->view->pager->getCurrentPage() * $this->view->pager->getItemsPerPage();
-        $location['#label'] = (int) $markerOffset + (int) $row->index + 1;
-      }
-
-      $locations[] = $location;
-    }
-
-    return $locations;
   }
 
   /**
@@ -318,14 +226,6 @@ class CommonMapBase extends StylePluginBase {
 
     $options['even_empty'] = ['default' => '1'];
 
-    $options['geolocation_field'] = ['default' => ''];
-    $options['data_provider_id'] = ['default' => 'geolocation_field_provider'];
-    $options['data_provider_settings'] = ['default' => []];
-
-    $options['title_field'] = ['default' => ''];
-    $options['icon_field'] = ['default' => ''];
-
-    $options['marker_row_number'] = ['default' => FALSE];
     $options['dynamic_map'] = [
       'contains' => [
         'enabled' => ['default' => 0],
@@ -336,7 +236,6 @@ class CommonMapBase extends StylePluginBase {
       ],
     ];
     $options['centre'] = ['default' => []];
-    $options['marker_icon_path'] = ['default' => ''];
 
     $options['map_provider_id'] = ['default' => ''];
     $options['map_provider_settings'] = ['default' => []];
@@ -360,103 +259,6 @@ class CommonMapBase extends StylePluginBase {
     }
 
     parent::buildOptionsForm($form, $form_state);
-
-    $labels = $this->displayHandler->getFieldLabels();
-    $geo_options = [];
-    /** @var \Drupal\geolocation\DataProviderInterface[] $data_providers */
-    $data_providers = [];
-    $title_options = [];
-    $icon_options = [];
-
-    $fields = $this->displayHandler->getHandlers('field');
-    /** @var \Drupal\views\Plugin\views\field\FieldPluginBase[] $fields */
-    foreach ($fields as $field_name => $field) {
-      $data_provider_settings = [];
-      if (
-        $this->options['geolocation_field'] == $field_name
-        && !empty($this->options['data_provider_settings'])
-      ) {
-        $data_provider_settings = $this->options['data_provider_settings'];
-      }
-      if ($data_provider = $this->dataProviderManager->getDataProviderByViewsField($field, $data_provider_settings)) {
-        $geo_options[$field_name] = $field->adminLabel();
-        $data_providers[$field_name] = $data_provider;
-      }
-
-      if (!empty($field->options['type']) && $field->options['type'] == 'image') {
-        $icon_options[$field_name] = $labels[$field_name];
-      }
-
-      if (!empty($field->options['type']) && $field->options['type'] == 'string') {
-        $title_options[$field_name] = $labels[$field_name];
-      }
-    }
-
-    $form['geolocation_field'] = [
-      '#title' => $this->t('Geolocation source field'),
-      '#type' => 'select',
-      '#default_value' => $this->options['geolocation_field'],
-      '#description' => $this->t("The source of geodata for each entity."),
-      '#options' => $geo_options,
-      '#required' => TRUE,
-      '#ajax' => [
-        'callback' => [get_class($this->dataProviderManager), 'addDataProviderSettingsFormAjax'],
-        'wrapper' => 'data-provider-settings',
-        'effect' => 'fade',
-      ],
-    ];
-
-    $data_provider = NULL;
-
-    $form_state_data_provider_id = NestedArray::getValue($form_state->getUserInput(), ['style_options', 'geolocation_field']);
-    if (
-      !empty($form_state_data_provider_id)
-      && !empty($data_providers[$form_state_data_provider_id])
-    ) {
-      $data_provider = $data_providers[$form_state_data_provider_id];
-    }
-    elseif (!empty($data_providers[$this->options['geolocation_field']])) {
-      $data_provider = $data_providers[$this->options['geolocation_field']];
-    }
-    elseif ($data_providers[reset($geo_options)]) {
-      $data_provider = $data_providers[reset($geo_options)];
-    }
-    else {
-      return;
-    }
-
-    $form['data_provider_id'] = [
-      '#type' => 'value',
-      '#value' => $data_provider->getPluginId(),
-    ];
-
-    $form['data_provider_settings'] = [
-      '#type' => 'container',
-    ];
-
-    if ($data_provider) {
-      $form['data_provider_settings'] = $data_provider->getSettingsForm(
-        $this->options['data_provider_settings'],
-        [
-          'style_options',
-          'map_provider_settings',
-        ]
-      );
-    }
-
-    $form['data_provider_settings'] = array_replace($form['data_provider_settings'], [
-      '#prefix' => '<div id="data-provider-settings">',
-      '#suffix' => '</div>',
-    ]);
-
-    $form['title_field'] = [
-      '#title' => $this->t('Title source field'),
-      '#type' => 'select',
-      '#default_value' => $this->options['title_field'],
-      '#description' => $this->t("The source of the title for each entity. Field type must be 'string'."),
-      '#options' => $title_options,
-      '#empty_value' => 'none',
-    ];
 
     $map_update_target_options = $this->getMapUpdateOptions();
 
@@ -557,40 +359,6 @@ class CommonMapBase extends StylePluginBase {
       '#title' => $this->t('Display map when no locations are found'),
       '#type' => 'checkbox',
       '#default_value' => $this->options['even_empty'],
-    ];
-
-    if ($icon_options) {
-      $form['icon_field'] = [
-        '#group' => 'style_options][advanced_settings',
-        '#title' => $this->t('Icon source field'),
-        '#type' => 'select',
-        '#default_value' => $this->options['icon_field'],
-        '#description' => $this->t("Optional image (field) to use as icon."),
-        '#options' => $icon_options,
-        '#empty_value' => 'none',
-        '#process' => [
-          ['\Drupal\Core\Render\Element\RenderElement', 'processGroup'],
-          ['\Drupal\Core\Render\Element\Select', 'processSelect'],
-        ],
-        '#pre_render' => [
-          ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
-        ],
-      ];
-    }
-
-    $form['marker_icon_path'] = [
-      '#group' => 'style_options][advanced_settings',
-      '#type' => 'textfield',
-      '#title' => $this->t('Marker icon path'),
-      '#description' => $this->t('Set relative or absolute path to custom marker icon. Tokens & Views replacement patterns supported. Empty for default.'),
-      '#default_value' => $this->options['marker_icon_path'],
-    ];
-
-    $form['marker_row_number'] = [
-      '#group' => 'style_options][advanced_settings',
-      '#title' => $this->t('Show views result row number in marker'),
-      '#type' => 'checkbox',
-      '#default_value' => $this->options['marker_row_number'],
     ];
 
     $form['map_provider_id'] = [
