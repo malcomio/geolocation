@@ -231,7 +231,8 @@
       var that = this;
 
       Object
-        .values(this.mapCenter)
+        // .values(this.mapCenter) // Reenable once IE11 is dead. Hopefully soon.
+        .keys(that.mapCenter).map(function (item) { return that.mapCenter[item]; }) // IE11 fix from #3046802.
         .sort(function (a, b) {
           return a.weight - b.weight;
         })
