@@ -8,6 +8,7 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\views\ResultRow;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Component\Render\PlainTextOutput;
 
 /**
  * Class GeolocationStyleBase.
@@ -22,6 +23,7 @@ abstract class GeolocationStyleBase extends StylePluginBase {
   protected $usesGrouping = FALSE;
 
   protected $titleField = FALSE;
+  protected $labelField = FALSE;
   protected $iconField = FALSE;
 
   /**
@@ -53,6 +55,39 @@ abstract class GeolocationStyleBase extends StylePluginBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function render() {
+    if (empty($this->options['geolocation_field'])) {
+      \Drupal::messenger()->addMessage('The geolocation based view ' . $this->view->id() . ' views style was called without a geolocation field defined in the views style settings.', 'error');
+      return FALSE;
+    }
+
+    if (
+      !empty($this->options['title_field'])
+      && $this->options['title_field'] != 'none'
+    ) {
+      $this->titleField = $this->options['title_field'];
+    }
+
+    if (
+      !empty($this->options['label_field'])
+      && $this->options['label_field'] != 'none'
+    ) {
+      $this->labelField = $this->options['label_field'];
+    }
+
+    if (
+      !empty($this->options['icon_field'])
+      && $this->options['icon_field'] != 'none'
+    ) {
+      $this->iconField = $this->options['icon_field'];
+    }
+
+    return parent::render();
+  }
+
+  /**
    * Render array from views result row.
    *
    * @param \Drupal\views\ResultRow $row
@@ -71,6 +106,19 @@ abstract class GeolocationStyleBase extends StylePluginBase {
       elseif (!empty($this->view->field[$this->titleField])) {
         $title_build = $this->view->field[$this->titleField]->render($row);
       }
+    }
+
+    if (!empty($this->labelField)) {
+      if (!empty($this->rendered_fields[$row->index][$this->labelField])) {
+        $label_build = $this->rendered_fields[$row->index][$this->labelField];
+      }
+      elseif (!empty($this->view->field[$this->labelField])) {
+        $label_build = $this->view->field[$this->labelField]->render($row);
+      }
+      else {
+        $label_build = '';
+      }
+      $label_build = PlainTextOutput::renderFromHtml($label_build);
     }
 
     $icon_url = NULL;
@@ -110,6 +158,7 @@ abstract class GeolocationStyleBase extends StylePluginBase {
         '#type' => 'geolocation_map_location',
         'content' => $this->view->rowPlugin->render($row),
         '#title' => empty($title_build) ? '' : $title_build,
+        '#label' => empty($label_build) ? '' : $label_build,
         '#position' => $position,
         '#weight' => $row->index,
         '#attributes' => ['data-views-row-index' => $row->index],
@@ -125,7 +174,13 @@ abstract class GeolocationStyleBase extends StylePluginBase {
 
       if ($this->options['marker_row_number']) {
         $markerOffset = $this->view->pager->getCurrentPage() * $this->view->pager->getItemsPerPage();
-        $location['#label'] = (int) $markerOffset + (int) $row->index + 1;
+        $marker_row_number = (int) $markerOffset + (int) $row->index + 1;
+        if (empty($location['#label'])) {
+          $location['#label'] = $marker_row_number;
+        }
+        else {
+          $location['#label'] = $location['#label'] . ': ' . $location['#label'];
+        }
       }
 
       $locations[] = $location;
@@ -145,6 +200,7 @@ abstract class GeolocationStyleBase extends StylePluginBase {
     $options['data_provider_settings'] = ['default' => []];
 
     $options['title_field'] = ['default' => ''];
+    $options['label_field'] = ['default' => ''];
     $options['icon_field'] = ['default' => ''];
 
     $options['marker_row_number'] = ['default' => FALSE];
@@ -164,6 +220,7 @@ abstract class GeolocationStyleBase extends StylePluginBase {
     /** @var \Drupal\geolocation\DataProviderInterface[] $data_providers */
     $data_providers = [];
     $title_options = [];
+    $label_options = [];
     $icon_options = [];
 
     $fields = $this->displayHandler->getHandlers('field');
@@ -187,6 +244,7 @@ abstract class GeolocationStyleBase extends StylePluginBase {
 
       if (!empty($field->options['type']) && $field->options['type'] == 'string') {
         $title_options[$field_name] = $labels[$field_name];
+        $label_options[$field_name] = $labels[$field_name];
       }
     }
 
@@ -253,6 +311,15 @@ abstract class GeolocationStyleBase extends StylePluginBase {
       '#default_value' => $this->options['title_field'],
       '#description' => $this->t("The source of the title for each entity. Field type must be 'string'."),
       '#options' => $title_options,
+      '#empty_value' => 'none',
+    ];
+
+    $form['label_field'] = [
+      '#title' => $this->t('Label source field'),
+      '#type' => 'select',
+      '#default_value' => $this->options['label_field'],
+      '#description' => $this->t("The source of the label for each entity. Field type must be 'string'."),
+      '#options' => $label_options,
       '#empty_value' => 'none',
     ];
 

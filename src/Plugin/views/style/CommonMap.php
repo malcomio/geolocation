@@ -104,23 +104,9 @@ class CommonMap extends GeolocationStyleBase {
    */
   public function render() {
 
-    if (empty($this->options['geolocation_field'])) {
-      \Drupal::messenger()->addMessage('The geolocation common map ' . $this->view->id() . ' views style was called without a geolocation field defined in the views style settings.', 'error');
+    $render = parent::render();
+    if ($render === FALSE) {
       return [];
-    }
-
-    if (
-      !empty($this->options['title_field'])
-      && $this->options['title_field'] != 'none'
-    ) {
-      $this->titleField = $this->options['title_field'];
-    }
-
-    if (
-      !empty($this->options['icon_field'])
-      && $this->options['icon_field'] != 'none'
-    ) {
-      $this->iconField = $this->options['icon_field'];
     }
 
     // TODO: Not unique enough, but uniqueid() changes on every AJAX request.
