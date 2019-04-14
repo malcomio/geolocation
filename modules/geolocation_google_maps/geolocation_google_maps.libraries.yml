@@ -139,6 +139,13 @@ mapfeature.marker_icon:
   dependencies:
     - geolocation_google_maps/googlemapsapi
 
+# MarkerLabelAdjustment support.
+mapfeature.marker_label:
+  js:
+    js/MapFeature/geolocation-marker-label.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
 # MapTypeStyle support.
 mapfeature.map_type_style:
   js:
