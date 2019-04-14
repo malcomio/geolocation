@@ -50,7 +50,7 @@ class GeolocationField extends EntityField {
     }
 
     $tokens['{{ ' . $this->options['id'] . '__lat_sex }}'] = GeolocationItem::decimalToSexagesimal($geolocationItem->get('lat')->getValue());
-    $tokens['{{ ' . $this->options['id'] . '__lng_sex }}'] = GeolocationItem::decimalToSexagesimal($geolocationItem->get('lat')->getValue());
+    $tokens['{{ ' . $this->options['id'] . '__lng_sex }}'] = GeolocationItem::decimalToSexagesimal($geolocationItem->get('lng')->getValue());
   }
 
 }
