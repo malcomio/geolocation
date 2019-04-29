@@ -24,7 +24,7 @@ class LeafletTileLayer extends MapFeatureBase {
    */
   public static function getDefaultSettings() {
     return [
-      'tile_layer_provider' => 'OpenStreetMap.Mapnik',
+      'tile_layer_provider' => 'OpenStreetMap Mapnik',
       'tile_provider_options' => [],
     ];
   }

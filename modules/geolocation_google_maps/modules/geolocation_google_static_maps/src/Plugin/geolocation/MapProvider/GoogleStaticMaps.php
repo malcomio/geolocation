@@ -31,6 +31,8 @@ class GoogleStaticMaps extends GoogleMapsProviderBase {
       [
         'height' => '400',
         'width' => '400',
+        'scale' => '1',
+        'format' => 'png',
       ]
     );
   }

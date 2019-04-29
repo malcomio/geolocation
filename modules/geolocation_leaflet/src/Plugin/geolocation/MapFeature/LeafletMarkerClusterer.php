@@ -23,7 +23,10 @@ class LeafletMarkerClusterer extends MapFeatureBase {
   public static function getDefaultSettings() {
     $default_settings = parent::getDefaultSettings();
 
-    $default_settings['cluster_settings'] = [];
+    $default_settings['cluster_settings'] = [
+      'show_coverage_on_hover' => TRUE,
+      'zoom_to_bounds_on_click' => TRUE,
+    ];
 
     return $default_settings;
   }
@@ -35,8 +38,8 @@ class LeafletMarkerClusterer extends MapFeatureBase {
     $settings = $this->getSettings($settings);
 
     $options = [
-      'show_coverage_on_hover' => $this->t('When you mouse over a cluster it shows the bounds of its markers.'),
-      'zoom_to_bounds_on_click' => $this->t('When you click a cluster we zoom to its bounds.'),
+      'show_coverage_on_hover' => $this->t('Hovering over a cluster shows the bounds of its markers.'),
+      'zoom_to_bounds_on_click' => $this->t('Clicking a cluster zooms to the bounds.'),
     ];
 
     $form['cluster_settings'] = [

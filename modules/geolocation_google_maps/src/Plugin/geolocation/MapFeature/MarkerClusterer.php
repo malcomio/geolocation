@@ -25,7 +25,7 @@ class MarkerClusterer extends MapFeatureBase {
   public static function getDefaultSettings() {
     return [
       'image_path' => '',
-      'styles' => [],
+      'styles' => '',
       'max_zoom' => 15,
       'zoom_on_click' => TRUE,
       'average_center' => FALSE,
