@@ -212,7 +212,7 @@ leaflet.bouncemarker:
 
 mapfeature.leaflet_marker_zoom_and_animate:
   js:
-    js/MapFeature/geolocation-markerzoombyanchor.js: {}
+    js/MapFeature/geolocation-marker-zoom-and-animate.js: {}
   dependencies:
     - geolocation_leaflet/geolocation.leaflet
     - geolocation_leaflet/leaflet.bouncemarker
