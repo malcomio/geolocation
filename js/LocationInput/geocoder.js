@@ -18,7 +18,7 @@
    */
   Drupal.behaviors.locationInputGeocoder = {
     attach: function (context, drupalSettings) {
-      $.each(drupalSettings.geolocation.locationInput.geocoder, function(index, settings) {
+      $.each(drupalSettings.geolocation.locationInput.geocoder, function (index, settings) {
         var input = $('.location-input-geocoder.' + settings.identifier, context).once('location-input-processed').first();
         if (input.length) {
           if (settings.hideForm) {

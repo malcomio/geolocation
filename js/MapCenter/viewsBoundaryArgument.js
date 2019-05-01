@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Views boundary argument center.
+ */
+
 (function ($, Drupal) {
 
   'use strict';
@@ -13,7 +18,7 @@
    * @param {float} centerOption.latSouthWest
    * @param {float} centerOption.lngSouthWest
    */
-  Drupal.geolocation.mapCenter.views_boundary_argument = function(map, centerOption) {
+  Drupal.geolocation.mapCenter.views_boundary_argument = function (map, centerOption) {
     var centerBounds = {
       north: centerOption.latNorthEast,
       east: centerOption.lngNorthEast,
