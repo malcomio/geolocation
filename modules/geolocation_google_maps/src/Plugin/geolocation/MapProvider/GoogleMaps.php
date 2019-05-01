@@ -21,7 +21,7 @@ class GoogleMaps extends GoogleMapsProviderBase {
    *
    * @var int
    */
-  public static $MAXZOOMLEVEL = 18;
+  public static $MAXZOOMLEVEL = 20;
 
   /**
    * Google map min zoom level.
