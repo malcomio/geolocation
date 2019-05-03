@@ -78,7 +78,10 @@ class CommonMap extends GeolocationStyleBase {
     foreach ($this->displayHandler->getOption('filters') as $filter_id => $filter) {
       if (
         !empty($filter['plugin_id'])
-        && $filter['plugin_id'] == 'geolocation_filter_boundary'
+        && in_array($filter['plugin_id'], [
+          'geolocation_filter_boundary',
+          'geolocation_search_api_filter_boundary',
+        ])
       ) {
         /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase $filter_handler */
         $filter_handler = $this->displayHandler->getHandler('filter', $filter_id);
