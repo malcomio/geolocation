@@ -103,7 +103,7 @@
                   arrowStyle: featureSettings.arrowStyle,
 
                   hideCloseButton: !featureSettings.closeButton,
-                  closeButtonSrc: featureSettings.closeButtonSrc,
+                  closeSrc: featureSettings.closeButtonSrc,
                   backgroundClassName: 'infobubble',
                   backgroundColor: featureSettings.backgroundColor,
                   minWidth: featureSettings.minWidth,
