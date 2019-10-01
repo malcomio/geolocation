@@ -199,6 +199,19 @@
         [boundaries.north, boundaries.east]
       ]);
     }
+
+    if (
+      typeof boundaries.getNorthEast === 'function'
+      && typeof boundaries.getSouthWest === 'function'
+    ) {
+      var northEast = boundaries.getNorthEast();
+      var southWest = boundaries.getSouthWest();
+
+      boundaries = L.latLngBounds([
+        ([southWest.lat(), southWest.lng()], [northEast.lat(), northEast.lng()])
+      ]);
+    }
+
     if (!this.leafletMap.getBounds().equals(boundaries)) {
       this.leafletMap.fitBounds(boundaries);
       Drupal.geolocation.GeolocationMapBase.prototype.fitBoundaries.call(this, boundaries, identifier);
