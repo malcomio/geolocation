@@ -287,6 +287,9 @@ mapfeature.leaflet_control_fullscreen:
 
 # Control Tile layer
 mapfeature.leaflet_control_layer:
+  css:
+    component:
+      css/geolocation-control-layer.css: {}
   js:
     js/MapFeature/geolocation-control-layer.js: {}
   dependencies:
