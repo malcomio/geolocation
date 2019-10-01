@@ -589,36 +589,37 @@
        * @param {GeolocationMapFeatureSettings} mapSettings[featureId] - Feature settings for current map
        */
       function (mapId, mapSettings) {
-        if (
-          typeof mapSettings[featureId] !== 'undefined'
-          && mapSettings[featureId].enable
-        ) {
-          var map = Drupal.geolocation.getMapById(mapId);
-          if (!map) {
-            return;
-          }
+        if (typeof mapSettings[featureId] === 'undefined') {
+          return;
+        }
+        if (!mapSettings[featureId].enable) {
+          return;
+        }
+        var map = Drupal.geolocation.getMapById(mapId);
+        if (!map) {
+          return;
+        }
 
-          map.features = map.features || {};
-          map.features[featureId] = map.features[featureId] || {};
-          if (typeof map.features[featureId].executed === 'undefined') {
-            map.features[featureId].executed = false;
-          }
+        map.features = map.features || {};
+        map.features[featureId] = map.features[featureId] || {};
+        if (typeof map.features[featureId].executed === 'undefined') {
+          map.features[featureId].executed = false;
+        }
 
+        if (map.features[featureId].executed) {
+          return;
+        }
+
+        map.addPopulatedCallback(function (map) {
           if (map.features[featureId].executed) {
             return;
           }
+          var result = callback(map, mapSettings[featureId]);
 
-          map.addPopulatedCallback(function (map) {
-            if (map.features[featureId].executed) {
-              return;
-            }
-            var result = callback(map, mapSettings[featureId]);
-
-            if (result === true) {
-              map.features[featureId].executed = true;
-            }
-          });
-        }
+          if (result === true) {
+            map.features[featureId].executed = true;
+          }
+        });
       }
     );
   };
