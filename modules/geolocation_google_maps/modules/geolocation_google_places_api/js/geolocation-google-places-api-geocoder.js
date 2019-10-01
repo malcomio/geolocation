@@ -40,7 +40,8 @@
         Drupal.geolocation.geocoder.googlePlacesAPI.autocompleteService.getPlacePredictions(
           {
             input: request.term,
-            componentRestrictions: componentRestrictions
+            componentRestrictions: componentRestrictions,
+            sessionToken: Drupal.geolocation.geocoder.googlePlacesAPI.sessionToken
           },
 
           function (results, status) {
@@ -114,6 +115,8 @@
       Drupal.geolocation.google.addLoadedCallback(function () {
         if (typeof Drupal.geolocation.geocoder.googlePlacesAPI.service === 'undefined') {
           Drupal.geolocation.geocoder.googlePlacesAPI.service = new google.maps.places.PlacesService(attribution_block[0]);
+          // Create a new session token.
+          Drupal.geolocation.geocoder.googlePlacesAPI.sessionToken = new google.maps.places.AutocompleteSessionToken();
           Drupal.geolocation.geocoder.googlePlacesAPI.autocompleteService = new google.maps.places.AutocompleteService();
 
           Drupal.geolocation.geocoder.googlePlacesAPI.attach(context);
