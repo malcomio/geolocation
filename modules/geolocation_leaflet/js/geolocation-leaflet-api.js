@@ -188,28 +188,30 @@
       return;
     }
 
-    if (
-      typeof boundaries.east !== 'undefined'
-      && typeof boundaries.west !== 'undefined'
-      && typeof boundaries.east !== 'undefined'
-      && typeof boundaries.east !== 'undefined'
-    ) {
-      boundaries = L.latLngBounds([
-        [boundaries.south, boundaries.west],
-        [boundaries.north, boundaries.east]
-      ]);
-    }
+    if (!(boundaries instanceof L.LatLngBounds)) {
+      if (typeof boundaries.east !== 'undefined'
+          && typeof boundaries.west !== 'undefined'
+          && typeof boundaries.east !== 'undefined'
+          && typeof boundaries.east !== 'undefined'
+      ) {
+        console.log(boundaries, "Trying to transform boundaries");
+        boundaries = L.latLngBounds([
+          [boundaries.south, boundaries.west],
+          [boundaries.north, boundaries.east]
+        ]);
+      }
+      else if (
+        typeof google.maps.LatLngBounds !== 'undefined'
+        && boundaries instanceof google.maps.LatLngBounds
+      ) {
+        var northEast = boundaries.getNorthEast();
+        var southWest = boundaries.getSouthWest();
 
-    if (
-      typeof boundaries.getNorthEast === 'function'
-      && typeof boundaries.getSouthWest === 'function'
-    ) {
-      var northEast = boundaries.getNorthEast();
-      var southWest = boundaries.getSouthWest();
-
-      boundaries = L.latLngBounds([
-        ([southWest.lat(), southWest.lng()], [northEast.lat(), northEast.lng()])
-      ]);
+        boundaries = L.latLngBounds([
+          [southWest.lat(), southWest.lng()],
+          [northEast.lat(), northEast.lng()]
+        ]);
+      }
     }
 
     if (!this.leafletMap.getBounds().equals(boundaries)) {
