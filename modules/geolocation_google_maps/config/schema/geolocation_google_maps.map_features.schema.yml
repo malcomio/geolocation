@@ -51,6 +51,9 @@ plugin.plugin_configuration.geolocation.map_feature.map_restriction:
         west:
           type: string
           label: 'West'
+        strict:
+          type: boolean
+          label: 'strictBounds'
 
 plugin.plugin_configuration.geolocation.map_feature.marker_clusterer:
   type: geolocation.map_feature_settings
