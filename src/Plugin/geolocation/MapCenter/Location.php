@@ -93,11 +93,9 @@ class Location extends MapCenterBase implements MapCenterInterface {
     $location = $this->locationManager->createInstance($center_option_id);
 
     $map_center = $location->getCoordinates($center_option_id, $center_option_settings, $context);
-    if (empty($map_center)) {
-      return FALSE;
+    if (!empty($map_center)) {
+      $map['#centre'] = $map_center;
     }
-
-    $map['#centre'] = $map_center;
 
     return $map;
   }
