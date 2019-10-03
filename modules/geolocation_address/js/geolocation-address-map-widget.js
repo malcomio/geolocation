@@ -120,6 +120,13 @@
         }
 
         if (typeof widget.addressEnabled === 'undefined') {
+          var elements = [];
+          $.each(addressIntegrationSettings.ignore, function (key, value) {
+              if (!value) {
+                elements.push(key);
+              }
+            }
+          );
           widget = $.extend(widget, {
             addressEnabled: true,
             settings: addressIntegrationSettings,
@@ -131,14 +138,7 @@
               addressInput = $(addressInput);
               var addressString = '';
               $.each(
-                  [
-                    'organization',
-                    'address-line1',
-                    'address-line2',
-                    'locality',
-                    'administrative-area',
-                    'postal-code'
-                  ],
+                  elements,
                   function (index, property) {
                     if (addressInput.find('.' + property).length) {
                       addressString = addressString + ', ' + addressInput.find('.' + property).val()
