@@ -183,35 +183,49 @@
     var center = this.leafletMap.getCenter();
     return {lat: center.lat, lng: center.lng};
   };
-  GeolocationLeafletMap.prototype.fitBoundaries = function (boundaries, identifier) {
-    if (typeof boundaries === 'undefined') {
-      return;
+  GeolocationLeafletMap.prototype.normalizeBoundaries = function (boundaries) {
+    if (boundaries instanceof L.LatLngBounds) {
+      return {
+        north: boundaries.getNorth(),
+        east: boundaries.getEast(),
+        south: boundaries.getSouth(),
+        west: boundaries.getWest()
+      };
     }
 
-    if (!(boundaries instanceof L.LatLngBounds)) {
-      if (typeof boundaries.east !== 'undefined'
-          && typeof boundaries.west !== 'undefined'
-          && typeof boundaries.east !== 'undefined'
-          && typeof boundaries.east !== 'undefined'
-      ) {
-        console.log(boundaries, "Trying to transform boundaries");
-        boundaries = L.latLngBounds([
+    return false;
+  };
+  GeolocationLeafletMap.prototype.denormalizeBoundaries = function (boundaries) {
+    if (typeof boundaries === 'undefined') {
+      return false;
+    }
+
+    if (boundaries instanceof L.LatLngBounds) {
+      return boundaries;
+    }
+
+    if (Drupal.geolocation.GeolocationMapBase.prototype.boundariesNormalized.call(this, boundaries)) {
+      return L.latLngBounds([
+        [boundaries.south, boundaries.west],
+        [boundaries.north, boundaries.east]
+      ]);
+    }
+    else {
+      boundaries = Drupal.geolocation.GeolocationMapBase.prototype.normalizeBoundaries.call(this, boundaries);
+      if (boundaries) {
+        return L.latLngBounds([
           [boundaries.south, boundaries.west],
           [boundaries.north, boundaries.east]
         ]);
       }
-      else if (
-        typeof google.maps.LatLngBounds !== 'undefined'
-        && boundaries instanceof google.maps.LatLngBounds
-      ) {
-        var northEast = boundaries.getNorthEast();
-        var southWest = boundaries.getSouthWest();
+    }
 
-        boundaries = L.latLngBounds([
-          [southWest.lat(), southWest.lng()],
-          [northEast.lat(), northEast.lng()]
-        ]);
-      }
+    return false;
+  };
+  GeolocationLeafletMap.prototype.fitBoundaries = function (boundaries, identifier) {
+    boundaries = this.denormalizeBoundaries(boundaries);
+    if (!boundaries) {
+      return;
     }
 
     if (!this.leafletMap.getBounds().equals(boundaries)) {

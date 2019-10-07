@@ -449,6 +449,41 @@
       });
 
       return locations;
+    },
+    boundariesNormalized: function (boundaries) {
+      if (typeof boundaries.north === 'number'
+          && typeof boundaries.east === 'number'
+          && typeof boundaries.south === 'number'
+          && typeof boundaries.west === 'number'
+      ) {
+        return true;
+      }
+
+      return false;
+    },
+    normalizeBoundaries: function (boundaries) {
+      var that = this;
+
+      if (that.boundariesNormalized(boundaries)) {
+        return boundaries;
+      }
+
+      $.each(Drupal.geolocation.MapProviders, function (type, name) {
+        if (typeof Drupal.geolocation[name].prototype.normalizeBoundaries !== 'undefined') {
+          var normalizedBoundaries = Drupal.geolocation[name].prototype.normalizeBoundaries.call(null, boundaries);
+        }
+
+        if (that.boundariesNormalized(normalizedBoundaries)) {
+          boundaries = normalizedBoundaries;
+          return false;
+        }
+      });
+
+      if (that.boundariesNormalized(boundaries)) {
+        return boundaries;
+      }
+
+      return false;
     }
   };
 

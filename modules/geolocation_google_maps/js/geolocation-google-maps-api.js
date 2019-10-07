@@ -197,6 +197,11 @@
     return bounds;
   };
   GeolocationGoogleMap.prototype.fitBoundaries = function (boundaries, identifier) {
+    boundaries = this.denormalizeBoundaries(boundaries);
+    if (!boundaries) {
+      return;
+    }
+
     var currentBounds = this.googleMap.getBounds();
     if (
       !currentBounds
@@ -256,6 +261,42 @@
         circle.setMap(null);
       }
     }
+  };
+  GeolocationGoogleMap.prototype.normalizeBoundaries = function (boundaries) {
+    if (boundaries instanceof google.maps.LatLngBounds) {
+      var northEast = boundaries.getNorthEast();
+      var southWest = boundaries.getSouthWest();
+
+      return {
+        north: northEast.lat(),
+        east: northEast.lng(),
+        south: southWest.lat(),
+        west: southWest.lng()
+      };
+    }
+
+    return false;
+  };
+  GeolocationGoogleMap.prototype.denormalizeBoundaries = function (boundaries) {
+    if (typeof boundaries === 'undefined') {
+      return false;
+    }
+
+    if (boundaries instanceof google.maps.LatLngBounds) {
+      return boundaries;
+    }
+
+    if (Drupal.geolocation.GeolocationMapBase.prototype.boundariesNormalized.call(this, boundaries)) {
+      return new google.maps.LatLngBounds([boundaries.south, boundaries.west], [boundaries.north, boundaries.east]);
+    }
+    else {
+      boundaries = Drupal.geolocation.GeolocationMapBase.prototype.normalizeBoundaries.call(this, boundaries);
+      if (boundaries) {
+        return new google.maps.LatLngBounds([boundaries.south, boundaries.west], [boundaries.north, boundaries.east]);
+      }
+    }
+
+    return false;
   };
   GeolocationGoogleMap.prototype.addControl = function (element) {
     element = $(element);

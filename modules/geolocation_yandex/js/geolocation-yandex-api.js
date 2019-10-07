@@ -105,7 +105,61 @@
   GeolocationYandexMap.prototype.getCenter = function () {
     return this.yandexMap.getCenter();
   };
+  GeolocationYandexMap.prototype.normalizeBoundaries = function (boundaries) {
+    if (
+      typeof boundaries[0][0] === 'number'
+      && typeof boundaries[0][1] === 'number'
+      && typeof boundaries[1][0] === 'number'
+      && typeof boundaries[1][1] === 'number'
+    ) {
+      return {
+        north: boundaries[1][0],
+        east: boundaries[1][1],
+        south: boundaries[0][0],
+        west: boundaries[0][1]
+      };
+    }
+
+    return false;
+  };
+  GeolocationYandexMap.prototype.denormalizeBoundaries = function (boundaries) {
+    if (typeof boundaries === 'undefined') {
+      return false;
+    }
+
+    if (
+      typeof boundaries[0][0] === 'number'
+      && typeof boundaries[0][1] === 'number'
+      && typeof boundaries[1][0] === 'number'
+      && typeof boundaries[1][1] === 'number'
+    ) {
+      return boundaries;
+    }
+
+    if (Drupal.geolocation.GeolocationMapBase.prototype.boundariesNormalized.call(this, boundaries)) {
+      return [
+        [boundaries.south, boundaries.west],
+        [boundaries.north, boundaries.east]
+      ];
+    }
+    else {
+      boundaries = Drupal.geolocation.GeolocationMapBase.prototype.normalizeBoundaries.call(this, boundaries);
+      if (boundaries) {
+        return [
+          [boundaries.south, boundaries.west],
+          [boundaries.north, boundaries.east]
+        ];
+      }
+    }
+
+    return false;
+  };
   GeolocationYandexMap.prototype.fitBoundaries = function (boundaries, identifier) {
+    boundaries = this.denormalizeBoundaries(boundaries);
+    if (!boundaries) {
+      return;
+    }
+
     this.yandexMap.setBounds(boundaries);
     Drupal.geolocation.GeolocationMapBase.prototype.fitBoundaries.call(this, boundaries, identifier);
   };
