@@ -77,9 +77,17 @@
 
 /**
  * @typedef {Object} GeolocationCoordinates
-
+ *
  * @property {Number} lat
  * @property {Number} lng
+ */
+
+/**
+ * @typedef {Object} GeolocationCenterOption
+ *
+ * @property {Object} map_center_id
+ * @property {Object} option_id
+ * @property {Object} settings
  */
 
 /**
@@ -123,7 +131,7 @@
  * @property {function({GeolocationMapMarker})} removeMapMarker - Remove single marker.
  * @property {function()} removeMapMarkers - Remove all markers from map.
  *
- * @property {function({string})} setZoom - Set zoom.
+ * @property {function({string}?)} setZoom - Set zoom.
  * @property {function():{GeolocationCoordinates}} getCenter - Get map center coordinates.
  * @property {function({string})} setCenter - Center map by plugin.
  * @property {function({GeolocationCoordinates}, {Number}?, {string}?)} setCenterByCoordinates - Center map on coordinates.
@@ -237,10 +245,7 @@
         })
         .forEach(
           /**
-           * @param {Object} centerOption
-           * @param {Object} centerOption.map_center_id
-           * @param {Object} centerOption.option_id
-           * @param {Object} centerOption.settings
+           * @param {GeolocationCenterOption} centerOption
            */
           function (centerOption) {
             if (typeof Drupal.geolocation.mapCenter[centerOption.map_center_id] === 'function') {
@@ -466,6 +471,24 @@
 
       if (that.boundariesNormalized(boundaries)) {
         return boundaries;
+      }
+
+      if (
+          typeof boundaries.north !== 'undefined'
+          && typeof boundaries.south !== 'undefined'
+          && typeof boundaries.east !== 'undefined'
+          && typeof boundaries.west !== 'undefined'
+      ) {
+        var castBoundaries = {
+          north: Number(boundaries.north),
+          east: Number(boundaries.east),
+          south: Number(boundaries.south),
+          west: Number(boundaries.west)
+        };
+
+        if (that.boundariesNormalized(castBoundaries)) {
+          return castBoundaries;
+        }
       }
 
       $.each(Drupal.geolocation.MapProviders, function (type, name) {

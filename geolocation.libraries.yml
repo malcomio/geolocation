@@ -69,6 +69,10 @@ map_center.fitlocations:
   js:
     js/MapCenter/fitlocations.js: {}
 
+map_center.fixed_boundaries:
+  js:
+    js/MapCenter/fixedBoundaries.js: {}
+
 map_center.client_location:
   js:
     js/MapCenter/client-location.js: {}

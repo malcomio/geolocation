@@ -287,12 +287,12 @@
     }
 
     if (Drupal.geolocation.GeolocationMapBase.prototype.boundariesNormalized.call(this, boundaries)) {
-      return new google.maps.LatLngBounds([boundaries.south, boundaries.west], [boundaries.north, boundaries.east]);
+      return new google.maps.LatLngBounds({lat: boundaries.south, lng: boundaries.west}, {lat: boundaries.north, lng: boundaries.east});
     }
     else {
       boundaries = Drupal.geolocation.GeolocationMapBase.prototype.normalizeBoundaries.call(this, boundaries);
       if (boundaries) {
-        return new google.maps.LatLngBounds([boundaries.south, boundaries.west], [boundaries.north, boundaries.east]);
+        return new google.maps.LatLngBounds({lat: boundaries.south, lng: boundaries.west}, {lat: boundaries.north, lng: boundaries.east});
       }
     }
 
