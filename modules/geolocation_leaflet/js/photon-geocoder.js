@@ -119,19 +119,34 @@
            * @param {Object} ui.item - See jquery doc
            */
           select: function (event, ui) {
-            Drupal.geolocation.geocoder.resultCallback({
-                geometry: {
-                  location: {
-                    lat: function () {
-                      return ui.item.result.geometry.coordinates[1];
-                    },
-                    lng: function () {
-                      return ui.item.result.geometry.coordinates[0];
-                    }
+            if (typeof ui.item.result.geometry.coordinates === 'undefined') {
+              return;
+            }
+
+            var result = {
+              geometry: {
+                location: {
+                  lat: function () {
+                    return ui.item.result.geometry.coordinates[1];
                   },
-                  bounds: ui.item.result.properties.extend
-                }
-            }, $(event.target).data('source-identifier').toString());
+                  lng: function () {
+                    return ui.item.result.geometry.coordinates[0];
+                  }
+                },
+                bounds: ui.item.result.properties.extent
+              }
+            };
+
+            if (typeof ui.item.result.properties.extent !== 'undefined') {
+              result.geometry.bounds = {
+                north: ui.item.result.properties.extent[1],
+                east: ui.item.result.properties.extent[2],
+                south: ui.item.result.properties.extent[3],
+                west: ui.item.result.properties.extent[0]
+              };
+            }
+
+            Drupal.geolocation.geocoder.resultCallback(result, $(event.target).data('source-identifier').toString());
           }
         })
         .on('input', function () {
