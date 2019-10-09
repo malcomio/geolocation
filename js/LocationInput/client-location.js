@@ -50,7 +50,7 @@
               latitudeInput.val(position.coords.latitude);
               longitudeInput.val(position.coords.longitude);
               if (settings.autoSubmit) {
-                input.closest('form').submit();
+                input.closest('form').find('input.js-form-submit').first().click();
               }
             }
             return false;
