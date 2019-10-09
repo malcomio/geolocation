@@ -31,7 +31,7 @@
      * @param {LocationInputClientLocationSettings[]} drupalSettings.geolocation.locationInput.clientLocation
      */
     attach: function (context, drupalSettings) {
-      $.each(drupalSettings.geolocation.locationInput.clientLocation, function(index, settings) {
+      $.each(drupalSettings.geolocation.locationInput.clientLocation, function (index, settings) {
         var input = $('.location-input-client-location.' + settings.identifier, context).once('location-input-processed').first();
         if (
           navigator.geolocation

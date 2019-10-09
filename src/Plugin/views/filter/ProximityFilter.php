@@ -187,7 +187,7 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
       ];
     }
     else {
-      $center = $this->locationInputManager->getCoordinates($this->value['center'], $this->options['location_input'], $this);
+      $center = $this->locationInputManager->getCoordinates((array) $this->value['center'], $this->options['location_input'], $this);
     }
 
     if (
