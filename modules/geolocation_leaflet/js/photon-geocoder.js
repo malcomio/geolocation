@@ -53,8 +53,17 @@
           geocoderInput.addClass('geocoder-attached');
         }
 
+        var minLength = 1;
+        if (
+            typeof drupalSettings.geolocation.geocoder.photon.autocompleteMinLength !== 'undefined'
+            && parseInt(drupalSettings.geolocation.geocoder.photon.autocompleteMinLength)
+        ) {
+          minLength = parseInt(drupalSettings.geolocation.geocoder.photon.autocompleteMinLength);
+        }
+
         geocoderInput.autocomplete({
           autoFocus: true,
+          minLength: minLength,
           source: function (request, response) {
             var autocompleteResults = [];
 

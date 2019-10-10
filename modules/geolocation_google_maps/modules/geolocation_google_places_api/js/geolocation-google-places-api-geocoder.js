@@ -19,6 +19,14 @@
   Drupal.geolocation.geocoder.googlePlacesAPI = {};
   drupalSettings.geolocation.geocoder.google_places_api = drupalSettings.geolocation.geocoder.google_places_api || {};
 
+  var minLength = 1;
+  if (
+      typeof drupalSettings.geolocation.geocoder.google_places_api.autocompleteMinLength !== 'undefined'
+      && parseInt(drupalSettings.geolocation.geocoder.google_places_api.autocompleteMinLength)
+  ) {
+    minLength = parseInt(drupalSettings.geolocation.geocoder.google_places_api.autocompleteMinLength);
+  }
+
   /**
    * @param {HTMLElement} context Context
    */
@@ -30,6 +38,7 @@
 
     autocomplete.once().autocomplete({
       autoFocus: true,
+      minLength: minLength,
       source: function (request, response) {
         var autocompleteResults = [];
         var componentRestrictions = {};
