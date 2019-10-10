@@ -213,6 +213,13 @@ mapfeature.control_streetview:
   dependencies:
     - geolocation_google_maps/googlemapsapi
 
+# Control Fullscreen.
+mapfeature.control_fullscreen:
+  js:
+    js/MapFeature/geolocation-control-fullscreen.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
 # ControlRecenter support.
 mapfeature.control_recenter:
   js:

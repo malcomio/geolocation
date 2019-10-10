@@ -331,6 +331,18 @@ plugin.plugin_configuration.geolocation.map_feature.control_streetview:
           type: string
           label: 'Behavior'
 
+plugin.plugin_configuration.geolocation.map_feature.control_fullscreen:
+  type: geolocation_google_maps.map_control_feature_settings
+  label: 'Control Fullscreen'
+  mapping:
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        behavior:
+          type: string
+          label: 'Behavior'
+
 plugin.plugin_configuration.geolocation.map_feature.control_maptype:
   type: geolocation_google_maps.map_control_feature_settings
   label: 'Control MapType'
