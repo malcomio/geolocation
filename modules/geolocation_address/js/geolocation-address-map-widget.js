@@ -95,8 +95,6 @@
      * @param {Object} drupalSettings
      * @param {Object} drupalSettings.geolocation
      * @param {Object} drupalSettings.geolocation.addressIntegration
-     * @param {Object} drupalSettings.path
-     * @param {String} drupalSettings.path.baseUrl
      */
     attach: function (context, drupalSettings) {
       /**
@@ -157,7 +155,7 @@
             },
             addressToCoordinates: function (address) {
               return $.getJSON(
-                  drupalSettings.path.baseUrl + 'geolocation/address/geocoder/geocode',
+                  Drupal.url('geolocation/address/geocoder/geocode'),
                   {
                     geocoder: this.settings.geocoder,
                     geocoder_settings: this.settings.geocoder_settings,
@@ -168,7 +166,7 @@
             },
             coordinatesToAddress: function (latitude, longitude) {
               return $.getJSON(
-                  drupalSettings.path.baseUrl + 'geolocation/address/geocoder/reverse',
+                  Drupal.url('geolocation/address/geocoder/reverse'),
                   {
                     geocoder: this.settings.geocoder,
                     geocoder_settings: this.settings.geocoder_settings,
