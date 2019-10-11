@@ -4,6 +4,7 @@ namespace Drupal\geolocation_google_maps\Plugin\geolocation\MapFeature;
 
 use Drupal\geolocation\MapFeatureBase;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Url;
 
 /**
  * Provides Google Maps.
@@ -177,7 +178,16 @@ class MarkerIcon extends MapFeatureBase {
       }
 
       $path = \Drupal::token()->replace($feature_settings['marker_icon_path'], $data);
+      $path = file_create_url($path);
       $render_array['#attached']['drupalSettings']['geolocation']['maps'][$render_array['#id']][$this->getPluginId()]['markerIconPath'] = $path;
+
+      if (!empty($render_array['#children']['locations'])) {
+        foreach ($render_array['#children']['locations'] as &$location) {
+          if (empty($location['#icon'])) {
+            $location['#icon'] = $path;
+          }
+        }
+      }
     }
 
     return $render_array;
