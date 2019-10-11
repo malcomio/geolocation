@@ -98,7 +98,8 @@
         fullscreenControl: false, // Handled by feature.
         scaleControl: map.settings.google_map_settings.scaleControl,
         panControl: map.settings.google_map_settings.panControl,
-        gestureHandling: map.settings.google_map_settings.gestureHandling
+        gestureHandling: map.settings.google_map_settings.gestureHandling,
+        styles: (typeof map.settings.google_map_settings.style !== 'undefined') ? map.settings.google_map_settings.style : null
       });
 
       var singleClick;
