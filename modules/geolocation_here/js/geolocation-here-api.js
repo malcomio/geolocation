@@ -92,7 +92,7 @@
   }
   GeolocationHereMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationHereMap.prototype.constructor = GeolocationHereMap;
-  GeolocationHereMap.prototype.setZoom = function (zoom) {
+  GeolocationHereMap.prototype.setZoom = function (zoom, defer) {
     if (typeof zoom === 'undefined') {
       zoom = this.settings.here_settings.zoom;
     }

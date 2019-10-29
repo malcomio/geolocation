@@ -212,7 +212,7 @@
       Drupal.geolocation.GeolocationMapBase.prototype.fitBoundaries.call(this, boundaries, identifier);
     }
   };
-  GeolocationGoogleMap.prototype.setZoom = function (zoom) {
+  GeolocationGoogleMap.prototype.setZoom = function (zoom, defer) {
     if (typeof zoom === 'undefined') {
       zoom = this.settings.google_map_settings.zoom;
     }
@@ -221,9 +221,11 @@
 
     this.googleMap.setZoom(zoom);
     var that = this;
-    google.maps.event.addListenerOnce(this.googleMap, "idle", function () {
-      that.googleMap.setZoom(zoom);
-    });
+    if (defer) {
+      google.maps.event.addListenerOnce(this.googleMap, "idle", function () {
+        that.googleMap.setZoom(zoom);
+      });
+    }
   };
   GeolocationGoogleMap.prototype.getCenter = function () {
     var center = this.googleMap.getCenter();

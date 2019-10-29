@@ -71,7 +71,7 @@
   }
   GeolocationYandexMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationYandexMap.prototype.constructor = GeolocationYandexMap;
-  GeolocationYandexMap.prototype.setZoom = function (zoom) {
+  GeolocationYandexMap.prototype.setZoom = function (zoom, defer) {
     if (typeof zoom === 'undefined') {
       zoom = this.settings.yandex_settings.zoom;
     }

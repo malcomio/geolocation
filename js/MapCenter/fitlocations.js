@@ -19,7 +19,7 @@
     map.fitMapToMarkers();
 
     if (centerOption.settings.reset_zoom) {
-      map.setZoom();
+      map.setZoom(undefined, true);
     }
 
     return false;
