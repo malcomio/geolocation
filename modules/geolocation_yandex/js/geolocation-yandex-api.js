@@ -107,10 +107,10 @@
   };
   GeolocationYandexMap.prototype.normalizeBoundaries = function (boundaries) {
     if (
-      typeof boundaries[0] === 'array'
+      typeof boundaries[0] === 'object'
       && typeof boundaries[0][0] === 'number'
       && typeof boundaries[0][1] === 'number'
-      && typeof boundaries[1] === 'array'
+      && typeof boundaries[1] === 'object'
       && typeof boundaries[1][0] === 'number'
       && typeof boundaries[1][1] === 'number'
     ) {
@@ -130,10 +130,10 @@
     }
 
     if (
-      typeof boundaries[0] === 'array'
+      typeof boundaries[0] === 'object'
       && typeof boundaries[0][0] === 'number'
       && typeof boundaries[0][1] === 'number'
-      && typeof boundaries[1] === 'array'
+      && typeof boundaries[1] === 'object'
       && typeof boundaries[1][0] === 'number'
       && typeof boundaries[1][1] === 'number'
     ) {
