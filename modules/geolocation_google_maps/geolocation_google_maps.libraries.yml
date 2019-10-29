@@ -206,6 +206,13 @@ mapfeature.control_streetview:
   dependencies:
     - geolocation_google_maps/googlemapsapi
 
+# Control Rotate.
+mapfeature.control_rotate:
+  js:
+    js/MapFeature/geolocation-control-rotate.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
 # Control Fullscreen.
 mapfeature.control_fullscreen:
   js:

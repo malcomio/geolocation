@@ -94,7 +94,7 @@
         mapTypeControl: false, // Handled by feature.
         zoomControl: false, // Handled by feature.
         streetViewControl: false, // Handled by feature.
-        rotateControl: map.settings.google_map_settings.rotateControl,
+        rotateControl: false, // Handled by feature.
         fullscreenControl: false, // Handled by feature.
         scaleControl: map.settings.google_map_settings.scaleControl,
         panControl: map.settings.google_map_settings.panControl,
