@@ -3,7 +3,7 @@
  * Fit locations.
  */
 
-(function ($, Drupal) {
+(function (Drupal) {
 
   'use strict';
 
@@ -29,4 +29,4 @@
     return false;
   }
 
-})(jQuery, Drupal);
+})(Drupal);

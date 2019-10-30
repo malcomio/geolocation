@@ -3,7 +3,7 @@
  * Client location center.
  */
 
-(function ($, Drupal) {
+(function (Drupal) {
 
   'use strict';
 
@@ -26,4 +26,4 @@
     return true;
   }
 
-})(jQuery, Drupal);
+})(Drupal);
