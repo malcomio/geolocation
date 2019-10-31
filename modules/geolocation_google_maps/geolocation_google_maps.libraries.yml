@@ -42,6 +42,13 @@ widget.google:
     - geolocation/geolocation.widget
     - geolocation_google_maps/widget.api.google
 
+widget.google_maps.geojson:
+  version: 8.x-3.x
+  js:
+    js/geolocation-geometry-widget-google-maps.js: {}
+  dependencies:
+    - core/jquery.once
+    - geolocation/geolocation.map
 
 #
 # Map Features
