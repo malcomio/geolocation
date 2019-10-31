@@ -21,6 +21,11 @@ use Drupal\Component\Utility\NestedArray;
  */
 class CommonMap extends GeolocationStyleBase {
 
+  /**
+   * Map ID.
+   *
+   * @var bool|string
+   */
   protected $mapId = FALSE;
 
   /**

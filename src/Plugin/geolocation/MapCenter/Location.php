@@ -25,6 +25,11 @@ class Location extends MapCenterBase implements MapCenterInterface {
    */
   protected $locationManager;
 
+  /**
+   * Location Plugin ID.
+   *
+   * @var string
+   */
   protected $locationPluginId = '';
 
   /**
