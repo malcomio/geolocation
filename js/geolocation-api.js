@@ -235,24 +235,29 @@
       this.setZoom();
       this.setCenterByCoordinates({lat: this.lat, lng: this.lng});
 
-      var that = this;
+      if (typeof this.mapCenter !== 'undefined') {
 
-      Object
-        // .values(this.mapCenter) // Reenable once IE11 is dead. Hopefully soon.
-        .keys(that.mapCenter).map(function (item) { return that.mapCenter[item]; }) // IE11 fix from #3046802.
-        .sort(function (a, b) {
-          return a.weight - b.weight;
-        })
-        .forEach(
-          /**
-           * @param {GeolocationCenterOption} centerOption
-           */
-          function (centerOption) {
-            if (typeof Drupal.geolocation.mapCenter[centerOption.map_center_id] === 'function') {
-              return Drupal.geolocation.mapCenter[centerOption.map_center_id](that, centerOption);
+        var that = this;
+
+        Object
+          // .values(this.mapCenter) // Reenable once IE11 is dead. Hopefully soon.
+          .keys(that.mapCenter).map(function (item) {
+            return that.mapCenter[item];
+          }) // IE11 fix from #3046802.
+          .sort(function (a, b) {
+            return a.weight - b.weight;
+          })
+          .forEach(
+            /**
+             * @param {GeolocationCenterOption} centerOption
+             */
+            function (centerOption) {
+              if (typeof Drupal.geolocation.mapCenter[centerOption.map_center_id] === 'function') {
+                return Drupal.geolocation.mapCenter[centerOption.map_center_id](that, centerOption);
+              }
             }
-          }
-        );
+          );
+      }
     },
     setCenterByCoordinates: function (coordinates, accuracy, identifier) {
       this.centerUpdatedCallback(coordinates, accuracy, identifier);
