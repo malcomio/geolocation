@@ -14,7 +14,14 @@ use Drupal\Component\Utility\NestedArray;
  *   id = "geolocation_geometry_widget_google_maps",
  *   label = @Translation("Geolocation Geometry Google Maps API - GeoJSON"),
  *   field_types = {
- *     "geolocation_geometry"
+ *     "geolocation_geometry_point",
+ *     "geolocation_geometry_multi_point",
+ *     "geolocation_geometry_linestring",
+ *     "geolocation_geometry_multi_linestring",
+ *     "geolocation_geometry_polygon",
+ *     "geolocation_geometry_multi_polygon",
+ *     "geolocation_geometry_geometry",
+ *     "geolocation_geometry_multi_geometry"
  *   }
  * )
  */

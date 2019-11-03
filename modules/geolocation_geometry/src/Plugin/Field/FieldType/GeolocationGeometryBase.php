@@ -9,17 +9,11 @@ use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\TypedData\MapDataDefinition;
 
 /**
- * Plugin implementation of the 'geolocation' field type.
+ * Class GeolocationGeometryBase.
  *
- * @FieldType(
- *   id = "geolocation_geometry",
- *   label = @Translation("Geolocation Geometry"),
- *   description = @Translation("This field stores spatial geometry data."),
- *   default_widget = "geolocation_geometry_wkt",
- *   default_formatter = "geolocation_geometry_wkt"
- * )
+ * @package Drupal\geolocation_geometry\Plugin\Field\FieldType
  */
-class GeolocationGeometry extends FieldItemBase {
+abstract class GeolocationGeometryBase extends FieldItemBase {
 
   /**
    * {@inheritdoc}
@@ -70,6 +64,27 @@ class GeolocationGeometry extends FieldItemBase {
     $properties['data'] = MapDataDefinition::create()->setLabel(t('Meta data'));
 
     return $properties;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave() {
+
+    if (!empty($this->values['wkt'])) {
+      $query = \Drupal::database()->query("SELECT ST_GeometryType(ST_GeomFromText('" . $this->values['wkt'] . "'))");
+    }
+    elseif (!empty($this->values['geojson'])) {
+      $query = \Drupal::database()->query("SELECT ST_GeometryType(ST_GeomFromGeoJSON(':json'))", [':json' => $this->values['geojson']]);
+    }
+    else {
+      return FALSE;
+    }
+
+    $query->execute();
+    $b = $query->fetchField();
+
+    return parent::preSave();
   }
 
   /**
