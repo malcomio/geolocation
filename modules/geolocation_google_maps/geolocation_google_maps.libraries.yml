@@ -54,6 +54,27 @@ widget.google_maps.geojson:
 # Map Features
 #
 
+# Layer bicycle.
+mapfeature.google_maps_layer_bicycling:
+  js:
+    js/MapFeature/geolocation-layer-bicycle.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
+# Layer transit.
+mapfeature.google_maps_layer_transit:
+  js:
+    js/MapFeature/geolocation-layer-transit.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
+# Layer traffic.
+mapfeature.google_maps_layer_traffic:
+  js:
+    js/MapFeature/geolocation-layer-traffic.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
 # Drawing support.
 mapfeature.drawing:
   js:
