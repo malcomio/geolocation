@@ -41,7 +41,7 @@ function geolocation_yandex_update_8001(&$sandbox) {
   if (!$old_config) {
     return;
   }
-  
+
   $new_config = $config_factory->getEditable('geolocation_yandex.settings');
   $new_config->set('api_key', $old_config->get('key'));
   $new_config->save();
