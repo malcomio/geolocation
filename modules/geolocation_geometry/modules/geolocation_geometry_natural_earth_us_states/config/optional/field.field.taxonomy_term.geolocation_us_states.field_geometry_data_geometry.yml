@@ -20,4 +20,4 @@ translatable: true
 default_value: {  }
 default_value_callback: ''
 settings: {  }
-field_type: geolocation_geometry_polygon
+field_type: geolocation_geometry_geometry

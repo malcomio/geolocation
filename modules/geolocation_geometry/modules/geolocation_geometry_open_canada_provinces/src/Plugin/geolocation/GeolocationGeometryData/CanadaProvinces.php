@@ -36,10 +36,14 @@ class CanadaProvinces extends GeolocationGeometryDataBase {
           continue;
         }
         else {
+          $name = utf8_decode($record['dbf']['name']);
+          if (empty($name)) {
+            continue;
+          }
           /** @var \Drupal\taxonomy\TermInterface $term */
           $term = $taxonomy_storage->create([
             'vid' => 'geolocation_provinces_of_canada',
-            'name' => utf8_decode($record['dbf']['name']),
+            'name' => $name,
           ]);
           $term->set('field_geometry_data_geometry', [
             'geojson' => $record['shp'],
