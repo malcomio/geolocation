@@ -10,6 +10,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
  * @FieldType(
  *   id = "geolocation_geometry_polygon",
  *   label = @Translation("Geolocation Geometry - Polygon"),
+ *   category = @Translation("Spatial fields"),
  *   description = @Translation("This field stores spatial geometry data."),
  *   default_widget = "geolocation_geometry_wkt",
  *   default_formatter = "geolocation_geometry_wkt"
