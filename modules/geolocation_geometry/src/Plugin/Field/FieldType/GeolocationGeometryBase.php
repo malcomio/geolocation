@@ -56,11 +56,16 @@ abstract class GeolocationGeometryBase extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
+    
+    $geom_type = explode("_", $field_definition->getType())[2];
+    
     $properties['geometry'] = DataDefinition::create('string')
       ->setComputed('true')
       ->setLabel(t('Geometry'));
-    $properties['wkt'] = DataDefinition::create('string')->setLabel(t('WKT'));
-    $properties['geojson'] = DataDefinition::create('string')->setLabel(t('GeoJSON'));
+    $properties['wkt'] = DataDefinition::create('string')->setLabel(t('WKT'))
+      ->addConstraint('GeometryType', ['geom_type' => $geom_type, 'type' => 'WKT']);
+    $properties['geojson'] = DataDefinition::create('string')->setLabel(t('GeoJSON'))
+      ->addConstraint('GeometryType', ['geom_type' => $geom_type, 'type' => 'GeoJSON']);
     $properties['data'] = MapDataDefinition::create()->setLabel(t('Meta data'));
 
     return $properties;

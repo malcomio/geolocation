@@ -34,7 +34,7 @@ class GeolocationGeometryWKTWidget extends WidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
 
     $description_link = Link::fromTextAndUrl($this->t('WKT data'), Url::fromUri('//en.wikipedia.org/wiki/Well-known_text', ['attributes' => ['target' => '_blank']]))->toString();
-
+    
     $element['wkt'] = [
       '#type' => 'textarea',
       '#title' => $this->t('WKT / Well Known Text'),
