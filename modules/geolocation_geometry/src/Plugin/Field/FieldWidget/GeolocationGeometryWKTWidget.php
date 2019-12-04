@@ -37,7 +37,7 @@ class GeolocationGeometryWKTWidget extends WidgetBase {
     
     $element['wkt'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('WKT / Well Known Text'),
+      '#title' => $this->t('WKT / Well Known Text (' .  $element['#title'] . ')'),
       '#default_value' => isset($items[$delta]->wkt) ? $items[$delta]->wkt : NULL,
       '#empty_value' => '',
       '#description' => $this->t('Please enter valid %wikipedia.', ['%wikipedia' => $description_link]),
