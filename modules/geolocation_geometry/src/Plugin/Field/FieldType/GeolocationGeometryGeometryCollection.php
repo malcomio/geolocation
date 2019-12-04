@@ -8,7 +8,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
  * Plugin implementation of the 'geolocation' field type.
  *
  * @FieldType(
- *   id = "geolocation_geometry_geometry_collection",
+ *   id = "geolocation_geometry_geometrycollection",
  *   label = @Translation("Geolocation Geometry - Geometry Collection"),
  *   description = @Translation("This field stores spatial geometry data."),
  *   default_widget = "geolocation_geometry_wkt",
