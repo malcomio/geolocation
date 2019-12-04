@@ -23,7 +23,7 @@ class GeolocationGeometryMultiPoint extends GeolocationGeometryBase {
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = parent::schema($field_definition);
 
-    $schema['columns']['geometry']['pgsql_type'] = 'multipoint';
+    $schema['columns']['geometry']['pgsql_type'] = "geometry('MULTIPOINT')";
     $schema['columns']['geometry']['mysql_type'] = 'multipoint';
 
     return $schema;

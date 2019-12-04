@@ -23,7 +23,7 @@ class GeolocationGeometryPoint extends GeolocationGeometryBase {
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = parent::schema($field_definition);
 
-    $schema['columns']['geometry']['pgsql_type'] = 'point';
+    $schema['columns']['geometry']['pgsql_type'] = "geometry('POINT')";
     $schema['columns']['geometry']['mysql_type'] = 'point';
 
     return $schema;

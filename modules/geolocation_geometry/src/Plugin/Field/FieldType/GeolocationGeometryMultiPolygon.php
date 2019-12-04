@@ -23,7 +23,7 @@ class GeolocationGeometryMultiPolygon extends GeolocationGeometryBase {
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = parent::schema($field_definition);
 
-    $schema['columns']['geometry']['pgsql_type'] = 'multipolygon';
+    $schema['columns']['geometry']['pgsql_type'] = "geometry('MULTIPOLYGON')";
     $schema['columns']['geometry']['mysql_type'] = 'multipolygon';
 
     return $schema;

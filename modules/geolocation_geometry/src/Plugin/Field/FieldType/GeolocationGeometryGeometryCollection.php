@@ -23,7 +23,7 @@ class GeolocationGeometryGeometryCollection extends GeolocationGeometryBase {
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = parent::schema($field_definition);
 
-    $schema['columns']['geometry']['pgsql_type'] = 'geometrycollection';
+    $schema['columns']['geometry']['pgsql_type'] = "geometry('GEOMETRYCOLLECTION')";
     $schema['columns']['geometry']['mysql_type'] = 'geometrycollection';
 
     return $schema;
