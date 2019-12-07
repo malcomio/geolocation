@@ -17,9 +17,24 @@ use Drupal\geolocation_geometry_data\GeolocationGeometryDataBase;
  */
 class NaturalEarthCountries extends GeolocationGeometryDataBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public $archiveUri = 'http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip';
+
+  /**
+   * {@inheritdoc}
+   */
   public $archiveFilename = 'ne_110m_admin_0_countries.zip';
+
+  /**
+   * {@inheritdoc}
+   */
   public $shapeDirectory = 'geolocation_geometry_natural_earth_countries';
+
+  /**
+   * {@inheritdoc}
+   */
   public $shapeFilename = 'ne_110m_admin_0_countries.shp';
 
   /**

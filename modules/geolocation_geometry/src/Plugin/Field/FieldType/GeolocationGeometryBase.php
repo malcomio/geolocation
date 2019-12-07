@@ -56,9 +56,9 @@ abstract class GeolocationGeometryBase extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
-    
+
     $geom_type = explode("_", $field_definition->getType())[2];
-    
+
     $properties['geometry'] = DataDefinition::create('string')
       ->setComputed('true')
       ->setLabel(t('Geometry'));

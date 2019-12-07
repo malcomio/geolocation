@@ -17,9 +17,24 @@ use Drupal\geolocation_geometry_data\GeolocationGeometryDataBase;
  */
 class UsStates extends GeolocationGeometryDataBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public $archiveUri = 'http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_1_states_provinces.zip';
+
+  /**
+   * {@inheritdoc}
+   */
   public $archiveFilename = 'ne_110m_admin_1_states_provinces.zip';
+
+  /**
+   * {@inheritdoc}
+   */
   public $shapeDirectory = 'geolocation_geometry_natural_earth_us_states';
+
+  /**
+   * {@inheritdoc}
+   */
   public $shapeFilename = 'ne_110m_admin_1_states_provinces.shp';
 
   /**

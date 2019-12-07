@@ -15,32 +15,42 @@ class GeometryConstraintValidator extends ConstraintValidator {
    * {@inheritdoc}
    */
   public function validate($value, Constraint $constraint) {
-    
+
     if (isset($value)) {
-      
+
       try {
-        
+
         $query = NULL;
         /* maybe: this could be configurable with field options */
-        $allowed_types_for_geometry = ['point','multipoint','linestring','multilinestring','polygon','multipolygon','geometrycollection'];
-        
-        if($constraint->type === 'WKT') {
+        $allowed_types_for_geometry = [
+          'point',
+          'multipoint',
+          'linestring',
+          'multilinestring',
+          'polygon',
+          'multipolygon',
+          'geometrycollection',
+        ];
+
+        if ($constraint->type === 'WKT') {
           $query = \Drupal::database()->query("SELECT ST_GeometryType(ST_GeomFromText('" . $value . "')) as type");
-        } elseif($constraint->type === 'GeoJSON') {
+        }
+        elseif ($constraint->type === 'GeoJSON') {
           $query = \Drupal::database()->query("SELECT ST_GeometryType(ST_GeomFromGeoJSON(':json')) as type", [':json' => $value]);
         }
-      
-        $result_ = $query->fetchAll();
-        $result = str_replace("st_","",strtolower($result_[0]->type));
 
-        if($constraint->geom_type != 'geometry' && $result != $constraint->geom_type) {
-          $this->context->addViolation($constraint->messageGeom, ['@value' => $value, '@geom_type' => $constraint->geom_type]);   
+        $result_ = $query->fetchAll();
+        $result = str_replace("st_", "", strtolower($result_[0]->type));
+
+        if ($constraint->geomType != 'geometry' && $result != $constraint->geomType) {
+          $this->context->addViolation($constraint->messageGeom, ['@value' => $value, '@geom_type' => $constraint->geomType]);
         }
-        elseif($constraint->geom_type === 'geometry' && !in_array($result,$allowed_types_for_geometry )) {
-          $this->context->addViolation($constraint->messageGeom, ['@value' => $value, '@geom_type' => $constraint->geom_type]);  
+        elseif ($constraint->geomType === 'geometry' && !in_array($result, $allowed_types_for_geometry)) {
+          $this->context->addViolation($constraint->messageGeom, ['@value' => $value, '@geom_type' => $constraint->geomType]);
         }
-      } catch (DatabaseExceptionWrapper $e) {
-        $this->context->addViolation($constraint->messageType, ['@value' => $value, '@type' => $constraint->type]);   
+      }
+      catch (DatabaseExceptionWrapper $e) {
+        $this->context->addViolation($constraint->messageType, ['@value' => $value, '@type' => $constraint->type]);
       }
     }
   }
