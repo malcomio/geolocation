@@ -56,12 +56,12 @@
       that.addPopulatedCallback(function (map) {
         map.yandexMap.events.add('click', function (e) {
           var coords = e.get('coords');
-          map.clickCallback({lat: coords.lat, lng: coords.lng});
+          map.clickCallback({lat: coords[0], lng: coords[1]});
         });
 
         map.yandexMap.events.add('contextmenu', function (e) {
           var coords = e.get('coords');
-          map.contextClickCallback({lat: coords.lat, lng: coords.lng});
+          map.contextClickCallback({lat: coords[0], lng: coords[1]});
         });
       });
 
