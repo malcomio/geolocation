@@ -49,7 +49,7 @@ class GeolocationMap extends RenderElement {
   public function getInfo() {
     $class = get_class($this);
 
-    $info = [
+    return [
       '#process' => [
         [$class, 'processGroup'],
       ],
@@ -63,8 +63,6 @@ class GeolocationMap extends RenderElement {
       '#controls' => NULL,
       '#context' => [],
     ];
-
-    return $info;
   }
 
   /**
