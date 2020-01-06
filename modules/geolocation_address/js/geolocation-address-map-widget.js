@@ -15,7 +15,7 @@
  * @typedef {Object} AddressIntegrationSettings
 
  * @property {String} geocoder
- * @property {Object} geocoder_settings
+ * @property {Object} settings
  * @property {String} address_field
  * @property {String} direction
  * @property {String} sync_mode
@@ -158,7 +158,7 @@
                   Drupal.url('geolocation/address/geocoder/geocode'),
                   {
                     geocoder: this.settings.geocoder,
-                    geocoder_settings: this.settings.geocoder_settings,
+                    geocoder_settings: this.settings.settings,
                     field_name: sourceFieldName,
                     address: address
                   }
@@ -169,7 +169,7 @@
                   Drupal.url('geolocation/address/geocoder/reverse'),
                   {
                     geocoder: this.settings.geocoder,
-                    geocoder_settings: this.settings.geocoder_settings,
+                    geocoder_settings: this.settings.settings,
                     field_name: sourceFieldName,
                     latitude: latitude,
                     longitude: longitude
