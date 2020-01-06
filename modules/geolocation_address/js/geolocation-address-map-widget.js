@@ -136,12 +136,17 @@
               addressInput = $(addressInput);
               var addressString = '';
               $.each(
-                  elements,
-                  function (index, property) {
-                    if (addressInput.find('.' + property).length) {
-                      addressString = addressString + ', ' + addressInput.find('.' + property).val()
+                elements,
+                function (index, property) {
+                  if (addressInput.find('.' + property).length) {
+                    if (addressInput.find('.' + property).val().trim().length) {
+                      if (addressString.length > 0) {
+                        addressString = addressString + ', ';
+                      }
+                      addressString = addressString + addressInput.find('.' + property).val().trim();
                     }
                   }
+                }
               );
 
               if (!addressString) {
