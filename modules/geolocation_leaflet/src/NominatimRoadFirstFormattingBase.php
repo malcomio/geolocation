@@ -20,7 +20,7 @@ class NominatimRoadFirstFormattingBase extends NominatimCountryFormattingBase {
     }
 
     if (!empty($atomics['houseNumber'])) {
-      $address_elements['addressLine1'] .= $atomics['houseNumber'];
+      $address_elements['addressLine1'] .= ' ' . $atomics['houseNumber'];
     }
 
     return $address_elements;

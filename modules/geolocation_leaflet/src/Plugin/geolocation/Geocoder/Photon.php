@@ -194,7 +194,7 @@ class Photon extends GeocoderBase implements GeocoderInterface {
       switch ($entry['properties']['osm_type']) {
         case 'N':
           $address_atomics = [
-            'houseNumber' => $entry['properties']['housenumber'],
+            'houseNumber' => !empty($entry['properties']['housenumber']) ? $entry['properties']['housenumber'] : '',
             'road' => $entry['properties']['street'],
             'city' => $entry['properties']['city'],
             'postcode' => $entry['properties']['postcode'],
