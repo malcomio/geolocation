@@ -192,6 +192,18 @@ plugin.plugin_configuration.geolocation.map_feature.marker_icon:
               type: integer
               label: 'Height'
 
+plugin.plugin_configuration.geolocation.map_feature.marker_opacity:
+  type: geolocation.map_feature_settings
+  label: 'Marker Opacity'
+  mapping:
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        opacity:
+          type: float
+          label: 'Marker Opacity'
+
 plugin.plugin_configuration.geolocation.map_feature.marker_label:
   type: geolocation.map_feature_settings
   label: 'Marker Label'

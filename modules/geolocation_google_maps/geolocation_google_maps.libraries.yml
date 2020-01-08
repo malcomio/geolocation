@@ -160,6 +160,13 @@ mapfeature.marker_infobubble:
     - geolocation_google_maps/googlemapsapi
     - geolocation_google_maps/infobubble
 
+# MarkerOpacity support.
+mapfeature.marker_opacity:
+  js:
+    js/MapFeature/geolocation-marker-opacity.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
 # MarkerIconAdjustment support.
 mapfeature.marker_icon:
   js:
