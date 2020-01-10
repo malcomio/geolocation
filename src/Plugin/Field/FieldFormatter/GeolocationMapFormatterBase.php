@@ -348,10 +348,7 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
       '#type' => 'geolocation_map',
       '#settings' => $settings['map_provider_settings'],
       '#maptype' => $settings['map_provider_id'],
-      '#centre' => [
-        'lat' => 0,
-        'lng' => 0,
-      ],
+      '#centre' => [],
       '#context' => ['formatter' => $this],
     ];
 
