@@ -23,7 +23,7 @@ function geolocation_address_geolocation_field_map_widget_alter(&$element, $cont
   /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['field_definition'];
 
-  $settings = $widget->getThirdPartySettings('geolocation_address');
+  $settings = geolocation_address_get_widget_settings($widget);
 
   if (empty($settings['enable'])) {
     return;
@@ -134,21 +134,7 @@ function geolocation_address_field_widget_third_party_settings_form(WidgetInterf
 
   $form_parent_name = 'fields[' . $field_definition->getName() . '][settings_edit_form][third_party_settings][geolocation_address]';
 
-  $settings = $widget->getThirdPartySettings('geolocation_address');
-  $settings = array_replace_recursive(
-    [
-      'enable' => FALSE,
-      'address_field' => NULL,
-      'geocoder' => NULL,
-      'settings' => [],
-      'sync_mode' => 'auto',
-      'direction' => 'duplex',
-      'button_position' => NULL,
-      'ignore' => [],
-    ],
-    $settings
-  );
-
+  $settings = geolocation_address_get_widget_settings($widget);
   if ($form_state->getTriggeringElement()['#name'] == $form_parent_name . '[geocoder]') {
     $settings['geocoder'] = $form_state->getTriggeringElement()['#value'];
   }
@@ -350,9 +336,40 @@ function geolocation_address_field_widget_settings_summary_alter(&$summary, $con
     return;
   }
 
-  $settings = $widget->getThirdPartySettings('geolocation_address');
+  $settings = geolocation_address_get_widget_settings($widget);
   if (!empty($settings['enable'])) {
     $summary[] = t('Syncing with %field address field', ['%field' => $settings['address_field']]);
   }
 
+}
+
+/**
+ * Returns geolocation_address third party settings of a widget.
+ *
+ * @param \Drupal\Core\Field\WidgetInterface $widget
+ *   The widget.
+ *
+ * @return array
+ *   The widget settings including defaults.
+ */
+function geolocation_address_get_widget_settings(WidgetInterface $widget) {
+  $settings = $widget->getThirdPartySettings('geolocation_address');
+
+  // Backwards compatibility if the third party settings have the
+  // geocoder_settings key but not settings.
+  if (isset($settings['geocoder_settings']) && !isset($settings['settings'])) {
+    $settings['settings'] = $settings['geocoder_settings'];
+    unset($settings['geocoder_settings']);
+  };
+
+  return $settings + [
+    'enable' => FALSE,
+    'address_field' => NULL,
+    'geocoder' => NULL,
+    'settings' => [],
+    'sync_mode' => 'auto',
+    'direction' => 'duplex',
+    'button_position' => NULL,
+    'ignore' => [],
+  ];
 }
