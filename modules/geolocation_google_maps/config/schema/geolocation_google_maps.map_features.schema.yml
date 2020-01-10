@@ -302,6 +302,18 @@ plugin.plugin_configuration.geolocation.map_feature.control_locate:
   type: geolocation_google_maps.map_control_feature_settings
   label: 'Control Locate'
 
+plugin.plugin_configuration.geolocation.map_feature.control_loading_indicator:
+  type: geolocation_google_maps.map_control_feature_settings
+  label: 'Control Loading Indicator'
+  mapping:
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        loading_label:
+          type: string
+          label: 'Label'
+
 plugin.plugin_configuration.geolocation.map_feature.control_geocoder:
   type: geolocation_google_maps.map_control_feature_settings
   label: 'Control Geocoder'

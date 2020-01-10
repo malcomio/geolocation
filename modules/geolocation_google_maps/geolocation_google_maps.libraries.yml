@@ -262,6 +262,13 @@ mapfeature.control_recenter:
   dependencies:
     - geolocation_google_maps/googlemapsapi
 
+# ControlLoadingIndicator support.
+mapfeature.control_loading_indicator:
+  js:
+    js/MapFeature/geolocation-control-loading-indicator.js: {}
+  dependencies:
+    - geolocation_google_maps/googlemapsapi
+
 # ControlLocate support.
 mapfeature.control_locate:
   js:
