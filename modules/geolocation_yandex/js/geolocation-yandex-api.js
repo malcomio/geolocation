@@ -47,7 +47,7 @@
       // Instantiate (and display) a map object:
       that.yandexMap = new ymaps.Map(
         that.container.get(0), {
-          center: [that.lat, that.lng],
+          center: [that.lng, that.lat],
           zoom: that.settings.yandex_settings.zoom,
           controls: []
         }
@@ -80,7 +80,7 @@
   };
   GeolocationYandexMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
     Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);
-    this.yandexMap.setCenter([coordinates.lat, coordinates.lng]);
+    this.yandexMap.setCenter([coordinates.lng, coordinates.lat]);
   };
   GeolocationYandexMap.prototype.setMapMarker = function (markerSettings) {
     var yandexMarkerSettings = {
@@ -88,7 +88,7 @@
       iconContent: markerSettings.label
     };
 
-    var currentMarker = new ymaps.Placemark([parseFloat(markerSettings.position.lat), parseFloat(markerSettings.position.lng)], yandexMarkerSettings);
+    var currentMarker = new ymaps.Placemark([parseFloat(markerSettings.position.lng), parseFloat(markerSettings.position.lat)], yandexMarkerSettings);
 
     this.yandexMap.geoObjects.add(currentMarker);
 

@@ -184,7 +184,7 @@ class Yandex extends MapProviderBase {
 
     $lang = \Drupal::languageManager()->getCurrentLanguage();
 
-    return self::$APIURLBASE . '?apikey=' . $api_key . '&lang=' . $lang->getId() . '_' . strtoupper($lang->getId());
+    return self::$APIURLBASE . '?apikey=' . $api_key . '&lang=' . $lang->getId() . '_' . strtoupper($lang->getId()) . '&coordorder=longlat';
   }
 
 }

@@ -76,7 +76,7 @@
 
     /** @param {Placemark} */
     var marker = this.getMarkerByDelta(delta);
-    marker.geometry.setCoordinates([location.lat, location.lng]);
+    marker.geometry.setCoordinates([location.lng, location.lat]);
 
     return marker;
   };
