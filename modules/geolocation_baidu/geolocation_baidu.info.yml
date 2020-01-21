@@ -1,0 +1,8 @@
+name: Geolocation - Baidu Maps
+type: module
+description: 'Baidu Maps provider.'
+core: 8.x
+package: Geolocation
+configure: geolocation_baidu.settings
+dependencies:
+  - geolocation:geolocation
