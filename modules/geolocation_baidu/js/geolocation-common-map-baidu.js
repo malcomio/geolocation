@@ -64,31 +64,34 @@
             ) {
               map.addPopulatedCallback(function (map) {
                 var geolocationMapIdleTimer;
-                map.baiduMap.addEventListener('mapviewchangeend', function () {
+                var baiduAjaxTrigger = function () {
                   clearTimeout(geolocationMapIdleTimer);
 
                   geolocationMapIdleTimer = setTimeout(
-                    function () {
-                      var ajaxSettings = Drupal.geolocation.commonMap.dynamicMapViewsAjaxSettings(commonMapSettings);
+                      function () {
+                        var ajaxSettings = Drupal.geolocation.commonMap.dynamicMapViewsAjaxSettings(commonMapSettings);
 
-                      // Add bounds.
-                      var currentBounds = map.baiduMap.getViewBounds();
-                      var bound_parameters = {};
-                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_north_east]'] = currentBounds.getTop();
-                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_north_east]'] = currentBounds.getRight();
-                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_south_west]'] = currentBounds.getBottom();
-                      bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_south_west]'] = currentBounds.getLeft();
+                        // Add bounds.
+                        var currentBounds = map.baiduMap.getBounds();
+                        var bound_parameters = {};
+                        bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_north_east]'] = currentBounds.getNorthEast().lat;
+                        bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_north_east]'] = currentBounds.getNorthEast().lng;
+                        bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lat_south_west]'] = currentBounds.getSouthWest().lat;
+                        bound_parameters[commonMapSettings['dynamic_map']['parameter_identifier'] + '[lng_south_west]'] = currentBounds.getSouthWest().lng;
 
-                      ajaxSettings.submit = $.extend(
-                        ajaxSettings.submit,
-                        bound_parameters
-                      );
+                        ajaxSettings.submit = $.extend(
+                            ajaxSettings.submit,
+                            bound_parameters
+                        );
 
-                      Drupal.ajax(ajaxSettings).execute();
-                    },
-                    commonMapSettings.dynamic_map.views_refresh_delay
+                        Drupal.ajax(ajaxSettings).execute();
+                      },
+                      commonMapSettings.dynamic_map.views_refresh_delay
                   );
-                });
+                };
+
+                map.baiduMap.addEventListener('moveend', baiduAjaxTrigger);
+                map.baiduMap.addEventListener('zoomend', baiduAjaxTrigger);
               });
             }
           }

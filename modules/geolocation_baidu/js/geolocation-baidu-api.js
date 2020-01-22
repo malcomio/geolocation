@@ -88,7 +88,7 @@
   };
   GeolocationBaiduMap.prototype.removeMapMarker = function (marker) {
     Drupal.geolocation.GeolocationMapBase.prototype.removeMapMarker.call(this, marker);
-    this.baiduMap.removeOverlay(marker)
+    this.baiduMap.removeOverlay(marker);
   };
   GeolocationBaiduMap.prototype.fitBoundaries = function (boundaries, identifier) {
     boundaries = this.denormalizeBoundaries(boundaries);
