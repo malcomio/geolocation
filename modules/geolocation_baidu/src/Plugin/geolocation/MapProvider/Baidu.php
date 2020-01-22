@@ -21,7 +21,7 @@ class Baidu extends MapProviderBase {
    *
    * @var string
    */
-  public static $APIURLBASE = 'https://api.map.baidu.com/api?v=2.0';
+  public static $apiBaseUrl = 'https://api.map.baidu.com/api?v=2.0';
 
   /**
    * {@inheritdoc}
@@ -186,7 +186,7 @@ class Baidu extends MapProviderBase {
 
     $api_key = $config->get('key');
 
-    return self::$APIURLBASE . '&ak=' . $api_key;
+    return self::$apiBaseUrl . '&ak=' . $api_key;
   }
 
 }

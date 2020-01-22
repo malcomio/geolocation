@@ -21,7 +21,7 @@ class Yandex extends MapProviderBase {
    *
    * @var string
    */
-  public static $APIURLBASE = 'https://api-maps.yandex.ru/2.1/';
+  public static $apiBaseUrl = 'https://api-maps.yandex.ru/2.1/';
 
   /**
    * {@inheritdoc}
@@ -184,7 +184,7 @@ class Yandex extends MapProviderBase {
 
     $lang = \Drupal::languageManager()->getCurrentLanguage();
 
-    return self::$APIURLBASE . '?apikey=' . $api_key . '&lang=' . $lang->getId() . '_' . strtoupper($lang->getId()) . '&coordorder=longlat';
+    return self::$apiBaseUrl . '?apikey=' . $api_key . '&lang=' . $lang->getId() . '_' . strtoupper($lang->getId()) . '&coordorder=longlat';
   }
 
 }
