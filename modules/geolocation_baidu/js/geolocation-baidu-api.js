@@ -59,6 +59,12 @@
   }
   GeolocationBaiduMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationBaiduMap.prototype.constructor = GeolocationBaiduMap;
+  GeolocationBaiduMap.prototype.getZoom = function () {
+    var that = this;
+    return new Promise(function (resolve, reject) {
+      resolve(that.baiduMap.getZoom());
+    });
+  };
   GeolocationBaiduMap.prototype.setZoom = function (zoom, defer) {
     if (typeof zoom === 'undefined') {
       zoom = this.settings.baidu_settings.zoom;
