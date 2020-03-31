@@ -309,39 +309,40 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
     $locations = [];
 
     foreach ($items as $delta => $item) {
-      $item_position = $this->dataProvider->getPositionsFromItem($item);
-      if (empty($item_position)) {
-        continue;
-      }
+      foreach ($this->dataProvider->getPositionsFromItem($item) as $item_position) {
+        if (empty($item_position)) {
+          continue;
+        }
 
-      $title = $this->dataProvider->replaceFieldItemTokens($settings['title'], $item);
-      if (empty($title)) {
-        $title = $item_position['lat'] . ', ' . $item_position['lng'];
-      }
+        $title = $this->dataProvider->replaceFieldItemTokens($settings['title'], $item);
+        if (empty($title)) {
+          $title = $item_position['lat'] . ', ' . $item_position['lng'];
+        }
 
-      $location = [
-        '#type' => 'geolocation_map_location',
-        '#title' => $title,
-        '#disable_marker' => empty($settings['set_marker']) ? TRUE : FALSE,
-        '#position' => [
-          'lat' => $item_position['lat'],
-          'lng' => $item_position['lng'],
-        ],
-        '#weight' => $delta,
-      ];
-
-      if (
-        !empty($settings['info_text']['value'])
-        && !empty($settings['info_text']['format'])
-      ) {
-        $location['content'] = [
-          '#type' => 'processed_text',
-          '#text' => $this->dataProvider->replaceFieldItemTokens($settings['info_text']['value'], $item),
-          '#format' => $settings['info_text']['format'],
+        $location = [
+          '#type' => 'geolocation_map_location',
+          '#title' => $title,
+          '#disable_marker' => empty($settings['set_marker']) ? TRUE : FALSE,
+          '#position' => [
+            'lat' => $item_position['lat'],
+            'lng' => $item_position['lng'],
+          ],
+          '#weight' => $delta,
         ];
-      }
 
-      $locations[] = $location;
+        if (
+          !empty($settings['info_text']['value'])
+          && !empty($settings['info_text']['format'])
+        ) {
+          $location['content'] = [
+            '#type' => 'processed_text',
+            '#text' => $this->dataProvider->replaceFieldItemTokens($settings['info_text']['value'], $item),
+            '#format' => $settings['info_text']['format'],
+          ];
+        }
+
+        $locations[] = $location;
+      }
     }
 
     $element_pattern = [

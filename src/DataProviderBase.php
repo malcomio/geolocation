@@ -189,6 +189,9 @@ abstract class DataProviderBase extends PluginBase implements DataProviderInterf
    */
   public function getPositionsFromViewsRow(ResultRow $row, FieldPluginBase $viewsField = NULL) {
     if (empty($viewsField)) {
+      if (empty($this->viewsField)) {
+        return [];
+      }
       $viewsField = $this->viewsField;
     }
 
@@ -202,7 +205,7 @@ abstract class DataProviderBase extends PluginBase implements DataProviderInterf
       $geo_items = $entity->{$viewsField->definition['field_name']};
 
       foreach ($geo_items as $item) {
-        $positions[] = $this->getPositionsFromItem($item);
+        $positions = array_merge($this->getPositionsFromItem($item), $positions);
       }
     }
 

@@ -95,6 +95,11 @@ abstract class GeolocationStyleBase extends StylePluginBase {
       return FALSE;
     }
 
+    if (empty($this->view->field[$this->options['geolocation_field']])) {
+      \Drupal::messenger()->addMessage('The geolocation based view ' . $this->view->id() . ' views style was called with a non-available geolocation field defined in the views style settings.', 'error');
+      return FALSE;
+    }
+
     if (
       !empty($this->options['title_field'])
       && $this->options['title_field'] != 'none'
@@ -266,7 +271,7 @@ abstract class GeolocationStyleBase extends StylePluginBase {
         $data_provider_settings = $this->options['data_provider_settings'];
       }
       if ($data_provider = $this->dataProviderManager->getDataProviderByViewsField($field, $data_provider_settings)) {
-        $geo_options[$field_name] = $field->adminLabel();
+        $geo_options[$field_name] = $field->adminLabel() . ' (' . $data_provider->getPluginDefinition()['name'] . ')';
         $data_providers[$field_name] = $data_provider;
       }
 
