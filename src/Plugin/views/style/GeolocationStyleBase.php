@@ -196,7 +196,7 @@ abstract class GeolocationStyleBase extends StylePluginBase {
         'content' => $this->view->rowPlugin->render($row),
         '#title' => empty($title_build) ? '' : $title_build,
         '#label' => empty($label_build) ? '' : $label_build,
-        '#position' => $position,
+        '#coordinates' => $position,
         '#weight' => $row->index,
         '#attributes' => ['data-views-row-index' => $row->index],
       ];
