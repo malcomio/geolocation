@@ -1,0 +1,16 @@
+field.formatter.settings.geolocation_gpx_file:
+  type: field.formatter.settings.geolocation_map
+  label: 'Geolocation GPX File Formatter'
+  mapping:
+    show_tracks:
+      type: boolean
+    show_waypoints:
+      type: boolean
+    track_stroke_color:
+      type: string
+    track_stroke_color_randomize:
+      type: boolean
+    track_stroke_width:
+      type: integer
+    track_stroke_opacity:
+      type: float
