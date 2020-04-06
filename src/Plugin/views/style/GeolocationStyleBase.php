@@ -188,7 +188,13 @@ abstract class GeolocationStyleBase extends StylePluginBase {
       $icon_url = file_url_transform_relative(file_create_url($icon_token_uri));
     }
 
-    $data_provider = $this->dataProviderManager->createInstance($this->options['data_provider_id'], $this->options['data_provider_settings']);
+    try {
+      $data_provider = $this->dataProviderManager->createInstance($this->options['data_provider_id'], $this->options['data_provider_settings']);
+    }
+    catch (\Exception $e) {
+      \Drupal::logger('geolocation')->critical('View with non-existing data provider called.');
+      return [];
+    }
 
     foreach ($data_provider->getPositionsFromViewsRow($row, $this->view->field[$this->options['geolocation_field']]) as $position) {
       $location = [
@@ -222,6 +228,9 @@ abstract class GeolocationStyleBase extends StylePluginBase {
 
       $locations[] = $location;
     }
+
+    $locations = array_merge($data_provider->getLocationsFromViewsRow($row, $this->view->field[$this->options['geolocation_field']]), $locations);
+    $locations = array_merge($data_provider->getShapesFromViewsRow($row, $this->view->field[$this->options['geolocation_field']]), $locations);
 
     return $locations;
   }

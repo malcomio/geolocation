@@ -359,13 +359,13 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
   }
 
   /**
-   * Get locations from field items.
+   * Get renderable locations from field items.
    *
    * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   Field items.
    *
    * @return array
-   *   Locations.
+   *   Renderable locations.
    */
   protected function getLocations(FieldItemListInterface $items) {
 
@@ -408,6 +408,9 @@ abstract class GeolocationMapFormatterBase extends FormatterBase {
 
         $locations[] = $location;
       }
+
+      $locations = array_merge($this->dataProvider->getLocationsFromItem($item), $locations);
+      $locations = array_merge($this->dataProvider->getShapesFromItem($item), $locations);
     }
 
     return $locations;
