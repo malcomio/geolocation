@@ -134,7 +134,7 @@
         break;
 
       case 'polygon':
-        shape = new ymaps.Polygone(coordinates, {
+        shape = new ymaps.Polygon([coordinates], {
           hintContent: shapeSettings.title
         }, {
           strokeColor: shapeSettings.strokeColor,

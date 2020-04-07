@@ -1,0 +1,3 @@
+field.formatter.settings.geolocation_geometry:
+  type: field.formatter.settings.geolocation_map
+  label: 'Geolocation Geometry Formatter'

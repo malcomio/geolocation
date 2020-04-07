@@ -203,16 +203,21 @@
         break;
     }
 
-    var infoWindow = new google.maps.InfoWindow();
-    var that = this;
-    google.maps.event.addListener(shape, 'mouseover', function (e) {
-      infoWindow.setPosition(e.latLng);
-      infoWindow.setContent(shapeSettings.title);
-      infoWindow.open(that.googleMap);
-    });
-    google.maps.event.addListener(shape, 'mouseout', function () {
-      infoWindow.close();
-    });
+    if (
+      typeof shapeSettings.title !== "undefined"
+      && shapeSettings.title.length
+    ) {
+      var infoWindow = new google.maps.InfoWindow();
+      var that = this;
+      google.maps.event.addListener(shape, 'mouseover', function (e) {
+        infoWindow.setPosition(e.latLng);
+        infoWindow.setContent(shapeSettings.title);
+        infoWindow.open(that.googleMap);
+      });
+      google.maps.event.addListener(shape, 'mouseout', function () {
+        infoWindow.close();
+      });
+    }
 
     shape.setMap(this.googleMap);
     Drupal.geolocation.GeolocationMapBase.prototype.addShape.call(this, shape);

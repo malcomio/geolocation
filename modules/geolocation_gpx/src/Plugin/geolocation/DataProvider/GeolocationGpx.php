@@ -6,9 +6,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\file\Entity\File;
 use Drupal\geolocation\DataProviderBase;
 use Drupal\geolocation_gpx\Plugin\Field\FieldType\GeolocationGpxFile;
-use Drupal\search_api\Plugin\views\field\SearchApiEntityField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
-use Drupal\views\ResultRow;
 use Drupal\geolocation\DataProviderInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\views\Plugin\views\field\EntityField;
@@ -62,41 +60,6 @@ class GeolocationGpx extends DataProviderBase implements DataProviderInterface {
     }
 
     return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPositionsFromViewsRow(ResultRow $row, FieldPluginBase $views_field = NULL) {
-    $positions = [];
-
-    if (!($views_field instanceof SearchApiEntityField)) {
-      return [];
-    }
-
-    foreach ($views_field->getItems($row) as $item) {
-      if (!empty($item['value'])) {
-        $pieces = explode(',', $item['value']);
-        if (count($pieces) != 2) {
-          continue;
-        }
-
-        $positions[] = [
-          'lat' => $pieces[0],
-          'lng' => $pieces[1],
-        ];
-      }
-      elseif (!empty($item['raw'])) {
-        /** @var \Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem $geolocation_item */
-        $geolocation_item = $item['raw'];
-        $positions[] = [
-          'lat' => $geolocation_item->get('lat')->getValue(),
-          'lng' => $geolocation_item->get('lng')->getValue(),
-        ];
-      }
-    }
-
-    return $positions;
   }
 
   /**
