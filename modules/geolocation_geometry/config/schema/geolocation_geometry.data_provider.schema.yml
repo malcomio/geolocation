@@ -16,4 +16,3 @@ geolocation.data_provider.geolocation_geometry:
       type: boolean
     fill_opacity:
       type: float
-
