@@ -12,7 +12,10 @@ dependencies:
       - geolocation_geometry_demo
   module:
     - geolocation
+    - geolocation_demo
+    - geolocation_leaflet
     - geolocation_geometry
+    - geolocation_geometry_natural_earth_countries
     - node
     - taxonomy
     - user
