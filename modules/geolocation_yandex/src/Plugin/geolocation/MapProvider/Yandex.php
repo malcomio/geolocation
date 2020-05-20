@@ -158,6 +158,26 @@ class Yandex extends MapProviderBase {
   /**
    * {@inheritdoc}
    */
+  public static function getPackages() {
+    return [
+      'full' => t('Full'),
+      'standard' => t('Standard'),
+      'map' => t('Map'),
+      'controls' => t('Controls'),
+      'controls' => t('Search'),
+      'geoObjects' => t('GeoObjects'),
+      'clusters' => t('Clusters'),
+      'traffic' => t('Traffic'),
+      'route' => t('Route'),
+      'geoXml' => t('GeoXml'),
+      'editor' => t('Editor'),
+      'overlays' => t('Overlays'),
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function alterCommonMap(array $render_array, array $map_settings, array $context) {
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
@@ -179,10 +199,17 @@ class Yandex extends MapProviderBase {
    */
   public function getApiUrl() {
     $config = \Drupal::config('geolocation_yandex.settings');
-
     $api_key = $config->get('api_key');
 
-    return self::$apiBaseUrl . '?apikey=' . $api_key . '&lang=' . self::getApiUrlLangcode() . '&coordorder=longlat';
+    $packages = $config->get('packages');
+    foreach ($packages as &$package) {
+      $package = 'package.'.$package;
+    }
+    $packages_str = implode(',',$packages);
+
+    $base_url = self::$apiBaseUrl;
+    $langcode = self::getApiUrlLangcode();
+    return "$base_url?apikey=$api_key&load=$packages_str&lang=$langcode&coordorder=longlat";
   }
 
   /**
