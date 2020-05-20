@@ -14,6 +14,9 @@
    * @implements {GeolocationMapInterface}
    * @inheritDoc
    *
+   * @prop {Map} leafletMap
+   * @prop {LayerGroup} markerLayer
+   * @prop {TileLayer} tileLayer
    * @prop {Object} settings.leaflet_settings - Leaflet specific settings.
    */
   function GeolocationLeafletMap(mapSettings) {
