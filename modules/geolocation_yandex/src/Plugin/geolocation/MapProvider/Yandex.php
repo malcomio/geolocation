@@ -118,6 +118,8 @@ class Yandex extends MapProviderBase {
   public function alterRenderArray(array $render_array, array $map_settings, array $context = []) {
     $map_settings = $this->getSettings($map_settings);
 
+    $yandex_url_parts = parse_url(self::$apiBaseUrl);
+
     $render_array['#attached'] = BubbleableMetadata::mergeAttachments(
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
@@ -133,6 +135,19 @@ class Yandex extends MapProviderBase {
                 ],
               ],
             ],
+          ],
+        ],
+        // Add 'preconnect' resource hint.
+        'html_head' => [
+          [
+            [
+              '#tag' => 'link',
+              '#attributes' => [
+                'rel' => 'preconnect',
+                'href' => $yandex_url_parts['scheme'] . "://" . $yandex_url_parts['host'],
+              ],
+            ],
+            'geolocation_yandex_link_preconnect_map',
           ],
         ],
       ]
@@ -156,7 +171,9 @@ class Yandex extends MapProviderBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Selection of Yandex API packages.
+   *
+   * @see https://tech.yandex.ru/maps/archive/doc/jsapi/2.0/ref/reference/packages-docpage/
    */
   public static function getPackages() {
     return [
@@ -164,7 +181,7 @@ class Yandex extends MapProviderBase {
       'standard' => t('Standard'),
       'map' => t('Map'),
       'controls' => t('Controls'),
-      'controls' => t('Search'),
+      'search' => t('Search'),
       'geoObjects' => t('GeoObjects'),
       'clusters' => t('Clusters'),
       'traffic' => t('Traffic'),
@@ -203,9 +220,9 @@ class Yandex extends MapProviderBase {
 
     $packages = $config->get('packages');
     foreach ($packages as &$package) {
-      $package = 'package.'.$package;
+      $package = 'package.' . $package;
     }
-    $packages_str = implode(',',$packages);
+    $packages_str = implode(',', $packages);
 
     $base_url = self::$apiBaseUrl;
     $langcode = self::getApiUrlLangcode();
