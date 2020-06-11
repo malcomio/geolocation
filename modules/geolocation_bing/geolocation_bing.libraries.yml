@@ -1,0 +1,24 @@
+bing:
+  version: 8.x-3.x
+  js:
+    //www.bing.com/api/maps/mapcontrol: { type: external, minified: true, attributes: { defer: true, async: true } }
+
+geolocation.bing:
+  version: 8.x-3.x
+  dependencies:
+    - core/drupalSettings
+    - geolocation_bing/bing
+    - geolocation/geolocation.api
+  js:
+    js/geolocation-bing-api.js: {}
+  css:
+    component:
+      'css/geolocation-leaflet.css': {}
+
+commonmap.bing:
+  version: 8.x-3.x
+  js:
+    js/geolocation-common-map-bing.js: {}
+  dependencies:
+    - geolocation/geolocation.commonmap
+    - geolocation_bing/geolocation.bing
