@@ -71,7 +71,7 @@
         const bingSettings = map.settings.bing_settings;
         // const mapCenter = new Microsoft.Maps.Location(map.lat, map.lng);
 
-        map.bingMap = new Microsoft.Maps.Map(map.container[0], {
+        let bingMap = new Microsoft.Maps.Map(map.container[0], {
           credentials: bingSettings.api_key,
           // center: mapCenter,
           showDashboard: false,
@@ -83,36 +83,65 @@
           zoom: bingSettings.zoom
         });
 
-        //Create an infobox at the center of the map but don't show it.
-        let infobox = new Microsoft.Maps.Infobox(map.getCenter(), {
-          visible: false
-        });
-
-        infobox.setMap(map.bingMap);
-
-        // Add the pins from view.
-        for (let i = 0; i < map.mapMarkers.length; i++) {
-          const thisMarker = map.mapMarkers[i];
-          const pinLocation = new Microsoft.Maps.Location(thisMarker.position.lat, thisMarker.position.lng);
-
-          let pin = new Microsoft.Maps.Pushpin(pinLocation);
-
-          // Add the pushpin to the map
-          map.bingMap.entities.push(pin);
-        }
-
+        that.bingMap = bingMap;
       });
 
-
+      that.addPopulatedCallback(function (map) {
+        // TODO: ???
+      });
 
       that.initializedCallback();
       that.populatedCallback();
 
+    })
+    .catch(function (error) {
+      console.error('Bing library not loaded. Bailing out. Error:'); // eslint-disable-line no-console.
+      console.error(error);
     });
   }
 
   GeolocationBingMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationBingMap.prototype.constructor = GeolocationBingMap;
+
+  GeolocationBingMap.prototype.getZoom = function () {
+    var that = this;
+
+
+    return new Promise(function (resolve, reject) {
+      resolve(that.bingMap.getZoom());
+    });
+  };
+
+  GeolocationBingMap.prototype.setZoom = function (zoom, defer) {
+    if (typeof zoom === 'undefined') {
+      zoom = this.settings.bing_settings.zoom;
+    }
+    zoom = parseInt(zoom);
+    console.log(this.bingMap);
+
+    // let that = this;
+    // return new Promise(function (resolve, reject) {
+    //   resolve(that.bingMap.setView({
+    //     zoom: zoom
+    //   }));
+    // });
+
+
+  };
+
+
+  GeolocationBingMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
+    Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);
+    console.log(this);
+    if (typeof accuracy === 'undefined') {
+      // TODO: bingMap is undefined.
+
+      // this.bingMap.setView({
+      //   center: new Microsoft.Maps.Location(coordinates.lat, coordinates.lng)
+      // });
+      return;
+    }
+  };
 
   Drupal.geolocation.GeolocationBingMap = GeolocationBingMap;
   Drupal.geolocation.addMapProvider('bing', 'GeolocationBingMap');

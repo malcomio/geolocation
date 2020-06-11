@@ -40,8 +40,6 @@
   Drupal.behaviors.geolocationMarkerInfobox = {
     attach: function (context, drupalSettings) {
 
-      console.log(this);
-
       Drupal.geolocation.executeFeatureOnAllMaps(
         'bing_marker_infobox',
 
@@ -53,7 +51,6 @@
 
 
           map.addMarkerAddedCallback(function (currentMarker) {
-            console.log(currentMarker);
 
             if (typeof (currentMarker.locationWrapper) === 'undefined') {
               return;
@@ -81,19 +78,27 @@
               visible: false
             });
 
+            currentInfoWindow.setMap(map.bingMap);
+
+            const pinLocation = new Microsoft.Maps.Location(currentMarker.position.lat, currentMarker.position.lng);
+
+            let pin = new Microsoft.Maps.Pushpin(pinLocation);
+
             pin.metadata = {
-              // TODO: get this dynamically.
-              title: 'hello',
-              description: 'blah'
+              description: content.toString()
             };
             Microsoft.Maps.Events.addHandler(pin, 'click', pushpinClicked);
 
+            map.bingMap.entities.push(pin);
+
 
             function pushpinClicked(e) {
-              //Make sure the infobox has metadata to display.
+              // Make sure the infobox has metadata to display.
               if (e.target.metadata) {
-                //Set the infobox options with the metadata of the pushpin.
-                infobox.setOptions({
+                // Set the infobox options with the metadata of the pushpin.
+                // TODO: sizing of the infobox.
+                // TODO: recentre the map.
+                currentInfoWindow.setOptions({
                   location: e.target.getLocation(),
                   title: e.target.metadata.title,
                   description: e.target.metadata.description,
@@ -102,18 +107,16 @@
               }
             }
 
-            console.log(map);
 
-
-            currentMarker.addListener('click', function () {
-              if (featureSettings.infoWindowSolitary) {
-                if (typeof map.infoWindow !== 'undefined') {
-                  map.infoWindow.close();
-                }
-                map.infoWindow = currentInfoWindow;
-              }
-              currentInfoWindow.open(map.bingMap, currentMarker);
-            });
+            // currentMarker.addListener('click', function () {
+            //   if (featureSettings.infoWindowSolitary) {
+            //     if (typeof map.infoWindow !== 'undefined') {
+            //       map.infoWindow.close();
+            //     }
+            //     map.infoWindow = currentInfoWindow;
+            //   }
+            //   currentInfoWindow.open(map.bingMap, currentMarker);
+            // });
 
           });
 
@@ -122,6 +125,7 @@
         drupalSettings
       );
     },
-    detach: function (context, drupalSettings) {}
+    detach: function (context, drupalSettings) {
+    }
   };
 })(Drupal);
