@@ -24,13 +24,19 @@ class Bing extends MapProviderBase {
   public static function getDefaultSettings() {
 
     $config = \Drupal::config('geolocation_bing.settings');
+
+    $defaultSettings = parent::getDefaultSettings();
     return array_replace_recursive(
-      parent::getDefaultSettings(),
+      $defaultSettings,
       [
         'zoom' => 10,
         'height' => '400px',
         'width' => '100%',
-        'map_features' => [],
+        'map_features' => [
+          'bing_marker_infobox' => [
+            'enabled' => TRUE,
+          ],
+        ],
         'api_key' => $config->get('api_key'),
       ]
     );
@@ -124,7 +130,7 @@ class Bing extends MapProviderBase {
       empty($render_array['#attached']) ? [] : $render_array['#attached'],
       [
         'library' => [
-          'geolocation_bing/geolocation_bing',
+          'geolocation_bing/geolocation.bing',
         ],
         'drupalSettings' => [
           'geolocation' => [
