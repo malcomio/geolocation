@@ -6,6 +6,9 @@
 (function ($, Drupal) {
   'use strict';
 
+  // TODO: cross-browser testing.
+  // TODO: infobox.
+
   /**
    * GeolocationBingMap element.
    *
@@ -21,10 +24,11 @@
    */
   function GeolocationBingMap(mapSettings) {
 
+    // Ensure that the Bing maps script has loaded before we try to do anything else.
     const bingPromise = new Promise(function (resolve, reject) {
-      if (typeof Microsoft === 'undefined') {
+      if (typeof Microsoft === 'undefined' || typeof Microsoft.Maps === 'undefined') {
         setTimeout(function () {
-          if (typeof Microsoft === 'undefined') {
+          if (typeof Microsoft === 'undefined' || typeof Microsoft.Maps === 'undefined') {
             reject();
           }
           else {
@@ -65,17 +69,13 @@
       that.addInitializedCallback(function (map) {
 
         const bingSettings = map.settings.bing_settings;
-        const mapCenter = new Microsoft.Maps.Location(map.lat, map.lng);
-
-        console.log(bingSettings);
+        // const mapCenter = new Microsoft.Maps.Location(map.lat, map.lng);
 
         map.bingMap = new Microsoft.Maps.Map(map.container[0], {
           credentials: bingSettings.api_key,
           // center: mapCenter,
           showDashboard: false,
           showScalebar: true,
-          disableZooming: true,
-          disablePanning: true,
           allowHidingLabelsOfRoad: false,
           showLocateMeButton: false,
           showCopyright: false,
@@ -96,51 +96,14 @@
           const pinLocation = new Microsoft.Maps.Location(thisMarker.position.lat, thisMarker.position.lng);
 
           let pin = new Microsoft.Maps.Pushpin(pinLocation);
-          pin.metadata = {
-            // TODO: get this dynamically.
-            title: 'hello',
-            description: 'blah'
-          };
-          Microsoft.Maps.Events.addHandler(pin, 'click', pushpinClicked);
 
           // Add the pushpin to the map
           map.bingMap.entities.push(pin);
-
         }
 
-        function pushpinClicked(e) {
-          //Make sure the infobox has metadata to display.
-          if (e.target.metadata) {
-            //Set the infobox options with the metadata of the pushpin.
-            infobox.setOptions({
-              location: e.target.getLocation(),
-              title: e.target.metadata.title,
-              description: e.target.metadata.description,
-              visible: true
-            });
-          }
-        }
-
-        console.log(map);
       });
 
-      that.addPopulatedCallback(function (map) {
-        // var singleClick;
-        // map.bingMap.on('click', /** @param {BingMouseEvent} e */ function (e) {
-        //   singleClick = setTimeout(function () {
-        //     map.clickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
-        //   }, 500);
-        // });
-        //
-        // map.bingMap.on('dblclick', /** @param {BingMouseEvent} e */ function (e) {
-        //   clearTimeout(singleClick);
-        //   map.doubleClickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
-        // });
-        //
-        // map.bingMap.on('contextmenu', /** @param {BingMouseEvent} e */ function (e) {
-        //   map.contextClickCallback({lat: e.latlng.lat, lng: e.latlng.lng});
-        // });
-      });
+
 
       that.initializedCallback();
       that.populatedCallback();

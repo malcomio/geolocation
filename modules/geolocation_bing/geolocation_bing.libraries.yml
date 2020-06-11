@@ -1,7 +1,8 @@
 bing:
   version: 8.x-3.x
+  header: true
   js:
-    //www.bing.com/api/maps/mapcontrol: { type: external, minified: true, attributes: { defer: true, async: true } }
+    //www.bing.com/api/maps/mapcontrol: { type: external, minified: true }
 
 geolocation.bing:
   version: 8.x-3.x
@@ -18,4 +19,10 @@ commonmap.bing:
     js/geolocation-common-map-bing.js: {}
   dependencies:
     - geolocation/geolocation.commonmap
+    - geolocation_bing/geolocation.bing
+
+mapfeature.bing_marker_infobox:
+  js:
+    js/MapFeature/geolocation-marker-infobox.js: {}
+  dependencies:
     - geolocation_bing/geolocation.bing
