@@ -82,6 +82,14 @@
           showLogo: false,
           zoom: bingSettings.zoom
         });
+        // Set the info popup text.
+        let currentInfoWindow = new Microsoft.Maps.Infobox(map.getCenter(), {
+          visible: false
+        });
+
+        currentInfoWindow.setMap(bingMap);
+
+        Drupal.geolocation.currentInfoWindow = currentInfoWindow;
 
         that.bingMap = bingMap;
       });

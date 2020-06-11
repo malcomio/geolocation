@@ -73,12 +73,7 @@
               markerInfoWindow.maxWidth = featureSettings.maxWidth;
             }
 
-            // Set the info popup text.
-            var currentInfoWindow = new Microsoft.Maps.Infobox(map.getCenter(), {
-              visible: false
-            });
 
-            currentInfoWindow.setMap(map.bingMap);
 
             const pinLocation = new Microsoft.Maps.Location(currentMarker.position.lat, currentMarker.position.lng);
 
@@ -98,7 +93,7 @@
                 // Set the infobox options with the metadata of the pushpin.
                 // TODO: sizing of the infobox.
                 // TODO: recentre the map.
-                currentInfoWindow.setOptions({
+                Drupal.geolocation.currentInfoWindow.setOptions({
                   location: e.target.getLocation(),
                   title: e.target.metadata.title,
                   description: e.target.metadata.description,
