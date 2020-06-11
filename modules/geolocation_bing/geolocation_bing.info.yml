@@ -1,0 +1,7 @@
+name: Geolocation - Bing
+type: module
+description: 'Bing map provider.'
+core_version_requirement: ^8.7.7 || ^9
+package: Geolocation
+dependencies:
+  - geolocation:geolocation

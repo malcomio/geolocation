@@ -1,0 +1,7 @@
+geolocation_bing.settings:
+  path: '/admin/config/services/geolocation/bing'
+  defaults:
+    _form:  '\Drupal\geolocation_bing\Form\GeolocationBingSettings'
+    _title: 'Geolocation Bing settings'
+  requirements:
+    _permission: 'configure geolocation'
