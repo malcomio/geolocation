@@ -20,10 +20,43 @@
    * @prop {Object} settings.bing_settings - Bing specific settings.
    */
   function GeolocationBingMap(mapSettings) {
+
+    console.log(mapSettings.settings.bing_settings);
     var bingPromise = new Promise(function (resolve, reject) {
-      if (typeof L === 'undefined') {
+
+
+
+      const mm = Microsoft.Maps,
+        center = new mm.Location(latitude, longitude),
+        pinLayer = new Microsoft.Maps.EntityCollection();
+      const pin = new Microsoft.Maps.Pushpin(center, {
+        icon: drupalSettings.pin,
+      });
+
+      let map = new mm.Map('.rml-branch-finder-map', {
+        credentials: mapSettings.settings.bing_settings.api_key,
+        center: center,
+        showDashboard: false,
+        showScalebar: true,
+        disableZooming: true,
+        disablePanning: true,
+        allowHidingLabelsOfRoad: false,
+        showLocateMeButton: false,
+        showCopyright: false,
+        showLogo: false,
+        zoom: 15,
+      });
+
+      pinLayer.push(pin);
+      map.entities.push(pinLayer);
+
+
+      console.log(map);
+
+      // TODO: get rid
+      if (typeof Microsoft === 'undefined') {
         setTimeout(function () {
-          if (typeof L === 'undefined') {
+          if (typeof Microsoft === 'undefined') {
             reject();
           }
           else {
@@ -60,23 +93,6 @@
     var that = this;
 
     bingPromise.then(function () {
-      /** @type {Map} */
-      var bingMap = L.map(that.container.get(0), {
-        center: [that.lat, that.lng],
-        zoom: that.settings.bing_settings.zoom,
-        zoomControl: false
-      });
-
-      var markerLayer = L.layerGroup().addTo(bingMap);
-
-      // Set the tile layer.
-      var tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(bingMap);
-
-      that.bingMap = bingMap;
-      that.markerLayer = markerLayer;
-      that.tileLayer = tileLayer;
 
       that.addPopulatedCallback(function (map) {
         var singleClick;

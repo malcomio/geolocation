@@ -22,6 +22,8 @@ class Bing extends MapProviderBase {
    * {@inheritdoc}
    */
   public static function getDefaultSettings() {
+
+    $config = \Drupal::config('geolocation_bing.settings');
     return array_replace_recursive(
       parent::getDefaultSettings(),
       [
@@ -29,6 +31,7 @@ class Bing extends MapProviderBase {
         'height' => '400px',
         'width' => '100%',
         'map_features' => [],
+        'api_key' => $config->get('api_key'),
       ]
     );
   }
@@ -38,8 +41,6 @@ class Bing extends MapProviderBase {
    */
   public function getSettings(array $settings) {
     $settings = parent::getSettings($settings);
-
-    $settings['api_key'] = 'ass';
 
     $settings['zoom'] = (int) $settings['zoom'];
 

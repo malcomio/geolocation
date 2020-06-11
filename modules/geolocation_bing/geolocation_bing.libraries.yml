@@ -11,9 +11,6 @@ geolocation.bing:
     - geolocation/geolocation.api
   js:
     js/geolocation-bing-api.js: {}
-  css:
-    component:
-      'css/geolocation-leaflet.css': {}
 
 commonmap.bing:
   version: 8.x-3.x

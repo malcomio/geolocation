@@ -29,8 +29,7 @@
          *     map
          */
         function (mapId, commonMapSettings) {
-          console.log(mapId);
-          console.log(commonMapSettings);
+
           if (
             typeof commonMapSettings.dynamic_map !== 'undefined'
             && commonMapSettings.dynamic_map.enable
@@ -77,42 +76,5 @@
         });
     }
   };
-
-  /**
-   * Render the map using location coordinates.
-   *
-   * @param {number} latitude
-   *   Location latitude.
-   * @param {number} longitude
-   *   Location longitude.
-   */
-  Drupal.behaviors.geolocationCommonMapBingRenderMap = function () {
-
-
-    const mm = Microsoft.Maps,
-      center = new mm.Location(latitude, longitude),
-      pinLayer = new Microsoft.Maps.EntityCollection();
-    const pin = new Microsoft.Maps.Pushpin(center, {
-      icon: drupalSettings.pin,
-    });
-
-    let map = new mm.Map('.rml-branch-finder-map', {
-        credentials: drupalSettings.bingMap.key,
-        center: center,
-        showDashboard: false,
-        showScalebar: true,
-        disableZooming: true,
-        disablePanning: true,
-        allowHidingLabelsOfRoad: false,
-        showLocateMeButton: false,
-        showCopyright: false,
-        showLogo: false,
-        zoom: 15,
-      });
-
-      pinLayer.push(pin);
-      map.entities.push(pinLayer);
-
-  }
 
 })(jQuery, Drupal);
