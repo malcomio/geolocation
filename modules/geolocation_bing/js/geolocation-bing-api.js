@@ -22,7 +22,6 @@
   function GeolocationBingMap(mapSettings) {
 
     const bingPromise = new Promise(function (resolve, reject) {
-      console.log('in promise');
       if (typeof Microsoft === 'undefined') {
         setTimeout(function () {
           if (typeof Microsoft === 'undefined') {
@@ -66,13 +65,12 @@
       that.addInitializedCallback(function (map) {
 
         const bingSettings = map.settings.bing_settings;
+        const mapCenter = new Microsoft.Maps.Location(map.lat, map.lng);
+
+        console.log(bingSettings);
 
         map.bingMap = new Microsoft.Maps.Map(map.container[0], {
           credentials: bingSettings.api_key,
-        });
-
-        const mapCenter = new Microsoft.Maps.Location(map.lat, map.lng);
-        map.bingMap.setOptions({
           // center: mapCenter,
           showDashboard: false,
           showScalebar: true,
@@ -82,8 +80,46 @@
           showLocateMeButton: false,
           showCopyright: false,
           showLogo: false,
-          zoom: bingSettings.zoom,
+          zoom: bingSettings.zoom
         });
+
+        //Create an infobox at the center of the map but don't show it.
+        let infobox = new Microsoft.Maps.Infobox(map.getCenter(), {
+          visible: false
+        });
+
+        infobox.setMap(map.bingMap);
+
+        // Add the pins from view.
+        for (let i = 0; i < map.mapMarkers.length; i++) {
+          const thisMarker = map.mapMarkers[i];
+          const pinLocation = new Microsoft.Maps.Location(thisMarker.position.lat, thisMarker.position.lng);
+
+          let pin = new Microsoft.Maps.Pushpin(pinLocation);
+          pin.metadata = {
+            // TODO: get this dynamically.
+            title: 'hello',
+            description: 'blah'
+          };
+          Microsoft.Maps.Events.addHandler(pin, 'click', pushpinClicked);
+
+          // Add the pushpin to the map
+          map.bingMap.entities.push(pin);
+
+        }
+
+        function pushpinClicked(e) {
+          //Make sure the infobox has metadata to display.
+          if (e.target.metadata) {
+            //Set the infobox options with the metadata of the pushpin.
+            infobox.setOptions({
+              location: e.target.getLocation(),
+              title: e.target.metadata.title,
+              description: e.target.metadata.description,
+              visible: true
+            });
+          }
+        }
 
         console.log(map);
       });
