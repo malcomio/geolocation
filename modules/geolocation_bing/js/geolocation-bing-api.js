@@ -6,9 +6,6 @@
 (function ($, Drupal) {
   'use strict';
 
-  // TODO: cross-browser testing.
-  // TODO: infobox.
-
   /**
    * GeolocationBingMap element.
    *
@@ -120,7 +117,6 @@
   GeolocationBingMap.prototype.getZoom = function () {
     var that = this;
 
-
     return new Promise(function (resolve, reject) {
       resolve(that.bingMap.getZoom());
     });
@@ -131,23 +127,14 @@
       zoom = this.settings.bing_settings.zoom;
     }
     zoom = parseInt(zoom);
-    console.log(this.bingMap);
-
-    // let that = this;
-    // return new Promise(function (resolve, reject) {
-    //   resolve(that.bingMap.setView({
-    //     zoom: zoom
-    //   }));
-    // });
-
-
+    // TODO: does this function even need to exist? If so, what are we doing here?
   };
 
 
   GeolocationBingMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
     Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);
     if (typeof accuracy === 'undefined') {
-      // TODO: bingMap is undefined.
+      // TODO: does this function even need to exist?
       return;
     }
   };

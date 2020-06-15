@@ -1,0 +1,4 @@
+.infobox-body,
+.infobox-info {
+  max-height: unset !important;
+}

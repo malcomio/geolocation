@@ -1,28 +1,6 @@
 /**
  * @file
- * Marker InfoWindow.
- */
-
-/**
- * @typedef {Object} MarkerInfoWindowSettings
- *
- * @extends {GeolocationMapFeatureSettings}
- *
- * @property {Boolean} infoAutoDisplay
- * @property {Boolean} disableAutoPan
- * @property {Boolean} infoWindowSolitary
- * @property {int} maxWidth
- */
-
-/**
- * @typedef {Object} GoogleInfoWindow
- * @property {Function} open
- * @property {Function} close
- */
-
-/**
- * @property {GoogleInfoWindow} GeolocationGoogleMap.infoWindow
- * @property {function({}):GoogleInfoWindow} GeolocationGoogleMap.InfoWindow
+ * Marker Infobox for Bing map.
  */
 
 (function (Drupal) {
@@ -43,19 +21,13 @@
       Drupal.geolocation.executeFeatureOnAllMaps(
         'bing_marker_infobox',
 
-        /**
-         * @param {GeolocationGoogleMap} map - Current map.
-         * @param {MarkerInfoWindowSettings} featureSettings - Settings for current feature.
-         */
         function (map, featureSettings) {
-
 
           map.addMarkerAddedCallback(function (currentMarker) {
 
             if (typeof (currentMarker.locationWrapper) === 'undefined') {
               return;
             }
-
 
             var content = currentMarker.locationWrapper.find('.location-content');
 
@@ -72,8 +44,6 @@
             if (featureSettings.maxWidth > 0) {
               markerInfoWindow.maxWidth = featureSettings.maxWidth;
             }
-
-
 
             const pinLocation = new Microsoft.Maps.Location(currentMarker.position.lat, currentMarker.position.lng);
 
@@ -101,17 +71,6 @@
                 });
               }
             }
-
-
-            // currentMarker.addListener('click', function () {
-            //   if (featureSettings.infoWindowSolitary) {
-            //     if (typeof map.infoWindow !== 'undefined') {
-            //       map.infoWindow.close();
-            //     }
-            //     map.infoWindow = currentInfoWindow;
-            //   }
-            //   currentInfoWindow.open(map.bingMap, currentMarker);
-            // });
 
           });
 

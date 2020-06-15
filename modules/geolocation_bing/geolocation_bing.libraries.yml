@@ -10,6 +10,9 @@ geolocation.bing:
     - core/drupalSettings
     - geolocation_bing/bing
     - geolocation/geolocation.api
+  css:
+    component:
+      css/geolocation-bing.css: {}
   js:
     js/geolocation-bing-api.js: {}
 
