@@ -69,11 +69,9 @@
       that.addInitializedCallback(function (map) {
 
         const bingSettings = map.settings.bing_settings;
-        // const mapCenter = new Microsoft.Maps.Location(map.lat, map.lng);
 
         let bingMap = new Microsoft.Maps.Map(map.container[0], {
           credentials: bingSettings.api_key,
-          // center: mapCenter,
           showDashboard: false,
           showScalebar: true,
           allowHidingLabelsOfRoad: false,
@@ -95,7 +93,15 @@
       });
 
       that.addPopulatedCallback(function (map) {
-        // TODO: ???
+        // Center the map based on the locations.
+        let locs = [];
+        for (let i = 0; i < map.mapMarkers.length; i++) {
+          const thisLocation = map.mapMarkers[i].position;
+          locs.push(new Microsoft.Maps.Location(thisLocation.lat, thisLocation.lng));
+        }
+
+        var rect = Microsoft.Maps.LocationRect.fromLocations(locs);
+        map.bingMap.setView({ bounds: rect, padding: 20 });
       });
 
       that.initializedCallback();
@@ -140,13 +146,8 @@
 
   GeolocationBingMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
     Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);
-    console.log(this);
     if (typeof accuracy === 'undefined') {
       // TODO: bingMap is undefined.
-
-      // this.bingMap.setView({
-      //   center: new Microsoft.Maps.Location(coordinates.lat, coordinates.lng)
-      // });
       return;
     }
   };
