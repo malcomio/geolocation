@@ -85,8 +85,11 @@ function GeolocationBingMapLoadedCallback() {
           const pinLocation = new Microsoft.Maps.Location(thisLocation.lat, thisLocation.lng);
           locations.push(pinLocation);
 
-          // TODO: customizable pins.
-          let pin = new Microsoft.Maps.Pushpin(pinLocation);
+          let pinOptions = {};
+          if (map.settings.bing_settings.icon_path) {
+            pinOptions.icon = map.settings.bing_settings.icon_path;
+          }
+          let pin = new Microsoft.Maps.Pushpin(pinLocation, pinOptions);
 
           // Do we have any info to put into the infobox?
           var content = thisMarker.locationWrapper.find('.location-content');

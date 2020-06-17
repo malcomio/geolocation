@@ -38,6 +38,7 @@ class Bing extends MapProviderBase {
           ],
         ],
         'api_key' => $config->get('api_key'),
+        'icon_path' => '',
       ]
     );
   }
@@ -49,6 +50,7 @@ class Bing extends MapProviderBase {
     $settings = parent::getSettings($settings);
 
     $settings['zoom'] = (int) $settings['zoom'];
+    $settings['icon_path'] = $settings['icon_path'];
 
     return $settings;
   }
@@ -114,6 +116,14 @@ class Bing extends MapProviderBase {
       '#pre_render' => [
         ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
       ],
+    ];
+
+    $form['icon_path'] = [
+      '#group' => $parents_string,
+      '#type' => 'textfield',
+      '#title' => $this->t('Icon'),
+      '#description' => $this->t('Set relative or absolute path to custom marker icon. Empty for default.'),
+      '#default_value' => $settings['icon_path'],
     ];
 
     return $form;
