@@ -120,10 +120,12 @@ function GeolocationBingMapLoadedCallback() {
       }
 
       // Center the map based on the locations.
-      if (locations.length) {
+      let viewOptions = {center: locations[0]};
+      if (locations.length > 1) {
         var rect = Microsoft.Maps.LocationRect.fromLocations(locations);
-        map.bingMap.setView({bounds: rect, padding: 20});
+        viewOptions = {bounds: rect, padding: 20};
       }
+      map.bingMap.setView(viewOptions);
     });
   }
 
