@@ -3,6 +3,10 @@
  * Javascript for Bing maps integration.
  */
 
+function GeolocationBingMapLoadedCallback() {
+  // TODO: is this necessary?
+}
+
 (function ($, Drupal) {
   'use strict';
 
@@ -125,7 +129,6 @@
     zoom = parseInt(zoom);
     // TODO: does this function even need to exist? If so, what are we doing here?
   };
-
 
   GeolocationBingMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
     Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);

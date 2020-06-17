@@ -29,33 +29,31 @@
               return;
             }
 
-            var content = currentMarker.locationWrapper.find('.location-content');
-
-            if (content.length < 1) {
-              return;
-            }
-            content = content.html();
-
-            var markerInfoWindow = {
-              content: content.toString(),
-              disableAutoPan: featureSettings.disableAutoPan
-            };
-
-            if (featureSettings.maxWidth > 0) {
-              markerInfoWindow.maxWidth = featureSettings.maxWidth;
-            }
-
+            // Generate a location pin.
             const pinLocation = new Microsoft.Maps.Location(currentMarker.position.lat, currentMarker.position.lng);
-
             let pin = new Microsoft.Maps.Pushpin(pinLocation);
 
-            pin.metadata = {
-              description: content.toString()
-            };
-            Microsoft.Maps.Events.addHandler(pin, 'click', pushpinClicked);
+            // Do we have any info to put into the infobox?
+            var content = currentMarker.locationWrapper.find('.location-content');
+            if (content.length) {
+              content = content.html();
+
+              var markerInfoWindow = {
+                content: content.toString(),
+                disableAutoPan: featureSettings.disableAutoPan
+              };
+
+              if (featureSettings.maxWidth > 0) {
+                markerInfoWindow.maxWidth = featureSettings.maxWidth;
+              }
+
+              pin.metadata = {
+                description: content.toString()
+              };
+              Microsoft.Maps.Events.addHandler(pin, 'click', pushpinClicked);
+            }
 
             map.bingMap.entities.push(pin);
-
 
             function pushpinClicked(e) {
               // Make sure the infobox has metadata to display.

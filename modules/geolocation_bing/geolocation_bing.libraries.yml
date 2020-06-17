@@ -2,7 +2,7 @@ bing:
   version: 8.x-3.x
   header: true
   js:
-    //www.bing.com/api/maps/mapcontrol: { type: external, minified: true }
+    //www.bing.com/api/maps/mapcontrol?callback=GeolocationBingMapLoadedCallback: { type: external, minified: true, attributes: { defer: true, async: true } }
 
 geolocation.bing:
   version: 8.x-3.x
