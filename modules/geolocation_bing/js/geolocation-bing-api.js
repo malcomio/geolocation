@@ -13,11 +13,6 @@
    * @augments {GeolocationMapBase}
    * @implements {GeolocationMapInterface}
    * @inheritDoc
-   *
-   * @prop {Map} bingMap
-   * @prop {L.LayerGroup} markerLayer
-   * @prop {TileLayer} tileLayer
-   * @prop {Object} settings.bing_settings - Bing specific settings.
    */
   function GeolocationBingMap(mapSettings) {
 
@@ -91,13 +86,15 @@
 
       that.addPopulatedCallback(function (map) {
         // Center the map based on the locations.
-        let locs = [];
+        let locations = [];
         for (let i = 0; i < map.mapMarkers.length; i++) {
           const thisLocation = map.mapMarkers[i].position;
-          locs.push(new Microsoft.Maps.Location(thisLocation.lat, thisLocation.lng));
+          if (thisLocation.lat && thisLocation.lng) {
+            locations.push(new Microsoft.Maps.Location(thisLocation.lat, thisLocation.lng));
+          }
         }
 
-        var rect = Microsoft.Maps.LocationRect.fromLocations(locs);
+        var rect = Microsoft.Maps.LocationRect.fromLocations(locations);
         map.bingMap.setView({ bounds: rect, padding: 20 });
       });
 
@@ -106,7 +103,6 @@
 
     })
     .catch(function (error) {
-      console.error('Bing library not loaded. Bailing out. Error:'); // eslint-disable-line no-console.
       console.error(error);
     });
   }
