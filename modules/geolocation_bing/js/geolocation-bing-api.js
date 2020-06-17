@@ -121,38 +121,11 @@ function GeolocationBingMapLoadedCallback() {
         var rect = Microsoft.Maps.LocationRect.fromLocations(locations);
         map.bingMap.setView({bounds: rect, padding: 20});
       }
-
-      console.log(locations);
-
     });
   }
 
   GeolocationBingMap.prototype = Object.create(Drupal.geolocation.GeolocationMapBase.prototype);
   GeolocationBingMap.prototype.constructor = GeolocationBingMap;
-
-  GeolocationBingMap.prototype.getZoom = function () {
-    var that = this;
-
-    return new Promise(function (resolve, reject) {
-      resolve(that.bingMap.getZoom());
-    });
-  };
-
-  GeolocationBingMap.prototype.setZoom = function (zoom, defer) {
-    if (typeof zoom === 'undefined') {
-      zoom = this.settings.bing_settings.zoom;
-    }
-    zoom = parseInt(zoom);
-    // TODO: does this function even need to exist? If so, what are we doing here?
-  };
-
-  GeolocationBingMap.prototype.setCenterByCoordinates = function (coordinates, accuracy, identifier) {
-    Drupal.geolocation.GeolocationMapBase.prototype.setCenterByCoordinates.call(this, coordinates, accuracy, identifier);
-    if (typeof accuracy === 'undefined') {
-      // TODO: does this function even need to exist?
-      return;
-    }
-  };
 
   Drupal.geolocation.GeolocationBingMap = GeolocationBingMap;
   Drupal.geolocation.addMapProvider('bing', 'GeolocationBingMap');
