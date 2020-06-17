@@ -3,8 +3,41 @@
  * Javascript for Bing maps integration.
  */
 
+/**
+ * Callback once Bing Maps have loaded asynchronously.
+ * @constructor
+ */
 function GeolocationBingMapLoadedCallback() {
-  // TODO: is this necessary?
+
+  const maps = Drupal.geolocation.maps;
+
+  for (let i = 0; i < maps.length; i++) {
+    const map = maps[i];
+    const bingSettings = map.settings.bing_settings;
+
+    let bingMap = new Microsoft.Maps.Map(map.container[0], {
+      credentials: bingSettings.api_key,
+      showDashboard: false,
+      showScalebar: true,
+      allowHidingLabelsOfRoad: false,
+      showLocateMeButton: false,
+      showCopyright: false,
+      showLogo: false,
+      zoom: bingSettings.zoom
+    });
+
+    // Set the info popup text.
+    let currentInfoWindow = new Microsoft.Maps.Infobox(map.getCenter(), {
+      visible: false
+    });
+    currentInfoWindow.setMap(bingMap);
+    Drupal.geolocation.currentInfoWindow = currentInfoWindow;
+
+    map.bingMap = bingMap;
+
+    map.initializedCallback();
+    map.populatedCallback();
+  }
 }
 
 (function ($, Drupal) {
@@ -19,23 +52,6 @@ function GeolocationBingMapLoadedCallback() {
    * @inheritDoc
    */
   function GeolocationBingMap(mapSettings) {
-
-    // Ensure that the Bing maps script has loaded before we try to do anything else.
-    const bingPromise = new Promise(function (resolve, reject) {
-      if (typeof Microsoft === 'undefined' || typeof Microsoft.Maps === 'undefined') {
-        setTimeout(function () {
-          if (typeof Microsoft === 'undefined' || typeof Microsoft.Maps === 'undefined') {
-            reject();
-          }
-          else {
-            resolve();
-          }
-        }, 1000);
-      }
-      else {
-        resolve();
-      }
-    });
 
     this.type = 'bing';
 
@@ -58,56 +74,56 @@ function GeolocationBingMapLoadedCallback() {
       width: this.settings.bing_settings.width
     });
 
-    let that = this;
-    // Ensure that the Bing script has loaded before trying to do anything.
-    bingPromise.then(function () {
+    this.addPopulatedCallback(function (map) {
+      let locations = [];
+      for (let i = 0; i < map.mapMarkers.length; i++) {
+        const thisMarker = map.mapMarkers[i];
+        const thisLocation = thisMarker.position;
+        if (thisLocation.lat && thisLocation.lng) {
 
-      that.addInitializedCallback(function (map) {
+          // Generate a location pin.
+          const pinLocation = new Microsoft.Maps.Location(thisLocation.lat, thisLocation.lng);
+          locations.push(pinLocation);
 
-        const bingSettings = map.settings.bing_settings;
+          // TODO: customizable pins.
+          let pin = new Microsoft.Maps.Pushpin(pinLocation);
 
-        let bingMap = new Microsoft.Maps.Map(map.container[0], {
-          credentials: bingSettings.api_key,
-          showDashboard: false,
-          showScalebar: true,
-          allowHidingLabelsOfRoad: false,
-          showLocateMeButton: false,
-          showCopyright: false,
-          showLogo: false,
-          zoom: bingSettings.zoom
-        });
-        // Set the info popup text.
-        let currentInfoWindow = new Microsoft.Maps.Infobox(map.getCenter(), {
-          visible: false
-        });
+          // Do we have any info to put into the infobox?
+          var content = thisMarker.locationWrapper.find('.location-content');
+          if (content.length) {
+            content = content.html();
 
-        currentInfoWindow.setMap(bingMap);
+            pin.metadata = {
+              description: content.toString()
+            };
+            Microsoft.Maps.Events.addHandler(pin, 'click', pushpinClicked);
+          }
 
-        Drupal.geolocation.currentInfoWindow = currentInfoWindow;
+          map.bingMap.entities.push(pin);
 
-        that.bingMap = bingMap;
-      });
-
-      that.addPopulatedCallback(function (map) {
-        // Center the map based on the locations.
-        let locations = [];
-        for (let i = 0; i < map.mapMarkers.length; i++) {
-          const thisLocation = map.mapMarkers[i].position;
-          if (thisLocation.lat && thisLocation.lng) {
-            locations.push(new Microsoft.Maps.Location(thisLocation.lat, thisLocation.lng));
+          function pushpinClicked(e) {
+            // Make sure the infobox has metadata to display.
+            if (e.target.metadata) {
+              // Set the infobox options with the metadata of the pushpin.
+              Drupal.geolocation.currentInfoWindow.setOptions({
+                location: e.target.getLocation(),
+                title: e.target.metadata.title,
+                description: e.target.metadata.description,
+                visible: true
+              });
+            }
           }
         }
+      }
 
+      // Center the map based on the locations.
+      if (locations.length) {
         var rect = Microsoft.Maps.LocationRect.fromLocations(locations);
-        map.bingMap.setView({ bounds: rect, padding: 20 });
-      });
+        map.bingMap.setView({bounds: rect, padding: 20});
+      }
 
-      that.initializedCallback();
-      that.populatedCallback();
+      console.log(locations);
 
-    })
-    .catch(function (error) {
-      console.error(error);
     });
   }
 

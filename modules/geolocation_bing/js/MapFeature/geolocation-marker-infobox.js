@@ -25,50 +25,6 @@
 
           map.addMarkerAddedCallback(function (currentMarker) {
 
-            if (typeof (currentMarker.locationWrapper) === 'undefined') {
-              return;
-            }
-
-            // Generate a location pin.
-            const pinLocation = new Microsoft.Maps.Location(currentMarker.position.lat, currentMarker.position.lng);
-            let pin = new Microsoft.Maps.Pushpin(pinLocation);
-
-            // Do we have any info to put into the infobox?
-            var content = currentMarker.locationWrapper.find('.location-content');
-            if (content.length) {
-              content = content.html();
-
-              var markerInfoWindow = {
-                content: content.toString(),
-                disableAutoPan: featureSettings.disableAutoPan
-              };
-
-              if (featureSettings.maxWidth > 0) {
-                markerInfoWindow.maxWidth = featureSettings.maxWidth;
-              }
-
-              pin.metadata = {
-                description: content.toString()
-              };
-              Microsoft.Maps.Events.addHandler(pin, 'click', pushpinClicked);
-            }
-
-            map.bingMap.entities.push(pin);
-
-            function pushpinClicked(e) {
-              // Make sure the infobox has metadata to display.
-              if (e.target.metadata) {
-                // Set the infobox options with the metadata of the pushpin.
-                // TODO: sizing of the infobox.
-                // TODO: recentre the map.
-                Drupal.geolocation.currentInfoWindow.setOptions({
-                  location: e.target.getLocation(),
-                  title: e.target.metadata.title,
-                  description: e.target.metadata.description,
-                  visible: true
-                });
-              }
-            }
 
           });
 
